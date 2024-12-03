@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<RootNamespace>FluentFin.Core</RootNamespace>
+		<Platforms>x86;x64;arm64;AnyCPU</Platforms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Models\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DeviceId.Windows" Version="6.8.0" />
+		<PackageReference Include="Flurl.Http" Version="4.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="ReactiveUI" Version="20.1.63" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Jellyfin.Client\Jellyfin.Client.csproj" />
+	</ItemGroup>
+</Project>

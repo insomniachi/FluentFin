@@ -9,7 +9,32 @@
                 <ResourceDictionary Source="/Styles/FontSizes.xaml" />
                 <ResourceDictionary Source="/Styles/Thickness.xaml" />
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
+                <ResourceDictionary Source="/Styles/Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="ItemContainer" x:Key="BareItemContainerStyle">
+                <Setter Property="Background" Value="{ThemeResource ItemContainerBackground}" />
+                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ItemContainer">
+                            <Grid x:Name="PART_ContainerRoot" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                                <!--Placeholder for child -->
+                                <Grid x:Name="PART_SelectionVisual" x:DeferLoadStrategy="Lazy" BorderBrush="Transparent" BorderThickness="3" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False" Opacity="0" />
+                                <Rectangle x:Name="PART_CommonVisual" Stroke="{ThemeResource ItemContainerBorderBrush}" StrokeThickness="{ThemeResource ItemContainerSelectedInnerThickness}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False" RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}" RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                <CheckBox x:Name="PART_SelectionCheckbox" Style="{StaticResource ItemContainerSelectionCheckboxStyle}" x:DeferLoadStrategy="Lazy" Opacity="0">
+                                    <CheckBox.Resources>
+                                        <StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="ControlOnImageFillColorDefaultBrush" />
+                                    </CheckBox.Resources>
+                                </CheckBox>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -41,6 +41,9 @@
                 <Button HorizontalAlignment="Center"
                             Command="{x:Bind ViewModel.LoginCommand}"
                             Style="{ThemeResource AccentButtonStyle}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Enter"/>
+                    </Button.KeyboardAccelerators>
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon Glyph="&#xE725;" />
                         <TextBlock Text="Login"/>

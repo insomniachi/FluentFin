@@ -18,6 +18,7 @@
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Styles\Button.xaml" />
 	  <None Remove="Views\HomePage.xaml" />
 	  <None Remove="Views\LoginView.xaml" />
 	  <None Remove="Views\TitleBarControl.xaml" />
@@ -33,6 +34,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview3" />
+		<PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.2.241112-preview1" />
+		<PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.241112-preview1" />
@@ -45,6 +48,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FluentFin.Core\FluentFin.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Styles\Button.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

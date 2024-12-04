@@ -1,0 +1,245 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FluentFin.Controls"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:ui="using:CommunityToolkit.WinUI" 
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:i="using:Microsoft.Xaml.Interactivity" 
+    xmlns:cb="using:CommunityToolkit.WinUI.Behaviors">
+
+    <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <SolidColorBrush Color="Black" Opacity="0.40" x:Key="Black75O"/>
+    <cc:DoubleToVisibilityConverter GreaterThan="0" x:Key="MoreThanZeroToVisibilityConverter"/>
+
+
+    <Style TargetType="local:PlayableMediaItem" >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PlayableMediaItem">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border CornerRadius="10 10 0 0" x:Name="ImageCanvas">
+
+                            <Border.Background>
+                                <ImageBrush Stretch="UniformToFill">
+                                    <ImageBrush.ImageSource>
+                                        <BitmapImage UriSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource, Mode=OneWay}"/>
+                                    </ImageBrush.ImageSource>
+                                </ImageBrush>
+                            </Border.Background>
+
+                            <i:Interaction.Behaviors>
+                                <ic:EventTriggerBehavior EventName="PointerEntered">
+                                    <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=PlayButton}" Value="Visible"/>
+                                    <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ActionButtons}" Value="Visible"/>
+                                    <ic:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ContentOverlay}" Value="{ThemeResource ControlOnImageFillColorDefaultBrush}"/>
+                                </ic:EventTriggerBehavior>
+                                <ic:EventTriggerBehavior EventName="PointerExited">
+                                    <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=PlayButton}" Value="Collapsed"/>
+                                    <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ActionButtons}" Value="Collapsed"/>
+                                    <ic:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ContentOverlay}" Value="Transparent"/>
+                                </ic:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+
+                            <Grid x:Name="ContentOverlay">
+
+                                <Button HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"
+                                        Height="50"
+                                        Width="50"
+                                        CornerRadius="25"
+                                        Visibility="Collapsed"
+                                        BorderThickness="0"
+                                        x:Name="PlayButton"
+                                        Style="{ThemeResource BareButtonStyle}"
+                                        Background="Black">
+                                    <animations:Implicit.ShowAnimations>
+                                        <animations:OpacityAnimation Duration="0:0:1" From="0" To="1.0"/>
+                                    </animations:Implicit.ShowAnimations>
+                                    <animations:Explicit.Animations>
+                                        <animations:AnimationSet x:Name="ZoomAnimation">
+                                            <animations:ScaleAnimation From="1" To="1.15" Duration="0:0:0.3"/>
+                                            <animations:StartAnimationActivity Animation="{Binding ElementName=OnEnter}"/>
+                                        </animations:AnimationSet>
+                                        <animations:AnimationSet x:Name="ZoomOutAnimation">
+                                            <animations:ScaleAnimation From="1.15" To="1" Duration="0:0:0.3"/>
+                                            <animations:StartAnimationActivity Animation="{Binding ElementName=OnExit}"/>
+                                        </animations:AnimationSet>
+                                    </animations:Explicit.Animations>
+                                    <i:Interaction.Behaviors>
+                                        <ic:EventTriggerBehavior EventName="PointerEntered">
+                                            <cb:StartAnimationAction Animation="{Binding ElementName=ZoomAnimation}" />
+                                        </ic:EventTriggerBehavior>
+                                        <ic:EventTriggerBehavior EventName="PointerExited">
+                                            <cb:StartAnimationAction Animation="{Binding ElementName=ZoomOutAnimation}" />
+                                        </ic:EventTriggerBehavior>
+                                    </i:Interaction.Behaviors>
+
+                                    <FontIcon Glyph="&#xF5B0;">
+                                        <animations:Explicit.Animations>
+                                            <animations:AnimationSet x:Name="OnEnter">
+                                                <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                            </animations:AnimationSet>
+                                            <animations:AnimationSet x:Name="OnExit">
+                                                <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                            </animations:AnimationSet>
+                                        </animations:Explicit.Animations>
+                                    </FontIcon>
+
+                                </Button>
+
+                                <InfoBadge HorizontalAlignment="Right" 
+                                           VerticalAlignment="Top" 
+                                           Margin="10" 
+                                           Padding="5 0"
+                                           FontWeight="ExtraBold"
+                                           Value="{TemplateBinding UnplayedCount}"
+                                           Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=UnplayedCount, Converter={StaticResource MoreThanZeroToVisibilityConverter}}"/>
+
+                                <ProgressBar Maximum="100"
+                                             Minimum="0"
+                                             VerticalAlignment="Bottom"
+                                             Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Progress, Mode=OneWay}"
+                                             Margin="5 0 5 10"
+                                             Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Progress, Converter={StaticResource MoreThanZeroToVisibilityConverter}, Mode=OneWay}"/>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            VerticalAlignment="Bottom" 
+                                            HorizontalAlignment="Right"
+                                            Spacing="1"
+                                            Margin="10"
+                                            Visibility="Collapsed"
+                                            x:Name="ActionButtons">
+                                    <Button Style="{ThemeResource BareButtonStyle}"
+                                            BorderThickness="0"
+                                            Height="30"
+                                            Width="30"
+                                            CornerRadius="15"
+                                            x:Name="MarkWatchedButton"
+                                            Background="Transparent"
+                                            ToolTipService.ToolTip="Mark watched">
+                                        <i:Interaction.Behaviors>
+                                            <ic:EventTriggerBehavior EventName="PointerEntered">
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkWatchedButton}" PropertyName="Background" Value="{StaticResource Black75O}"/>
+                                                <cb:StartAnimationAction Animation="{Binding ElementName=WatchedOnEnter}" />
+                                            </ic:EventTriggerBehavior>
+                                            <ic:EventTriggerBehavior EventName="PointerExited">
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkWatchedButton}" PropertyName="Background" Value="Transparent"/>
+                                                <cb:StartAnimationAction Animation="{Binding ElementName=WatchedOnExit}" />
+                                            </ic:EventTriggerBehavior>
+                                        </i:Interaction.Behaviors>
+                                        <animations:Explicit.Animations>
+                                            <animations:AnimationSet x:Name="WatchedOnEnter">
+                                                <animations:StartAnimationActivity Animation="{Binding ElementName=WatchColorOnEnter}" />
+                                            </animations:AnimationSet>
+                                            <animations:AnimationSet x:Name="WatchedOnExit">
+                                                <animations:StartAnimationActivity Animation="{Binding ElementName=WatchColorOnExit}" />
+                                            </animations:AnimationSet>
+                                        </animations:Explicit.Animations>
+                                        <FontIcon Glyph="&#xE73E;" FontSize="15">
+                                            <animations:Explicit.Animations>
+                                                <animations:AnimationSet x:Name="WatchColorOnEnter">
+                                                    <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                                </animations:AnimationSet>
+                                                <animations:AnimationSet x:Name="WatchColorOnExit">
+                                                    <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                                </animations:AnimationSet>
+                                            </animations:Explicit.Animations>
+                                        </FontIcon>
+                                    </Button>
+                                    <Button Style="{ThemeResource BareButtonStyle}"
+                                            BorderThickness="0"
+                                            Height="30"
+                                            Width="30"
+                                            CornerRadius="15"
+                                            x:Name="MarkFavoriteButton"
+                                            Background="Transparent"
+                                            ToolTipService.ToolTip="Add to favorites">
+                                        <i:Interaction.Behaviors>
+                                            <ic:EventTriggerBehavior EventName="PointerEntered">
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkFavoriteButton}" PropertyName="Background" Value="{StaticResource Black75O}"/>
+                                                <cb:StartAnimationAction Animation="{Binding ElementName=FavoriteOnEnter}" />
+                                            </ic:EventTriggerBehavior>
+                                            <ic:EventTriggerBehavior EventName="PointerExited">
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkFavoriteButton}" PropertyName="Background" Value="Transparent"/>
+                                                <cb:StartAnimationAction Animation="{Binding ElementName=FavoriteOnExit}" />
+                                            </ic:EventTriggerBehavior>
+                                        </i:Interaction.Behaviors>
+                                        <animations:Explicit.Animations>
+                                            <animations:AnimationSet x:Name="FavoriteOnEnter">
+                                                <animations:StartAnimationActivity Animation="{Binding ElementName=FavoriteColorOnEnter}" />
+                                            </animations:AnimationSet>
+                                            <animations:AnimationSet x:Name="FavoriteOnExit">
+                                                <animations:StartAnimationActivity Animation="{Binding ElementName=FavoriteColorOnExit}" />
+                                            </animations:AnimationSet>
+                                        </animations:Explicit.Animations>
+                                        <FontIcon Glyph="&#xEB52;" FontSize="14">
+                                            <animations:Explicit.Animations>
+                                                <animations:AnimationSet x:Name="FavoriteColorOnEnter">
+                                                    <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                                </animations:AnimationSet>
+                                                <animations:AnimationSet x:Name="FavoriteColorOnExit">
+                                                    <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                                </animations:AnimationSet>
+                                            </animations:Explicit.Animations>
+                                        </FontIcon>
+                                    </Button>
+                                    <Button Style="{ThemeResource BareButtonStyle}"
+                                            BorderThickness="0"
+                                            Height="30"
+                                            Width="30"
+                                            CornerRadius="15"
+                                            x:Name="MoreButton"
+                                            Background="Transparent"
+                                            ToolTipService.ToolTip="More">
+                                        <i:Interaction.Behaviors>
+                                            <ic:EventTriggerBehavior EventName="PointerEntered">
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MoreButton}" PropertyName="Background" Value="{StaticResource Black75O}"/>
+                                                <cb:StartAnimationAction Animation="{Binding ElementName=MoreOnEnter}" />
+                                            </ic:EventTriggerBehavior>
+                                            <ic:EventTriggerBehavior EventName="PointerExited">
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MoreButton}" PropertyName="Background" Value="Transparent"/>
+                                                <cb:StartAnimationAction Animation="{Binding ElementName=MoreOnExit}" />
+                                            </ic:EventTriggerBehavior>
+                                        </i:Interaction.Behaviors>
+                                        <animations:Explicit.Animations>
+                                            <animations:AnimationSet x:Name="MoreOnEnter">
+                                                <animations:StartAnimationActivity Animation="{Binding ElementName=MoreColorOnEnter}" />
+                                            </animations:AnimationSet>
+                                            <animations:AnimationSet x:Name="MoreOnExit">
+                                                <animations:StartAnimationActivity Animation="{Binding ElementName=MoreColorOnExit}" />
+                                            </animations:AnimationSet>
+                                        </animations:Explicit.Animations>
+                                        <FontIcon Glyph="&#xE712;" FontSize="15">
+                                            <animations:Explicit.Animations>
+                                                <animations:AnimationSet x:Name="MoreColorOnEnter">
+                                                    <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                                </animations:AnimationSet>
+                                                <animations:AnimationSet x:Name="MoreColorOnExit">
+                                                    <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
+                                                </animations:AnimationSet>
+                                            </animations:Explicit.Animations>
+                                        </FontIcon>
+                                    </Button>
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+                        <Grid Grid.Row="1"
+                              Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                              Padding="5">
+                            <TextBlock Text="{TemplateBinding Title}"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}" 
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

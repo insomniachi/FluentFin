@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.ViewModels;
+using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
 using System.Reactive.Linq;
 
@@ -12,13 +13,19 @@ public partial class LoginViewModel : ObservableObject
 {
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
 	private readonly INavigationService _navigationService;
+	private readonly INavigationViewService _navigationViewService;
+	private readonly IJellyfinClient _jellyfinClient;
 
 	public LoginViewModel(IMainWindowViewModel mainWindowViewModel,
 						  IJellyfinAuthenticationService jellyfinAuthenticator,
-						  INavigationService navigationService)
+						  INavigationService navigationService,
+						  INavigationViewService navigationViewService,
+						  IJellyfinClient jellyfinClient)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
 		_navigationService = navigationService;
+		_navigationViewService = navigationViewService;
+		_jellyfinClient = jellyfinClient;
 
 		this.WhenAnyValue(x => x.ServerUrl, x => x.Username, x => x.Password)
 			.Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2) && !string.IsNullOrEmpty(x.Item3))
@@ -47,8 +54,19 @@ public partial class LoginViewModel : ObservableObject
 	{
 		var authenticated = await _jellyfinAuthenticator.Authenticate(ServerUrl, Username, Password);
 
-		if(authenticated)
+		if (authenticated)
 		{
+			var libarariesItem = new NavigationViewItem() { Content = "Libraries", Icon = new SymbolIcon { Symbol = Symbol.Library }, SelectsOnInvoked = false };
+			await foreach (var item in _jellyfinClient.GetUserLibraries())
+			{
+				libarariesItem.MenuItems.Add(new NavigationViewItem
+				{
+					Content = item.Name,
+				});
+			}
+
+			_navigationViewService.MenuItems?.Add(libarariesItem);
+
 			_navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new object());
 		}
 	}

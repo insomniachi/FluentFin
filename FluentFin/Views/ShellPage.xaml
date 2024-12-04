@@ -20,7 +20,7 @@
         <NavigationView.MenuItems>
             <NavigationViewItem Content="Home" 
                                 Icon="{ui:SymbolIcon Symbol=Home}"
-                                helpers:NavigationHelper.NavigateTo="FluentFin.ViewModels.MainViewModel"/>
+                                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.HomeViewModel"/>
         </NavigationView.MenuItems>
         <Frame x:Name="NavigationFrame" x:FieldModifier="Public"/>
     </NavigationView>

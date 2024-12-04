@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using FluentFin.Contracts.Services;
-using FluentFin.ViewModels;
+using FluentFin.Core.ViewModels;
 using FluentFin.Views;
 
 using Microsoft.UI.Xaml.Controls;
-using System.Windows;
 
 namespace FluentFin.Services;
 

@@ -1,3 +1,4 @@
+using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

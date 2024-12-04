@@ -1,0 +1,53 @@
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+
+
+namespace FluentFin.Controls;
+
+public sealed partial class PlayableMediaItem : Control
+{
+	public static readonly DependencyProperty ProgressProperty =
+		DependencyProperty.Register(nameof(Progress), typeof(double), typeof(PlayableMediaItem), new PropertyMetadata(0));
+
+
+	public static readonly DependencyProperty ImageSourceProperty =
+		DependencyProperty.Register(nameof(ImageSource), typeof(Uri), typeof(PlayableMediaItem), new PropertyMetadata(null));
+
+
+	public static readonly DependencyProperty TitleProperty =
+		DependencyProperty.Register(nameof(Title), typeof(string), typeof(PlayableMediaItem), new PropertyMetadata(""));
+
+
+	public static readonly DependencyProperty UnplayedCountProperty =
+		DependencyProperty.Register(nameof(UnplayedCount), typeof(int), typeof(PlayableMediaItem), new PropertyMetadata(0));
+
+
+	public int UnplayedCount
+	{
+		get { return (int)GetValue(UnplayedCountProperty); }
+		set { SetValue(UnplayedCountProperty, value); }
+	}
+
+	public string Title
+	{
+		get { return (string)GetValue(TitleProperty); }
+		set { SetValue(TitleProperty, value); }
+	}
+
+	public Uri ImageSource
+	{
+		get { return (Uri)GetValue(ImageSourceProperty); }
+		set { SetValue(ImageSourceProperty, value); }
+	}
+
+	public double Progress
+	{
+		get { return (double)GetValue(ProgressProperty); }
+		set { SetValue(ProgressProperty, value); }
+	}
+
+	public PlayableMediaItem()
+	{
+		DefaultStyleKey = typeof(PlayableMediaItem);
+	}
+}

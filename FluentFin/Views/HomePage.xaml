@@ -6,10 +6,93 @@
     xmlns:local="using:FluentFin.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:jm="using:Jellyfin.Client.Models"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:lc="using:FluentFin.Controls" xmlns:generic="using:System.Collections.Generic" xmlns:services="using:FluentFin.Core.Contracts.Services"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Margin="{StaticResource MediumLeftRightMargin}">
 
-    <Grid>
+    <Page.Resources>
+        <c:JellyfinImageConverter x:Key="IdToThumbnailConverter" Type="Thumb"/>
+        <c:JellyfinImageConverter x:Key="IdToPrimaryImageConverter" Type="Primary"/>
+        <cc:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
+    </Page.Resources>
 
-    </Grid>
+    <ScrollViewer>
+        <StackPanel Spacing="20">
+            <StackPanel Visibility="{x:Bind ViewModel.ContinueItems, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}" Padding="12 0 0 0">
+                <TextBlock Text="Continue Watching" 
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="{StaticResource SmallTopBottomMargin}"/>
+
+                <ItemsView ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
+                    <ItemsView.ItemTemplate>
+                        <DataTemplate x:DataType="jm:BaseItemDto">
+                            <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
+                                <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
+                                                      ImageSource="{x:Bind Id, Converter={StaticResource IdToThumbnailConverter}}"
+                                                      Title="{x:Bind Name}"/>
+                            </ItemContainer>
+                        </DataTemplate>
+                    </ItemsView.ItemTemplate>
+                    <ItemsView.Layout>
+                        <UniformGridLayout MaximumRowsOrColumns="1" Orientation="Vertical"/>
+                    </ItemsView.Layout>
+                </ItemsView>
+            </StackPanel>
+
+            <StackPanel Visibility="{x:Bind ViewModel.NextUpItems, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}" Padding="12 0 0 0">
+                <TextBlock Text="Continue Watching" Style="{StaticResource TitleTextBlockStyle}"
+                Margin="{StaticResource SmallTopBottomMargin}"/>
+
+                <ItemsView ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
+                    <ItemsView.ItemTemplate>
+                        <DataTemplate x:DataType="jm:BaseItemDto">
+                            <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
+                                <lc:PlayableMediaItem ImageSource="{x:Bind Id, Converter={StaticResource IdToThumbnailConverter}}"
+                                                      Title="{x:Bind Name}"/>
+                            </ItemContainer>
+                        </DataTemplate>
+                    </ItemsView.ItemTemplate>
+                    <ItemsView.Layout>
+                        <UniformGridLayout MaximumRowsOrColumns="1" Orientation="Vertical"/>
+                    </ItemsView.Layout>
+                </ItemsView>
+            </StackPanel>
+
+            <ItemsView ItemsSource="{x:Bind ViewModel.RecentItems, Mode=OneWay}" SelectionMode="None">
+                <ItemsView.ItemTemplate>
+                    <DataTemplate x:DataType="services:NamedDtoQueryResult">
+                        <ItemContainer Margin="{StaticResource SmallLeftRightMargin}" Style="{StaticResource BareItemContainerStyle}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="{StaticResource SmallTopBottomMargin}">
+                             <Run Text="Recently Added In"/>
+                             <Run Text="{x:Bind Name, Mode=OneWay}"/>
+                                </TextBlock>
+                                <ItemsView ItemsSource="{x:Bind Items, Mode=OneWay}" SelectionMode="None">
+                                    <ItemsView.ItemTemplate>
+                                        <DataTemplate x:DataType="jm:BaseItemDto">
+                                            <ItemContainer Width="220" Height="350" Style="{StaticResource BareItemContainerStyle}">
+                                                <lc:PlayableMediaItem ImageSource="{x:Bind Id, Converter={StaticResource IdToPrimaryImageConverter}}"
+                                                                      Title="{x:Bind Name}"
+                                                                      UnplayedCount="{x:Bind UserData.UnplayedItemCount}"/>
+                                            </ItemContainer>
+                                        </DataTemplate>
+                                    </ItemsView.ItemTemplate>
+                                    <ItemsView.Layout>
+                                        <UniformGridLayout Orientation="Horizontal" MinColumnSpacing="10" MinRowSpacing="10"/>
+                                    </ItemsView.Layout>
+                                </ItemsView>
+                            </StackPanel>
+                        </ItemContainer>
+                    </DataTemplate>
+                </ItemsView.ItemTemplate>
+                <ItemsView.Layout>
+                    <StackLayout Orientation="Vertical" Spacing="10"/>
+                </ItemsView.Layout>
+            </ItemsView>
+
+        </StackPanel>
+    </ScrollViewer>
 </Page>

@@ -36,11 +36,11 @@ namespace Jellyfin.Client.Models
         /// <summary>Gets or sets a value indicating whether this MediaBrowser.Model.Dto.UserItemDataDto is played.</summary>
         public bool? Played { get; set; }
         /// <summary>Gets or sets the played percentage.</summary>
-        public double? PlayedPercentage { get; set; }
+        public double PlayedPercentage { get; set; }
         /// <summary>Gets or sets the rating.</summary>
         public double? Rating { get; set; }
         /// <summary>Gets or sets the unplayed item count.</summary>
-        public int? UnplayedItemCount { get; set; }
+        public int UnplayedItemCount { get; set; }
 
     }
 }

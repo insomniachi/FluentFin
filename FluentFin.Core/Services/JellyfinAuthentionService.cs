@@ -7,6 +7,7 @@ using Flurl.Http.Configuration;
 using Jellyfin.Client;
 using Jellyfin.Client.Models;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 using System.Text.Json;
 
 namespace FluentFin.Core.Services
@@ -25,16 +26,9 @@ namespace FluentFin.Core.Services
 
 		public async Task<bool> Authenticate(string url, string username, string password)
 		{
-			var info = await url.AppendPathSegment("/System/Info/Public").GetJsonAsync<PublicSystemInfo>();
-
-			if(info is null)
-			{
-				return false;
-			}
-
 
 			var id = new DeviceIdBuilder().OnWindows(windows => windows.AddWindowsDeviceId()).ToString();
-			var authHeader = $"""MediaBrowser Client="FluentFin", Device="Windows 10/11", DeviceId="{id}", Version="{info.Version}" """.Trim();
+			var authHeader = $"""MediaBrowser Client="FluentFin", Device="Windows 10/11", DeviceId="{id}", Version="{Assembly.GetEntryAssembly()!.GetName().Version}" """.Trim();
 
 			try
 			{

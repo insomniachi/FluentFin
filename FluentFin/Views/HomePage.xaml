@@ -16,7 +16,8 @@
     <Page.Resources>
         <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Thumb"/>
         <c:JellyfinParentImageConverter x:Key="ParentImageConverter"/>
-        <c:JellyfinNameConverter x:Key="NameConverter"/>
+        <c:JellyfinTitleConverter x:Key="NameConverter"/>
+        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
         <cc:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
     </Page.Resources>
 
@@ -33,7 +34,8 @@
                             <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
                                 <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
                                                       ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
-                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"/>
+                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
+                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
                             </ItemContainer>
                         </DataTemplate>
                     </ItemsView.ItemTemplate>
@@ -52,7 +54,8 @@
                         <DataTemplate x:DataType="jm:BaseItemDto">
                             <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
                                 <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
-                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"/>
+                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
+                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
                             </ItemContainer>
                         </DataTemplate>
                     </ItemsView.ItemTemplate>
@@ -67,9 +70,9 @@
                     <DataTemplate x:DataType="services:NamedDtoQueryResult">
                         <ItemContainer Margin="{StaticResource SmallLeftRightMargin}" Style="{StaticResource BareItemContainerStyle}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="{StaticResource SmallTopBottomMargin}">
-                             <Run Text="Recently Added In"/>
-                             <Run Text="{x:Bind Name, Mode=OneWay}"/>
+                                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="{StaticResource MediumTopBottomMargin}">
+                                    <Run Text="Recently Added In"/>
+                                    <Run Text="{x:Bind Name, Mode=OneWay}"/>
                                 </TextBlock>
                                 <ItemsView ItemsSource="{x:Bind Items, Mode=OneWay}" SelectionMode="None">
                                     <ItemsView.ItemTemplate>
@@ -77,12 +80,17 @@
                                             <ItemContainer Width="220" Height="350" Style="{StaticResource BareItemContainerStyle}">
                                                 <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
                                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                                                      UnplayedCount="{x:Bind UserData.UnplayedItemCount}"/>
+                                                                      UnplayedCount="{x:Bind UserData.UnplayedItemCount}"
+                                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
                                             </ItemContainer>
                                         </DataTemplate>
                                     </ItemsView.ItemTemplate>
                                     <ItemsView.Layout>
-                                        <UniformGridLayout Orientation="Horizontal" MinColumnSpacing="10" MinRowSpacing="10"/>
+                                        <UniformGridLayout Orientation="Horizontal" 
+                                                           MinColumnSpacing="10"
+                                                           MinRowSpacing="10" 
+                                                           ItemsStretch="None" 
+                                                           ItemsJustification="Start"/>
                                     </ItemsView.Layout>
                                 </ItemsView>
                             </StackPanel>
@@ -90,7 +98,7 @@
                     </DataTemplate>
                 </ItemsView.ItemTemplate>
                 <ItemsView.Layout>
-                    <StackLayout Orientation="Vertical" Spacing="10"/>
+                    <StackLayout Orientation="Vertical" Spacing="20"/>
                 </ItemsView.Layout>
             </ItemsView>
 

@@ -22,6 +22,14 @@ public sealed partial class PlayableMediaItem : Control
 	public static readonly DependencyProperty UnplayedCountProperty =
 		DependencyProperty.Register(nameof(UnplayedCount), typeof(int), typeof(PlayableMediaItem), new PropertyMetadata(0));
 
+	public static readonly DependencyProperty SubtitleProperty =
+		DependencyProperty.Register("Subtitle", typeof(string), typeof(PlayableMediaItem), new PropertyMetadata(""));
+
+	public string Subtitle
+	{
+		get { return (string)GetValue(SubtitleProperty); }
+		set { SetValue(SubtitleProperty, value); }
+	}
 
 	public int UnplayedCount
 	{

@@ -15,6 +15,7 @@
     <SolidColorBrush Color="Black" Opacity="0.40" x:Key="Black40O"/>
     <SolidColorBrush Color="Black" Opacity="0.65" x:Key="Black65O"/>
     <cc:DoubleToVisibilityConverter GreaterThan="0" x:Key="MoreThanZeroToVisibilityConverter"/>
+    <cc:EmptyStringToObjectConverter x:Key="EmptyStringVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible" />
 
 
     <Style TargetType="local:PlayableMediaItem" >
@@ -70,6 +71,7 @@
                             </Grid>
 
                             <Grid x:Name="ContentOverlay">
+
                                 <Button HorizontalAlignment="Center" 
                                         VerticalAlignment="Center"
                                         Height="50"
@@ -253,17 +255,20 @@
                                 </StackPanel>
 
                             </Grid>
-                            
-
 
                         </Grid>
-                        <Grid Grid.Row="1"
+                        <StackPanel Grid.Row="1"
                               Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
-                              Padding="5">
+                              Padding="5"
+                                    Spacing="3">
                             <TextBlock Text="{TemplateBinding Title}"
                                        Style="{StaticResource BodyStrongTextBlockStyle}" 
                                        HorizontalAlignment="Center"/>
-                        </Grid>
+                            <TextBlock Text="{TemplateBinding Subtitle}"
+                                       Style="{StaticResource CaptionTextBlockStyle}" 
+                                       HorizontalAlignment="Center"
+                                       Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Subtitle, Converter={StaticResource EmptyStringVisibilityConverter}}"/>
+                        </StackPanel>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

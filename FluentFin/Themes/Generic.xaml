@@ -7,6 +7,7 @@
     xmlns:ui="using:CommunityToolkit.WinUI" 
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:i="using:Microsoft.Xaml.Interactivity" 
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:cb="using:CommunityToolkit.WinUI.Behaviors"
     xmlns:cl="using:FluentFin.Controls.Lights">
 
@@ -25,24 +26,50 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
-
                         <Grid CornerRadius="10 10 0 0" x:Name="ImageCanvas">
                             <i:Interaction.Behaviors>
                                 <ic:EventTriggerBehavior EventName="PointerEntered">
                                     <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=PlayButton}" Value="Visible"/>
                                     <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ActionButtons}" Value="Visible"/>
-                                    <ic:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ContentOverlay}" Value="{ThemeResource ControlOnImageFillColorDefaultBrush}"/>
+                                    <cb:StartAnimationAction Animation="{Binding ElementName=BlurAnimation}"/>
                                 </ic:EventTriggerBehavior>
                                 <ic:EventTriggerBehavior EventName="PointerExited">
                                     <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=PlayButton}" Value="Collapsed"/>
                                     <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=ActionButtons}" Value="Collapsed"/>
-                                    <ic:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ContentOverlay}" Value="Transparent"/>
+                                    <cb:StartAnimationAction Animation="{Binding ElementName=UnBlurAnimation}"/>
                                 </ic:EventTriggerBehavior>
                             </i:Interaction.Behaviors>
-                            <Image Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource, Mode=OneWay}" Stretch="Fill"/>
-                            <Grid x:Name="ContentOverlay">
 
+                            <Grid>
+                                <Image Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource, Mode=OneWay}"
+                                       Stretch="Fill"
+                                       CacheMode="BitmapCache"/>
+                                <media:UIElementExtensions.VisualFactory>
+                                    <media:PipelineVisualFactory>
+                                        <media:BlurEffect x:Name="ImageBlurEffect" IsAnimatable="True"/>
+                                    </media:PipelineVisualFactory>
+                                </media:UIElementExtensions.VisualFactory>
+                                <animations:Explicit.Animations>
+                                    <animations:AnimationSet x:Name="BlurAnimation">
+                                        <animations:BlurEffectAnimation EasingMode="EaseOut"
+                                         EasingType="Linear"
+                                         Target="{Binding ElementName=ImageBlurEffect}"
+                                         From="0"
+                                         To="3"
+                                         Duration="0:0:0.5" />
+                                    </animations:AnimationSet>
+                                    <animations:AnimationSet x:Name="UnBlurAnimation">
+                                        <animations:BlurEffectAnimation EasingMode="EaseOut"
+                                         EasingType="Linear"
+                                         Target="{Binding ElementName=ImageBlurEffect}"
+                                         From="3"
+                                         To="0"
+                                         Duration="0:0:0.5" />
+                                    </animations:AnimationSet>
+                                </animations:Explicit.Animations>
+                            </Grid>
+
+                            <Grid x:Name="ContentOverlay">
                                 <Button HorizontalAlignment="Center" 
                                         VerticalAlignment="Center"
                                         Height="50"
@@ -226,6 +253,9 @@
                                 </StackPanel>
 
                             </Grid>
+                            
+
+
                         </Grid>
                         <Grid Grid.Row="1"
                               Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"

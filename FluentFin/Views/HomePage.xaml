@@ -14,12 +14,13 @@
     Margin="{StaticResource MediumLeftRightMargin}">
 
     <Page.Resources>
-        <c:JellyfinImageConverter x:Key="IdToThumbnailConverter" Type="Thumb"/>
-        <c:JellyfinImageConverter x:Key="IdToPrimaryImageConverter" Type="Primary"/>
+        <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Thumb"/>
+        <c:JellyfinParentImageConverter x:Key="ParentImageConverter"/>
+        <c:JellyfinNameConverter x:Key="NameConverter"/>
         <cc:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
     </Page.Resources>
 
-    <ScrollViewer>
+    <ScrollViewer Margin="0 10">
         <StackPanel Spacing="20">
             <StackPanel Visibility="{x:Bind ViewModel.ContinueItems, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}" Padding="12 0 0 0">
                 <TextBlock Text="Continue Watching" 
@@ -31,8 +32,8 @@
                         <DataTemplate x:DataType="jm:BaseItemDto">
                             <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
                                 <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
-                                                      ImageSource="{x:Bind Id, Converter={StaticResource IdToThumbnailConverter}}"
-                                                      Title="{x:Bind Name}"/>
+                                                      ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"/>
                             </ItemContainer>
                         </DataTemplate>
                     </ItemsView.ItemTemplate>
@@ -50,8 +51,8 @@
                     <ItemsView.ItemTemplate>
                         <DataTemplate x:DataType="jm:BaseItemDto">
                             <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
-                                <lc:PlayableMediaItem ImageSource="{x:Bind Id, Converter={StaticResource IdToThumbnailConverter}}"
-                                                      Title="{x:Bind Name}"/>
+                                <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"/>
                             </ItemContainer>
                         </DataTemplate>
                     </ItemsView.ItemTemplate>
@@ -74,8 +75,8 @@
                                     <ItemsView.ItemTemplate>
                                         <DataTemplate x:DataType="jm:BaseItemDto">
                                             <ItemContainer Width="220" Height="350" Style="{StaticResource BareItemContainerStyle}">
-                                                <lc:PlayableMediaItem ImageSource="{x:Bind Id, Converter={StaticResource IdToPrimaryImageConverter}}"
-                                                                      Title="{x:Bind Name}"
+                                                <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
+                                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
                                                                       UnplayedCount="{x:Bind UserData.UnplayedItemCount}"/>
                                             </ItemContainer>
                                         </DataTemplate>

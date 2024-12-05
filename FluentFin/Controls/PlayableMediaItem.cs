@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 
 namespace FluentFin.Controls;
@@ -11,7 +12,7 @@ public sealed partial class PlayableMediaItem : Control
 
 
 	public static readonly DependencyProperty ImageSourceProperty =
-		DependencyProperty.Register(nameof(ImageSource), typeof(Uri), typeof(PlayableMediaItem), new PropertyMetadata(null));
+		DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(PlayableMediaItem), new PropertyMetadata(null));
 
 
 	public static readonly DependencyProperty TitleProperty =
@@ -34,9 +35,9 @@ public sealed partial class PlayableMediaItem : Control
 		set { SetValue(TitleProperty, value); }
 	}
 
-	public Uri ImageSource
+	public ImageSource ImageSource
 	{
-		get { return (Uri)GetValue(ImageSourceProperty); }
+		get { return (ImageSource)GetValue(ImageSourceProperty); }
 		set { SetValue(ImageSourceProperty, value); }
 	}
 

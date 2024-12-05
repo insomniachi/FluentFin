@@ -11,17 +11,9 @@ namespace Jellyfin.Client.Models
     /// Gets or sets the image tags.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class BaseItemDto_ImageTags 
+    public partial class BaseItemDto_ImageTags : Dictionary<string, string>
     {
-        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
-        public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>
-        /// Instantiates a new <see cref="global::Jellyfin.Client.Models.BaseItemDto_ImageTags"/> and sets the default values.
-        /// </summary>
-        public BaseItemDto_ImageTags()
-        {
-            AdditionalData = new Dictionary<string, object>();
-        }
+
     }
 }
 #pragma warning restore CS0618

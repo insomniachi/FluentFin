@@ -7,10 +7,12 @@
     xmlns:ui="using:CommunityToolkit.WinUI" 
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:i="using:Microsoft.Xaml.Interactivity" 
-    xmlns:cb="using:CommunityToolkit.WinUI.Behaviors">
+    xmlns:cb="using:CommunityToolkit.WinUI.Behaviors"
+    xmlns:cl="using:FluentFin.Controls.Lights">
 
     <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    <SolidColorBrush Color="Black" Opacity="0.40" x:Key="Black75O"/>
+    <SolidColorBrush Color="Black" Opacity="0.40" x:Key="Black40O"/>
+    <SolidColorBrush Color="Black" Opacity="0.65" x:Key="Black65O"/>
     <cc:DoubleToVisibilityConverter GreaterThan="0" x:Key="MoreThanZeroToVisibilityConverter"/>
 
 
@@ -23,16 +25,9 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Border CornerRadius="10 10 0 0" x:Name="ImageCanvas">
 
-                            <Border.Background>
-                                <ImageBrush Stretch="UniformToFill">
-                                    <ImageBrush.ImageSource>
-                                        <BitmapImage UriSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource, Mode=OneWay}"/>
-                                    </ImageBrush.ImageSource>
-                                </ImageBrush>
-                            </Border.Background>
 
+                        <Grid CornerRadius="10 10 0 0" x:Name="ImageCanvas">
                             <i:Interaction.Behaviors>
                                 <ic:EventTriggerBehavior EventName="PointerEntered">
                                     <ic:ChangePropertyAction PropertyName="Visibility" TargetObject="{Binding ElementName=PlayButton}" Value="Visible"/>
@@ -45,7 +40,7 @@
                                     <ic:ChangePropertyAction PropertyName="Background" TargetObject="{Binding ElementName=ContentOverlay}" Value="Transparent"/>
                                 </ic:EventTriggerBehavior>
                             </i:Interaction.Behaviors>
-
+                            <Image Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource, Mode=OneWay}" Stretch="Fill"/>
                             <Grid x:Name="ContentOverlay">
 
                                 <Button HorizontalAlignment="Center" 
@@ -57,17 +52,19 @@
                                         BorderThickness="0"
                                         x:Name="PlayButton"
                                         Style="{ThemeResource BareButtonStyle}"
-                                        Background="Black">
+                                        Background="{StaticResource Black65O}"
+                                        ui:VisualExtensions.Scale="0.8"
+                                        ui:VisualExtensions.NormalizedCenterPoint="0.5,0.5">
                                     <animations:Implicit.ShowAnimations>
                                         <animations:OpacityAnimation Duration="0:0:1" From="0" To="1.0"/>
                                     </animations:Implicit.ShowAnimations>
                                     <animations:Explicit.Animations>
                                         <animations:AnimationSet x:Name="ZoomAnimation">
-                                            <animations:ScaleAnimation From="1" To="1.15" Duration="0:0:0.3"/>
+                                            <animations:ScaleAnimation To="1" Duration="0:0:0.3"/>
                                             <animations:StartAnimationActivity Animation="{Binding ElementName=OnEnter}"/>
                                         </animations:AnimationSet>
                                         <animations:AnimationSet x:Name="ZoomOutAnimation">
-                                            <animations:ScaleAnimation From="1.15" To="1" Duration="0:0:0.3"/>
+                                            <animations:ScaleAnimation To="0.8" Duration="0:0:0.3"/>
                                             <animations:StartAnimationActivity Animation="{Binding ElementName=OnExit}"/>
                                         </animations:AnimationSet>
                                     </animations:Explicit.Animations>
@@ -125,7 +122,7 @@
                                             ToolTipService.ToolTip="Mark watched">
                                         <i:Interaction.Behaviors>
                                             <ic:EventTriggerBehavior EventName="PointerEntered">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkWatchedButton}" PropertyName="Background" Value="{StaticResource Black75O}"/>
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkWatchedButton}" PropertyName="Background" Value="{StaticResource Black40O}"/>
                                                 <cb:StartAnimationAction Animation="{Binding ElementName=WatchedOnEnter}" />
                                             </ic:EventTriggerBehavior>
                                             <ic:EventTriggerBehavior EventName="PointerExited">
@@ -162,7 +159,7 @@
                                             ToolTipService.ToolTip="Add to favorites">
                                         <i:Interaction.Behaviors>
                                             <ic:EventTriggerBehavior EventName="PointerEntered">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkFavoriteButton}" PropertyName="Background" Value="{StaticResource Black75O}"/>
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkFavoriteButton}" PropertyName="Background" Value="{StaticResource Black40O}"/>
                                                 <cb:StartAnimationAction Animation="{Binding ElementName=FavoriteOnEnter}" />
                                             </ic:EventTriggerBehavior>
                                             <ic:EventTriggerBehavior EventName="PointerExited">
@@ -199,7 +196,7 @@
                                             ToolTipService.ToolTip="More">
                                         <i:Interaction.Behaviors>
                                             <ic:EventTriggerBehavior EventName="PointerEntered">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MoreButton}" PropertyName="Background" Value="{StaticResource Black75O}"/>
+                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MoreButton}" PropertyName="Background" Value="{StaticResource Black40O}"/>
                                                 <cb:StartAnimationAction Animation="{Binding ElementName=MoreOnEnter}" />
                                             </ic:EventTriggerBehavior>
                                             <ic:EventTriggerBehavior EventName="PointerExited">
@@ -229,7 +226,7 @@
                                 </StackPanel>
 
                             </Grid>
-                        </Border>
+                        </Grid>
                         <Grid Grid.Row="1"
                               Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
                               Padding="5">

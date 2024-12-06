@@ -26,24 +26,24 @@
             </StackPanel.Resources>
             <StackPanel>
                 <TextBlock Text="Server"/>
-                <TextBox Text="{x:Bind ViewModel.ServerUrl, Mode=TwoWay}"/>
+                <TextBox Text="{x:Bind ViewModel.ServerUrl, Mode=TwoWay}"
+                         KeyDown="InputFieldKeyDown"/>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Username"/>
-                <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay}"/>
+                <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay}"
+                         KeyDown="InputFieldKeyDown"/>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Password"/>
-                <PasswordBox Password="{x:Bind ViewModel.Password}"
+                <PasswordBox x:Name="PasswordBox"
+                             KeyDown="InputFieldKeyDown"
                              PasswordChanged="PasswordBox_PasswordChanged"/>
             </StackPanel>
             <Grid>
                 <Button HorizontalAlignment="Center"
-                            Command="{x:Bind ViewModel.LoginCommand}"
-                            Style="{ThemeResource AccentButtonStyle}">
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Enter"/>
-                    </Button.KeyboardAccelerators>
+                        Command="{x:Bind ViewModel.LoginCommand}"
+                        Style="{ThemeResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon Glyph="&#xE725;" />
                         <TextBlock Text="Login"/>

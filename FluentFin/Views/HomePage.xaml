@@ -31,7 +31,7 @@
                 <ItemsView ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
                     <ItemsView.ItemTemplate>
                         <DataTemplate x:DataType="jm:BaseItemDto">
-                            <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
+                            <ItemContainer Width="390" Height="240" Style="{StaticResource BareItemContainerStyle}">
                                 <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
                                                       ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
@@ -52,7 +52,7 @@
                 <ItemsView ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
                     <ItemsView.ItemTemplate>
                         <DataTemplate x:DataType="jm:BaseItemDto">
-                            <ItemContainer Width="390" Height="230" Style="{StaticResource BareItemContainerStyle}">
+                            <ItemContainer Width="390" Height="240" Style="{StaticResource BareItemContainerStyle}">
                                 <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
                                                       Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
@@ -74,25 +74,23 @@
                                     <Run Text="Recently Added In"/>
                                     <Run Text="{x:Bind Name, Mode=OneWay}"/>
                                 </TextBlock>
-                                <ItemsView ItemsSource="{x:Bind Items, Mode=OneWay}" SelectionMode="None">
-                                    <ItemsView.ItemTemplate>
-                                        <DataTemplate x:DataType="jm:BaseItemDto">
-                                            <ItemContainer Width="220" Height="350" Style="{StaticResource BareItemContainerStyle}">
-                                                <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
-                                                                      Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                                                      UnplayedCount="{x:Bind UserData.UnplayedItemCount}"
-                                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
-                                            </ItemContainer>
-                                        </DataTemplate>
-                                    </ItemsView.ItemTemplate>
-                                    <ItemsView.Layout>
-                                        <UniformGridLayout Orientation="Horizontal" 
-                                                           MinColumnSpacing="10"
-                                                           MinRowSpacing="10" 
-                                                           ItemsStretch="None" 
-                                                           ItemsJustification="Start"/>
-                                    </ItemsView.Layout>
-                                </ItemsView>
+                                <ScrollViewer HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Enabled" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled">
+                                    <ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}">
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="jm:BaseItemDto">
+                                                <lc:PlayableMediaItem 
+                                                                    Width="240" Height="350"
+                                                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
+                                                                    Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
+                                                                    UnplayedCount="{x:Bind UserData.UnplayedItemCount}"
+                                                                    Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                        <ItemsRepeater.Layout>
+                                            <StackLayout Orientation="Horizontal" Spacing="10"/>
+                                        </ItemsRepeater.Layout>
+                                    </ItemsRepeater>
+                                </ScrollViewer>
                             </StackPanel>
                         </ItemContainer>
                     </DataTemplate>

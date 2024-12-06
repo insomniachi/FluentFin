@@ -37,7 +37,7 @@ public partial class JellyfinSubtitleConverter : IValueConverter
 
 		if (bid.Type == BaseItemDto_Type.Episode)
 		{
-			return $"S{bid.ParentIndexNumber}E{bid.IndexNumber} {bid.Name}";
+			return $"S{bid.ParentIndexNumber}:E{bid.IndexNumber} - {bid.Name}";
 		}
 		if (bid.Type == BaseItemDto_Type.Movie)
 		{
@@ -48,7 +48,7 @@ public partial class JellyfinSubtitleConverter : IValueConverter
 			return $"{bid.ProductionYear} - {(string.Equals(bid.Status, "Continuing", StringComparison.OrdinalIgnoreCase) ? "Present" : bid.EndDate?.Year)}";
 		}
 
-		return "";
+		return DependencyProperty.UnsetValue;
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)

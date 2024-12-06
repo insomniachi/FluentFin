@@ -56,6 +56,9 @@ public partial class LoginViewModel : ObservableObject
 
 		if (authenticated)
 		{
+			Username = "";
+			Password = "";
+
 			var libarariesItem = new NavigationViewItem() { Content = "Libraries", Icon = new SymbolIcon { Symbol = Symbol.Library }, SelectsOnInvoked = false };
 			await foreach (var item in _jellyfinClient.GetUserLibraries())
 			{

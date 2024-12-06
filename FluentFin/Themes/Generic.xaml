@@ -48,24 +48,39 @@
                                 <media:UIElementExtensions.VisualFactory>
                                     <media:PipelineVisualFactory>
                                         <media:BlurEffect x:Name="ImageBlurEffect" IsAnimatable="True"/>
+                                        <media:TintEffect x:Name="ImageColorEffect" IsAnimatable="True" />
                                     </media:PipelineVisualFactory>
                                 </media:UIElementExtensions.VisualFactory>
                                 <animations:Explicit.Animations>
-                                    <animations:AnimationSet x:Name="BlurAnimation">
+                                    <animations:AnimationSet x:Name="BlurAnimation" IsSequential="True">
                                         <animations:BlurEffectAnimation EasingMode="EaseOut"
                                          EasingType="Linear"
                                          Target="{Binding ElementName=ImageBlurEffect}"
                                          From="0"
                                          To="3"
-                                         Duration="0:0:0.5" />
+                                         Duration="0:0:0.3" />
+                                        <animations:ColorEffectAnimation EasingMode="EaseOut"
+                                         EasingType="Linear"
+                                         Target="{Binding ElementName=ImageColorEffect}"
+                                         From="Transparent"
+                                         To="Gray"
+                                         Duration="0:0:0.3" />
                                     </animations:AnimationSet>
-                                    <animations:AnimationSet x:Name="UnBlurAnimation">
+ 
+
+                                    <animations:AnimationSet x:Name="UnBlurAnimation" IsSequential="True">
                                         <animations:BlurEffectAnimation EasingMode="EaseOut"
                                          EasingType="Linear"
                                          Target="{Binding ElementName=ImageBlurEffect}"
                                          From="3"
                                          To="0"
-                                         Duration="0:0:0.5" />
+                                         Duration="0:0:0.3" />
+                                        <animations:ColorEffectAnimation EasingMode="EaseOut"
+                                         EasingType="Linear"
+                                         Target="{Binding ElementName=ImageColorEffect}"
+                                         From="Gray"
+                                         To="Transparent"
+                                         Duration="0:0:0.3" />
                                     </animations:AnimationSet>
                                 </animations:Explicit.Animations>
                             </Grid>

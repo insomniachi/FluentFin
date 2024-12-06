@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.ViewModels;
+using Jellyfin.Client.Models;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -65,6 +66,7 @@ public partial class LoginViewModel : ObservableObject
 				libarariesItem.MenuItems.Add(new NavigationViewItem
 				{
 					Content = item.Name,
+					Icon = GetIcon(item.CollectionType)
 				});
 			}
 
@@ -74,4 +76,14 @@ public partial class LoginViewModel : ObservableObject
 		}
 	}
 
+	private static FontIcon? GetIcon(BaseItemDto_CollectionType? collectionType)
+	{
+		return collectionType switch
+		{
+			BaseItemDto_CollectionType.Movies => new FontIcon { Glyph = "\uE8B2" },
+			BaseItemDto_CollectionType.Tvshows => new FontIcon { Glyph = "\uE7F4" },
+			BaseItemDto_CollectionType.Boxsets => new FontIcon { Glyph = "\uF133" },
+			_ => null
+		};
+	}
 }

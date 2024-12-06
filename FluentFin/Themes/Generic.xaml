@@ -16,6 +16,7 @@
     <SolidColorBrush Color="Black" Opacity="0.65" x:Key="Black65O"/>
     <cc:DoubleToVisibilityConverter GreaterThan="0" x:Key="MoreThanZeroToVisibilityConverter"/>
     <cc:EmptyStringToObjectConverter x:Key="EmptyStringVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible" />
+    <cc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
 
 
     <Style TargetType="local:PlayableMediaItem" >
@@ -289,4 +290,82 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:MenuFlyoutButton">
+        <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutItemForeground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutItemBackgroundBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutItemBorderThickness}" />
+        <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MenuFlyoutButton">
+                    <Grid         
+                        x:Name="LayoutRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        ColumnSpacing="10"
+                        Padding="{TemplateBinding Padding}" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <i:Interaction.Behaviors>
+                            <ic:EventTriggerBehavior EventName="PointerEntered">
+                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=LayoutRoot}"
+                                                         PropertyName="Background"
+                                                         Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}"/>
+                            </ic:EventTriggerBehavior>
+                            <ic:EventTriggerBehavior EventName="PointerExited">
+                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=LayoutRoot}"
+                                                         PropertyName="Background"
+                                                         Value="Transparent"/>
+                            </ic:EventTriggerBehavior>
+                        </i:Interaction.Behaviors>
+
+                        <ContentPresenter x:Name="ContentPresenter" 
+                                          Grid.Column="1"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                                          Content="{TemplateBinding Content}" 
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                          ContentTransitions="{TemplateBinding ContentTransitions}" 
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                          AutomationProperties.AccessibilityView="Raw" 
+                                          AnimatedIcon.State="Normal">
+                            <ContentPresenter.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </ContentPresenter.BackgroundTransition>
+                        </ContentPresenter>
+
+                        <Viewbox 
+                            x:Name="IconRoot"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Width="16"
+                            Height="16"
+                            Grid.Column="0"
+                            Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon, Converter={StaticResource ObjectToVisibilityConverter}}">
+                            <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Icon}"/>
+                        </Viewbox>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

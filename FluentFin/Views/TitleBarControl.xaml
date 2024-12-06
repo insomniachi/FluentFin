@@ -8,7 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
     xmlns:c="using:FluentFin.Converters"
-    xmlns:ui="using:CommunityToolkit.WinUI" xmlns:i="using:Microsoft.Xaml.Interactivity" xmlns:behaviors="using:FluentFin.Behaviors"
+    xmlns:lc="using:FluentFin.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:FluentFin.Behaviors" xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -47,11 +50,43 @@
                         Height="32"
                         DisplayName="{Binding User.Name}"/>
                 <Button.Flyout>
-                    <MenuBarItemFlyout Placement="BottomEdgeAlignedRight">
-                        <MenuFlyoutItem Text="Dashboard" Icon="{ui:SymbolIcon Symbol=Setting}"/>
-                        <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="Logout" Icon="{ui:FontIcon Glyph=&#xF3B1;}" Command="{Binding LogoutCommand}"/>
-                    </MenuBarItemFlyout>
+                    <Flyout Placement="BottomEdgeAlignedRight">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <PersonPicture
+                                    Width="48"
+                                    Height="48"
+                                    DisplayName="{Binding User.Name}"/>
+                                <TextBlock Text="{Binding User.Name}" 
+                                           Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                           Grid.Column="1" 
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <MenuFlyoutSeparator Grid.Row="1" Margin="{StaticResource XSmallTopBottomMargin}"/>
+
+                            <StackPanel Grid.Row="2">
+                                <lc:MenuFlyoutButton Icon="{ui:FontIcon Glyph=&#xE713;}" Content="Dashboard" HorizontalAlignment="Stretch"/>
+                                <lc:MenuFlyoutButton Icon="{ui:FontIcon Glyph=&#xF3B1;}" Command="{Binding LogoutCommand}" Content="Logout" HorizontalAlignment="Stretch"/>
+                            </StackPanel>
+
+                        </Grid>
+                        <!--<StackPanel Margin="0">
+                            <lc:MenuFlyoutButton Icon="{ui:FontIcon Glyph=&#xF3B1;}" Content="Dashboard"/>
+                            <MenuFlyoutSeparator/>
+                            <lc:MenuFlyoutButton Content="Logout" Icon="{ui:FontIcon Glyph=&#xF3B1;}" Command="{Binding LogoutCommand}"/>
+                        </StackPanel>-->
+                    </Flyout>
                 </Button.Flyout>
             </Button>
         </TitleBar.Footer>

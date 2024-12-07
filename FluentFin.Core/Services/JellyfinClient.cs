@@ -36,7 +36,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 	{
 		try
 		{
-			var result = await _jellyfinApiClient.UserItems.Resume.GetAsync(x =>
+			return await _jellyfinApiClient.UserItems.Resume.GetAsync(x =>
 			{
 				var query = x.QueryParameters;
 				query.Limit = 12;
@@ -46,9 +46,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				query.EnableTotalRecordCount = false;
 				query.MediaTypes = [MediaType.Video];
 			});
-
-			return result;
-
 		}
 		catch (Exception ex)
 		{
@@ -61,7 +58,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 	{
 		try
 		{
-			var result = await _jellyfinApiClient.Shows.NextUp.GetAsync(x =>
+			return await _jellyfinApiClient.Shows.NextUp.GetAsync(x =>
 			{
 				var query = x.QueryParameters;
 				query.Limit = 24;
@@ -70,28 +67,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				query.ImageTypeLimit = 1;
 				query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Banner, ImageType.Thumb];
 			});
-
-			//var result = await BaseUrl.AppendPathSegment($"/Shows/NextUp")
-			//	.SetQueryParams(new
-			//	{
-			//		Limit = 24,
-			//		Fields = "PrimaryImageAspectRatio,DateCreated,Path,MediaSourceCount",
-			//		UserId = UserId.ToString("N"),
-			//		ImageTypeLimit = 1,
-			//		EnableImageTypes = "Primary,Backdrop,Banner,Thumb",
-			//		EnableTotalRecordCount = false,
-			//		Recursive = true,
-			//		DisableFirstEpisode=false,
-			//		NextUpDateCutoff= DateTime.Now.AddYears(-1),
-			//		EnableResumable=false,
-			//		EnableRewatching=false,
-			//	})
-			//	.WithHeader(_authHeaderName, _token)
-			//	.WithSettings(x => x.JsonSerializer = _serializer)
-			//	.GetJsonAsync<BaseItemDtoQueryResult>();
-
-			return result;
-
 		}
 		catch (Exception ex)
 		{
@@ -104,7 +79,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 	{
 		try
 		{
-			var result = await _jellyfinApiClient.Items.GetAsync(x =>
+			return await _jellyfinApiClient.Items.GetAsync(x =>
 			{
 				var query = x.QueryParameters;
 				query.SortBy = [ItemSortBy.SortName];
@@ -121,29 +96,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 					_ => null
 				};
 			});
-			//var result = await BaseUrl.AppendPathSegment($"/Users/{UserId}/Items")
-			//	.SetQueryParams(new
-			//	{
-			//		SortBy = "SortName",
-			//		SortOrder = "Ascending",
-			//		Recurisve = "true",
-			//		Fields = "PrimaryImageAspectRatio,DateCreated",
-			//		ImageTypeLimit = 1,
-			//		EnableImageTypes = "Primary,Backdrop,Banner,Thumb",
-			//		ParentId = parent.Id,
-			//		IncludeItemTypes = parent.CollectionType switch
-			//		{
-			//			BaseItemDto_CollectionType.Movies => "Movies",
-			//			BaseItemDto_CollectionType.Tvshows => "Series",
-			//			_ => ""
-			//		}
-			//	})
-			//	.WithHeader(_authHeaderName, _token)
-			//	.WithSettings(x => x.JsonSerializer = _serializer)
-			//	.GetJsonAsync<BaseItemDtoQueryResult>();
-
-			return result;
-
 		}
 		catch (Exception ex)
 		{
@@ -158,15 +110,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		try
 		{
 			views = await _jellyfinApiClient.UserViews.GetAsync(x => x.QueryParameters.UserId = UserId);
-
-			//views = await BaseUrl.AppendPathSegment($"/UserViews")
-			//	.SetQueryParams(new
-			//	{
-			//		UserId = UserId.ToString("N"),
-			//	})
-			//	.WithHeader(_authHeaderName, _token)
-			//	.WithSettings(x => x.JsonSerializer = _serializer)
-			//	.GetJsonAsync<BaseItemDtoQueryResult>();
 		}
 		catch (Exception ex)
 		{
@@ -177,7 +120,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		{
 			yield break;
 		}
-
 
 		foreach (var library in views.Items)
 		{
@@ -198,18 +140,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 					query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Thumb];
 					query.ParentId = library.Id;
 				});
-				//info = await BaseUrl.AppendPathSegment($"/Users/{UserId:N}/Items/Latest")
-				//					.SetQueryParams(new 
-				//					{
-				//						Limit = 16,
-				//						Fields = "PrimaryImageAspectRatio,Path",
-				//						ImageTypeLimit = 1,
-				//						EnableImageTypes = "Primary,Backdrop,Thumb",
-				//						ParentId = library.Id!.Value.ToString("N")
-				//					})
-				//					.WithHeader(_authHeaderName, _token)
-				//					.WithSettings(x => x.JsonSerializer = _serializer)
-				//					.GetJsonAsync<List<BaseItemDto>>();
 			}
 			catch (Exception ex)
 			{

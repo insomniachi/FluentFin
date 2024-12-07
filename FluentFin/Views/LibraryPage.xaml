@@ -18,6 +18,7 @@
         <c:JellyfinTitleConverter x:Key="NameConverter"/>
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
         <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
+        <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -89,7 +90,9 @@
                         <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage, Converter={StaticResource NullableDoubleToValueOrDefaultConverter}}"
                                               ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                               Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                              Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
+                                              Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
+                                              IsWatched="{x:Bind UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
+                                              IsFavourite="{x:Bind UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"/>
    
                     </ItemContainer>
                 </DataTemplate>

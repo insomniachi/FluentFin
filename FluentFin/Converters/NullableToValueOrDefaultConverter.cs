@@ -1,10 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Data;
-using System.Numerics;
 
 namespace FluentFin.Converters
 {
 	public partial class NullableToValueOrDefaultConverter<T> : IValueConverter
-		where T : INumber<T>
+		where T : notnull
 	{
 		public T Default { get; set; } = default!;
 
@@ -26,4 +25,5 @@ namespace FluentFin.Converters
 
 	public partial class NullableDoubleToValueOrDefaultConverter : NullableToValueOrDefaultConverter<double> { }
 	public partial class NullableIntToValueOrDefaultConverter : NullableToValueOrDefaultConverter<int> { }
+	public partial class NullableBoolToValueOrDefaultConverter : NullableToValueOrDefaultConverter<bool> { }
 }

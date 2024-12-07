@@ -37,6 +37,24 @@ public sealed partial class PlayableMediaItem : Control
 		set { SetValue(ProgressProperty, value); }
 	}
 
+	public bool IsWatched
+	{
+		get { return (bool)GetValue(IsWatchedProperty); }
+		set { SetValue(IsWatchedProperty, value); }
+	}
+
+	public bool IsFavourite
+	{
+		get { return (bool)GetValue(IsFavouriteProperty); }
+		set { SetValue(IsFavouriteProperty, value); }
+	}
+
+	public static readonly DependencyProperty IsFavouriteProperty =
+		DependencyProperty.Register("IsFavourite", typeof(bool), typeof(PlayableMediaItem), new PropertyMetadata(false));
+
+
+	public static readonly DependencyProperty IsWatchedProperty =
+		DependencyProperty.Register("IsWatched", typeof(bool), typeof(PlayableMediaItem), new PropertyMetadata(false));
 
 
 	public static readonly DependencyProperty ProgressProperty =

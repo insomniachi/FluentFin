@@ -20,6 +20,7 @@
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
         <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
         <c:NullableIntToValueOrDefaultConverter x:Key="NullableIntToValueOrDefaultConverter"/>
+        <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter"/>
         <cc:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
     </Page.Resources>
 
@@ -38,6 +39,8 @@
                                                       ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
                                                       Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
+                                                      IsWatched="{x:Bind UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
+                                                      IsFavourite="{x:Bind UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
                                                       Width="390" Height="240"/>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -60,6 +63,8 @@
                                 <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
                                                       Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
+                                                      IsWatched="{x:Bind UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
+                                                      IsFavourite="{x:Bind UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
                                                       Width="390" Height="240"/>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -84,11 +89,13 @@
                                         <ItemsRepeater.ItemTemplate>
                                             <DataTemplate x:DataType="jm:BaseItemDto">
                                                 <lc:PlayableMediaItem 
-                                                                    Width="240" Height="350"
-                                                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
-                                                                    Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                                                    UnplayedCount="{x:Bind UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}"
-                                                                    Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
+                                                    Width="240" Height="350"
+                                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
+                                                    Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
+                                                    UnplayedCount="{x:Bind UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}"
+                                                    Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
+                                                    IsWatched="{x:Bind UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
+                                                    IsFavourite="{x:Bind UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"/>
                                             </DataTemplate>
                                         </ItemsRepeater.ItemTemplate>
                                         <ItemsRepeater.Layout>

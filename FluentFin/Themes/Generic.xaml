@@ -100,6 +100,7 @@
                                         Background="{StaticResource Black65O}"
                                         ui:VisualExtensions.Scale="0.8"
                                         ui:VisualExtensions.NormalizedCenterPoint="0.5,0.5">
+                                    
                                     <animations:Implicit.ShowAnimations>
                                         <animations:OpacityAnimation Duration="0:0:1" From="0" To="1.0"/>
                                     </animations:Implicit.ShowAnimations>
@@ -150,124 +151,41 @@
                                              Margin="5 0 5 10"
                                              Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Progress, Converter={StaticResource MoreThanZeroToVisibilityConverter}, Mode=OneWay}"/>
 
-                                <StackPanel Orientation="Horizontal" 
-                                            VerticalAlignment="Bottom" 
-                                            HorizontalAlignment="Right"
-                                            Spacing="1"
-                                            Margin="10"
-                                            Visibility="Collapsed"
-                                            x:Name="ActionButtons">
-                                    <Button Style="{ThemeResource BareButtonStyle}"
-                                            BorderThickness="0"
-                                            Height="30"
-                                            Width="30"
-                                            CornerRadius="15"
-                                            x:Name="MarkWatchedButton"
-                                            Background="Transparent"
-                                            ToolTipService.ToolTip="Mark watched">
-                                        <i:Interaction.Behaviors>
-                                            <ic:EventTriggerBehavior EventName="PointerEntered">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkWatchedButton}" PropertyName="Background" Value="{StaticResource Black40O}"/>
-                                                <cb:StartAnimationAction Animation="{Binding ElementName=WatchedOnEnter}" />
-                                            </ic:EventTriggerBehavior>
-                                            <ic:EventTriggerBehavior EventName="PointerExited">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkWatchedButton}" PropertyName="Background" Value="Transparent"/>
-                                                <cb:StartAnimationAction Animation="{Binding ElementName=WatchedOnExit}" />
-                                            </ic:EventTriggerBehavior>
-                                        </i:Interaction.Behaviors>
-                                        <animations:Explicit.Animations>
-                                            <animations:AnimationSet x:Name="WatchedOnEnter">
-                                                <animations:StartAnimationActivity Animation="{Binding ElementName=WatchColorOnEnter}" />
-                                            </animations:AnimationSet>
-                                            <animations:AnimationSet x:Name="WatchedOnExit">
-                                                <animations:StartAnimationActivity Animation="{Binding ElementName=WatchColorOnExit}" />
-                                            </animations:AnimationSet>
-                                        </animations:Explicit.Animations>
-                                        <FontIcon Glyph="&#xE73E;" FontSize="15">
-                                            <animations:Explicit.Animations>
-                                                <animations:AnimationSet x:Name="WatchColorOnEnter">
-                                                    <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
-                                                </animations:AnimationSet>
-                                                <animations:AnimationSet x:Name="WatchColorOnExit">
-                                                    <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
-                                                </animations:AnimationSet>
-                                            </animations:Explicit.Animations>
-                                        </FontIcon>
-                                    </Button>
-                                    <Button Style="{ThemeResource BareButtonStyle}"
-                                            BorderThickness="0"
-                                            Height="30"
-                                            Width="30"
-                                            CornerRadius="15"
-                                            x:Name="MarkFavoriteButton"
-                                            Background="Transparent"
-                                            ToolTipService.ToolTip="Add to favorites">
-                                        <i:Interaction.Behaviors>
-                                            <ic:EventTriggerBehavior EventName="PointerEntered">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkFavoriteButton}" PropertyName="Background" Value="{StaticResource Black40O}"/>
-                                                <cb:StartAnimationAction Animation="{Binding ElementName=FavoriteOnEnter}" />
-                                            </ic:EventTriggerBehavior>
-                                            <ic:EventTriggerBehavior EventName="PointerExited">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MarkFavoriteButton}" PropertyName="Background" Value="Transparent"/>
-                                                <cb:StartAnimationAction Animation="{Binding ElementName=FavoriteOnExit}" />
-                                            </ic:EventTriggerBehavior>
-                                        </i:Interaction.Behaviors>
-                                        <animations:Explicit.Animations>
-                                            <animations:AnimationSet x:Name="FavoriteOnEnter">
-                                                <animations:StartAnimationActivity Animation="{Binding ElementName=FavoriteColorOnEnter}" />
-                                            </animations:AnimationSet>
-                                            <animations:AnimationSet x:Name="FavoriteOnExit">
-                                                <animations:StartAnimationActivity Animation="{Binding ElementName=FavoriteColorOnExit}" />
-                                            </animations:AnimationSet>
-                                        </animations:Explicit.Animations>
-                                        <FontIcon Glyph="&#xEB52;" FontSize="14">
-                                            <animations:Explicit.Animations>
-                                                <animations:AnimationSet x:Name="FavoriteColorOnEnter">
-                                                    <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
-                                                </animations:AnimationSet>
-                                                <animations:AnimationSet x:Name="FavoriteColorOnExit">
-                                                    <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
-                                                </animations:AnimationSet>
-                                            </animations:Explicit.Animations>
-                                        </FontIcon>
-                                    </Button>
-                                    <Button Style="{ThemeResource BareButtonStyle}"
-                                            BorderThickness="0"
-                                            Height="30"
-                                            Width="30"
-                                            CornerRadius="15"
-                                            x:Name="MoreButton"
-                                            Background="Transparent"
-                                            ToolTipService.ToolTip="More">
-                                        <i:Interaction.Behaviors>
-                                            <ic:EventTriggerBehavior EventName="PointerEntered">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MoreButton}" PropertyName="Background" Value="{StaticResource Black40O}"/>
-                                                <cb:StartAnimationAction Animation="{Binding ElementName=MoreOnEnter}" />
-                                            </ic:EventTriggerBehavior>
-                                            <ic:EventTriggerBehavior EventName="PointerExited">
-                                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=MoreButton}" PropertyName="Background" Value="Transparent"/>
-                                                <cb:StartAnimationAction Animation="{Binding ElementName=MoreOnExit}" />
-                                            </ic:EventTriggerBehavior>
-                                        </i:Interaction.Behaviors>
-                                        <animations:Explicit.Animations>
-                                            <animations:AnimationSet x:Name="MoreOnEnter">
-                                                <animations:StartAnimationActivity Animation="{Binding ElementName=MoreColorOnEnter}" />
-                                            </animations:AnimationSet>
-                                            <animations:AnimationSet x:Name="MoreOnExit">
-                                                <animations:StartAnimationActivity Animation="{Binding ElementName=MoreColorOnExit}" />
-                                            </animations:AnimationSet>
-                                        </animations:Explicit.Animations>
-                                        <FontIcon Glyph="&#xE712;" FontSize="15">
-                                            <animations:Explicit.Animations>
-                                                <animations:AnimationSet x:Name="MoreColorOnEnter">
-                                                    <animations:ColorAnimation To="{ThemeResource SystemAccentColor}" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
-                                                </animations:AnimationSet>
-                                                <animations:AnimationSet x:Name="MoreColorOnExit">
-                                                    <animations:ColorAnimation To="White" Target="(FontIcon.Foreground).(SolidColorBrush.Color)" Layer="Xaml" Duration="0:0:0.3"/>
-                                                </animations:AnimationSet>
-                                            </animations:Explicit.Animations>
-                                        </FontIcon>
-                                    </Button>
+                                <StackPanel
+                                    Orientation="Horizontal" 
+                                    VerticalAlignment="Bottom" 
+                                    HorizontalAlignment="Right"
+                                    Spacing="1"
+                                    Margin="10"
+                                    Visibility="Collapsed"
+                                    x:Name="ActionButtons">
+                                   
+                                    <ToggleButton 
+                                        Style="{ThemeResource IconToggleButtonStyle}"
+                                        Height="40"
+                                        Width="40"
+                                        CornerRadius="20"
+                                        Content="{ui:FontIcon Glyph=&#xE73E;, FontSize=15}"
+                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsWatched, Mode=TwoWay}"
+                                        ToolTipService.ToolTip="Mark watched"/>
+
+                                    <ToggleButton 
+                                        Style="{ThemeResource IconToggleButtonStyle}"
+                                        Height="40"
+                                        Width="40"
+                                        CornerRadius="20"
+                                        Content="{ui:FontIcon Glyph=&#xEB52;, FontSize=15}"
+                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsFavourite, Mode=TwoWay}"
+                                        ToolTipService.ToolTip="Add to favorites"/>
+
+                                    <Button 
+                                        Style="{ThemeResource IconButtonStyle}"
+                                        Height="40"
+                                        Width="40"
+                                        CornerRadius="20"
+                                        Content="{ui:FontIcon Glyph=&#xE712;, FontSize=15}"
+                                        ToolTipService.ToolTip="More"/>
+
                                 </StackPanel>
 
                             </Grid>

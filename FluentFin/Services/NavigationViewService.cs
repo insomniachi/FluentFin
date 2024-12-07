@@ -1,10 +1,10 @@
 ﻿using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
-using Jellyfin.Client.Models;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics.CodeAnalysis;
-using FluentFin.Core.ViewModels;
 
 namespace FluentFin.Services;
 

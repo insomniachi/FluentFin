@@ -1,14 +1,11 @@
 ﻿using DeviceId;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.ViewModels;
-using Flurl;
-using Flurl.Http;
-using Flurl.Http.Configuration;
-using Jellyfin.Client;
-using Jellyfin.Client.Models;
+using Jellyfin.Sdk;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Kiota.Abstractions.Authentication;
 using System.Reflection;
-using System.Text.Json;
 
 namespace FluentFin.Core.Services
 {
@@ -16,31 +13,23 @@ namespace FluentFin.Core.Services
 										   ITitleBarViewModel titleBarViewModel,
 										   ILogger<JellyfinAuthentionService> logger) : IJellyfinAuthenticationService
 	{
-		private readonly DefaultJsonSerializer _serializer = new DefaultJsonSerializer(new JsonSerializerOptions
-		{
-			Converters =
-			{
-				new NullableGuidConveter(),
-			}
-		});
 
 		public async Task<bool> Authenticate(string url, string username, string password)
 		{
 
 			var id = new DeviceIdBuilder().OnWindows(windows => windows.AddWindowsDeviceId()).ToString();
-			var authHeader = $"""MediaBrowser Client="FluentFin", Device="Windows 10/11", DeviceId="{id}", Version="{Assembly.GetEntryAssembly()!.GetName().Version}" """.Trim();
+			var settings = new JellyfinSdkSettings();
+			settings.SetServerUrl(url);
+			settings.Initialize("FluentFin", Assembly.GetEntryAssembly()!.GetName().Version!.ToString(), Environment.MachineName, id);
+			var client = new JellyfinApiClient(new JellyfinRequestAdapter(new JellyfinAuthenticationProvider(settings), settings));
 
 			try
 			{
-				var auth = await url.AppendPathSegment("/Users/AuthenticateByName")
-					.WithHeader("X-Emby-Authorization", authHeader)
-					.WithSettings(settings => settings.JsonSerializer = _serializer)
-					.PostJsonAsync(new
-					{
-						Username = username,
-						Pw = password
-					})
-					.ReceiveJson<AuthenticationResult>();
+				var auth = await client.Users.AuthenticateByName.PostAsync(new AuthenticateUserByName
+				{
+					Username = username,
+					Pw = password
+				});
 
 				if (auth is not null)
 				{
@@ -52,7 +41,7 @@ namespace FluentFin.Core.Services
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex.Message, ex);
+				logger.LogError(ex, "Unhandled exception");
 				return false;
 			}
 		}

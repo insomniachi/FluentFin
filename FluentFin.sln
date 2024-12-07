@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin", "FluentFin\Flue
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.Core", "FluentFin.Core\FluentFin.Core.csproj", "{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.Client", "Jellyfin.Client\Jellyfin.Client.csproj", "{383A380F-E366-4CE3-90CA-55DC4A0AF77E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|arm64 = Debug|arm64
@@ -49,18 +47,6 @@ Global
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x64.Build.0 = Release|x64
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x86.ActiveCfg = Release|x86
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x86.Build.0 = Release|x86
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Debug|arm64.Build.0 = Debug|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Debug|x64.Build.0 = Debug|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Debug|x86.Build.0 = Debug|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Release|arm64.ActiveCfg = Release|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Release|arm64.Build.0 = Release|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Release|x64.ActiveCfg = Release|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Release|x64.Build.0 = Release|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Release|x86.ActiveCfg = Release|Any CPU
-		{383A380F-E366-4CE3-90CA-55DC4A0AF77E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

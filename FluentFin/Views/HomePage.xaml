@@ -6,7 +6,7 @@
     xmlns:local="using:FluentFin.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:jm="using:Jellyfin.Client.Models"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:c="using:FluentFin.Converters"
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
     xmlns:lc="using:FluentFin.Controls" xmlns:generic="using:System.Collections.Generic" xmlns:services="using:FluentFin.Core.Contracts.Services"
@@ -18,6 +18,8 @@
         <c:JellyfinParentImageConverter x:Key="ParentImageConverter"/>
         <c:JellyfinTitleConverter x:Key="NameConverter"/>
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
+        <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
+        <c:NullableIntToValueOrDefaultConverter x:Key="NullableIntToValueOrDefaultConverter"/>
         <cc:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
     </Page.Resources>
 
@@ -27,42 +29,45 @@
                 <TextBlock Text="Continue Watching" 
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="{StaticResource SmallTopBottomMargin}"/>
-
-                <ItemsView ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
-                    <ItemsView.ItemTemplate>
-                        <DataTemplate x:DataType="jm:BaseItemDto">
-                            <ItemContainer Width="390" Height="240" Style="{StaticResource BareItemContainerStyle}">
-                                <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
+                
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Enabled" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:BaseItemDto">
+                                <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage, Converter={StaticResource NullableDoubleToValueOrDefaultConverter}}"
                                                       ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
-                            </ItemContainer>
-                        </DataTemplate>
-                    </ItemsView.ItemTemplate>
-                    <ItemsView.Layout>
-                        <UniformGridLayout MaximumRowsOrColumns="1" Orientation="Vertical"/>
-                    </ItemsView.Layout>
-                </ItemsView>
+                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
+                                                      Width="390" Height="240"/>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="10"/>
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </ScrollViewer>
             </StackPanel>
 
             <StackPanel Visibility="{x:Bind ViewModel.NextUpItems, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}" Padding="12 0 0 0">
-                <TextBlock Text="Continue Watching" Style="{StaticResource TitleTextBlockStyle}"
-                Margin="{StaticResource SmallTopBottomMargin}"/>
-
-                <ItemsView ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
-                    <ItemsView.ItemTemplate>
-                        <DataTemplate x:DataType="jm:BaseItemDto">
-                            <ItemContainer Width="390" Height="240" Style="{StaticResource BareItemContainerStyle}">
+                <TextBlock
+                    Text="Continue Watching" Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="{StaticResource SmallTopBottomMargin}"/>
+                
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Enabled" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:BaseItemDto">
                                 <lc:PlayableMediaItem ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                                       Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
-                            </ItemContainer>
-                        </DataTemplate>
-                    </ItemsView.ItemTemplate>
-                    <ItemsView.Layout>
-                        <UniformGridLayout MaximumRowsOrColumns="1" Orientation="Vertical"/>
-                    </ItemsView.Layout>
-                </ItemsView>
+                                                      Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
+                                                      Width="390" Height="240"/>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="10"/>
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </ScrollViewer>
             </StackPanel>
 
             <ItemsView ItemsSource="{x:Bind ViewModel.RecentItems, Mode=OneWay}" SelectionMode="None">
@@ -82,7 +87,7 @@
                                                                     Width="240" Height="350"
                                                                     ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
                                                                     Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                                                    UnplayedCount="{x:Bind UserData.UnplayedItemCount}"
+                                                                    UnplayedCount="{x:Bind UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}"
                                                                     Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
                                             </DataTemplate>
                                         </ItemsRepeater.ItemTemplate>

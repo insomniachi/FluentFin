@@ -1,4 +1,4 @@
-﻿using Jellyfin.Client.Models;
+﻿using Jellyfin.Sdk.Generated.Models;
 using System.ComponentModel;
 
 namespace FluentFin.Core.ViewModels;

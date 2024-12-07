@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
-using Jellyfin.Client.Models;
+using Jellyfin.Sdk.Generated.Models;
 using System.Reflection;
 
 namespace FluentFin.ViewModels;

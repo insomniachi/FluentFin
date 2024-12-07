@@ -1,4 +1,4 @@
-﻿using Jellyfin.Client.Models;
+﻿using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.Contracts.Services
 {

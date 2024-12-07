@@ -6,11 +6,10 @@
     xmlns:local="using:FluentFin.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:jm="using:Jellyfin.Client.Models"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:lc="using:FluentFin.Controls" 
     xmlns:c="using:FluentFin.Converters" xmlns:dw="using:DevWinUI"
     xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:jc="using:Jellyfin.Client.Models"
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
 
@@ -18,6 +17,7 @@
         <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Primary"/>
         <c:JellyfinTitleConverter x:Key="NameConverter"/>
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
+        <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -34,48 +34,48 @@
                         <RadioMenuFlyoutItem Text="Name"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.Name}"
+                                             CommandParameter="{x:Bind jm:ItemSortBy.Name}"
                                              IsChecked="True"/>
                         <RadioMenuFlyoutItem Text="Community Rating"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.CommunityRating}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.CommunityRating}"/>
                         <RadioMenuFlyoutItem Text="Critic Rating"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.CriticRating}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.CriticRating}"/>
                         <RadioMenuFlyoutItem Text="Date Added"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.DateCreated}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.DateCreated}"/>
                         <RadioMenuFlyoutItem Text="Date Played"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.DatePlayed}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.DatePlayed}"/>
                         <RadioMenuFlyoutItem Text="Play Count"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.PlayCount}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.PlayCount}"/>
                         <RadioMenuFlyoutItem Text="Release Date"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.PremiereDate}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.PremiereDate}"/>
                         <RadioMenuFlyoutItem Text="Runtime"
                                              GroupName="Library_SortItem"
                                              Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                                             CommandParameter="{x:Bind jc:ItemSortBy.Runtime}"/>
+                                             CommandParameter="{x:Bind jm:ItemSortBy.Runtime}"/>
 
                         <MenuFlyoutSeparator/>
 
                         <RadioMenuFlyoutItem Text="Ascending"
                                              GroupName="Library_SortOrder"
                                              Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
-                                             CommandParameter="{x:Bind jc:SortOrder.Ascending}"
+                                             CommandParameter="{x:Bind jm:SortOrder.Ascending}"
                                              IsChecked="True"/>
                         <RadioMenuFlyoutItem Text="Descending"
                                              GroupName="Library_SortOrder"
                                              Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
-                                             CommandParameter="{x:Bind jc:SortOrder.Descending}"/>
+                                             CommandParameter="{x:Bind jm:SortOrder.Descending}"/>
                     </MenuBarItemFlyout>
                 </lc:MenuFlyoutButton.Flyout>
             </lc:MenuFlyoutButton>
@@ -86,7 +86,7 @@
             <ItemsView.ItemTemplate>
                 <DataTemplate x:DataType="jm:BaseItemDto">
                     <ItemContainer Style="{StaticResource BareItemContainerStyle}">
-                        <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
+                        <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage, Converter={StaticResource NullableDoubleToValueOrDefaultConverter}}"
                                               ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
                                               Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
                                               Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>

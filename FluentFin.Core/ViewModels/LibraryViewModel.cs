@@ -4,7 +4,7 @@ using DynamicData;
 using DynamicData.Binding;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
-using Jellyfin.Client.Models;
+using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;

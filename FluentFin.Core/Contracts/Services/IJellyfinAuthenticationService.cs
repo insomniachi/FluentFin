@@ -1,7 +1,4 @@
-﻿using Jellyfin.Client.Models;
-using System.Text.Json;
-
-namespace FluentFin.Core.Contracts.Services;
+﻿namespace FluentFin.Core.Contracts.Services;
 
 public interface IJellyfinAuthenticationService
 {

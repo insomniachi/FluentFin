@@ -15,7 +15,7 @@ public partial class JellyfinImageConverter : IValueConverter
 
 
 
-	public object Convert(object value, Type targetType, object parameter, string language)
+	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
 		if(string.IsNullOrEmpty(BaseUrl))
 		{
@@ -24,21 +24,16 @@ public partial class JellyfinImageConverter : IValueConverter
 
 		if(value is BaseItemDto bid)
 		{
-			if(bid.Name == "Matilda")
+			if(bid is { ImageTags: null or { Count : 0} })
 			{
-				;
-			}
-
-			if(bid.ImageTags is null)
-			{
-				return DependencyProperty.UnsetValue;
+				return null;
 			}
 
 			var imageType = bid.ImageTags.Keys.FirstOrDefault(x => x.Equals(TypeRequest.ToString())) ?? bid.ImageTags.Keys.First();
 			return new BitmapImage(BaseUrl.AppendPathSegment($"/Items/{bid.Id}/Images/{imageType}").ToUri());
 		}
 
-		return DependencyProperty.UnsetValue;
+		return null;
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -53,7 +48,7 @@ public partial class JellyfinParentImageConverter : IValueConverter
 	public ImageInfo_ImageType TypeRequest { get; set; }
 
 
-	public object Convert(object value, Type targetType, object parameter, string language)
+	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
 		if (string.IsNullOrEmpty(BaseUrl))
 		{
@@ -62,21 +57,16 @@ public partial class JellyfinParentImageConverter : IValueConverter
 
 		if (value is BaseItemDto bid)
 		{
-			if (bid.Name == "Matilda")
+			if (bid is { ImageTags: null or { Count: 0 } })
 			{
-				;
-			}
-
-			if (bid.ImageTags is null)
-			{
-				return DependencyProperty.UnsetValue;
+				return null;
 			}
 
 			var id = bid.Type == BaseItemDto_Type.Episode ? bid.SeasonId : bid.Id;
 			return new BitmapImage(BaseUrl.AppendPathSegment($"/Items/{id}/Images/{TypeRequest}").ToUri());
 		}
 
-		return DependencyProperty.UnsetValue;
+		return null;
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)

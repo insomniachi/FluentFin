@@ -1,10 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace FluentFin.Controls;
 
-public partial class MenuFlyoutButton : ButtonBase
+public partial class MenuFlyoutButton : Button
 {
 	public IconElement Icon
 	{

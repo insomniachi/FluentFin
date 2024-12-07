@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.ViewModels;
-using Jellyfin.Client.Models;
-using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
 using System.Reactive.Linq;
 
@@ -15,18 +13,15 @@ public partial class LoginViewModel : ObservableObject
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
 	private readonly INavigationService _navigationService;
 	private readonly INavigationViewService _navigationViewService;
-	private readonly IJellyfinClient _jellyfinClient;
 
 	public LoginViewModel(IMainWindowViewModel mainWindowViewModel,
 						  IJellyfinAuthenticationService jellyfinAuthenticator,
 						  INavigationService navigationService,
-						  INavigationViewService navigationViewService,
-						  IJellyfinClient jellyfinClient)
+						  INavigationViewService navigationViewService)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
 		_navigationService = navigationService;
 		_navigationViewService = navigationViewService;
-		_jellyfinClient = jellyfinClient;
 
 		this.WhenAnyValue(x => x.ServerUrl, x => x.Username, x => x.Password)
 			.Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2) && !string.IsNullOrEmpty(x.Item3))
@@ -59,31 +54,8 @@ public partial class LoginViewModel : ObservableObject
 		{
 			Username = "";
 			Password = "";
-
-			var libarariesItem = new NavigationViewItem() { Content = "Libraries", Icon = new SymbolIcon { Symbol = Symbol.Library }, SelectsOnInvoked = false };
-			await foreach (var item in _jellyfinClient.GetUserLibraries())
-			{
-				libarariesItem.MenuItems.Add(new NavigationViewItem
-				{
-					Content = item.Name,
-					Icon = GetIcon(item.CollectionType)
-				});
-			}
-
-			_navigationViewService.MenuItems?.Add(libarariesItem);
-
+			await _navigationViewService.InitializeLibraries();
 			_navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new object());
 		}
-	}
-
-	private static FontIcon? GetIcon(BaseItemDto_CollectionType? collectionType)
-	{
-		return collectionType switch
-		{
-			BaseItemDto_CollectionType.Movies => new FontIcon { Glyph = "\uE8B2" },
-			BaseItemDto_CollectionType.Tvshows => new FontIcon { Glyph = "\uE7F4" },
-			BaseItemDto_CollectionType.Boxsets => new FontIcon { Glyph = "\uF133" },
-			_ => null
-		};
 	}
 }

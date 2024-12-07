@@ -1,29 +1,31 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using FluentFin.Contracts.Services;
+﻿using FluentFin.Contracts.Services;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Helpers;
-using FluentFin.ViewModels;
-
+using Jellyfin.Client.Models;
 using Microsoft.UI.Xaml.Controls;
+using System.Diagnostics.CodeAnalysis;
+using FluentFin.Core.ViewModels;
 
 namespace FluentFin.Services;
 
 public class NavigationViewService : INavigationViewService
 {
     private readonly INavigationService _navigationService;
-
     private readonly IPageService _pageService;
-
+	private readonly IJellyfinClient _jellyfinClient;
     private NavigationView? _navigationView;
 
     public IList<object>? MenuItems => _navigationView?.MenuItems;
 
     public object? SettingsItem => _navigationView?.SettingsItem;
 
-    public NavigationViewService(INavigationService navigationService, IPageService pageService)
+    public NavigationViewService(INavigationService navigationService,
+								 IPageService pageService,
+								 IJellyfinClient jellyfinClient)
     {
         _navigationService = navigationService;
         _pageService = pageService;
+		_jellyfinClient = jellyfinClient;
     }
 
     [MemberNotNull(nameof(_navigationView))]
@@ -44,7 +46,40 @@ public class NavigationViewService : INavigationViewService
 		_navigationView.IsPaneOpen ^= true;
 	}
 
-    public void UnregisterEvents()
+	public async Task InitializeLibraries()
+	{
+		var libarariesItem = new NavigationViewItem 
+		{
+			Content = "Libraries",
+			Icon = new SymbolIcon
+			{
+				Symbol = Symbol.Library
+			}, 
+			SelectsOnInvoked = false
+		};
+		await foreach (var item in _jellyfinClient.GetUserLibraries())
+		{
+			var libraryItem = new NavigationViewItem
+			{
+				Content = item.Name,
+				Icon = GetIcon(item.CollectionType),
+				Tag = item
+			};
+			libraryItem.Tapped += LibarariesItem_Tapped;
+
+			libarariesItem.MenuItems.Add(libraryItem);
+		}
+
+		MenuItems?.Add(libarariesItem);
+	}
+
+	private void LibarariesItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+	{
+		var dto = (BaseItemDto)((NavigationViewItem)sender).Tag;
+		_navigationService.NavigateTo(typeof(LibraryViewModel).FullName!, dto);
+	}
+
+	public void UnregisterEvents()
     {
         if (_navigationView != null)
         {
@@ -110,4 +145,15 @@ public class NavigationViewService : INavigationViewService
 
         return false;
     }
+
+	private static FontIcon? GetIcon(BaseItemDto_CollectionType? collectionType)
+	{
+		return collectionType switch
+		{
+			BaseItemDto_CollectionType.Movies => new FontIcon { Glyph = "\uE8B2" },
+			BaseItemDto_CollectionType.Tvshows => new FontIcon { Glyph = "\uE7F4" },
+			BaseItemDto_CollectionType.Boxsets => new FontIcon { Glyph = "\uF133" },
+			_ => null
+		};
+	}
 }

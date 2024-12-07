@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using Jellyfin.Client.Models;
+using System.Reflection;
 
 namespace FluentFin.ViewModels;
 
@@ -23,7 +24,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	public partial string Title { get; set; } = "";
 
 	[ObservableProperty]
-	public partial string Version { get; set; } = "";
+	public partial string Version { get; set; } = Assembly.GetEntryAssembly()!.GetName().Version!.ToString();
 
 	[ObservableProperty]
 	public partial bool CanGoBack { get; set; }

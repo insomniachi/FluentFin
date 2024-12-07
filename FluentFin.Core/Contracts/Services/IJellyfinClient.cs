@@ -1,5 +1,4 @@
-﻿using FluentFin.Core.Services;
-using Jellyfin.Client.Models;
+﻿using Jellyfin.Client.Models;
 
 namespace FluentFin.Core.Contracts.Services
 {
@@ -14,6 +13,8 @@ namespace FluentFin.Core.Contracts.Services
 		Task<BaseItemDtoQueryResult?> GetContinueWatching();
 
 		Task<BaseItemDtoQueryResult?> GetNextUp();
+
+		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent);
 		
 		IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries();
 

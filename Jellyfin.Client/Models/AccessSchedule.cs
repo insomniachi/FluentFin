@@ -7,7 +7,6 @@ namespace Jellyfin.Client.Models
 	[global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AccessSchedule
     {
-		[JsonConverter(typeof(JsonStringEnumConverter<AccessSchedule_DayOfWeek>))]
         /// <summary>Gets or sets the day of week.</summary>
         public global::Jellyfin.Client.Models.AccessSchedule_DayOfWeek? DayOfWeek { get; set; }
         /// <summary>Gets or sets the end hour.</summary>

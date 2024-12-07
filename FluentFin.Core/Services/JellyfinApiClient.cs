@@ -97,6 +97,41 @@ public class JellyfinApiClient(ILogger<JellyfinApiClient> logger) : IJellyfinCli
 		}
 	}
 
+	public async Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent)
+	{
+		try
+		{
+			var result = await BaseUrl.AppendPathSegment($"/Users/{UserId}/Items")
+				.SetQueryParams(new
+				{
+					SortBy = "SortName",
+					SortOrder = "Ascending",
+					Recurisve = "true",
+					Fields = "PrimaryImageAspectRatio",
+					ImageTypeLimit = 1,
+					EnableImageTypes = "Primary,Backdrop,Banner,Thumb",
+					ParentId = parent.Id,
+					IncludeItemTypes = parent.CollectionType switch
+					{
+						BaseItemDto_CollectionType.Movies => "Movies",
+						BaseItemDto_CollectionType.Tvshows => "Series",
+						_ => ""
+					}
+				})
+				.WithHeader(_authHeaderName, _token)
+				.WithSettings(x => x.JsonSerializer = _serializer)
+				.GetJsonAsync<BaseItemDtoQueryResult>();
+
+			return result;
+
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries()
 	{
 		BaseItemDtoQueryResult? views = null;

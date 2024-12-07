@@ -20,6 +20,7 @@
 	<ItemGroup>
 	  <None Remove="Styles\Button.xaml" />
 	  <None Remove="Views\HomePage.xaml" />
+	  <None Remove="Views\LibraryPage.xaml" />
 	  <None Remove="Views\LoginView.xaml" />
 	  <None Remove="Views\TitleBarControl.xaml" />
 	</ItemGroup>
@@ -40,6 +41,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.241112-preview1" />
+		<PackageReference Include="DevWinUI.Controls" Version="8.0.0-Preview3" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.241114004-experimental1" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
@@ -49,6 +51,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FluentFin.Core\FluentFin.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\LibraryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

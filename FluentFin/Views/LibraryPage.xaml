@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="FluentFin.Views.LibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:jm="using:Jellyfin.Client.Models"
+    xmlns:lc="using:FluentFin.Controls" 
+    xmlns:c="using:FluentFin.Converters" xmlns:dw="using:DevWinUI"
+    Margin="{StaticResource MediumLeftTopRightBottomMargin}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Primary"/>
+        <c:JellyfinTitleConverter x:Key="NameConverter"/>
+        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <ItemsView ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" Grid.Row="1">
+            <ItemsView.ItemTemplate>
+                <DataTemplate x:DataType="jm:BaseItemDto">
+                    <ItemContainer Style="{StaticResource BareItemContainerStyle}">
+                        <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage}"
+                                              ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                                              Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
+                                              Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"/>
+   
+                    </ItemContainer>
+                </DataTemplate>
+            </ItemsView.ItemTemplate>
+            <ItemsView.Layout>
+                <UniformGridLayout Orientation="Horizontal"
+                                   MinItemHeight="390"
+                                   MinItemWidth="240"
+                                   MinColumnSpacing="20"
+                                   MinRowSpacing="20"
+                                   ItemsStretch="Fill"
+                                   ItemsJustification="Start"/>
+            </ItemsView.Layout>
+        </ItemsView>
+
+        <dw:PagerControl DisplayMode="ButtonPanel" 
+                         NumberOfPages="{x:Bind ViewModel.NumberOfPages, Mode=OneWay}"
+                         SelectedPageIndex="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}"
+                         Grid.Row="2"
+                         Margin="{StaticResource MediumTopMargin}"/>
+
+    </Grid>
+</Page>

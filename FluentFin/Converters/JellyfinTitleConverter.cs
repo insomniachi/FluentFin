@@ -9,7 +9,7 @@ public partial class JellyfinTitleConverter : IValueConverter
 	{
 		if (value is not BaseItemDto bid)
 		{
-			return DependencyProperty.UnsetValue;
+			return "";
 		}
 
 		if(bid.Type == BaseItemDto_Type.Episode)
@@ -32,7 +32,7 @@ public partial class JellyfinSubtitleConverter : IValueConverter
 	{
 		if (value is not BaseItemDto bid)
 		{
-			return DependencyProperty.UnsetValue;
+			return "";
 		}
 
 		if (bid.Type == BaseItemDto_Type.Episode)
@@ -48,7 +48,7 @@ public partial class JellyfinSubtitleConverter : IValueConverter
 			return $"{bid.ProductionYear} - {(string.Equals(bid.Status, "Continuing", StringComparison.OrdinalIgnoreCase) ? "Present" : bid.EndDate?.Year)}";
 		}
 
-		return DependencyProperty.UnsetValue;
+		return "";
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -4,7 +4,8 @@ namespace Jellyfin.Client.Models
 {
 	/// <summary>Gets or sets the day of week.</summary>
 	[global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum AccessSchedule_DayOfWeek
+	[JsonConverter(typeof(JsonStringEnumConverter<AccessSchedule_DayOfWeek>))]
+	public enum AccessSchedule_DayOfWeek
     {
         [JsonStringEnumMemberName("Sunday")]
         Sunday,

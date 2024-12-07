@@ -11,7 +11,7 @@
     xmlns:lc="using:FluentFin.Controls"
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:behaviors="using:FluentFin.Behaviors" xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:behaviors="using:FluentFin.Behaviors" xmlns:ctk="using:CommunityToolkit.WinUI.Controls" xmlns:devwinui="using:DevWinUI"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -49,8 +49,8 @@
                         Width="32"
                         Height="32"
                         DisplayName="{Binding User.Name}"/>
-                <Button.Flyout>
-                    <Flyout Placement="BottomEdgeAlignedRight">
+                <Button.Flyout> 
+                    <Flyout Placement="BottomEdgeAlignedRight" LightDismissOverlayMode="On" AllowFocusOnInteraction="True" AreOpenCloseAnimationsEnabled="True">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -81,11 +81,6 @@
                             </StackPanel>
 
                         </Grid>
-                        <!--<StackPanel Margin="0">
-                            <lc:MenuFlyoutButton Icon="{ui:FontIcon Glyph=&#xF3B1;}" Content="Dashboard"/>
-                            <MenuFlyoutSeparator/>
-                            <lc:MenuFlyoutButton Content="Logout" Icon="{ui:FontIcon Glyph=&#xF3B1;}" Command="{Binding LogoutCommand}"/>
-                        </StackPanel>-->
                     </Flyout>
                 </Button.Flyout>
             </Button>

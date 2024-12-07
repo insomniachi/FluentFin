@@ -79,6 +79,7 @@ public partial class App : Application
 			services.AddSingleton<IMainWindowViewModel, MainViewModel>();
 			services.AddSingleton<ITitleBarViewModel, TitleBarViewModel>();
 			services.AddTransient<HomeViewModel>();
+			services.AddTransient<LibraryViewModel>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

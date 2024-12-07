@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="/Styles/Thickness.xaml" />
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
+                <ResourceDictionary Source="ms-appx:///DevWinUI.Controls/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="ItemContainer" x:Key="BareItemContainerStyle">

@@ -7,24 +7,6 @@ namespace FluentFin.Controls;
 
 public sealed partial class PlayableMediaItem : Control
 {
-	public static readonly DependencyProperty ProgressProperty =
-		DependencyProperty.Register(nameof(Progress), typeof(double), typeof(PlayableMediaItem), new PropertyMetadata(0));
-
-
-	public static readonly DependencyProperty ImageSourceProperty =
-		DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(PlayableMediaItem), new PropertyMetadata(null));
-
-
-	public static readonly DependencyProperty TitleProperty =
-		DependencyProperty.Register(nameof(Title), typeof(string), typeof(PlayableMediaItem), new PropertyMetadata(""));
-
-
-	public static readonly DependencyProperty UnplayedCountProperty =
-		DependencyProperty.Register(nameof(UnplayedCount), typeof(int), typeof(PlayableMediaItem), new PropertyMetadata(0));
-
-	public static readonly DependencyProperty SubtitleProperty =
-		DependencyProperty.Register("Subtitle", typeof(string), typeof(PlayableMediaItem), new PropertyMetadata(""));
-
 	public string Subtitle
 	{
 		get { return (string)GetValue(SubtitleProperty); }
@@ -54,6 +36,27 @@ public sealed partial class PlayableMediaItem : Control
 		get { return (double)GetValue(ProgressProperty); }
 		set { SetValue(ProgressProperty, value); }
 	}
+
+
+
+	public static readonly DependencyProperty ProgressProperty =
+		DependencyProperty.Register(nameof(Progress), typeof(double), typeof(PlayableMediaItem), new PropertyMetadata(0));
+
+
+	public static readonly DependencyProperty ImageSourceProperty =
+		DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(PlayableMediaItem), new PropertyMetadata(null));
+
+
+	public static readonly DependencyProperty TitleProperty =
+		DependencyProperty.Register(nameof(Title), typeof(string), typeof(PlayableMediaItem), new PropertyMetadata(""));
+
+
+	public static readonly DependencyProperty UnplayedCountProperty =
+		DependencyProperty.Register(nameof(UnplayedCount), typeof(int), typeof(PlayableMediaItem), new PropertyMetadata(0));
+
+	public static readonly DependencyProperty SubtitleProperty =
+		DependencyProperty.Register("Subtitle", typeof(string), typeof(PlayableMediaItem), new PropertyMetadata(""));
+
 
 	public PlayableMediaItem()
 	{

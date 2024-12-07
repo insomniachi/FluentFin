@@ -310,7 +310,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:MenuFlyoutButton">
                     <Grid         
-                        x:Name="LayoutRoot"
+                        x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -321,19 +321,54 @@
                             <ColumnDefinition Width="16"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.083" />
+                        </Grid.BackgroundTransition>
 
-                        <i:Interaction.Behaviors>
-                            <ic:EventTriggerBehavior EventName="PointerEntered">
-                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=LayoutRoot}"
-                                                         PropertyName="Background"
-                                                         Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}"/>
-                            </ic:EventTriggerBehavior>
-                            <ic:EventTriggerBehavior EventName="PointerExited">
-                                <ic:ChangePropertyAction TargetObject="{Binding ElementName=LayoutRoot}"
-                                                         PropertyName="Background"
-                                                         Value="Transparent"/>
-                            </ic:EventTriggerBehavior>
-                        </i:Interaction.Behaviors>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ControlFillColorDefaultBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconPresenter"
+                                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
+                                                                  KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                                  Value="0.86" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconPresenter"
+                                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
+                                                                  KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                                  Value="0.86" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ControlFillColorDefaultBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ButtonForegroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
                         <ContentPresenter x:Name="ContentPresenter" 
                                           Grid.Column="1"
@@ -359,7 +394,11 @@
                             Height="16"
                             Grid.Column="0"
                             Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon, Converter={StaticResource ObjectToVisibilityConverter}}">
-                            <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Icon}"/>
+                            <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding Icon}">
+                                <ContentPresenter.RenderTransform>
+                                    <CompositeTransform />
+                                </ContentPresenter.RenderTransform>
+                            </ContentPresenter>
                         </Viewbox>
 
                     </Grid>

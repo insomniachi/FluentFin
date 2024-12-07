@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
 using FluentFin.Contracts.ViewModels;
@@ -22,14 +23,41 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		_jellyfinClient = jellyfinClient;
 
 		var pageRequest = this.WhenAnyValue(x => x.SelectedPage).Select(page => new PageRequest(page + 1, 100));
+		var comparer = this.WhenAnyValue(x => x.SortBy, x => x.Order)
+						   .Select(GetComparer);
 
 		_itemsCache
 			.Connect()
 			.RefCount()
-			.SortAndPage(SortExpressionComparer<BaseItemDto>.Ascending(x => x.Name ?? ""), pageRequest)
+			.SortAndPage(comparer, pageRequest)
 			.Bind(out _items)
-			.DisposeMany()
 			.Subscribe();
+	}
+
+	private IComparer<BaseItemDto> GetComparer((ItemSortBy, SortOrder) sortDescription)
+	{
+		return sortDescription switch
+		{
+			(ItemSortBy.Name, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.Name ?? ""),
+			(ItemSortBy.CommunityRating, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.CommunityRating ?? 0),
+			(ItemSortBy.CriticRating, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.CriticRating ?? 0),
+			(ItemSortBy.DateCreated, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.DateCreated ?? new DateTimeOffset()),
+			(ItemSortBy.DatePlayed, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.UserData?.LastPlayedDate ?? new DateTimeOffset()),
+			(ItemSortBy.PlayCount, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.UserData?.PlayCount ?? 0),
+			(ItemSortBy.PremiereDate, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.PremiereDate ?? new DateTimeOffset()),
+			(ItemSortBy.Runtime, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.RunTimeTicks ?? 0),
+
+			(ItemSortBy.Name, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.Name ?? ""),
+			(ItemSortBy.CommunityRating, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.CommunityRating ?? 0),
+			(ItemSortBy.CriticRating, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.CriticRating ?? 0),
+			(ItemSortBy.DateCreated, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.DateCreated ?? new DateTimeOffset()),
+			(ItemSortBy.DatePlayed, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.UserData?.LastPlayedDate ?? new DateTimeOffset()),
+			(ItemSortBy.PlayCount, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.UserData?.PlayCount ?? 0),
+			(ItemSortBy.PremiereDate, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.PremiereDate ?? new DateTimeOffset()),
+			(ItemSortBy.Runtime, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.RunTimeTicks ?? 0),
+
+			_ => SortExpressionComparer<BaseItemDto>.Ascending(x => x.Name ?? ""),
+		};
 	}
 
 	public ReadOnlyObservableCollection<BaseItemDto> Items => _items;
@@ -39,6 +67,18 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 
 	[ObservableProperty]
 	public partial int SelectedPage { get; set; }
+
+	[ObservableProperty]
+	public partial ItemSortBy SortBy { get; set; } = ItemSortBy.Name;
+
+	[ObservableProperty]
+	public partial SortOrder Order { get; set; } = SortOrder.Ascending;
+
+	[RelayCommand]
+	public void UpdateSortBy(ItemSortBy sortBy) => SortBy = sortBy;
+
+	[RelayCommand]
+	public void UpdateSortOrder(SortOrder order) => Order = order;
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 

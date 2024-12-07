@@ -9,6 +9,8 @@
     xmlns:jm="using:Jellyfin.Client.Models"
     xmlns:lc="using:FluentFin.Controls" 
     xmlns:c="using:FluentFin.Converters" xmlns:dw="using:DevWinUI"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:jc="using:Jellyfin.Client.Models"
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
 
@@ -24,6 +26,61 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Spacing="5" HorizontalAlignment="Center" Margin="{StaticResource MediumBottomMargin}">
+            <lc:MenuFlyoutButton Icon="{ui:SymbolIcon Symbol=Sort}" Content="Sort">
+                <lc:MenuFlyoutButton.Flyout>
+                    <MenuBarItemFlyout>
+                        <RadioMenuFlyoutItem Text="Name"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.Name}"
+                                             IsChecked="True"/>
+                        <RadioMenuFlyoutItem Text="Community Rating"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.CommunityRating}"/>
+                        <RadioMenuFlyoutItem Text="Critic Rating"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.CriticRating}"/>
+                        <RadioMenuFlyoutItem Text="Date Added"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.DateCreated}"/>
+                        <RadioMenuFlyoutItem Text="Date Played"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.DatePlayed}"/>
+                        <RadioMenuFlyoutItem Text="Play Count"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.PlayCount}"/>
+                        <RadioMenuFlyoutItem Text="Release Date"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.PremiereDate}"/>
+                        <RadioMenuFlyoutItem Text="Runtime"
+                                             GroupName="Library_SortItem"
+                                             Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                             CommandParameter="{x:Bind jc:ItemSortBy.Runtime}"/>
+
+                        <MenuFlyoutSeparator/>
+
+                        <RadioMenuFlyoutItem Text="Ascending"
+                                             GroupName="Library_SortOrder"
+                                             Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
+                                             CommandParameter="{x:Bind jc:SortOrder.Ascending}"
+                                             IsChecked="True"/>
+                        <RadioMenuFlyoutItem Text="Descending"
+                                             GroupName="Library_SortOrder"
+                                             Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
+                                             CommandParameter="{x:Bind jc:SortOrder.Descending}"/>
+                    </MenuBarItemFlyout>
+                </lc:MenuFlyoutButton.Flyout>
+            </lc:MenuFlyoutButton>
+            <lc:MenuFlyoutButton Icon="{ui:SymbolIcon Symbol=Filter}" Content="Filter"/>
+        </StackPanel>
         
         <ItemsView ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" Grid.Row="1">
             <ItemsView.ItemTemplate>

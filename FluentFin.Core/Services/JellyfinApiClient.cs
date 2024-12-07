@@ -107,7 +107,7 @@ public class JellyfinApiClient(ILogger<JellyfinApiClient> logger) : IJellyfinCli
 					SortBy = "SortName",
 					SortOrder = "Ascending",
 					Recurisve = "true",
-					Fields = "PrimaryImageAspectRatio",
+					Fields = "PrimaryImageAspectRatio,DateCreated",
 					ImageTypeLimit = 1,
 					EnableImageTypes = "Primary,Backdrop,Banner,Thumb",
 					ParentId = parent.Id,

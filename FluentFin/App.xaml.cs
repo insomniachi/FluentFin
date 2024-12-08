@@ -21,15 +21,7 @@ namespace FluentFin;
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
 {
-    // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
-    // https://docs.microsoft.com/dotnet/core/extensions/generic-host
-    // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
-    // https://docs.microsoft.com/dotnet/core/extensions/configuration
-    // https://docs.microsoft.com/dotnet/core/extensions/logging
-    public IHost Host
-    {
-        get;
-    }
+    public IHost Host { get; }
 
     public static T GetService<T>()
         where T : class
@@ -43,6 +35,8 @@ public partial class App : Application
     }
 
     public static WindowEx MainWindow { get; } = new MainWindow();
+
+	public static GlobalCommands Commands { get; private set; } = null!;
 
     public static UIElement? AppTitlebar { get; set; }
 
@@ -66,6 +60,7 @@ public partial class App : Application
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
+			services.AddSingleton<INavigationServiceCore>(sp => sp.GetRequiredService<INavigationService>());
 
 			// Core Services
 			services.AddTransient<LoginViewModel>();
@@ -74,12 +69,14 @@ public partial class App : Application
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton<KnownFolders>();
+			services.AddSingleton<GlobalCommands>();
 
             // Views and ViewModels
 			services.AddSingleton<IMainWindowViewModel, MainViewModel>();
 			services.AddSingleton<ITitleBarViewModel, TitleBarViewModel>();
 			services.AddTransient<HomeViewModel>();
 			services.AddTransient<LibraryViewModel>();
+			services.AddTransient<VideoPlayerViewModel>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
@@ -99,6 +96,7 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
+		Commands = GetService<GlobalCommands>();
         await GetService<IActivationService>().ActivateAsync(args);
     }
 }

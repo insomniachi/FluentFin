@@ -14,8 +14,8 @@
     Margin="{StaticResource MediumLeftRightMargin}">
 
     <Page.Resources>
-        <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Thumb"/>
-        <c:JellyfinParentImageConverter x:Key="ParentImageConverter"/>
+        <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Thumb" ImageHeight="200"/>
+        <c:JellyfinImageConverter x:Key="PrimaryImageConverter"/>
         <c:JellyfinTitleConverter x:Key="NameConverter"/>
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
         <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
@@ -85,7 +85,7 @@
                                             <DataTemplate x:DataType="jm:BaseItemDto">
                                                 <lc:PlayableMediaItem 
                                                     Width="240" Height="350"
-                                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ParentImageConverter}}"
+                                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource PrimaryImageConverter}}"
                                                     Model="{x:Bind}"/>
                                             </DataTemplate>
                                         </ItemsRepeater.ItemTemplate>

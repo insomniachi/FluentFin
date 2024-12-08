@@ -24,6 +24,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto);
 
+		Task<Uri?> GetMediaUrl(BaseItemDto dto);
+
+		Uri? GetImage(BaseItemDto dto, ImageType type, double? height = null);
+
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

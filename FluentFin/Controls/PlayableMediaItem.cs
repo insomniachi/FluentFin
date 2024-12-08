@@ -94,6 +94,9 @@ public sealed partial class PlayableMediaItem : Control
 	{
 		var markWatchedButton = (ToggleButton)GetTemplateChild("MarkWatchedButton");
 		var addToFavoriteButton = (ToggleButton)GetTemplateChild("AddToFavoriteButton");
+		var playButton = (Button)GetTemplateChild("PlayButton");
+		playButton.Command = App.Commands.PlayDtoCommand;
+		playButton.CommandParameter = Model;
 
 		markWatchedButton.Checked += MarkWatchedButton_Clicked;
 		markWatchedButton.Unchecked += MarkWatchedButton_Clicked;

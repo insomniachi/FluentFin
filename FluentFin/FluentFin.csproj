@@ -23,6 +23,7 @@
 	  <None Remove="Views\LibraryPage.xaml" />
 	  <None Remove="Views\LoginView.xaml" />
 	  <None Remove="Views\TitleBarControl.xaml" />
+	  <None Remove="Views\VideoPlayerPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -51,6 +52,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FluentFin.Core\FluentFin.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\VideoPlayerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

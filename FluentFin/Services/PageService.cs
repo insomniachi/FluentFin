@@ -2,6 +2,7 @@
 
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
+using FluentFin.ViewModels;
 using FluentFin.Views;
 
 using Microsoft.UI.Xaml.Controls;
@@ -16,6 +17,7 @@ public class PageService : IPageService
     {
 		Configure<HomeViewModel, HomePage>();
 		Configure<LibraryViewModel, LibraryPage>();
+		Configure<VideoPlayerViewModel, VideoPlayerPage>();
     }
 
     public Type GetPageType(string key)

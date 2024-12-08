@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <c:JellyfinImageConverter x:Key="ThumbnailConverter" TypeRequest="Primary"/>
+        <c:JellyfinImageConverter x:Key="PrimaryImageConverter"/>
         <c:JellyfinTitleConverter x:Key="NameConverter"/>
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
         <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
@@ -88,7 +88,7 @@
                 <DataTemplate x:DataType="jm:BaseItemDto">
                     <ItemContainer Style="{StaticResource BareItemContainerStyle}">
                         <lc:PlayableMediaItem 
-                            ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                            ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource PrimaryImageConverter}}"
                             Model="{x:Bind}"/>
                     </ItemContainer>
                 </DataTemplate>

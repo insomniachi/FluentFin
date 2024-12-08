@@ -7,14 +7,12 @@ namespace FluentFin.Core;
 public partial class GlobalCommands(INavigationServiceCore navigationService)
 {
 	[RelayCommand]
-	public async Task PlayDto(BaseItemDto dto)
+	public void PlayDto(BaseItemDto dto)
 	{
 		if(dto is null)
 		{
 			return;
 		}
-
-		await Task.Delay(1);
 
 		navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
 	}

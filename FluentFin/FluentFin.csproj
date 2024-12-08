@@ -17,14 +17,6 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Styles\Button.xaml" />
-	  <None Remove="Views\HomePage.xaml" />
-	  <None Remove="Views\LibraryPage.xaml" />
-	  <None Remove="Views\LoginView.xaml" />
-	  <None Remove="Views\TitleBarControl.xaml" />
-	  <None Remove="Views\VideoPlayerPage.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
@@ -52,6 +44,18 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FluentFin.Core\FluentFin.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Styles\MenuFlyoutButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Styles\PlayableMediaItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

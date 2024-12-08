@@ -20,7 +20,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 
 		var flyout = new MenuBarItemFlyout();
 
-		foreach (var item in GetPlayItems(type))
+		foreach (var item in GetPlayItems(dto, type))
 		{
 			flyout.Items.Add(item);
 		}
@@ -90,14 +90,16 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		};
 	}
 
-	private static IEnumerable<MenuFlyoutItemBase> GetPlayItems(BaseItemDto_Type type)
+	private static IEnumerable<MenuFlyoutItemBase> GetPlayItems(BaseItemDto dto, BaseItemDto_Type type)
 	{
 		if(type is BaseItemDto_Type.Movie or BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.Episode)
 		{
 			yield return new MenuFlyoutItem
 			{
 				Text = "Play",
-				Icon = new SymbolIcon { Symbol = Symbol.Play }
+				Icon = new SymbolIcon { Symbol = Symbol.Play },
+				Command = App.Commands.PlayDtoCommand,
+				CommandParameter = dto
 			};
 		}
 

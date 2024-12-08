@@ -9,7 +9,8 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity" 
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:cb="using:CommunityToolkit.WinUI.Behaviors"
-    xmlns:cl="using:FluentFin.Controls.Lights">
+    xmlns:cl="using:FluentFin.Controls.Lights"
+    xmlns:c="using:FluentFin.Converters">
 
     <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     <SolidColorBrush Color="Black" Opacity="0.40" x:Key="Black40O"/>
@@ -17,6 +18,12 @@
     <cc:DoubleToVisibilityConverter GreaterThan="0" x:Key="MoreThanZeroToVisibilityConverter"/>
     <cc:EmptyStringToObjectConverter x:Key="EmptyStringVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible" />
     <cc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
+    <c:JellyfinTitleConverter x:Key="NameConverter"/>
+    <c:JellyfinSubtitleConverter x:Key="SubtitleConverter"/>
+    <c:JellyfinFlyoutConverter x:Key="FlyoutConverter"/>
+    <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter"/>
+    <c:NullableIntToValueOrDefaultConverter x:Key="NullableIntToValueOrDefaultConverter"/>
+    <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter"/>
 
 
     <Style TargetType="local:PlayableMediaItem" >
@@ -141,15 +148,15 @@
                                            Margin="10" 
                                            Padding="5 0"
                                            FontWeight="ExtraBold"
-                                           Value="{TemplateBinding UnplayedCount}"
-                                           Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=UnplayedCount, Converter={StaticResource MoreThanZeroToVisibilityConverter}}"/>
+                                           Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}"
+                                           Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.UnplayedItemCount, Converter={StaticResource MoreThanZeroToVisibilityConverter}}"/>
 
                                 <ProgressBar Maximum="100"
                                              Minimum="0"
                                              VerticalAlignment="Bottom"
-                                             Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Progress, Mode=OneWay}"
+                                             Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.PlayedPercentage, Converter={StaticResource NullableDoubleToValueOrDefaultConverter}, Mode=OneWay}"
                                              Margin="5 0 5 10"
-                                             Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Progress, Converter={StaticResource MoreThanZeroToVisibilityConverter}, Mode=OneWay}"/>
+                                             Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.PlayedPercentage, Converter={StaticResource MoreThanZeroToVisibilityConverter}, Mode=OneWay}"/>
 
                                 <StackPanel
                                     Orientation="Horizontal" 
@@ -161,21 +168,23 @@
                                     x:Name="ActionButtons">
                                    
                                     <ToggleButton 
+                                        x:Name="MarkWatchedButton"
                                         Style="{ThemeResource IconToggleButtonStyle}"
                                         Height="40"
                                         Width="40"
                                         CornerRadius="20"
                                         Content="{ui:FontIcon Glyph=&#xE73E;, FontSize=15}"
-                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsWatched, Mode=TwoWay}"
+                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
                                         ToolTipService.ToolTip="Mark watched"/>
 
                                     <ToggleButton 
+                                        x:Name="AddToFavoriteButton"
                                         Style="{ThemeResource IconToggleButtonStyle}"
                                         Height="40"
                                         Width="40"
                                         CornerRadius="20"
                                         Content="{ui:FontIcon Glyph=&#xEB52;, FontSize=15}"
-                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsFavourite, Mode=TwoWay}"
+                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
                                         ToolTipService.ToolTip="Add to favorites"/>
 
                                     <Button 
@@ -184,6 +193,7 @@
                                         Width="40"
                                         CornerRadius="20"
                                         Content="{ui:FontIcon Glyph=&#xE712;, FontSize=15}"
+                                        Flyout="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource FlyoutConverter}}"
                                         ToolTipService.ToolTip="More"/>
 
                                 </StackPanel>
@@ -195,13 +205,13 @@
                               Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
                               Padding="5"
                                     Spacing="3">
-                            <TextBlock Text="{TemplateBinding Title}"
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource NameConverter}}"
                                        Style="{StaticResource BodyStrongTextBlockStyle}" 
                                        HorizontalAlignment="Center"/>
-                            <TextBlock Text="{TemplateBinding Subtitle}"
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource SubtitleConverter}}"
                                        Style="{StaticResource CaptionTextBlockStyle}" 
                                        HorizontalAlignment="Center"
-                                       Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Subtitle, Converter={StaticResource EmptyStringVisibilityConverter}}"/>
+                                       Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text, Converter={StaticResource EmptyStringVisibilityConverter}}"/>
                         </StackPanel>
                     </Grid>
                 </ControlTemplate>

@@ -20,6 +20,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		IAsyncEnumerable<BaseItemDto> GetUserLibraries();
 
+		Task<UserItemDataDto?> ToggleMarkAsFavorite(BaseItemDto dto);
+
+		Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto);
+
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

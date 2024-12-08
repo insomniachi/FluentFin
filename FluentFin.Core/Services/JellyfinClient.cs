@@ -175,4 +175,46 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			yield return item;
 		}
 	}
+
+	public async Task<UserItemDataDto?> ToggleMarkAsFavorite(BaseItemDto dto)
+	{
+		try
+		{
+			if(dto.Id is null)
+			{
+				return null;
+			}
+
+			return await _jellyfinApiClient.UserItems[dto.Id.Value].UserData.PostAsync(new UpdateUserItemDataDto
+			{
+				IsFavorite = !(dto.UserData?.IsFavorite ?? false)
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto)
+	{
+		try
+		{
+			if (dto.Id is null)
+			{
+				return null;
+			}
+
+			return await _jellyfinApiClient.UserItems[dto.Id.Value].UserData.PostAsync(new UpdateUserItemDataDto
+			{
+				Played = !(dto.UserData?.Played ?? false)
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
 }

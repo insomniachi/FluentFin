@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin", "FluentFin\Flue
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.Core", "FluentFin.Core\FluentFin.Core.csproj", "{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.Core.Tests", "FluentFin.Core.Tests\FluentFin.Core.Tests.csproj", "{927D047D-DD1F-4A67-A07E-B97370CF9BD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|arm64 = Debug|arm64
@@ -47,6 +49,18 @@ Global
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x64.Build.0 = Release|x64
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x86.ActiveCfg = Release|x86
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x86.Build.0 = Release|x86
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|arm64.Build.0 = Debug|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|x64.Build.0 = Debug|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|x86.Build.0 = Debug|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|arm64.ActiveCfg = Release|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|arm64.Build.0 = Release|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|x64.ActiveCfg = Release|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|x64.Build.0 = Release|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|x86.ActiveCfg = Release|Any CPU
+		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

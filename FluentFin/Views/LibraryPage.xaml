@@ -87,13 +87,9 @@
             <ItemsView.ItemTemplate>
                 <DataTemplate x:DataType="jm:BaseItemDto">
                     <ItemContainer Style="{StaticResource BareItemContainerStyle}">
-                        <lc:PlayableMediaItem Progress="{x:Bind UserData.PlayedPercentage, Converter={StaticResource NullableDoubleToValueOrDefaultConverter}}"
-                                              ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
-                                              Title="{x:Bind (jm:BaseItemDto), Converter={StaticResource NameConverter}}"
-                                              Subtitle="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}"
-                                              IsWatched="{x:Bind UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"
-                                              IsFavourite="{x:Bind UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}}"/>
-   
+                        <lc:PlayableMediaItem 
+                            ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                            Model="{x:Bind}"/>
                     </ItemContainer>
                 </DataTemplate>
             </ItemsView.ItemTemplate>
@@ -108,11 +104,12 @@
             </ItemsView.Layout>
         </ItemsView>
 
-        <dw:PagerControl DisplayMode="ButtonPanel" 
-                         NumberOfPages="{x:Bind ViewModel.NumberOfPages, Mode=OneWay}"
-                         SelectedPageIndex="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}"
-                         Grid.Row="2"
-                         Margin="{StaticResource MediumTopMargin}"/>
+        <dw:PagerControl 
+            DisplayMode="ButtonPanel" 
+            NumberOfPages="{x:Bind ViewModel.NumberOfPages, Mode=OneWay}"
+            SelectedPageIndex="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}"
+            Grid.Row="2"
+            Margin="{StaticResource MediumTopMargin}"/>
 
     </Grid>
 </Page>

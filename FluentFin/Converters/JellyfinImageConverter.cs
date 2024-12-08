@@ -73,36 +73,3 @@ public partial class JellyfinParentImageConverter : IValueConverter
 		throw new NotSupportedException();
 	}
 }
-
-public partial class JellyfinImageConverterUniversal : IValueConverter
-{
-	public string? BaseUrl { get; set; }
-	public ImageType TypeRequest { get; set; }
-
-
-	public object? Convert(object value, Type targetType, object parameter, string language)
-	{
-		//if (string.IsNullOrEmpty(BaseUrl))
-		//{
-		//	BaseUrl = App.GetService<IJellyfinClient>().BaseUrl;
-		//}
-
-		//if (value is BaseItemDto bid)
-		//{
-		//	if (bid is { ImageTags: null or { Count: 0 } })
-		//	{
-		//		return null;
-		//	}
-
-		//	var id = bid.Type == BaseItemDto_Type.Episode ? bid.SeasonId : bid.Id;
-		//	return new BitmapImage(BaseUrl.AppendPathSegment($"/Items/{id}/Images/{TypeRequest}").ToUri());
-		//}
-
-		return null;
-	}
-
-	public object ConvertBack(object value, Type targetType, object parameter, string language)
-	{
-		throw new NotSupportedException();
-	}
-}

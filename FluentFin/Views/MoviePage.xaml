@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="FluentFin.Views.MoviePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:root="using:FluentFin"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters" xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <c:JellyfinImageConverter x:Key="BackdropImageConverter" ImageHeight="560" TypeRequest="Backdrop"/>
+        <c:JellyfinImageConverter x:Key="PrimaryImageConverter" ImageHeight="800" TypeRequest="Primary"/>
+        <c:JellyfinImageConverter x:Key="LogoImageConverter" ImageHeight="200" TypeRequest="Logo"/>
+        <c:JellyfinFlyoutConverter x:Key="FlyoutConverter"/>
+        <cc:StringVisibilityConverter x:Key="StringVisibilityConverter"/>
+        <cc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
+        <SolidColorBrush  x:Key="BackgroundOnImageBrush" Color="Black" Opacity="0.3"/>
+        <x:Double x:Key="ButtonStripHeight">60</x:Double>
+        <x:Double x:Key="InputLabelWidth">125</x:Double>
+        <x:Double x:Key="InputControlWidth">200</x:Double>
+        <Style TargetType="TextBlock" x:Key="InputLabelStyle" BasedOn="{StaticResource BodyTextBlockStyle}">
+            <Setter Property="Width" Value="{StaticResource InputLabelWidth}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <c:StringJoinConverter x:Key="StringJoinConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.ColumnSpan="2">
+            <Grid>
+                <Image 
+                x:Name="BackdropImage"
+                Stretch="UniformToFill" 
+                Source="{x:Bind ViewModel.Dto, Converter={StaticResource BackdropImageConverter}, Mode=OneWay}"/>
+                <media:UIElementExtensions.VisualFactory>
+                    <media:PipelineVisualFactory>
+                        <media:TintEffect Color="Gray"/>
+                    </media:PipelineVisualFactory>
+                </media:UIElementExtensions.VisualFactory>
+            </Grid>
+            <Grid Grid.ColumnSpan="2" Grid.Column="1">
+                <Image
+                    Stretch="Uniform"
+                    Height="200"
+                    Source="{x:Bind ViewModel.Dto, Converter={StaticResource LogoImageConverter}, Mode=OneWay}"/>
+            </Grid>
+            <Border 
+                Background="{StaticResource BackgroundOnImageBrush}"
+                Height="{StaticResource ButtonStripHeight}"
+                VerticalAlignment="Bottom"/>
+        </Grid>
+
+        <Grid
+            x:Name="ButtonStrip"
+            Height="{StaticResource ButtonStripHeight}"
+            VerticalAlignment="Bottom" 
+            Grid.Column="1">
+            <StackPanel 
+                    HorizontalAlignment="Left"
+                    Spacing="20"
+                    Orientation="Horizontal" 
+                    VerticalAlignment="Center">
+                <TextBlock Text="{x:Bind ViewModel.Dto.ProductionYear, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}"/>
+                <TextBlock Text="{x:Bind ViewModel.Dto.OfficialRating, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}"/>
+                <StackPanel
+                        Orientation="Horizontal"
+                        Spacing="5"
+                        Visibility="{x:Bind ViewModel.Dto.CommunityRating, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                    <SymbolIcon Symbol="OutlineStar"/>
+                    <TextBlock Text="{x:Bind ViewModel.Dto.CommunityRating, Mode=OneWay}"/>
+                </StackPanel>
+                <StackPanel 
+                        Orientation="Horizontal"
+                        Spacing="5"
+                        Visibility="{x:Bind ViewModel.Dto.CriticRating, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                    <SymbolIcon Symbol="SolidStar"/>
+                    <TextBlock Text="{x:Bind ViewModel.Dto.CriticRating, Mode=OneWay}"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" Spacing="2" Orientation="Horizontal" Margin="{StaticResource SmallRightMargin}">
+                <Button 
+                        Background="Transparent"
+                        Height="50" Width="50"
+                        CornerRadius="25"
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="{ui:SymbolIcon Symbol=Play}"
+                        Command="{x:Bind root:App.Commands.PlayDtoCommand}"
+                        CommandParameter="{x:Bind ViewModel.Dto, Mode=OneWay}"/>
+                <ToggleButton
+                        Background="Transparent"
+                        Height="50" Width="50"
+                        CornerRadius="25"
+                        Style="{StaticResource IconToggleButtonStyle}"
+                        Content="{ui:FontIcon Glyph=&#xE73E;}"
+                        Command="{x:Bind root:App.Commands.ToggleWatchedCommand}"/>
+                <ToggleButton
+                        Background="Transparent"
+                        Height="50" Width="50"
+                        CornerRadius="25"
+                        Style="{StaticResource IconToggleButtonStyle}"
+                        Content="{ui:FontIcon Glyph=&#xEB52;}"
+                        Command="{x:Bind root:App.Commands.ToggleFavoriteCommand}"/>
+                <Button 
+                        Background="Transparent"
+                        Height="50" Width="50"
+                        CornerRadius="25"
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="{ui:SymbolIcon Symbol=More}"
+                        Flyout="{x:Bind ViewModel.Dto, Converter={StaticResource FlyoutConverter}, Mode=OneWay}"/>
+            </StackPanel>
+        </Grid>
+
+
+        <Grid 
+            Grid.Row="0" 
+            Grid.RowSpan="2"
+            Margin="36 -300 36 0" 
+            CornerRadius="15"    
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center">
+            <Image 
+                Width="400"
+                Stretch="Uniform"
+                Source="{x:Bind ViewModel.Dto, Converter={StaticResource PrimaryImageConverter}, Mode=OneWay}"/>
+        </Grid>
+
+        <StackPanel 
+            Margin="{StaticResource MediumTopBottomMargin}"
+            Spacing="60"
+            Grid.Row="1"
+            Grid.Column="1">
+            <Grid RowSpacing="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Video" Style="{StaticResource InputLabelStyle}"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind local:MoviePage.GetVideoTitle(ViewModel.Dto), Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Audio" Style="{StaticResource InputLabelStyle}"/>
+                <ComboBox 
+                    Grid.Row="1" Grid.Column="1"
+                    HorizontalAlignment="Left"
+                    MinWidth="800"
+                    SelectedIndex="0"
+                    ItemsSource="{x:Bind local:MoviePage.GetAudioStreams(ViewModel.Dto), Mode=OneWay}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Subtitle" Style="{StaticResource InputLabelStyle}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1"
+                          MinWidth="800"
+                          SelectedIndex="0"
+                          ItemsSource="{x:Bind local:MoviePage.GetSubtitleStreams(ViewModel.Dto), Mode=OneWay}"/>
+            </Grid>
+            <TextBlock Text="{x:Bind ViewModel.Dto.Overview, Mode=OneWay}"/>
+
+            <StackPanel Spacing="10">
+                <TextBlock Text="Tags" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Dto.Tags, Mode=OneWay}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding}" Background="{ThemeResource SystemColorControlAccentBrush}" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"/>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                    <ItemsRepeater.Layout>
+                        <ctk:WrapLayout Orientation="Horizontal" HorizontalSpacing="5" VerticalSpacing="5"/>
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </StackPanel>
+        </StackPanel>
+
+
+    </Grid>
+</Page>

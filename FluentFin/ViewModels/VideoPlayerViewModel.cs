@@ -91,7 +91,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		if(sender.CurrentState is MediaPlayerState.Paused)
 		{
-			await jellyfinClient.Pause(Dto);
+			await jellyfinClient.Pause(Dto, Position);
 		}
 	}
 

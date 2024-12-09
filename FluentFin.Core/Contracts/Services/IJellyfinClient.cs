@@ -15,6 +15,8 @@ namespace FluentFin.Core.Contracts.Services
 		Task<BaseItemDtoQueryResult?> GetNextUp();
 
 		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent);
+
+		Task<BaseItemDto?> GetItem(Guid id);
 		
 		IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries();
 

@@ -17,6 +17,9 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Views\MoviePage.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
@@ -44,6 +47,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FluentFin.Core\FluentFin.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\MoviePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

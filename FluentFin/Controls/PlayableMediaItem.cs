@@ -1,4 +1,6 @@
+using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -88,6 +90,23 @@ public sealed partial class PlayableMediaItem : Control
 	public PlayableMediaItem()
 	{
 		DefaultStyleKey = typeof(PlayableMediaItem);
+
+		Tapped += PlayableMediaItem_Tapped;
+	}
+
+	private void PlayableMediaItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+	{
+		if(e.OriginalSource is not (Grid or Image))
+		{
+			return;
+		}
+
+		if(Model is { Type : BaseItemDto_Type.Movie })
+		{
+			App.GetService<INavigationService>().NavigateTo(typeof(MovieViewModel).FullName!, Model);
+		}
+
+		e.Handled = true;
 	}
 
 	protected override void OnApplyTemplate()

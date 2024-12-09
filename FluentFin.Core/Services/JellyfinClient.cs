@@ -110,6 +110,19 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task<BaseItemDto?> GetItem(Guid id)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Items[id].GetAsync(x => x.QueryParameters.UserId = UserId);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries()
 	{
 		BaseItemDtoQueryResult? views = null;

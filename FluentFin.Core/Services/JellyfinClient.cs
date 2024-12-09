@@ -287,34 +287,52 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			return null;
 		}
 
-		if(dto is { ImageTags: null } or { BackdropImageTags : null or { Count : 0} })
+		object? requestTag = null;
+		var hasRequestTag = dto.ImageTags?.AdditionalData.TryGetValue($"{type}", out requestTag);
+		var backdropTag = dto.BackdropImageTags?.FirstOrDefault();
+		var parentBackdropTag = dto.ParentBackdropImageTags?.FirstOrDefault();
+
+		var tag = "";
+		if (hasRequestTag == true)
 		{
-			return BaseUrl.AppendPathSegment($"/Items/{id}/Images/{type}").ToUri();
+			tag = $"{requestTag}";
+		}
+		else if(!string.IsNullOrEmpty(backdropTag))
+		{
+			tag = $"{backdropTag}";
+		}
+		else if(!string.IsNullOrEmpty(parentBackdropTag))
+		{
+			tag = $"{parentBackdropTag}";
 		}
 
-		var hasrequestTag = dto.ImageTags.AdditionalData.TryGetValue($"{type}", out var requestTag);
-		var backdropTag = dto.BackdropImageTags?[0];
-		var parentBackdropTag = dto.ParentBackdropImageTags?[0];
+		if (type == ImageType.Thumb && dto.Type == BaseItemDto_Type.Episode)
+		{
+			type = ImageType.Primary;
+		}
+
+		else if (type == ImageType.Primary && dto.Type == BaseItemDto_Type.Episode)
+		{
+			if (!string.IsNullOrEmpty(dto.SeriesPrimaryImageTag) && dto.SeriesId is { } seriesId)
+			{
+				id = seriesId;
+				tag = $"{dto.SeriesPrimaryImageTag}";
+			}
+		}
+
 
 		var uri = BaseUrl.AppendPathSegment($"/Items/{id}/Images/{type}");
 
-		if(height is { } h)
+		if (height is { } h)
 		{
 			uri.SetQueryParam("fillHeight", h);
 		}
 
-		if(hasrequestTag)
+		if(!string.IsNullOrEmpty(tag))
 		{
-			uri.SetQueryParam("tag", requestTag);
+			uri.SetQueryParam("tag", tag);
 		}
-		else if(!string.IsNullOrEmpty(backdropTag))
-		{
-			uri.SetQueryParam("tag", backdropTag);
-		}
-		else if(!string.IsNullOrEmpty(parentBackdropTag))
-		{
-			uri.SetQueryParam("tag", parentBackdropTag);
-		}
+
 
 		return uri.ToUri();
 	}

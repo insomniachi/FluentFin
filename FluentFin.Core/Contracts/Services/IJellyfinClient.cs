@@ -28,6 +28,18 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri? GetImage(BaseItemDto dto, ImageType type, double? height = null);
 
+		Task Playing(BaseItemDto dto);
+
+		Task Progress(BaseItemDto dto, TimeSpan position);
+
+		Task Pause(BaseItemDto dto, TimeSpan? position = null);
+
+		Task Stop(BaseItemDto dto);
+
+		Task Stop();
+
+		Task Logout();
+
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

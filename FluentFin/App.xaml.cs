@@ -12,6 +12,7 @@ using FluentFin.Views;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using System.ComponentModel;
 using System.Text.Json;
@@ -37,8 +38,6 @@ public partial class App : Application
     public static WindowEx MainWindow { get; } = new MainWindow();
 
 	public static GlobalCommands Commands { get; private set; } = null!;
-
-    public static UIElement? AppTitlebar { get; set; }
 
     public App()
     {
@@ -90,13 +89,22 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
+		GetService<ILogger<App>>().LogError(e.Exception, e.Message);
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
 
+		MainWindow.Closed += MainWindow_Closed;
+
+
 		Commands = GetService<GlobalCommands>();
         await GetService<IActivationService>().ActivateAsync(args);
     }
+
+	private async void MainWindow_Closed(object sender, WindowEventArgs args)
+	{
+		await GetService<IJellyfinClient>().Stop();
+	}
 }

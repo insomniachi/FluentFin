@@ -13,6 +13,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 	private string _token = "";
 	private Jellyfin.Sdk.JellyfinSdkSettings _settings = null!;
 	private string _deviceId = "";
+	private BaseItemDto? _currentItem = null;
 
 	public Guid UserId { get; set; }
 	public string BaseUrl { get; set; } = "";
@@ -246,22 +247,18 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			var sessionId = playbackInfo.PlaySessionId;
 			var mediaSource = playbackInfo.MediaSources.FirstOrDefault(x => x.Id == id.ToString("N"));
 
-			if(mediaSource is null)
-			{
-				return null;
-			}
-
 			if(dto.MediaType == BaseItemDto_MediaType.Video)
 			{
-				if(!string.IsNullOrEmpty(mediaSource.TranscodingUrl))
+				if(!string.IsNullOrEmpty(mediaSource?.TranscodingUrl))
 				{
 					return BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).SetQueryParams(new
 					{
 						api_key = _token,
-						SubtitleMethod = "Hls"
+						SubtitleMethod = "Hls",
+						StartTimeTicks = dto.UserData?.PlaybackPositionTicks,
 					}).ToUri();
 				}
-				else if(mediaSource.SupportsDirectPlay == true)
+				else if(mediaSource?.SupportsDirectPlay == true)
 				{
 					var info = _jellyfinApiClient.Videos[id].Stream.ToGetRequestInformation(x =>
 					{
@@ -270,6 +267,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 						query.PlaySessionId = sessionId;
 						query.Static = true;
 						query.Tag = mediaSource.ETag;
+						query.StartTimeTicks = dto.UserData?.PlaybackPositionTicks;
 					});
 
 					return AddApiKey(info.URI);
@@ -335,6 +333,97 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 
 
 		return uri.ToUri();
+	}
+
+	public async Task Playing(BaseItemDto dto)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions.Playing.PostAsync(new PlaybackStartInfo
+			{
+				Item = dto,
+			});
+
+			_currentItem = dto;
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+		}
+	}
+
+	public async Task Progress(BaseItemDto dto, TimeSpan position)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions.Playing.Progress.PostAsync(new PlaybackProgressInfo
+			{
+				Item = dto,
+				PositionTicks = position.Ticks,
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+	
+		}
+	}
+
+	public async Task Pause(BaseItemDto dto, TimeSpan? position = null)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions.Playing.Progress.PostAsync(new PlaybackProgressInfo
+			{
+				Item = dto,
+				IsPaused = true,
+				PositionTicks = position?.Ticks
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+
+		}
+	}
+
+	public async Task Stop(BaseItemDto dto)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions.Playing.Stopped.PostAsync(new PlaybackStopInfo
+			{
+				Item = dto
+			});
+
+			_currentItem = null;
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+		}
+	}
+
+	public async Task Stop()
+	{
+		if(_currentItem is null)
+		{
+			return;
+		}
+
+		await Stop(_currentItem);
+	}
+
+	public async Task Logout()
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions.Logout.PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+		}
 	}
 
 	private Uri AddApiKey(Uri uri)

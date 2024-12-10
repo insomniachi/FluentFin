@@ -1,52 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="FluentFin.Views.LoginView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FluentFin.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid>
-        <StackPanel Spacing="20"
-                    Padding="50"
-                    CornerRadius="8"
-                    MinWidth="500"
-                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+        <StackPanel
+            MinWidth="500"
+            Padding="50"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+            CornerRadius="8"
+            Spacing="20">
             <StackPanel.Resources>
                 <Style TargetType="StackPanel">
-                    <Setter Property="Spacing" Value="5"/>
+                    <Setter Property="Spacing" Value="5" />
                 </Style>
                 <Style TargetType="TextBlock">
-                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="FontWeight" Value="Bold" />
                 </Style>
             </StackPanel.Resources>
             <StackPanel>
-                <TextBlock Text="Server"/>
-                <TextBox Text="{x:Bind ViewModel.ServerUrl, Mode=TwoWay}"
-                         KeyDown="InputFieldKeyDown"/>
+                <TextBlock Text="Server" />
+                <TextBox KeyDown="InputFieldKeyDown" Text="{x:Bind ViewModel.ServerUrl, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel>
-                <TextBlock Text="Username"/>
-                <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay}"
-                         KeyDown="InputFieldKeyDown"/>
+                <TextBlock Text="Username" />
+                <TextBox KeyDown="InputFieldKeyDown" Text="{x:Bind ViewModel.Username, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel>
-                <TextBlock Text="Password"/>
-                <PasswordBox x:Name="PasswordBox"
-                             KeyDown="InputFieldKeyDown"
-                             PasswordChanged="PasswordBox_PasswordChanged"/>
+                <TextBlock Text="Password" />
+                <PasswordBox
+                    x:Name="PasswordBox"
+                    KeyDown="InputFieldKeyDown"
+                    PasswordChanged="PasswordBox_PasswordChanged" />
             </StackPanel>
             <Grid>
-                <Button HorizontalAlignment="Center"
-                        Command="{x:Bind ViewModel.LoginCommand}"
-                        Style="{ThemeResource AccentButtonStyle}">
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.LoginCommand}"
+                    Style="{ThemeResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon Glyph="&#xE725;" />
-                        <TextBlock Text="Login"/>
+                        <TextBlock Text="Login" />
                     </StackPanel>
                 </Button>
             </Grid>

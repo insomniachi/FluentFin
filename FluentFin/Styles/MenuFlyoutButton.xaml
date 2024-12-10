@@ -1,11 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:FluentFin.Controls"
-    xmlns:cc="using:CommunityToolkit.WinUI.Converters">
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls="using:FluentFin.Controls">
 
-    <cc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
+    <cc:EmptyObjectToObjectConverter
+        x:Key="ObjectToVisibilityConverter"
+        EmptyValue="Collapsed"
+        NotEmptyValue="Visible" />
 
     <Style TargetType="controls:MenuFlyoutButton">
         <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}" />
@@ -15,7 +18,7 @@
         <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutItemBorderThickness}" />
         <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
@@ -25,21 +28,53 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:MenuFlyoutButton">
-                    <Grid         
+                    <Grid
                         x:Name="RootGrid"
+                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
                         ColumnSpacing="10"
-                        Padding="{TemplateBinding Padding}" >
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.BackgroundTransition>
                             <BrushTransition Duration="0:0:0.083" />
                         </Grid.BackgroundTransition>
+
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Grid.Column="1"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AnimatedIcon.State="Normal"
+                            AutomationProperties.AccessibilityView="Raw"
+                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            Foreground="{TemplateBinding Foreground}">
+                            <ContentPresenter.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </ContentPresenter.BackgroundTransition>
+                        </ContentPresenter>
+
+                        <Viewbox
+                            x:Name="IconRoot"
+                            Grid.Column="0"
+                            Width="16"
+                            Height="16"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon, Converter={StaticResource ObjectToVisibilityConverter}}">
+                            <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding Icon}">
+                                <ContentPresenter.RenderTransform>
+                                    <CompositeTransform />
+                                </ContentPresenter.RenderTransform>
+                            </ContentPresenter>
+                        </Viewbox>
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -54,10 +89,16 @@
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconPresenter" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
-                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlFastAnimationDuration}"  Value="0.86" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                Value="0.86" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconPresenter" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
-                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlFastAnimationDuration}" Value="0.86" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                Value="0.86" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlFillColorDefaultBrush}" />
@@ -73,39 +114,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <ContentPresenter
-                            x:Name="ContentPresenter" 
-                            Grid.Column="1"
-                            Foreground="{TemplateBinding Foreground}"
-                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                            Content="{TemplateBinding Content}" 
-                            ContentTemplate="{TemplateBinding ContentTemplate}" 
-                            ContentTransitions="{TemplateBinding ContentTransitions}" 
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" 
-                            AutomationProperties.AccessibilityView="Raw" 
-                            AnimatedIcon.State="Normal">
-                            <ContentPresenter.BackgroundTransition>
-                                <BrushTransition Duration="0:0:0.083" />
-                            </ContentPresenter.BackgroundTransition>
-                        </ContentPresenter>
-
-                        <Viewbox 
-                            x:Name="IconRoot"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Width="16"
-                            Height="16"
-                            Grid.Column="0"
-                            Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon, Converter={StaticResource ObjectToVisibilityConverter}}">
-                            <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding Icon}">
-                                <ContentPresenter.RenderTransform>
-                                    <CompositeTransform />
-                                </ContentPresenter.RenderTransform>
-                            </ContentPresenter>
-                        </Viewbox>
-
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

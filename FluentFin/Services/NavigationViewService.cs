@@ -48,7 +48,7 @@ public class NavigationViewService : INavigationViewService
 
 	public async Task InitializeLibraries()
 	{
-		var libarariesItem = new NavigationViewItem 
+		var librariesItem = new NavigationViewItem 
 		{
 			Content = "Libraries",
 			Icon = new SymbolIcon
@@ -65,15 +65,15 @@ public class NavigationViewService : INavigationViewService
 				Icon = GetIcon(item.CollectionType),
 				Tag = item
 			};
-			libraryItem.Tapped += LibarariesItem_Tapped;
+			libraryItem.Tapped += LibrariesItem_Tapped;
 
-			libarariesItem.MenuItems.Add(libraryItem);
+			librariesItem.MenuItems.Add(libraryItem);
 		}
 
-		MenuItems?.Add(libarariesItem);
+		MenuItems?.Add(librariesItem);
 	}
 
-	private void LibarariesItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+	private void LibrariesItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
 	{
 		var dto = (BaseItemDto)((NavigationViewItem)sender).Tag;
 		_navigationService.NavigateTo(typeof(LibraryViewModel).FullName!, dto);

@@ -9,19 +9,20 @@
     Loaded="OnLoaded">
 
     <NavigationView
-            x:Name="NavigationViewControl"
-            x:FieldModifier="Public"
-            Canvas.ZIndex="0"
-            IsBackButtonVisible="Collapsed"
-            IsPaneToggleButtonVisible="False"
-            SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
-            IsSettingsVisible="False"
-            ExpandedModeThresholdWidth="1280">
+        x:Name="NavigationViewControl"
+        x:FieldModifier="Public"
+        Canvas.ZIndex="0"
+        ExpandedModeThresholdWidth="1280"
+        IsBackButtonVisible="Collapsed"
+        IsPaneToggleButtonVisible="False"
+        IsSettingsVisible="False"
+        SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
         <NavigationView.MenuItems>
-            <NavigationViewItem Content="Home" 
-                                Icon="{ui:SymbolIcon Symbol=Home}"
-                                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.HomeViewModel"/>
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.HomeViewModel"
+                Content="Home"
+                Icon="{ui:SymbolIcon Symbol=Home}" />
         </NavigationView.MenuItems>
-        <Frame x:Name="NavigationFrame" x:FieldModifier="Public"/>
+        <Frame x:Name="NavigationFrame" x:FieldModifier="Public" />
     </NavigationView>
 </Page>

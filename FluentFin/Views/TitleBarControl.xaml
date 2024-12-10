@@ -1,83 +1,104 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="FluentFin.Views.TitleBarControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FluentFin.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:behaviors="using:FluentFin.Behaviors"
     xmlns:c="using:FluentFin.Converters"
-    xmlns:lc="using:FluentFin.Controls"
-    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:devwinui="using:DevWinUI"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:behaviors="using:FluentFin.Behaviors" xmlns:ctk="using:CommunityToolkit.WinUI.Controls" xmlns:devwinui="using:DevWinUI"
+    xmlns:lc="using:FluentFin.Controls"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <cc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
-        <cc:EmptyObjectToObjectConverter x:Key="ObjectToBoolConverter" EmptyValue="False" NotEmptyValue="True"/>
+        <cc:EmptyObjectToObjectConverter
+            x:Key="ObjectToVisibilityConverter"
+            EmptyValue="Collapsed"
+            NotEmptyValue="Visible" />
+        <cc:EmptyObjectToObjectConverter
+            x:Key="ObjectToBoolConverter"
+            EmptyValue="False"
+            NotEmptyValue="True" />
     </UserControl.Resources>
 
     <TitleBar
-            x:Name="TitleBar"
-            Title="FluentFin"
-            IsBackButtonVisible="{Binding User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
-            IsBackEnabled="{Binding CanGoBack, Mode=OneWay}"
-            IsPaneToggleButtonVisible="{Binding User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
-            PaneToggleRequested="TitleBar_PaneToggleRequested"
-            BackRequested="TitleBar_BackRequested"
-            Subtitle="{Binding Version}">
+        x:Name="TitleBar"
+        Title="FluentFin"
+        BackRequested="TitleBar_BackRequested"
+        IsBackButtonVisible="{Binding User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
+        IsBackEnabled="{Binding CanGoBack, Mode=OneWay}"
+        IsPaneToggleButtonVisible="{Binding User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
+        PaneToggleRequested="TitleBar_PaneToggleRequested"
+        Subtitle="{Binding Version}">
         <TitleBar.Content>
-            <AutoSuggestBox QueryIcon="Find" 
-                            Width="600"
-                            Margin="{StaticResource XSmallTopBottomMargin}"
-                            PlaceholderText="Search movies, series, actors and more"
-                            Visibility="{Binding User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}"/>
+            <AutoSuggestBox
+                Width="600"
+                Margin="{StaticResource XSmallTopBottomMargin}"
+                PlaceholderText="Search movies, series, actors and more"
+                QueryIcon="Find"
+                Visibility="{Binding User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
         </TitleBar.Content>
         <TitleBar.Footer>
             <Button
+                Width="32"
+                Height="32"
+                Padding="0"
+                HorizontalAlignment="Right"
+                BorderBrush="{ThemeResource CircleElevationBorderBrush}"
+                CornerRadius="16"
+                ToolTipService.ToolTip="{Binding User.Name}"
+                Visibility="{Binding User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                <PersonPicture
                     Width="32"
                     Height="32"
-                    Padding="0"
-                    BorderBrush="{ThemeResource CircleElevationBorderBrush}"
-                    HorizontalAlignment="Right"
-                    Visibility="{Binding User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}"
-                    ToolTipService.ToolTip="{Binding User.Name}"
-                    CornerRadius="16">
-                <PersonPicture
-                        Width="32"
-                        Height="32"
-                        DisplayName="{Binding User.Name}"/>
-                <Button.Flyout> 
-                    <Flyout Placement="BottomEdgeAlignedRight" LightDismissOverlayMode="On" AllowFocusOnInteraction="True" AreOpenCloseAnimationsEnabled="True">
+                    DisplayName="{Binding User.Name}" />
+                <Button.Flyout>
+                    <Flyout
+                        AllowFocusOnInteraction="True"
+                        AreOpenCloseAnimationsEnabled="True"
+                        LightDismissOverlayMode="On"
+                        Placement="BottomEdgeAlignedRight">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <PersonPicture
                                     Width="48"
                                     Height="48"
-                                    DisplayName="{Binding User.Name}"/>
-                                <TextBlock Text="{Binding User.Name}" 
-                                           Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                           Grid.Column="1" 
-                                           VerticalAlignment="Center"/>
+                                    DisplayName="{Binding User.Name}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="{Binding User.Name}" />
                             </Grid>
 
-                            <MenuFlyoutSeparator Grid.Row="1" Margin="{StaticResource XSmallTopBottomMargin}"/>
+                            <MenuFlyoutSeparator Grid.Row="1" Margin="{StaticResource XSmallTopBottomMargin}" />
 
                             <StackPanel Grid.Row="2">
-                                <lc:MenuFlyoutButton Icon="{ui:FontIcon Glyph=&#xE713;}" Content="Dashboard" HorizontalAlignment="Stretch"/>
-                                <lc:MenuFlyoutButton Icon="{ui:FontIcon Glyph=&#xF3B1;}" Command="{Binding LogoutCommand}" Content="Logout" HorizontalAlignment="Stretch"/>
+                                <lc:MenuFlyoutButton
+                                    HorizontalAlignment="Stretch"
+                                    Content="Dashboard"
+                                    Icon="{ui:FontIcon Glyph=&#xE713;}" />
+                                <lc:MenuFlyoutButton
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding LogoutCommand}"
+                                    Content="Logout"
+                                    Icon="{ui:FontIcon Glyph=&#xF3B1;}" />
                             </StackPanel>
 
                         </Grid>
@@ -86,5 +107,5 @@
             </Button>
         </TitleBar.Footer>
     </TitleBar>
-    
+
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using FluentFin.Core.Contracts.Services;
+using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -19,7 +20,6 @@ public partial class JellyfinImageConverter : IValueConverter
 		{
 			return null;
 		}
-
 		var uri = _jellyfinClient.GetImage(dto, TypeRequest, ImageHeight);
 
 		if(uri is null)
@@ -28,6 +28,27 @@ public partial class JellyfinImageConverter : IValueConverter
 		}
 
 		return new BitmapImage(uri);
+	}
+
+	public object ConvertBack(object value, Type targetType, object parameter, string language)
+	{
+		throw new NotSupportedException();
+	}
+}
+
+public partial class JellyfinPersonImageConverter : IValueConverter
+{
+	private static IJellyfinClient _jellyfinClient = App.GetService<IJellyfinClient>();
+	public double ImageHeight { get; set; } = 300;
+
+	public object? Convert(object value, Type targetType, object parameter, string language)
+	{
+		if(value is not BaseItemPerson { } dto)
+		{
+			return null;
+		}
+
+		return new BitmapImage(_jellyfinClient.BaseUrl.AppendPathSegment($"/Items/{dto.Id}/Images/Primary").SetQueryParam("fillHeight", ImageHeight).ToUri());
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)

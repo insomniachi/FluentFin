@@ -30,8 +30,20 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 
 		Dto = full;
 
+		var response = await jellyfinClient.GetSimilarItems(Dto);
+
+		if(response is null or { Items : null })
+		{
+			return;
+		}
+
+		Similar = response.Items;
+
 	}
 
 	[ObservableProperty]
 	public partial BaseItemDto Dto { get; set; }
+
+	[ObservableProperty]
+	public partial List<BaseItemDto> Similar { get; set; }
 }

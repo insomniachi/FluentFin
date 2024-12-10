@@ -195,6 +195,28 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto)
+	{
+		if(dto.Id is not { } id)
+		{
+			return null;
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].Similar.GetAsync(x =>
+			{
+				x.QueryParameters.UserId = UserId;
+				x.QueryParameters.Limit = 12;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async Task<UserItemDataDto?> ToggleMarkAsFavorite(BaseItemDto dto)
 	{
 		try

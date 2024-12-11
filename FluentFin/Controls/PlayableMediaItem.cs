@@ -101,10 +101,7 @@ public sealed partial class PlayableMediaItem : Control
 			return;
 		}
 
-		if(Model is { Type : BaseItemDto_Type.Movie })
-		{
-			App.GetService<INavigationService>().NavigateTo(typeof(MovieViewModel).FullName!, Model);
-		}
+		App.Commands.DisplayDto(Model);
 
 		e.Handled = true;
 	}

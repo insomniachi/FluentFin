@@ -21,24 +21,8 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 			return;
 		}
 
-		var full = await jellyfinClient.GetItem(id);
-
-		if(full is null)
-		{
-			return;
-		}
-
-		Dto = full;
-
-		var response = await jellyfinClient.GetSimilarItems(Dto);
-
-		if(response is null or { Items : null })
-		{
-			return;
-		}
-
-		Similar = response.Items;
-
+		await UpdateMovie(id);
+		await UpdateSimilar(dto);
 	}
 
 	[ObservableProperty]
@@ -46,4 +30,28 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 
 	[ObservableProperty]
 	public partial List<BaseItemDto> Similar { get; set; }
+
+	private async Task UpdateMovie(Guid id)
+	{
+		var movie = await jellyfinClient.GetItem(id);
+		if (movie is null)
+		{
+			return;
+		}
+
+		Dto = movie;
+
+	}
+
+	private async Task UpdateSimilar(BaseItemDto dto)
+	{
+		var response = await jellyfinClient.GetSimilarItems(dto);
+
+		if (response is null or { Items: null })
+		{
+			return;
+		}
+
+		Similar = response.Items;
+	}
 }

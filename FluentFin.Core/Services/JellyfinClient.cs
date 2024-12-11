@@ -81,7 +81,29 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
-	public async Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent)
+	public async Task<BaseItemDtoQueryResult?> GetNextUp(BaseItemDto dto)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Shows.NextUp.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				if (dto.Type == BaseItemDto_Type.Series)
+				{
+					query.SeriesId = dto.Id; 
+				}
+				query.Fields = [ItemFields.MediaSourceCount];
+				query.UserId = UserId;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent, bool recursive = false)
 	{
 		try
 		{
@@ -90,7 +112,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				var query = x.QueryParameters;
 				query.SortBy = [ItemSortBy.SortName];
 				query.SortOrder = [SortOrder.Ascending];
-				query.Recursive = true;
+				query.Recursive = recursive;
 				query.Fields = [ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated];
 				query.ImageTypeLimit = 1;
 				query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Banner, ImageType.Thumb];

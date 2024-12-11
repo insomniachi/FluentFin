@@ -14,7 +14,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetNextUp();
 
-		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent);
+		Task<BaseItemDtoQueryResult?> GetNextUp(BaseItemDto dto);
+
+		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent, bool recursive = false);
 
 		Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto);
 

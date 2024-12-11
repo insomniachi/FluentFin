@@ -17,6 +17,9 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Views\SeriesPage.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
@@ -50,6 +53,12 @@
 	  <Content Update="Assets\WindowIcon.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\SeriesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

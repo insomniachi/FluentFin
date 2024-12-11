@@ -56,6 +56,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\SeasonPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Page Update="Views\SeriesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

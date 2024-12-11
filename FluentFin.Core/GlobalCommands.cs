@@ -36,6 +36,8 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 				navigationService.NavigateTo(typeof(MovieViewModel).FullName!, dto); break;
 			case BaseItemDto_Type.Series:
 				navigationService.NavigateTo(typeof(SeriesViewModel).FullName!, dto); break;
+			case BaseItemDto_Type.Season:
+				navigationService.NavigateTo(typeof(SeasonViewModel).FullName!, dto); break;
 			default:
 				break;
 		}

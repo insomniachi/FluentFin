@@ -78,6 +78,7 @@ public partial class App : Application
 			services.AddTransient<VideoPlayerViewModel>();
 			services.AddTransient<MovieViewModel>();
 			services.AddTransient<SeriesViewModel>();
+			services.AddTransient<SeasonViewModel>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

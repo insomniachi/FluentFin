@@ -113,7 +113,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				query.SortBy = [ItemSortBy.SortName];
 				query.SortOrder = [SortOrder.Ascending];
 				query.Recursive = recursive;
-				query.Fields = [ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated];
+				query.Fields = [ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated, ItemFields.Overview];
 				query.ImageTypeLimit = 1;
 				query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Banner, ImageType.Thumb];
 				query.ParentId = parent.Id;
@@ -361,6 +361,11 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			tag = $"{parentBackdropTag}";
 		}
 
+		if(type == ImageType.Backdrop && dto.Type is BaseItemDto_Type.Season && dto.ParentId is { } pid)
+		{
+			id = pid;
+		}
+
 		if (type == ImageType.Thumb && dto.Type == BaseItemDto_Type.Episode)
 		{
 			type = ImageType.Primary;
@@ -374,6 +379,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				tag = $"{dto.SeriesPrimaryImageTag}";
 			}
 		}
+
 
 
 		var uri = BaseUrl.AppendPathSegment($"/Items/{id}/Images/{type}");

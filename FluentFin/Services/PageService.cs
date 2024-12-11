@@ -20,6 +20,7 @@ public class PageService : IPageService
 		Configure<VideoPlayerViewModel, VideoPlayerPage>();
 		Configure<MovieViewModel, MoviePage>();
 		Configure<SeriesViewModel, SeriesPage>();
+		Configure<SeasonViewModel, SeasonPage>();
     }
 
     public Type GetPageType(string key)

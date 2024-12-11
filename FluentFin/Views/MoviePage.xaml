@@ -50,6 +50,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <c:StringJoinConverter x:Key="StringJoinConverter" />
+        <local:AlternateTemplateSelector x:Key="DataTemplateSelector" />
     </Page.Resources>
 
     <Grid>
@@ -232,19 +233,106 @@
                         <ItemsRepeater ItemsSource="{x:Bind ViewModel.Dto.Tags, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button
-                                        Background="{ThemeResource SystemColorControlAccentBrush}"
-                                        Content="{Binding}"
-                                        CornerRadius="20"
-                                        Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
+                                    <HyperlinkButton Content="{Binding}" Style="{StaticResource TextBlockButtonStyle}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                             <ItemsRepeater.Layout>
-                                <StackLayout Orientation="Horizontal" Spacing="5" />
+                                <StackLayout Orientation="Horizontal" Spacing="10" />
                             </ItemsRepeater.Layout>
                         </ItemsRepeater>
                     </ScrollViewer>
                 </StackPanel>
+
+                <Grid HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Style="{StaticResource InputLabelStyle}"
+                        Text="Genres" />
+                    <ItemsRepeater
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        ItemsSource="{x:Bind ViewModel.Dto.GenreItems, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:NameGuidPair">
+                                <HyperlinkButton Content="{x:Bind Name}" Style="{StaticResource TextBlockButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="10" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Style="{StaticResource InputLabelStyle}"
+                        Text="Director" />
+                    <ItemsRepeater
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        ItemsSource="{x:Bind local:MoviePage.GetDirectors(ViewModel.Dto.People), Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:BaseItemPerson">
+                                <HyperlinkButton Content="{x:Bind Name}" Style="{StaticResource TextBlockButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="10" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+
+
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Style="{StaticResource InputLabelStyle}"
+                        Text="Writers" />
+                    <ItemsRepeater
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        ItemsSource="{x:Bind local:MoviePage.GetWriters(ViewModel.Dto.People), Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:BaseItemPerson">
+                                <HyperlinkButton Content="{x:Bind Name}" Style="{StaticResource TextBlockButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="10" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Style="{StaticResource InputLabelStyle}"
+                        Text="Studios" />
+                    <ItemsRepeater
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        ItemsSource="{x:Bind ViewModel.Dto.Studios, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:NameGuidPair">
+                                <HyperlinkButton Content="{x:Bind Name}" Style="{StaticResource TextBlockButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="10" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </Grid>
 
                 <StackPanel Spacing="10">
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Cast &amp; Crew" />

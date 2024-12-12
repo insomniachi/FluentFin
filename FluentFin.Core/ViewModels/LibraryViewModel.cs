@@ -36,6 +36,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 			.Subscribe(x =>
 			{
 				_itemsCache.Refresh();
+				UpdateNumberOfPages();
 			});
 
 		_itemsCache
@@ -124,8 +125,8 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		NumberOfPages = (int)Math.Ceiling(result.Items.Count / 100d);
 		_itemsCache.AddOrUpdate(result.Items);
+		UpdateNumberOfPages();
 
 		var filters = await _jellyfinClient.GetFilters(libraryDto);
 
@@ -138,6 +139,13 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		GenresSource = filters.Genres?.ToList() ?? [];
 		OfficialRatingsSource = filters.OfficialRatings?.ToList() ?? [];
 		YearsSource = filters.Years?.Where(x => x.HasValue).Select(x => x!.Value.ToString()).ToList() ?? [];
+	}
+
+	private void UpdateNumberOfPages()
+	{
+		NumberOfPages = Filter.IsEmptyFilter()
+			? (int)Math.Ceiling(_itemsCache.Items.Count / 100d)
+			: (int)Math.Ceiling(Items.Count / 100d);
 	}
 }
 
@@ -161,6 +169,8 @@ public partial class LibraryFilter : ObservableObject
 
 	[ObservableProperty]
 	public partial ObservableCollection<string> Years { get; set; } = new();
+
+	public bool IsEmptyFilter() => this is { Tags.Count: 0, Genres.Count: 0, OfficialRatings.Count: 0, Years.Count: 0 };
 
 	public bool IsVisible(BaseItemDto dto)
 	{

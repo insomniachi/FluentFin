@@ -26,9 +26,22 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		var comparer = this.WhenAnyValue(x => x.SortBy, x => x.Order)
 						   .Select(GetComparer);
 
+		var filter = this.WhenAnyValue(x => x.Filter)
+			.WhereNotNull()
+			.SelectMany(x => x.WhenAnyPropertyChanged())
+			.Where(x => x is not null)
+			.Select(x => (Func<BaseItemDto, bool>)x!.IsVisible);
+
+		Filter.WhenAnyPropertyChanged()
+			.Subscribe(x =>
+			{
+				_itemsCache.Refresh();
+			});
+
 		_itemsCache
 			.Connect()
 			.RefCount()
+			.Filter(Filter.IsVisible)
 			.SortAndPage(comparer, pageRequest)
 			.Bind(out _items)
 			.Subscribe();
@@ -74,11 +87,26 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial SortOrder Order { get; set; } = SortOrder.Ascending;
 
+	[ObservableProperty]
+	public partial List<string> TagsSource { get; set; } = new();
+
+	[ObservableProperty]
+	public partial List<string> GenresSource { get; set; } = new();
+
+	[ObservableProperty]
+	public partial List<string> OfficialRatingsSource { get; set; } = new();
+
+	[ObservableProperty]
+	public partial List<string> YearsSource { get; set; } = new();
+
+	public LibraryFilter Filter { get; set; } = new();
+
 	[RelayCommand]
 	public void UpdateSortBy(ItemSortBy sortBy) => SortBy = sortBy;
 
 	[RelayCommand]
 	public void UpdateSortOrder(SortOrder order) => Order = order;
+
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 
@@ -98,5 +126,69 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 
 		NumberOfPages = (int)Math.Ceiling(result.Items.Count / 100d);
 		_itemsCache.AddOrUpdate(result.Items);
+
+		var filters = await _jellyfinClient.GetFilters(libraryDto);
+
+		if(filters is null)
+		{
+			return;
+		}
+
+		TagsSource = filters.Tags?.ToList() ?? [];
+		GenresSource = filters.Genres?.ToList() ?? [];
+		OfficialRatingsSource = filters.OfficialRatings?.ToList() ?? [];
+		YearsSource = filters.Years?.Where(x => x.HasValue).Select(x => x!.Value.ToString()).ToList() ?? [];
+	}
+}
+
+public partial class LibraryFilter : ObservableObject
+{
+	public LibraryFilter()
+	{
+		Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
+		Genres.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Genres));
+		OfficialRatings.CollectionChanged += (_, _) => OnPropertyChanged(nameof(OfficialRatings));
+		Years.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Years));
+	}
+
+	public ObservableCollection<string> Tags { get; set; } = new();
+
+	[ObservableProperty]
+	public partial ObservableCollection<string> Genres { get; set; } = new();
+
+	[ObservableProperty]
+	public partial ObservableCollection<string> OfficialRatings { get; set; } = new();
+
+	[ObservableProperty]
+	public partial ObservableCollection<string> Years { get; set; } = new();
+
+	public bool IsVisible(BaseItemDto dto)
+	{
+		bool hasMatchingTags = true;
+		bool hasMatchingGenres = true;
+		bool hasMatchingOfficialRatings = true;
+		bool hasMatchingYears = true;
+
+		if(Tags is { Count : > 0})
+		{
+			hasMatchingTags = dto.Tags?.Intersect(Tags).Count() == Tags.Count;
+		}
+
+		if (Genres is { Count: > 0 })
+		{
+			hasMatchingGenres = dto.Genres?.Intersect(Genres).Count() == Genres.Count;
+		}
+
+		if (OfficialRatings is { Count : > 0})
+		{
+			hasMatchingOfficialRatings = OfficialRatings.Contains(dto.OfficialRating ?? "");
+		}
+
+		if (dto.ProductionYear is > 0 && Years is { Count : > 0})
+		{
+			hasMatchingYears = Years.Contains(dto.ProductionYear.Value.ToString());
+		}
+
+		return hasMatchingTags && hasMatchingGenres && hasMatchingOfficialRatings && hasMatchingYears;
 	}
 }

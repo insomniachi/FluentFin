@@ -63,7 +63,7 @@
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="Continue Watching" />
+                    Text="Next Up" />
 
                 <ScrollViewer
                     HorizontalScrollBarVisibility="Hidden"

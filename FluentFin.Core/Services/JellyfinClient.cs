@@ -113,7 +113,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				query.SortBy = [ItemSortBy.SortName];
 				query.SortOrder = [SortOrder.Ascending];
 				query.Recursive = recursive;
-				query.Fields = [ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated, ItemFields.Overview];
+				query.Fields = [ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated, ItemFields.Overview, ItemFields.Tags, ItemFields.Genres];
 				query.ImageTypeLimit = 1;
 				query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Banner, ImageType.Thumb];
 				query.ParentId = parent.Id;
@@ -230,6 +230,40 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			{
 				x.QueryParameters.UserId = UserId;
 				x.QueryParameters.Limit = 12;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task<QueryFiltersLegacy?> GetFilters(BaseItemDto library)
+	{
+		if(library.Type != BaseItemDto_Type.CollectionFolder)
+		{
+			return null;
+		}
+
+		if(library.Id is not { } id )
+		{
+			return null;
+		}
+
+		try
+		{
+			 return await _jellyfinApiClient.Items.Filters.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.UserId = UserId;
+				query.ParentId = id;
+				query.IncludeItemTypes = library.CollectionType switch
+				{
+					BaseItemDto_CollectionType.Movies => [BaseItemKind.Movie],
+					BaseItemDto_CollectionType.Tvshows => [BaseItemKind.Series],
+					_ => []
+				};
 			});
 		}
 		catch (Exception ex)

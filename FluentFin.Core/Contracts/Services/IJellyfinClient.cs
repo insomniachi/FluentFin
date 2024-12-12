@@ -26,6 +26,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		IAsyncEnumerable<BaseItemDto> GetUserLibraries();
 
+		Task<QueryFiltersLegacy?> GetFilters(BaseItemDto library);
+
 		Task<UserItemDataDto?> ToggleMarkAsFavorite(BaseItemDto dto);
 
 		Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto);

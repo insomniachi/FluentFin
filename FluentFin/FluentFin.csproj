@@ -35,6 +35,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.241112-preview1" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.241112-preview1" />
 		<PackageReference Include="DevWinUI.Controls" Version="8.0.0-Preview3" />

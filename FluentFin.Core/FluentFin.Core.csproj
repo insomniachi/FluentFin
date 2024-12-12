@@ -18,6 +18,6 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="ReactiveUI" Version="20.1.63" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview3" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	</ItemGroup>
 </Project>

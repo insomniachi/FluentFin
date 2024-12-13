@@ -10,6 +10,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dw="using:DevWinUI"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:labs="using:CommunityToolkit.Labs.WinUI"
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
@@ -348,12 +349,9 @@
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <dw:ImageEx
-                                            CacheMode="BitmapCache"
-                                            EnableLazyLoading="True"
-                                            IsCacheEnabled="True"
-                                            PlaceholderSource="/Assets/placeholder-person.png"
-                                            PlaceholderStretch="Fill"
+
+                                        <controls:LoadingImage
+                                            LoadingSymbol="Contact"
                                             Source="{x:Bind (jm:BaseItemPerson), Converter={StaticResource PersonImageConverter}}"
                                             Stretch="UniformToFill" />
 

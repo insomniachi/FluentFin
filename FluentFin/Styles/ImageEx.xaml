@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:dw="using:DevWinUI"
+    xmlns:ui="using:CommunityToolkit.WinUI">
+
+    <Style TargetType="controls:LoadingImage">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CacheMode" Value="BitmapCache" />
+        <Setter Property="EnableLazyLoading" Value="True" />
+        <Setter Property="IsCacheEnabled" Value="True" />
+        <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="LazyLoadingThreshold" Value="300" />
+        <Setter Property="LoadingIcon" Value="{ui:SymbolIcon Symbol=Pictures}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:LoadingImage">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid
+                            x:Name="FailedTemplate"
+                            Padding="20"
+                            Background="DarkGray">
+                            <Viewbox>
+                                <SymbolIcon Symbol="{TemplateBinding LoadingSymbol}" />
+                            </Viewbox>
+                        </Grid>
+                        <Image
+                            Name="Image"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                            NineGrid="{TemplateBinding NineGrid}"
+                            Opacity="0.0"
+                            Stretch="{TemplateBinding Stretch}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Failed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="0" />
+                                        <Setter Target="FailedTemplate.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Loading">
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="0" />
+                                        <Setter Target="FailedTemplate.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Loaded">
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="1" />
+                                        <Setter Target="FailedTemplate.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Unloaded" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

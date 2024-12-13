@@ -239,6 +239,26 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task<BaseItemDtoQueryResult?> Search(string searchTerm)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Items.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.SearchTerm = searchTerm;
+				query.Recursive = true;
+				query.Limit = 100;
+				query.IncludeItemTypes = [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Person];
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async Task<QueryFiltersLegacy?> GetFilters(BaseItemDto library)
 	{
 		if(library.Type != BaseItemDto_Type.CollectionFolder)

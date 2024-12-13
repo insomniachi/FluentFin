@@ -20,6 +20,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto);
 
+		Task<BaseItemDtoQueryResult?> Search(string searchTerm);
+
 		Task<BaseItemDto?> GetItem(Guid id);
 		
 		IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries();

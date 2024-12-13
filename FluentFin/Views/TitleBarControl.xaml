@@ -3,6 +3,7 @@
     x:Class="FluentFin.Views.TitleBarControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="using:FluentFin.Behaviors"
     xmlns:behaviors="using:FluentFin.Behaviors"
     xmlns:c="using:FluentFin.Converters"
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
@@ -10,6 +11,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:devwinui="using:DevWinUI"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:lc="using:FluentFin.Controls"
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -25,24 +27,55 @@
             x:Key="ObjectToBoolConverter"
             EmptyValue="False"
             NotEmptyValue="True" />
+        <c:JellyfinImageConverter x:Key="PrimaryImageConverter" />
+        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
     </UserControl.Resources>
 
     <TitleBar
         x:Name="TitleBar"
         Title="FluentFin"
         BackRequested="TitleBar_BackRequested"
-        IsBackButtonVisible="{Binding User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
-        IsBackEnabled="{Binding CanGoBack, Mode=OneWay}"
+        IsBackButtonVisible="{x:Bind ViewModel.User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
+        IsBackEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
         IsPaneToggleButtonVisible="{Binding User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
         PaneToggleRequested="TitleBar_PaneToggleRequested"
-        Subtitle="{Binding Version}">
+        Subtitle="{x:Bind ViewModel.Version}">
         <TitleBar.Content>
             <AutoSuggestBox
                 Width="600"
                 Margin="{StaticResource XSmallTopBottomMargin}"
                 PlaceholderText="Search movies, series, actors and more"
                 QueryIcon="Find"
-                Visibility="{Binding User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
+                Visibility="{x:Bind ViewModel.User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                <i:Interaction.Behaviors>
+                    <b:GlobalSearchBoxBehavior />
+                </i:Interaction.Behaviors>
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="jm:BaseItemDto">
+                        <Grid Padding="3" ColumnSpacing="20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid CornerRadius="{StaticResource ControlCornerRadius}">
+                                <Image
+                                    Height="100"
+                                    Source="{x:Bind (jm:BaseItemDto), Converter={StaticResource PrimaryImageConverter}}"
+                                    Stretch="UniformToFill" />
+                            </Grid>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+                <AutoSuggestBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="10" />
+                    </ItemsPanelTemplate>
+                </AutoSuggestBox.ItemsPanel>
+            </AutoSuggestBox>
         </TitleBar.Content>
         <TitleBar.Footer>
             <Button
@@ -52,12 +85,12 @@
                 HorizontalAlignment="Right"
                 BorderBrush="{ThemeResource CircleElevationBorderBrush}"
                 CornerRadius="16"
-                ToolTipService.ToolTip="{Binding User.Name}"
-                Visibility="{Binding User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                ToolTipService.ToolTip="{x:Bind ViewModel.User.Name}"
+                Visibility="{x:Bind ViewModel.User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
                 <PersonPicture
                     Width="32"
                     Height="32"
-                    DisplayName="{Binding User.Name}" />
+                    DisplayName="{x:Bind ViewModel.User.Name}" />
                 <Button.Flyout>
                     <Flyout
                         AllowFocusOnInteraction="True"
@@ -79,12 +112,12 @@
                                 <PersonPicture
                                     Width="48"
                                     Height="48"
-                                    DisplayName="{Binding User.Name}" />
+                                    DisplayName="{x:Bind ViewModel.User.Name}" />
                                 <TextBlock
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                    Text="{Binding User.Name}" />
+                                    Text="{x:Bind ViewModel.User.Name}" />
                             </Grid>
 
                             <MenuFlyoutSeparator Grid.Row="1" Margin="{StaticResource XSmallTopBottomMargin}" />

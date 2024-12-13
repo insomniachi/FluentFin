@@ -23,7 +23,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <views:TitleBarControl Grid.Row="0" DataContext="{x:Bind ViewModel.TitleBarViewModel}" />
+        <views:TitleBarControl Grid.Row="0" />
 
         <controls:SwitchPresenter
             Grid.Row="1"

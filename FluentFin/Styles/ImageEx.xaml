@@ -14,7 +14,8 @@
         <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="LazyLoadingThreshold" Value="300" />
-        <Setter Property="LoadingIcon" Value="{ui:SymbolIcon Symbol=Pictures}" />
+        <Setter Property="LoadingSymbol" Value="Pictures" />
+        <Setter Property="Stretch" Value="UniformToFill" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:LoadingImage">

@@ -1,4 +1,5 @@
 ﻿using FluentFin.Core.Contracts.Services;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
 using ReactiveUI;
@@ -18,10 +19,11 @@ public partial class GlobalSearchBoxBehavior : Behavior<AutoSuggestBox>
 
 
 		AssociatedObject.TextChanged += AssociatedObject_TextChanged;
+		AssociatedObject.SuggestionChosen += AssociatedObject_SuggestionChosen;
 
 		_disposable = _textChangedSubject
 			.DistinctUntilChanged()
-			.Throttle(TimeSpan.FromSeconds(1))
+			.Throttle(TimeSpan.FromMilliseconds(500))
 			.SelectMany(_jellyfinClient.Search)
 			.WhereNotNull()
 			.Subscribe(result =>
@@ -33,8 +35,25 @@ public partial class GlobalSearchBoxBehavior : Behavior<AutoSuggestBox>
 			});
 	}
 
+	private void AssociatedObject_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+	{
+		if(args.SelectedItem is not BaseItemDto dto)
+		{
+			return;
+		}
+
+		sender.Text = string.Empty;
+
+		App.Commands.DisplayDto(dto);
+	}
+
 	private void AssociatedObject_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 	{
+		if(args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
+		{
+			return;
+		}
+
 		if(string.IsNullOrEmpty(sender.Text))
 		{
 			return;
@@ -52,6 +71,7 @@ public partial class GlobalSearchBoxBehavior : Behavior<AutoSuggestBox>
 	{
 		_disposable?.Dispose();
 		AssociatedObject.TextChanged -= AssociatedObject_TextChanged;
+		AssociatedObject.SuggestionChosen -= AssociatedObject_SuggestionChosen;
 		base.OnDetaching();
 	}
 }

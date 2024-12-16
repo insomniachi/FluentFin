@@ -1,4 +1,5 @@
 ﻿using Jellyfin.Sdk.Generated.Models;
+using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Converters;
 

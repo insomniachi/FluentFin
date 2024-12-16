@@ -65,10 +65,10 @@
                             </i:Interaction.Behaviors>
 
                             <Grid>
-                                <Image
-                                    CacheMode="BitmapCache"
+                                <controls:LoadingImage
+                                    LoadingSymbol="{TemplateBinding LoadingSymbol}"
                                     Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource, Mode=OneWay}"
-                                    Stretch="Fill" />
+                                    Stretch="UniformToFill" />
 
                                 <media:UIElementExtensions.VisualFactory>
                                     <media:PipelineVisualFactory>
@@ -85,14 +85,14 @@
                                             Target="{Binding ElementName=ImageBlurEffect}"
                                             From="0"
                                             To="3"
-                                            Duration="0:0:0.3" />
+                                            Duration="0:0:0.2" />
                                         <animations:ColorEffectAnimation
                                             EasingMode="EaseOut"
                                             EasingType="Linear"
                                             Target="{Binding ElementName=ImageColorEffect}"
                                             From="Transparent"
                                             To="Gray"
-                                            Duration="0:0:0.3" />
+                                            Duration="0:0:0.2" />
                                     </animations:AnimationSet>
 
                                     <animations:AnimationSet x:Name="UnBlurAnimation" IsSequential="True">
@@ -102,14 +102,14 @@
                                             Target="{Binding ElementName=ImageBlurEffect}"
                                             From="3"
                                             To="0"
-                                            Duration="0:0:0.3" />
+                                            Duration="0:0:0.2" />
                                         <animations:ColorEffectAnimation
                                             EasingMode="EaseOut"
                                             EasingType="Linear"
                                             Target="{Binding ElementName=ImageColorEffect}"
                                             From="Gray"
                                             To="Transparent"
-                                            Duration="0:0:0.3" />
+                                            Duration="0:0:0.2" />
                                     </animations:AnimationSet>
                                 </animations:Explicit.Animations>
                             </Grid>

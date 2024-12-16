@@ -22,14 +22,14 @@ public sealed partial class PlayableMediaItem : Control
 		set { SetValue(ModelProperty, value); }
 	}
 
-	public Symbol LoadingSymbol
+	public string Glyph
 	{
-		get { return (Symbol)GetValue(LoadingSymbolProperty); }
-		set { SetValue(LoadingSymbolProperty, value); }
+		get { return (string)GetValue(GlyphProperty); }
+		set { SetValue(GlyphProperty, value); }
 	}
 
-	public static readonly DependencyProperty LoadingSymbolProperty =
-		DependencyProperty.Register("LoadingSymbol", typeof(Symbol), typeof(PlayableMediaItem), new PropertyMetadata(Symbol.Pictures));
+	public static readonly DependencyProperty GlyphProperty =
+		DependencyProperty.Register("Glyph", typeof(string), typeof(PlayableMediaItem), new PropertyMetadata("\uE8B9"));
 
 	public static readonly DependencyProperty ModelProperty =
 		DependencyProperty.Register("Model", typeof(BaseItemDto), typeof(PlayableMediaItem), new PropertyMetadata(null));

@@ -321,12 +321,8 @@
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <dw:ImageEx
-                                            CacheMode="BitmapCache"
-                                            EnableLazyLoading="True"
-                                            IsCacheEnabled="True"
-                                            PlaceholderSource="/Assets/placeholder-person.png"
-                                            PlaceholderStretch="Fill"
+                                        <controls:LoadingImage
+                                            Glyph="&#xE77B;"
                                             Source="{x:Bind (jm:BaseItemPerson), Converter={StaticResource PersonImageConverter}}"
                                             Stretch="UniformToFill" />
 

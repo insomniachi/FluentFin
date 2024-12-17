@@ -43,7 +43,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		}
 
 		MediaPlayer.PropertyChanged += MediaPlayer_PropertyChanged;
-		MediaPlayer.Subtitles.PropertyChanged += Subtitles_PropertyChanged;
 
 		Dto = dto;
 
@@ -79,19 +78,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		catch (Exception ex)
 		{
 			logger.LogError(ex, "Unhandled Exception");
-		}
-	}
-
-	private void Subtitles_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-	{
-		if(sender is not Subtitles subs)
-		{
-			return;
-		}
-
-		if(subs.IsOpened)
-		{
-			OnPropertyChanged(nameof(MediaPlayer));
 		}
 	}
 

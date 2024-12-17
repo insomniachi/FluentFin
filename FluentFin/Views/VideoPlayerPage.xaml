@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <flyleaf:FullScreenContainer x:Name="FSC">
+    <flyleaf:FullScreenContainer x:Name="FSC" PointerMoved="FSC_PointerMoved">
         <flyleaf:FlyleafHost x:Name="flyleafHost" Player="{x:Bind ViewModel.MediaPlayer}">
             <controls:TransportControls x:Name="TransportControls" Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}" />
         </flyleaf:FlyleafHost>

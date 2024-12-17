@@ -4,7 +4,6 @@ using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Kiota.Abstractions.Authentication;
 using System.Reflection;
 
 namespace FluentFin.Core.Services

@@ -15,21 +15,11 @@ public sealed partial class TitleBarControl : UserControl
 
 	private void TitleBar_PaneToggleRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
 	{
-		if(DataContext is not ITitleBarViewModel vm)
-		{
-			return;
-		}
-
-		vm.TogglePane();
-        }
+		ViewModel.TogglePane();
+    }
 
 	private void TitleBar_BackRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
 	{
-		if (DataContext is not ITitleBarViewModel vm)
-		{
-			return;
-		}
-
-		vm.GoBack();
+		ViewModel.GoBack();
 	}
-    }
+}

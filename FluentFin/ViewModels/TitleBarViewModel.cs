@@ -25,15 +25,6 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 		_jellyfinClient = jellyfinClient;
 
 		navigationService.Navigated += NavigationService_Navigated;
-
-		this.WhenAnyValue(x => x.SearchTerm)
-			.Where(x => x is { Length: >= 3 })
-			.Throttle(TimeSpan.FromSeconds(1))
-			.SelectMany(jellyfinClient.Search)
-			.WhereNotNull()
-			.Where(x => x.Items is { Count : > 0})
-			.ObserveOn(RxApp.MainThreadScheduler)
-			.Subscribe(result => SearchResults = result.Items!);
 	}
 
 	[ObservableProperty]
@@ -47,12 +38,6 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 
 	[ObservableProperty]
 	public partial UserDto? User { get; set; }
-
-	[ObservableProperty]
-	public partial string SearchTerm { get; set; }
-
-	[ObservableProperty]
-	public partial List<BaseItemDto> SearchResults { get; set; }
 
 	public void TogglePane()
 	{

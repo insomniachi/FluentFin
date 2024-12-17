@@ -50,6 +50,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task Logout();
 
+		Task BitrateTest();
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

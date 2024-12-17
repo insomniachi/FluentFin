@@ -29,6 +29,9 @@ public partial class LoginViewModel : ObservableObject
 	}
 
 
+	//[ObservableProperty]
+	//public partial string ServerUrl { get; set; } = "https://jellyfin.chaithram.xyz/jellyfin";
+
 	[ObservableProperty]
 	public partial string ServerUrl { get; set; } = "http://192.168.1.200:8096/jellyfin";
 

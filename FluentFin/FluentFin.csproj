@@ -18,6 +18,9 @@
 		<LangVersion>preview</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Controls\TransportControls.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
@@ -38,6 +41,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.241112-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.241112-preview1" />
 		<PackageReference Include="DevWinUI.Controls" Version="8.0.0-Preview3" />
+		<PackageReference Include="FlyleafLib.Controls.WinUI" Version="1.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.241114004-experimental1" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
@@ -54,6 +58,12 @@
 	  <Content Update="Assets\WindowIcon.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Controls\TransportControls.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

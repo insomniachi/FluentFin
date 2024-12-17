@@ -100,7 +100,7 @@ public partial class App : Application
         base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
-
+        StartFlyleaf();
 
 		Commands = GetService<GlobalCommands>();
         await GetService<IActivationService>().ActivateAsync(args);
@@ -109,5 +109,28 @@ public partial class App : Application
 	private async void MainWindow_Closed(object sender, WindowEventArgs args)
 	{
 		await GetService<IJellyfinClient>().Stop();
+	}
+
+	private static void StartFlyleaf()
+	{
+		FlyleafLib.Engine.Start(new FlyleafLib.EngineConfig()
+		{
+			FFmpegDevices = false,    // Prevents loading avdevice/avfilter dll files. Enable it only if you plan to use dshow/gdigrab etc.
+
+#if RELEASE
+            FFmpegPath = @"FFmpeg",
+            FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Quiet,
+            LogLevel = FlyleafLib.LogLevel.Quiet,
+
+#else
+			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Warn,
+			LogLevel = FlyleafLib.LogLevel.Debug,
+			LogOutput = ":debug",
+			FFmpegPath = @"E:\FFmpeg",
+#endif
+			UIRefresh = false,    // Required for Activity, BufferedDuration, Stats in combination with Config.Player.Stats = true
+			UIRefreshInterval = 250,      // How often (in ms) to notify the UI
+			UICurTimePerSecond = true,     // Whether to notify UI for CurTime only when it's second changed or by UIRefreshInterval
+		});
 	}
 }

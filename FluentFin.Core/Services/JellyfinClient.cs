@@ -543,6 +543,27 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task BitrateTest()
+	{
+		try
+		{
+			IEnumerable<int> sizes = [500000, 1000000, 3000000];
+
+			foreach (var size in sizes)
+			{
+				var time1 = TimeProvider.System.GetTimestamp();
+				var result = await _jellyfinApiClient.Playback.BitrateTest.GetAsync(x => x.QueryParameters.Size = size);
+				var elapsed = TimeProvider.System.GetElapsedTime(time1);
+			}
+
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

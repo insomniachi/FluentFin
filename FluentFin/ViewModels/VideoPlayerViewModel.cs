@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using Windows.Media.Core;
-using Windows.Media.Playback;
 
 namespace FluentFin.ViewModels;
 
@@ -32,22 +31,19 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		MediaPlayer.Source = null;
 		MediaPlayer.Dispose();
-		MediaPlayer = null;
 	}
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if(MediaPlayer is null)
-		{
-			return;
-		}
 
 		if(parameter is not BaseItemDto dto)
 		{
 			return;
 		}
+
+		MediaPlayer.PropertyChanged += MediaPlayer_PropertyChanged;
+		MediaPlayer.Subtitles.PropertyChanged += Subtitles_PropertyChanged;
 
 		Dto = dto;
 
@@ -60,9 +56,13 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		try
 		{
-			MediaPlayer.Source = MediaSource.CreateFromUri(uri);
-			MediaPlayer.Position = TimeSpan.FromTicks(dto.UserData?.PlaybackPositionTicks ?? 0);
-			MediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
+			var args = MediaPlayer.Open(uri.ToString());
+
+			if(!args.Success)
+			{
+				logger.LogError("Unable to open media, {Error}", args.Error);
+				return;
+			}
 
 			await jellyfinClient.Playing(dto);
 
@@ -72,7 +72,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 				.DisposeWith(_disposables);
 
 			Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-				.Subscribe(_ => Position = MediaPlayer.Position)
+				.Subscribe(_ => Position = new TimeSpan(MediaPlayer.CurTime))
 				.DisposeWith(_disposables);
 
 		}
@@ -82,20 +82,44 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		}
 	}
 
-	private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
+	private void Subtitles_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
-		if(Dto is null)
+		if(sender is not Subtitles subs)
 		{
 			return;
 		}
 
-		if(sender.CurrentState is MediaPlayerState.Paused)
+		if(subs.IsOpened)
+		{
+			OnPropertyChanged(nameof(MediaPlayer));
+		}
+	}
+
+	private async void MediaPlayer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	{
+		if(sender is not Player mp)
+		{
+			return;
+		}
+
+		if (Dto is null)
+		{
+			return;
+		}
+
+		if (e.PropertyName != nameof(MediaPlayer.Status))
+		{
+			return;
+		}
+
+		if(mp.Status == Status.Paused)
 		{
 			await jellyfinClient.Pause(Dto, Position);
 		}
 	}
 
-	public MediaPlayer? MediaPlayer { get; private set; } = new();
+
+	public Player MediaPlayer { get; private set; } = new();
 	public BaseItemDto? Dto { get; set; }
 
 	[ObservableProperty]
@@ -104,17 +128,17 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 	private async Task UpdateStatus()
 	{
-		if(Dto is null || MediaPlayer is null)
+		if(Dto is null)
 		{
 			return;
 		}
 
-		if(MediaPlayer.CurrentState is not MediaPlayerState.Playing)
+		if(MediaPlayer.Status is not Status.Playing)
 		{
 			return;
 		}
 
-		await jellyfinClient.Progress(Dto, MediaPlayer.Position);
+		await jellyfinClient.Progress(Dto, new TimeSpan(MediaPlayer.CurTime));
 
 	}
 

@@ -12,7 +12,10 @@
 
     <flyleaf:FullScreenContainer x:Name="FSC" PointerMoved="FSC_PointerMoved">
         <flyleaf:FlyleafHost x:Name="flyleafHost" Player="{x:Bind ViewModel.MediaPlayer}">
-            <controls:TransportControls x:Name="TransportControls" Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}" />
+            <controls:TransportControls
+                x:Name="TransportControls"
+                Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
+                Playlist="{x:Bind ViewModel.Playlist}" />
         </flyleaf:FlyleafHost>
     </flyleaf:FullScreenContainer>
 </Page>

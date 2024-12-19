@@ -51,6 +51,10 @@ namespace FluentFin.Core.Contracts.Services
 		Task Logout();
 
 		Task BitrateTest();
+
+		Task<List<RemoteSearchResult>> IdentifySeries(BaseItemDto dto, SeriesInfo info);
+		Task<List<RemoteSearchResult>> IdentifyMovie(BaseItemDto dto, MovieInfo info);
+		Task ApplyRemoteResult(BaseItemDto dto, RemoteSearchResult remoteResult);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

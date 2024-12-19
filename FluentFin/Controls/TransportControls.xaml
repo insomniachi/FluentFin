@@ -177,8 +177,8 @@
                     </AppBarButton>
                     <AppBarButton
                         x:Name="NextTrackButton"
+                        Command="{x:Bind Playlist.SelectNextCommand, Mode=OneWay}"
                         Icon="Next"
-                        IsEnabled="{x:Bind IsNextTrackButtonVisible, Mode=OneWay}"
                         IsTabStop="False"
                         Label="Next Episode">
                         <AppBarButton.KeyboardAccelerators>
@@ -198,8 +198,8 @@
                     </AppBarButton>
                     <AppBarButton
                         x:Name="PreviousTrackButton"
+                        Command="{x:Bind Playlist.SelectPrevCommand, Mode=OneWay}"
                         Icon="Previous"
-                        IsEnabled="{x:Bind IsPreviousTrackButtonVisible, Mode=OneWay}"
                         IsTabStop="False"
                         Label="Previous Episode">
                         <AppBarButton.KeyboardAccelerators>

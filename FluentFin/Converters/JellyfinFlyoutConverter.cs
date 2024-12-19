@@ -1,4 +1,8 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+﻿using CommunityToolkit.Mvvm.Input;
+using FluentFin.Dialogs.ViewModels;
+using FluentFin.Dialogs.Views;
+using FluentFin.Services;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 
@@ -6,6 +10,8 @@ namespace FluentFin.Converters;
 
 public partial class JellyfinFlyoutConverter : IValueConverter
 {
+	private static IContentDialogService _dialogService = App.GetService<IContentDialogService>();
+
 	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
 		if(value is not BaseItemDto dto)
@@ -30,7 +36,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			flyout.Items.Add(item);
 		}
 
-		foreach (var item in GetMetaDataItems(type))
+		foreach (var item in GetMetaDataItems(dto, type))
 		{
 			flyout.Items.Add(item);
 		}
@@ -43,7 +49,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		throw new NotSupportedException();
 	}
 
-	private static IEnumerable<MenuFlyoutItemBase> GetMetaDataItems(BaseItemDto_Type type)
+	private IEnumerable<MenuFlyoutItemBase> GetMetaDataItems(BaseItemDto dto, BaseItemDto_Type type)
 	{
 		yield return new MenuFlyoutItem
 		{
@@ -70,7 +76,9 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			yield return new MenuFlyoutItem
 			{
 				Text = "Identify",
-				Icon = new SymbolIcon { Symbol = Symbol.Edit }
+				Icon = new SymbolIcon { Symbol = Symbol.Edit },
+				Command = ShowIdentifyDialogCommand,
+				CommandParameter = dto,
 			};
 		}
 
@@ -176,5 +184,25 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		}
 
 		yield return new MenuFlyoutSeparator();
+	}
+
+	[RelayCommand]
+	private static async Task ShowIdentifyDialog(BaseItemDto dto)
+	{
+		var vm = App.GetService<IdentifyViewModel>();
+		vm.Item = dto;
+
+		var result = await _dialogService.ShowDialog(vm, x =>
+		{
+			x.Closing += (_, e) =>
+			{
+				if(!vm.CanClose)
+				{
+					e.Cancel = true;
+				}
+			};
+			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
+			x.PrimaryButtonClick += (_, _) => { vm.CanClose = vm.ViewState == State.Result; };
+		});
 	}
 }

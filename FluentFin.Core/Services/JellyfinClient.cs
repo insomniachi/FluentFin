@@ -564,6 +564,59 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task<List<RemoteSearchResult>> IdentifySeries(BaseItemDto dto, SeriesInfo info)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Items.RemoteSearch.Series.PostAsync(new SeriesInfoRemoteSearchQuery
+			{
+				ItemId = dto.Id,
+				SearchInfo = info
+			}) ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task<List<RemoteSearchResult>> IdentifyMovie(BaseItemDto dto, MovieInfo info)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Items.RemoteSearch.Movie.PostAsync(new MovieInfoRemoteSearchQuery
+			{
+				ItemId = dto.Id,
+				SearchInfo = info
+			}) ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task ApplyRemoteResult(BaseItemDto dto, RemoteSearchResult remoteResult)
+	{
+		if(dto.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items.RemoteSearch.Apply[id].PostAsync(remoteResult);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			throw;
+		}
+
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

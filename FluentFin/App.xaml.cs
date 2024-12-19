@@ -5,6 +5,8 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.Dialogs.ViewModels;
+using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
 using FluentFin.Services;
 using FluentFin.ViewModels;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using ReactiveUI;
 using System.ComponentModel;
 using System.Text.Json;
 
@@ -60,6 +63,7 @@ public partial class App : Application
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
 			services.AddSingleton<INavigationServiceCore>(sp => sp.GetRequiredService<INavigationService>());
+            services.AddTransient<IContentDialogService, ContentDialogService>();
 
 			// Core Services
 			services.AddTransient<LoginViewModel>();
@@ -79,6 +83,10 @@ public partial class App : Application
 			services.AddTransient<MovieViewModel>();
 			services.AddTransient<SeriesViewModel>();
 			services.AddTransient<SeasonViewModel>();
+
+            // Dialogs
+            services.AddTransient<IViewFor<IdentifyViewModel>, IdentifyDialog>();
+            services.AddTransient<IdentifyViewModel>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

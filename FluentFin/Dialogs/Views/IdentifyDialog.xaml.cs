@@ -24,4 +24,5 @@ public sealed partial class IdentifyDialog : IViewFor<IdentifyViewModel>
 
 		ViewModel.SelectedResult = (RemoteSearchResult)sender.SelectedItem;
     }
+
 }

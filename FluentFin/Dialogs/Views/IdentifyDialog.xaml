@@ -15,9 +15,11 @@
     CloseButtonText="Close"
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="True"
-    IsSecondaryButtonEnabled="False"
+    IsSecondaryButtonEnabled="True"
     PrimaryButtonCommand="{x:Bind ViewModel.PrimaryButtonExecuteCommand, Mode=OneWay}"
     PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText, Mode=OneWay}"
+    SecondaryButtonCommand="{x:Bind ViewModel.BackCommand, Mode=OneWay}"
+    SecondaryButtonText="{x:Bind ViewModel.SecondaryButtonText, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
@@ -87,30 +89,29 @@
                     <ItemsView.ItemTemplate>
                         <DataTemplate x:DataType="jm:RemoteSearchResult">
                             <ItemContainer>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
+                                <Grid ColumnSpacing="15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
                                     <controls:LoadingImage
-                                        Height="100"
+                                        CornerRadius="{StaticResource ControlCornerRadius}"
                                         Source="{x:Bind ImageUrl}"
                                         Stretch="UniformToFill" />
-                                    <StackPanel Grid.Row="1">
-                                        <TextBlock Text="{x:Bind Name}" />
-                                        <TextBlock Text="{x:Bind ProductionYear}" />
-                                        <TextBlock Text="{x:Bind SearchProviderName}" TextTrimming="CharacterEllipsis" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind ProductionYear}" />
+                                        <TextBlock
+                                            Style="{ThemeResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind SearchProviderName}"
+                                            TextTrimming="CharacterEllipsis" />
                                     </StackPanel>
                                 </Grid>
                             </ItemContainer>
                         </DataTemplate>
                     </ItemsView.ItemTemplate>
                     <ItemsView.Layout>
-                        <UniformGridLayout
-                            ItemsStretch="Fill"
-                            MinColumnSpacing="50"
-                            MinRowSpacing="50"
-                            Orientation="Horizontal" />
+                        <StackLayout Orientation="Vertical" Spacing="5" />
                     </ItemsView.Layout>
                 </ItemsView>
             </ctk:Case>

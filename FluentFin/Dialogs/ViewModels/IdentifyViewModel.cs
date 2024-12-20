@@ -22,6 +22,14 @@ public partial class IdentifyViewModel : ObservableObject
 				_ => "Search"
 			})
 			.Subscribe(text => PrimaryButtonText = text);
+
+		this.WhenAnyValue(x => x.ViewState)
+			.Select(value => value switch
+			{
+				State.Result => "Back",
+				_ => ""
+			})
+			.Subscribe(text => SecondaryButtonText = text);
 	}
 
 	public BaseItemDto Item { get; set; } = new();
@@ -65,6 +73,9 @@ public partial class IdentifyViewModel : ObservableObject
 	[ObservableProperty]
 	public partial RemoteSearchResult? SelectedResult { get; set; }
 
+	[ObservableProperty]
+	public partial string SecondaryButtonText { get; set; }
+
 	public bool CanClose { get; set; }
 
 
@@ -80,6 +91,9 @@ public partial class IdentifyViewModel : ObservableObject
 			await Submit();
 		}
 	}
+
+	[RelayCommand]
+	public void Back() => ViewState = State.Input;
 
 	private async Task Submit()
 	{

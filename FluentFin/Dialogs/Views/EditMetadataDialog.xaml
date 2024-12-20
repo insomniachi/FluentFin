@@ -21,7 +21,7 @@
     PrimaryButtonText="Save"
     SecondaryButtonCommand="{x:Bind ViewModel.ResetCommand}"
     SecondaryButtonText="Reset"
-    Style="{StaticResource DefaultContentDialogStyle}"
+    Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
     mc:Ignorable="d">
 
     <ContentDialog.Resources>

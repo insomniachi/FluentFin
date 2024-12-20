@@ -85,7 +85,9 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			yield return new MenuFlyoutItem
 			{
 				Text = "Media Info",
-				Icon = new SymbolIcon { Symbol = Symbol.MusicInfo }
+				Icon = new SymbolIcon { Symbol = Symbol.MusicInfo },
+				Command = App.Dialogs.MediaInfoDialogCommand,
+				CommandParameter = dto,
 			};
 		}
 

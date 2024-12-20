@@ -94,6 +94,7 @@ public partial class App : Application
             // Dialogs
             services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
+            services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

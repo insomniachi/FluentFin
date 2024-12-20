@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="FluentFin.Dialogs.Views.MediaInfoDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Dialogs.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:FluentFin.Dialogs.ViewModels"
+    Title="Media Info"
+    CloseButtonText="Close"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="False"
+    IsSecondaryButtonEnabled="False"
+    Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
+    mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleConverter" />
+        <cc:EmptyObjectToObjectConverter
+            x:Key="ObjectToVisiblityConvertr"
+            EmptyValue="Collapsed"
+            NotEmptyValue="Visible" />
+        <cc:SwitchConverter x:Key="VisibleForVideoConverter" TargetType="jm:MediaStream_Type">
+            <ctk:Case Value="Video">
+                <Visibility>Visible</Visibility>
+            </ctk:Case>
+            <ctk:Case IsDefault="True">
+                <Visibility>Collapsed</Visibility>
+            </ctk:Case>
+        </cc:SwitchConverter>
+    </ContentDialog.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Item.MediaSources, Mode=OneWay}">
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="jm:MediaSourceInfo">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="{StaticResource SmallTopBottomMargin}"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                            Text="{x:Bind Name}" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Container" />
+                            <TextBlock Text="{x:Bind Container}" />
+                        </StackPanel>
+                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Path" />
+                        <TextBlock Text="{x:Bind Path}" TextWrapping="WrapWholeWords" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Size" />
+                            <TextBlock Text="{x:Bind Size}" />
+                        </StackPanel>
+
+                        <ItemsRepeater ItemsSource="{x:Bind MediaStreams}">
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="jm:MediaStream">
+                                    <StackPanel>
+                                        <StackPanel.Resources>
+                                            <Style x:Key="HorizontalStackLayout" TargetType="StackPanel">
+                                                <Setter Property="Orientation" Value="Horizontal" />
+                                                <Setter Property="Spacing" Value="10" />
+                                            </Style>
+                                        </StackPanel.Resources>
+                                        <TextBlock
+                                            Margin="{StaticResource XSmallTopMargin}"
+                                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                                            Text="{x:Bind Type}" />
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind DisplayTitle, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Title" />
+                                            <TextBlock Text="{x:Bind DisplayTitle}" TextWrapping="WrapWholeWords" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Language, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Language" />
+                                            <TextBlock Text="{x:Bind Language}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Codec, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Codec" />
+                                            <TextBlock Text="{x:Bind Codec}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind IsAVC, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="AVC" />
+                                            <TextBlock Text="{x:Bind IsAVC}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Profile, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Profie" />
+                                            <TextBlock Text="{x:Bind Profile}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Type, Converter={StaticResource VisibleForVideoConverter}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Level" />
+                                            <TextBlock Text="{x:Bind Level}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Type, Converter={StaticResource VisibleForVideoConverter}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Resolution" />
+                                            <TextBlock>
+                                                <Run Text="{x:Bind Width}" />
+                                                <Run Text="x" />
+                                                <Run Text="{x:Bind Height}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind AspectRatio, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Aspect ratio" />
+                                            <TextBlock Text="{x:Bind AspectRatio}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind IsAnamorphic, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Anamorphic" />
+                                            <TextBlock Text="{x:Bind IsAnamorphic}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Type, Converter={StaticResource VisibleForVideoConverter}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Interlaced" />
+                                            <TextBlock Text="{x:Bind IsInterlaced}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind AverageFrameRate, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Framerate" />
+                                            <TextBlock Text="{x:Bind AverageFrameRate}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind ChannelLayout, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Layout" />
+                                            <TextBlock Text="{x:Bind ChannelLayout}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Channels, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Channels" />
+                                            <TextBlock Text="{x:Bind Channels}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind BitRate, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Bitrate" />
+                                            <TextBlock Text="{x:Bind BitRate}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind BitDepth, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Bit depth" />
+                                            <TextBlock Text="{x:Bind BitDepth}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Type, Converter={StaticResource VisibleForVideoConverter}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Video range" />
+                                            <TextBlock Text="{x:Bind VideoRange}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Type, Converter={StaticResource VisibleForVideoConverter}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Video range type" />
+                                            <TextBlock Text="{x:Bind VideoRangeType}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind ColorSpace, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Color space" />
+                                            <TextBlock Text="{x:Bind ColorSpace}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind ColorTransfer, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Color transfer" />
+                                            <TextBlock Text="{x:Bind ColorTransfer}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind ColorPrimaries, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Color primaries" />
+                                            <TextBlock Text="{x:Bind ColorPrimaries}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind PixelFormat, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Pixel format" />
+                                            <TextBlock Text="{x:Bind PixelFormat}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind RefFrames, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Ref frames" />
+                                            <TextBlock Text="{x:Bind RefFrames}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind NalLengthSize, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="NAL" />
+                                            <TextBlock Text="{x:Bind NalLengthSize}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind SampleRate, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Sample rate" />
+                                            <TextBlock Text="{x:Bind SampleRate}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind IsDefault, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Default" />
+                                            <TextBlock Text="{x:Bind IsDefault}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind IsForced, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Forced" />
+                                            <TextBlock Text="{x:Bind IsForced}" />
+                                        </StackPanel>
+                                        <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind IsExternal, Converter={StaticResource ObjectToVisiblityConvertr}}">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="External" />
+                                            <TextBlock Text="{x:Bind IsExternal}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="20" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
+    </ScrollViewer>
+</ContentDialog>

@@ -20,7 +20,7 @@
     PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText, Mode=OneWay}"
     SecondaryButtonCommand="{x:Bind ViewModel.BackCommand, Mode=OneWay}"
     SecondaryButtonText="{x:Bind ViewModel.SecondaryButtonText, Mode=OneWay}"
-    Style="{StaticResource DefaultContentDialogStyle}"
+    Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
     mc:Ignorable="d">
 
     <ScrollViewer MinWidth="500">

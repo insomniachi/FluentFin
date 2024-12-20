@@ -50,6 +50,14 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	}
 
 	[RelayCommand]
+	private async Task MediaInfoDialog(BaseItemDto dto)
+	{
+		var vm = App.GetService<MediaInfoViewModel>();
+		await vm.Initialize(dto.Id ?? Guid.Empty);
+		await dialogService.ShowDialog(vm, null!);
+	}
+
+	[RelayCommand]
 	private void CopyUrlToClipboard(BaseItemDto dto)
 	{
 		if(jellyfinClient.GetStreamUrl(dto) is not { } uri)

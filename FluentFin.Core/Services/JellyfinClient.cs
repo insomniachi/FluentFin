@@ -633,6 +633,17 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public Uri? GetStreamUrl(BaseItemDto dto)
+	{
+		if(dto.Id is not { } id)
+		{
+			return null;
+		}
+
+		var info = _jellyfinApiClient.Items[id].Download.ToGetRequestInformation();
+		return AddApiKey(info.URI);
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

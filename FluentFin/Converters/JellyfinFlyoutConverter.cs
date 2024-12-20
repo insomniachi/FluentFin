@@ -26,7 +26,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			flyout.Items.Add(item);
 		}
 
-		foreach (var item in GetDtoItems(type))
+		foreach (var item in GetDtoItems(dto, type))
 		{
 			flyout.Items.Add(item);
 		}
@@ -130,7 +130,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		yield return new MenuFlyoutSeparator();
 	}
 
-	private static IEnumerable<MenuFlyoutItemBase> GetDtoItems(BaseItemDto_Type type)
+	private static IEnumerable<MenuFlyoutItemBase> GetDtoItems(BaseItemDto dto, BaseItemDto_Type type)
 	{
 
 		yield return new MenuFlyoutItem
@@ -152,13 +152,10 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		{
 			yield return new MenuFlyoutItem
 			{
-				Text = "Download",
-				Icon = new SymbolIcon { Symbol = Symbol.Download }
-			};
-			yield return new MenuFlyoutItem
-			{
-				Text = "Copy Stream URL",
-				Icon = new SymbolIcon { Symbol = Symbol.Copy }
+				Text = "Copy Download URL",
+				Icon = new SymbolIcon { Symbol = Symbol.Copy },
+				Command = App.Dialogs.CopyUrlToClipboardCommand,
+				CommandParameter = dto,
 			};
 			yield return new MenuFlyoutItem
 			{
@@ -169,11 +166,6 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 
 		if(type is BaseItemDto_Type.Series or BaseItemDto_Type.Season)
 		{
-			yield return new MenuFlyoutItem
-			{
-				Text = "Download All",
-				Icon = new SymbolIcon { Symbol = Symbol.Download }
-			};
 			yield return new MenuFlyoutItem
 			{
 				Text = "Delete Series",

@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Services;
 using Jellyfin.Sdk.Generated.Models;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace FluentFin.Dialogs;
 
-public partial class DialogCommands(IContentDialogService dialogService)
+public partial class DialogCommands(IContentDialogService dialogService,
+									IJellyfinClient jellyfinClient)
 {
 	[RelayCommand]
 	private async Task IdentifyDialog(BaseItemDto dto)
@@ -44,5 +47,18 @@ public partial class DialogCommands(IContentDialogService dialogService)
 			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
 			x.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
 		});
+	}
+
+	[RelayCommand]
+	private void CopyUrlToClipboard(BaseItemDto dto)
+	{
+		if(jellyfinClient.GetStreamUrl(dto) is not { } uri)
+		{
+			return;
+		}
+
+		var package = new DataPackage();
+		package.SetText(uri.ToString());
+		Clipboard.SetContent(package);
 	}
 }

@@ -74,7 +74,7 @@ public partial class IdentifyViewModel : ObservableObject
 	public partial RemoteSearchResult? SelectedResult { get; set; }
 
 	[ObservableProperty]
-	public partial string SecondaryButtonText { get; set; }
+	public partial string SecondaryButtonText { get; set; } = "";
 
 	public bool CanClose { get; set; }
 

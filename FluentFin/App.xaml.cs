@@ -87,6 +87,8 @@ public partial class App : Application
             // Dialogs
             services.AddTransient<IViewFor<IdentifyViewModel>, IdentifyDialog>();
             services.AddTransient<IdentifyViewModel>();
+            services.AddTransient<IViewFor<EditMetadataViewModel>, EditMetadataDialog>();
+            services.AddTransient<EditMetadataViewModel>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

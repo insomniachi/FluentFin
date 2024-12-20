@@ -54,8 +54,11 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		yield return new MenuFlyoutItem
 		{
 			Text = "Edit Metadata",
-			Icon = new SymbolIcon { Symbol = Symbol.Edit }
+			Icon = new SymbolIcon { Symbol = Symbol.Edit },
+			Command = ShowEditMetadataDialogCommand,
+			CommandParameter = dto
 		};
+
 		yield return new MenuFlyoutItem
 		{
 			Text = "Edit Images",
@@ -203,6 +206,25 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
 			x.PrimaryButtonClick += (_, _) => { vm.CanClose = vm.ViewState == State.Result; };
+		});
+	}
+
+	[RelayCommand]
+	private static async Task ShowEditMetadataDialog(BaseItemDto dto)
+	{
+		var vm = App.GetService<EditMetadataViewModel>();
+		await vm.Initialize(dto.Id ?? Guid.Empty);
+		await _dialogService.ShowDialog(vm, x =>
+		{
+			x.Closing += (_, e) =>
+			{
+				if (!vm.CanClose)
+				{
+					e.Cancel = true;
+				}
+			};
+			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
+			x.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
 		});
 	}
 }

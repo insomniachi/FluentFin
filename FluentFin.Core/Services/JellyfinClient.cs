@@ -612,9 +612,25 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		catch (Exception ex)
 		{
 			logger.LogError(ex, @"Unhandled exception");
-			throw;
 		}
 
+	}
+
+	public async Task UpdateMetadata(BaseItemDto dto)
+	{
+		if(dto.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items[id].PostAsync(dto);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+		}
 	}
 
 	private Uri AddApiKey(Uri uri)

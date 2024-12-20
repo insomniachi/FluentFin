@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using FluentFin.Dialogs.ViewModels;
-using FluentFin.Dialogs.Views;
-using FluentFin.Services;
+﻿using FluentFin.Services;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -10,8 +7,6 @@ namespace FluentFin.Converters;
 
 public partial class JellyfinFlyoutConverter : IValueConverter
 {
-	private static IContentDialogService _dialogService = App.GetService<IContentDialogService>();
-
 	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
 		if(value is not BaseItemDto dto)
@@ -49,13 +44,13 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		throw new NotSupportedException();
 	}
 
-	private IEnumerable<MenuFlyoutItemBase> GetMetaDataItems(BaseItemDto dto, BaseItemDto_Type type)
+	private static IEnumerable<MenuFlyoutItemBase> GetMetaDataItems(BaseItemDto dto, BaseItemDto_Type type)
 	{
 		yield return new MenuFlyoutItem
 		{
 			Text = "Edit Metadata",
 			Icon = new SymbolIcon { Symbol = Symbol.Edit },
-			Command = ShowEditMetadataDialogCommand,
+			Command = App.Dialogs.EditMetadataDialogCommand,
 			CommandParameter = dto
 		};
 
@@ -80,7 +75,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			{
 				Text = "Identify",
 				Icon = new SymbolIcon { Symbol = Symbol.Edit },
-				Command = ShowIdentifyDialogCommand,
+				Command = App.Dialogs.IdentifyDialogCommand,
 				CommandParameter = dto,
 			};
 		}
@@ -187,44 +182,5 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		}
 
 		yield return new MenuFlyoutSeparator();
-	}
-
-	[RelayCommand]
-	private static async Task ShowIdentifyDialog(BaseItemDto dto)
-	{
-		var vm = App.GetService<IdentifyViewModel>();
-		vm.Item = dto;
-
-		var result = await _dialogService.ShowDialog(vm, x =>
-		{
-			x.Closing += (_, e) =>
-			{
-				if(!vm.CanClose)
-				{
-					e.Cancel = true;
-				}
-			};
-			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
-			x.PrimaryButtonClick += (_, _) => { vm.CanClose = vm.ViewState == State.Result; };
-		});
-	}
-
-	[RelayCommand]
-	private static async Task ShowEditMetadataDialog(BaseItemDto dto)
-	{
-		var vm = App.GetService<EditMetadataViewModel>();
-		await vm.Initialize(dto.Id ?? Guid.Empty);
-		await _dialogService.ShowDialog(vm, x =>
-		{
-			x.Closing += (_, e) =>
-			{
-				if (!vm.CanClose)
-				{
-					e.Cancel = true;
-				}
-			};
-			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
-			x.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
-		});
 	}
 }

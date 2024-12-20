@@ -5,6 +5,7 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.Dialogs;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
@@ -40,7 +41,10 @@ public partial class App : Application
 
     public static WindowEx MainWindow { get; } = new MainWindow();
 
-	public static GlobalCommands Commands { get; private set; } = null!;
+    public static GlobalCommands Commands { get; } = GetService<GlobalCommands>();
+
+    public static DialogCommands Dialogs { get; } = GetService<DialogCommands>();
+
 
     public App()
     {
@@ -72,9 +76,12 @@ public partial class App : Application
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton<KnownFolders>();
-			services.AddSingleton<GlobalCommands>();
 
-            // Views and ViewModels
+			// Commands
+			services.AddSingleton<GlobalCommands>();
+			services.AddSingleton<DialogCommands>();
+
+			// Views and ViewModels
 			services.AddSingleton<IMainWindowViewModel, MainViewModel>();
 			services.AddSingleton<ITitleBarViewModel, TitleBarViewModel>();
 			services.AddTransient<HomeViewModel>();
@@ -85,10 +92,8 @@ public partial class App : Application
 			services.AddTransient<SeasonViewModel>();
 
             // Dialogs
-            services.AddTransient<IViewFor<IdentifyViewModel>, IdentifyDialog>();
-            services.AddTransient<IdentifyViewModel>();
-            services.AddTransient<IViewFor<EditMetadataViewModel>, EditMetadataDialog>();
-            services.AddTransient<EditMetadataViewModel>();
+            services.AddDialog<IdentifyViewModel, IdentifyDialog>();
+            services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
@@ -102,7 +107,8 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-		GetService<ILogger<App>>().LogError(e.Exception, e.Message);
+		GetService<ILogger<App>>().LogError(e.Exception, "Unhandled exception");
+        e.Handled = true;
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
@@ -112,7 +118,6 @@ public partial class App : Application
 		MainWindow.Closed += MainWindow_Closed;
         StartFlyleaf();
 
-		Commands = GetService<GlobalCommands>();
         await GetService<IActivationService>().ActivateAsync(args);
     }
 

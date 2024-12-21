@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
@@ -41,27 +42,6 @@ public partial class IdentifyViewModel : ObservableObject
 	public partial int? Year { get; set; }
 
 	[ObservableProperty]
-	public partial string AnilistSeriesId { get; set; } = "";
-
-	[ObservableProperty]
-	public partial string ImbdId { get; set; } = "";
-
-	[ObservableProperty]
-	public partial string TmdbMovieId { get; set; } = "";
-
-	[ObservableProperty]
-	public partial string TmdbBoxSetId { get; set; } = "";
-
-	[ObservableProperty]
-	public partial string TvdbBoxSetId { get; set; } = "";
-
-	[ObservableProperty]
-	public partial string TvdbNumericalMovieId { get; set; } = "";
-
-	[ObservableProperty]
-	public partial string TvdbSlugMovieId { get; set; } = "";
-
-	[ObservableProperty]
 	public partial List<RemoteSearchResult> Results { get; set; } = [];
 
 	[ObservableProperty]
@@ -76,8 +56,27 @@ public partial class IdentifyViewModel : ObservableObject
 	[ObservableProperty]
 	public partial string SecondaryButtonText { get; set; } = "";
 
+	public ObservableCollection<KeyValueViewModel> ExternalIds { get; } = [];
+
 	public bool CanClose { get; set; }
 
+
+	public async Task Initialize(BaseItemDto dto)
+	{
+		Item = dto;
+
+		var externalIds = await _jellyfinClient.GetExternalIdInfo(dto);
+
+		foreach (var item in externalIds)
+		{
+			if(string.IsNullOrEmpty(item.Key) || string.IsNullOrEmpty(item.Name))
+			{
+				continue;
+			}
+
+			ExternalIds.Add(new KeyValueViewModel(item.Name, item.Key, item.Type));
+		}
+	}
 
 	[RelayCommand]
 	public async Task PrimaryButtonExecute()
@@ -116,15 +115,7 @@ public partial class IdentifyViewModel : ObservableObject
 				Year = Year,
 				ProviderIds = new MovieInfo_ProviderIds
 				{
-					AdditionalData =
-					{
-						{"AniList" , AnilistSeriesId },
-						{"Imdb", ImbdId },
-						{"Tmdb", TmdbMovieId},
-						{"Tvdb", TvdbNumericalMovieId },
-						{"TvdbCollection", TvdbBoxSetId },
-						{"TvdbSlug", TvdbSlugMovieId },
-					}
+					AdditionalData = ExternalIds.ToDictionary(x => x.Key, x => (object?)x.Value)
 				}
 			});
 		}
@@ -136,20 +127,22 @@ public partial class IdentifyViewModel : ObservableObject
 				Year = Year,
 				ProviderIds = new SeriesInfo_ProviderIds
 				{
-					AdditionalData =
-					{
-						{"AniList" , AnilistSeriesId },
-						{"Imdb", ImbdId },
-						{"Tmdb", TmdbMovieId},
-						{"Tvdb", TvdbNumericalMovieId },
-						{"TvdbCollection", TvdbBoxSetId },
-						{"TvdbSlug", TvdbSlugMovieId },
-					}
+					AdditionalData = ExternalIds.ToDictionary(x => x.Key, x => (object?)x.Value)
 				}
 			});
 		}
 		ViewState = State.Result;
 	}
+}
+
+public partial class KeyValueViewModel(string name, string key, ExternalIdInfo_Type? type) : ObservableObject
+{
+	public string DisplayName { get; } = name;
+	public string Key { get; } = key;
+	public ExternalIdInfo_Type? Type { get; } = type;
+
+	[ObservableProperty]
+	public partial string? Value { get; set; }
 }
 
 public enum State

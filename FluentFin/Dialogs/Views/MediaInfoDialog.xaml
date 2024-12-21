@@ -36,7 +36,10 @@
         </cc:SwitchConverter>
     </ContentDialog.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Hidden"
+        HorizontalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Hidden">
         <ItemsRepeater ItemsSource="{x:Bind ViewModel.Item.MediaSources, Mode=OneWay}">
             <ItemsRepeater.ItemTemplate>
                 <DataTemplate x:DataType="jm:MediaSourceInfo">
@@ -72,7 +75,7 @@
                                             Text="{x:Bind Type}" />
                                         <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind DisplayTitle, Converter={StaticResource ObjectToVisiblityConvertr}}">
                                             <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Title" />
-                                            <TextBlock Text="{x:Bind DisplayTitle}" TextWrapping="WrapWholeWords" />
+                                            <TextBlock Text="{x:Bind DisplayTitle}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
                                         <StackPanel Style="{StaticResource HorizontalStackLayout}" Visibility="{x:Bind Language, Converter={StaticResource ObjectToVisiblityConvertr}}">
                                             <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Language" />

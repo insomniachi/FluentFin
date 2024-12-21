@@ -644,6 +644,24 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		return AddApiKey(info.URI);
 	}
 
+	public async Task<List<ExternalIdInfo>> GetExternalIdInfo(BaseItemDto dto)
+	{
+		if(dto.Id is not { } id)
+		{
+			return [];
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].ExternalIdInfos.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

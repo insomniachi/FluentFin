@@ -14,7 +14,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	private async Task IdentifyDialog(BaseItemDto dto)
 	{
 		var vm = App.GetService<IdentifyViewModel>();
-		vm.Item = dto;
+		await vm.Initialize(dto);
 
 		var result = await dialogService.ShowDialog(vm, x =>
 		{

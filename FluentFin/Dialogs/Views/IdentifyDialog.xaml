@@ -43,34 +43,23 @@
                         <TextBlock Text="Year" />
                         <NumberBox Text="{x:Bind ViewModel.Year, Mode=TwoWay}" />
                     </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="AniList Series Id" />
-                        <TextBox Text="{x:Bind ViewModel.AnilistSeriesId, Mode=TwoWay}" />
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="IMDb Id" />
-                        <TextBox Text="{x:Bind ViewModel.ImbdId, Mode=TwoWay}" />
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="TheMovieDb Movie Id" />
-                        <TextBox Text="{x:Bind ViewModel.TmdbMovieId, Mode=TwoWay}" />
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="TheMovieDb Box Set Id" />
-                        <TextBox Text="{x:Bind ViewModel.TmdbBoxSetId, Mode=TwoWay}" />
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="TheTVDB Box Set Id" />
-                        <TextBox Text="{x:Bind ViewModel.TvdbBoxSetId, Mode=TwoWay}" />
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="TheTVDB Numerical Movie Id" />
-                        <TextBox Text="{x:Bind ViewModel.TvdbNumericalMovieId, Mode=TwoWay}" />
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="TheTVDB Slug Movie Id" />
-                        <TextBox Text="{x:Bind ViewModel.TvdbSlugMovieId, Mode=TwoWay}" />
-                    </StackPanel>
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="vm:KeyValueViewModel">
+                                <StackPanel>
+                                    <TextBlock>
+                                        <Run Text="{x:Bind DisplayName}" />
+                                        <Run Text="{x:Bind Type}"/>
+                                        <Run Text="Id" />
+                                    </TextBlock>
+                                    <TextBox Text="{x:Bind Value, Mode=TwoWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Spacing="20" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
                 </StackPanel>
             </ctk:Case>
             <ctk:Case Value="Loading">

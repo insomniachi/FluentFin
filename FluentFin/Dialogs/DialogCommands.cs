@@ -3,6 +3,8 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Services;
 using Jellyfin.Sdk.Generated.Models;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace FluentFin.Dialogs;
@@ -34,7 +36,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	private async Task EditMetadataDialog(BaseItemDto dto)
 	{
 		var vm = App.GetService<EditMetadataViewModel>();
-		await vm.Initialize(dto.Id ?? Guid.Empty);
+		await vm.Initialize(dto);
 		await dialogService.ShowDialog(vm, x =>
 		{
 			x.Closing += (_, e) =>

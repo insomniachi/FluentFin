@@ -662,6 +662,24 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task<MetadataEditorInfo?> GetMetadataEditorInfo(BaseItemDto dto)
+	{
+		if (dto.Id is not { } id)
+		{
+			return null;
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].MetadataEditor.GetAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

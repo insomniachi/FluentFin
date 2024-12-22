@@ -63,6 +63,8 @@ namespace FluentFin.Core.Contracts.Services
 		Uri? GetStreamUrl(BaseItemDto dto);
 
 		Task<List<ExternalIdInfo>> GetExternalIdInfo(BaseItemDto dto);
+
+		Task<MetadataEditorInfo?> GetMetadataEditorInfo(BaseItemDto dto);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

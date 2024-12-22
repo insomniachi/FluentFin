@@ -11,7 +11,9 @@
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Dialogs.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:FluentFin"
     xmlns:vm="using:FluentFin.Dialogs.ViewModels"
+    x:Name="Page"
     Title="Edit Metadata"
     CloseButtonText="Close"
     DefaultButton="Primary"
@@ -96,6 +98,121 @@
                 <TextBlock Text="End date" />
                 <DatePicker SelectedDate="{x:Bind ViewModel.EndDate, Mode=TwoWay}" />
             </StackPanel>
+            <Grid ColumnSpacing="20" RowSpacing="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="Parental rating" />
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{x:Bind ViewModel.RatingValues, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.ParentalRating, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="Custom ratings" />
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{x:Bind ViewModel.RatingValues, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.CustomRating, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0">
+                    <TextBlock Text="Original aspect ratio" />
+                    <TextBox Text="{x:Bind ViewModel.OriginalAspectRatio, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="3D format" />
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{x:Bind ViewModel.Video3DFormatValues, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.Video3DFormat, Mode=TwoWay}" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock
+                Margin="{StaticResource XSmallTopMargin}"
+                Style="{ThemeResource SubheaderTextBlockStyle}"
+                Text="External IDs" />
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="vm:KeyValueViewModel">
+                        <StackPanel>
+                            <TextBlock>
+                                <Run Text="{x:Bind DisplayName}" />
+                                <Run Text="{x:Bind Type}" />
+                                <Run Text="Id" />
+                            </TextBlock>
+                            <TextBox Text="{x:Bind Value, Mode=TwoWay}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="20" />
+                </ItemsRepeater.Layout>
+            </ItemsRepeater>
+
+            <StackPanel
+                Margin="{StaticResource XSmallTopMargin}"
+                Orientation="Horizontal"
+                Spacing="10">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource SubheaderTextBlockStyle}"
+                    Text="Genres" />
+                <Button VerticalAlignment="Center">
+                    <SymbolIcon Symbol="Add" />
+                    <Button.Flyout>
+                        <Flyout ShowMode="TransientWithDismissOnPointerMoveAway">
+                            <StackPanel Spacing="20">
+                                <StackPanel Spacing="5">
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Genre" />
+                                    <TextBox x:Name="AddGenreTextBox" MinWidth="200" />
+                                </StackPanel>
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Command="{x:Bind ViewModel.AddGenreCommand}"
+                                    CommandParameter="{x:Bind AddGenreTextBox.Text, Mode=OneWay}"
+                                    Content="Add" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{x:Bind}" />
+                            <Button
+                                Grid.Column="1"
+                                Command="{Binding ElementName=Page, Path=ViewModel.DeleteGenreCommand}"
+                                CommandParameter="{x:Bind}">
+                                <SymbolIcon Symbol="Delete" />
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="10">
+                            <StackPanel.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                </TransitionCollection>
+                            </StackPanel.ChildrenTransitions>
+                        </StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </StackPanel>
     </ScrollViewer>
 </ContentDialog>

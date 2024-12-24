@@ -3,7 +3,6 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Services;
 using Jellyfin.Sdk.Generated.Models;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -28,7 +27,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 				}
 			};
 			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
-			x.PrimaryButtonClick += (_, _) => { vm.CanClose = vm.ViewState == State.Result; };
+			x.PrimaryButtonClick += (_, _) => { vm.CanClose = vm.ViewState == IdentifyViewModelState.Result; };
 		});
 	}
 
@@ -37,18 +36,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	{
 		var vm = App.GetService<EditMetadataViewModel>();
 		await vm.Initialize(dto);
-		await dialogService.ShowDialog(vm, x =>
-		{
-			x.Closing += (_, e) =>
-			{
-				if (!vm.CanClose)
-				{
-					e.Cancel = true;
-				}
-			};
-			x.CloseButtonClick += (_, _) => { vm.CanClose = true; };
-			x.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
-		});
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
 	}
 
 	[RelayCommand]
@@ -57,6 +45,14 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		var vm = App.GetService<MediaInfoViewModel>();
 		await vm.Initialize(dto.Id ?? Guid.Empty);
 		await dialogService.ShowDialog(vm, null!);
+	}
+
+	[RelayCommand]
+	private async Task EditImagesDialog(BaseItemDto dto)
+	{
+		var vm = App.GetService<EditImagesViewModel>();
+		await vm.Initialize(dto);
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseButtonClick(dialog, vm));
 	}
 
 	[RelayCommand]
@@ -70,5 +66,29 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		var package = new DataPackage();
 		package.SetText(uri.ToString());
 		Clipboard.SetContent(package);
+	}
+
+	private static void CloseOnlyOnCloseButtonClick(ContentDialog dialog, IHandleClose vm)
+	{
+		dialog.Closing += (_, e) =>
+		{
+			if (!vm.CanClose)
+			{
+				e.Cancel = true;
+			}
+		};
+		dialog.CloseButtonClick += (_, _) => { vm.CanClose = true; };
+	}
+	private static void CloseOnlyOnCloseAndPrimaryButtonClick(ContentDialog dialog, IHandleClose vm)
+	{
+		dialog.Closing += (_, e) =>
+		{
+			if (!vm.CanClose)
+			{
+				e.Cancel = true;
+			}
+		};
+		dialog.CloseButtonClick += (_, _) => { vm.CanClose = true; };
+		dialog.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
 	}
 }

@@ -3,19 +3,16 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using System.Collections.ObjectModel;
-using Vortice.MediaFoundation;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class EditMetadataViewModel : ObservableObject
+public partial class EditMetadataViewModel : ObservableObject, IHandleClose
 {
 	private readonly IJellyfinClient _jellyfinClient;
 
 	public EditMetadataViewModel(IJellyfinClient jellyfinClient)
 	{
 		_jellyfinClient = jellyfinClient;
-
-		var dto = new BaseItemDto();
 	}
 
 	[ObservableProperty]
@@ -69,7 +66,6 @@ public partial class EditMetadataViewModel : ObservableObject
 	[ObservableProperty]
 	public partial BaseItemDto_Video3DFormat? Video3DFormat { get; set; }
 
-
 	[ObservableProperty]
 	public partial List<string?> RatingValues { get; set; } = [];
 
@@ -79,7 +75,7 @@ public partial class EditMetadataViewModel : ObservableObject
 	[ObservableProperty]
 	public partial List<KeyValueViewModel> ExternalIds { get; set; } = [];
 
-	public ObservableCollection<string> Genres { get; }	= new();
+	public ObservableCollection<string> Genres { get; }	= [];
 
 	public List<string?> StatusValues { get; } = [null, "Ended", "Continuing", "Not yet released"];
 

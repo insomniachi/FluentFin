@@ -61,6 +61,9 @@
 	  <Page Update="Controls\TransportControls.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Dialogs\Views\EditImagesDialog.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Dialogs\Views\MediaInfoDialog.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>

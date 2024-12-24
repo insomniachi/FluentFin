@@ -452,6 +452,11 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		return uri.ToUri();
 	}
 
+	public Uri GetImage(BaseItemDto item, ImageInfo info)
+	{
+		return BaseUrl.AppendPathSegment($"/Items/{item.Id}/Images/{info.ImageType}").SetQueryParam("tag", info.ImageTag).ToUri();
+	}
+
 	public async Task Playing(BaseItemDto dto)
 	{
 		try
@@ -677,6 +682,91 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		{
 			logger.LogError(ex, @"Unhandled exception");
 			return null;
+		}
+	}
+
+	public async Task<List<ImageInfo>> GetImages(BaseItemDto dto)
+	{
+		if (dto.Id is not { } id)
+		{
+			return [];
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].Images.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task<RemoteImageResult?> SearchImages(BaseItemDto dto, ImageType type, string? providerName = null, bool includeAllLanguages = false)
+	{
+		if (dto.Id is not { } id)
+		{
+			return null;
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].RemoteImages.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.StartIndex = 0;
+				query.Limit = 30;
+				query.IncludeAllLanguages = includeAllLanguages;
+				query.ProviderName = providerName;
+				query.Type = Enum.Parse<Jellyfin.Sdk.Generated.Items.Item.RemoteImages.ImageType>(type.ToString());
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task UpdateImage(BaseItemDto dto, RemoteImageInfo info)
+	{
+		if (dto.Id is not { } id || info.Type is null)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items[id].RemoteImages.Download.PostAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.ImageUrl = info.Url;
+				query.Type = Enum.Parse<Jellyfin.Sdk.Generated.Items.Item.RemoteImages.Download.ImageType>(info.Type.Value.ToString());
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task<List<ImageProviderInfo>> GetImageProviders(BaseItemDto dto)
+	{
+		if (dto.Id is not { } id)
+		{
+			return [];
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].RemoteImages.Providers.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
 		}
 	}
 

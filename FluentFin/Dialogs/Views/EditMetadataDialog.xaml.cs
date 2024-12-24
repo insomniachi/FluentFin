@@ -1,6 +1,7 @@
 using FluentFin.Dialogs.ViewModels;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using ReactiveUI;
-using Windows.Globalization.NumberFormatting;
 
 namespace FluentFin.Dialogs.Views;
 
@@ -14,4 +15,6 @@ public sealed partial class EditMetadataDialog : IViewFor<EditMetadataViewModel>
 	{
 		InitializeComponent();
 	}
+
+	public static ImageSource GetImage() => new BitmapImage();
 }

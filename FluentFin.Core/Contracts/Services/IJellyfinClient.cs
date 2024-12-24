@@ -38,6 +38,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri? GetImage(BaseItemDto dto, ImageType type, double? height = null);
 
+		Uri GetImage(BaseItemDto item, ImageInfo info);
+
 		Task Playing(BaseItemDto dto);
 
 		Task Progress(BaseItemDto dto, TimeSpan position);
@@ -65,6 +67,14 @@ namespace FluentFin.Core.Contracts.Services
 		Task<List<ExternalIdInfo>> GetExternalIdInfo(BaseItemDto dto);
 
 		Task<MetadataEditorInfo?> GetMetadataEditorInfo(BaseItemDto dto);
+
+		Task<List<ImageInfo>> GetImages(BaseItemDto dto);
+
+		Task<List<ImageProviderInfo>> GetImageProviders(BaseItemDto dto);
+
+		Task<RemoteImageResult?> SearchImages(BaseItemDto dto, ImageType type, string? providerName = null, bool includeAllLanguages = false);
+
+		Task UpdateImage(BaseItemDto dto, RemoteImageInfo info);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

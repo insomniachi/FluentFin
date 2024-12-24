@@ -4,6 +4,8 @@ using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media;
 
 namespace FluentFin.Converters;
 
@@ -19,6 +21,15 @@ public static class Converters
 	public static double TiksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static ImageSource? GetImage(Uri? uri)
+	{
+		if(uri is null)
+		{
+			return null;
+		}
+
+		return new BitmapImage(uri);
+	}
 
 	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> subtitles)
 	{

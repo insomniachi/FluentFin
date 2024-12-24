@@ -92,11 +92,12 @@ public partial class App : Application
 			services.AddTransient<SeasonViewModel>();
 
             // Dialogs
-            services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
+            services.AddDialog<EditImagesViewModel, EditImagesDialog>();
+            services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
 
-            services.AddTransient<ShellPage>();
+			services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
             // Configuration

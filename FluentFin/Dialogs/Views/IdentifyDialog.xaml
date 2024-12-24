@@ -24,7 +24,7 @@
     mc:Ignorable="d">
 
     <ScrollViewer MinWidth="500">
-        <ctk:SwitchPresenter TargetType="vm:State" Value="{x:Bind ViewModel.ViewState, Mode=OneWay}">
+        <ctk:SwitchPresenter TargetType="vm:IdentifyViewModelState" Value="{x:Bind ViewModel.ViewState, Mode=OneWay}">
             <ctk:Case Value="Input">
                 <StackPanel Spacing="20">
                     <StackPanel.Resources>

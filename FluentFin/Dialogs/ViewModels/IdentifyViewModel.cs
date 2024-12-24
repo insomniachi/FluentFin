@@ -19,7 +19,7 @@ public partial class IdentifyViewModel : ObservableObject
 		this.WhenAnyValue(x => x.ViewState)
 			.Select(value => value switch
 			{
-				State.Result => "Submit",
+				IdentifyViewModelState.Result => "Submit",
 				_ => "Search"
 			})
 			.Subscribe(text => PrimaryButtonText = text);
@@ -27,7 +27,7 @@ public partial class IdentifyViewModel : ObservableObject
 		this.WhenAnyValue(x => x.ViewState)
 			.Select(value => value switch
 			{
-				State.Result => "Back",
+				IdentifyViewModelState.Result => "Back",
 				_ => ""
 			})
 			.Subscribe(text => SecondaryButtonText = text);
@@ -45,7 +45,7 @@ public partial class IdentifyViewModel : ObservableObject
 	public partial List<RemoteSearchResult> Results { get; set; } = [];
 
 	[ObservableProperty]
-	public partial State ViewState { get; set; } = State.Input;
+	public partial IdentifyViewModelState ViewState { get; set; } = IdentifyViewModelState.Input;
 
 	[ObservableProperty]
 	public partial string PrimaryButtonText { get; set; } = "Search";
@@ -81,18 +81,18 @@ public partial class IdentifyViewModel : ObservableObject
 	[RelayCommand]
 	public async Task PrimaryButtonExecute()
 	{
-		if(ViewState == State.Input)
+		if(ViewState == IdentifyViewModelState.Input)
 		{
 			await Search();
 		}
-		else if(ViewState == State.Result)
+		else if(ViewState == IdentifyViewModelState.Result)
 		{
 			await Submit();
 		}
 	}
 
 	[RelayCommand]
-	public void Back() => ViewState = State.Input;
+	public void Back() => ViewState = IdentifyViewModelState.Input;
 
 	private async Task Submit()
 	{
@@ -106,7 +106,7 @@ public partial class IdentifyViewModel : ObservableObject
 
 	private async Task Search()
 	{
-		ViewState = State.Loading;
+		ViewState = IdentifyViewModelState.Loading;
 		if (Item.Type == BaseItemDto_Type.Movie)
 		{
 			Results = await _jellyfinClient.IdentifyMovie(Item, new MovieInfo
@@ -131,7 +131,7 @@ public partial class IdentifyViewModel : ObservableObject
 				}
 			});
 		}
-		ViewState = State.Result;
+		ViewState = IdentifyViewModelState.Result;
 	}
 }
 
@@ -145,7 +145,7 @@ public partial class KeyValueViewModel(string name, string key, ExternalIdInfo_T
 	public partial string? Value { get; set; }
 }
 
-public enum State
+public enum IdentifyViewModelState
 {
 	Input,
 	Loading,

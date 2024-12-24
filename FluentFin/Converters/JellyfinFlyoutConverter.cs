@@ -1,5 +1,4 @@
-﻿using FluentFin.Services;
-using Jellyfin.Sdk.Generated.Models;
+﻿using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 
@@ -57,7 +56,9 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		yield return new MenuFlyoutItem
 		{
 			Text = "Edit Images",
-			Icon = new FontIcon { Glyph = "\uEE71" }
+			Icon = new FontIcon { Glyph = "\uEE71" },
+			Command = App.Dialogs.EditImagesDialogCommand,
+			CommandParameter = dto
 		};
 
 		if(type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)

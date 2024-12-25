@@ -3,6 +3,7 @@ using FluentFin.Core.Contracts.Services;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Reflection;
 
 namespace FluentFin.Core.Services;
@@ -764,6 +765,65 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 				query.ImageUrl = info.Url;
 				query.Type = Enum.Parse<Jellyfin.Sdk.Generated.Items.Item.RemoteImages.Download.ImageType>(info.Type.Value.ToString());
 			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task<List<RemoteSubtitleInfo>> SearchSubtitles(BaseItemDto dto, CultureInfo culture)
+	{
+		if (dto.Id is not { } id)
+		{
+			return [];
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.Items[id].RemoteSearch.Subtitles[culture.ThreeLetterISOLanguageName].GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task DownloadSubtitle(BaseItemDto dto, RemoteSubtitleInfo info)
+	{
+		if (dto.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items[id].RemoteSearch.Subtitles[info.Id].PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task DeleteSubtitle(BaseItemDto dto, MediaStream stream)
+	{
+		if (dto.Id is not { } id)
+		{
+			return;
+		}
+
+		if(stream.Index is null)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Videos[id].Subtitles[stream.Index.Value].DeleteAsync();
 		}
 		catch (Exception ex)
 		{

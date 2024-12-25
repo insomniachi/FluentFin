@@ -40,12 +40,11 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	}
 
 	[RelayCommand]
-	private async Task MediaInfoDialog(BaseItemDto dto)
-	{
-		var vm = App.GetService<MediaInfoViewModel>();
-		await vm.Initialize(dto.Id ?? Guid.Empty);
-		await dialogService.ShowDialog(vm, null!);
-	}
+	private async Task MediaInfoDialog(BaseItemDto dto) => await ShowBaseItemDialog<MediaInfoViewModel>(dto);
+
+	[RelayCommand]
+	private async Task EditSubtitlesDialog(BaseItemDto dto) => await ShowBaseItemDialog<EditSubtitlesViewModel>(dto);
+
 
 	[RelayCommand]
 	private async Task EditImagesDialog(BaseItemDto dto)
@@ -66,6 +65,14 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		var package = new DataPackage();
 		package.SetText(uri.ToString());
 		Clipboard.SetContent(package);
+	}
+
+	private async Task ShowBaseItemDialog<TViewModel>(BaseItemDto dto)
+		where TViewModel : class, IBaseItemDialogViewModel
+	{
+		var vm = App.GetService<TViewModel>();
+		await vm.Initialize(dto);
+		await dialogService.ShowDialog(vm, null!);
 	}
 
 	private static void CloseOnlyOnCloseButtonClick(ContentDialog dialog, IHandleClose vm)

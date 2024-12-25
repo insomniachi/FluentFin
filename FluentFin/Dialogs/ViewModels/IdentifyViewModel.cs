@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class IdentifyViewModel : ObservableObject
+public partial class IdentifyViewModel : ObservableObject, IBaseItemDialogViewModel
 {
 	private readonly IJellyfinClient _jellyfinClient;
 

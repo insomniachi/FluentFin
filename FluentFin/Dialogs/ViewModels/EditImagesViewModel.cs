@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class EditImagesViewModel : ObservableObject, IHandleClose
+public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBaseItemDialogViewModel
 {
 	private readonly IJellyfinClient _jellyfinClient;
 	

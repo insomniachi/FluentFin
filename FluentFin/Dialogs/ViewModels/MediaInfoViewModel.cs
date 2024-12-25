@@ -4,20 +4,18 @@ using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class MediaInfoViewModel(IJellyfinClient jellyfinClient) : ObservableObject
+public partial class MediaInfoViewModel(IJellyfinClient jellyfinClient) : ObservableObject, IBaseItemDialogViewModel
 {
 	[ObservableProperty]
-	public partial BaseItemDto Item { get; set; }
+	public partial BaseItemDto? Item { get; set; }
 
-	public async Task Initialize(Guid id)
+	public async Task Initialize(BaseItemDto item)
 	{
-		var item = await jellyfinClient.GetItem(id);
-
-		if(item is null)
+		if(item.Id is not { } id)
 		{
 			return;
 		}
 
-		Item = item;
+		Item = await jellyfinClient.GetItem(id);
 	}
 }

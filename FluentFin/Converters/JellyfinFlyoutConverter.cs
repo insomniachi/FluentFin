@@ -66,7 +66,9 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			yield return new MenuFlyoutItem
 			{
 				Text = "Edit Subtitles",
-				Icon = new SymbolIcon { Symbol = Symbol.ClosedCaption }
+				Icon = new SymbolIcon { Symbol = Symbol.ClosedCaption },
+				Command = App.Dialogs.EditSubtitlesDialogCommand,
+				CommandParameter = dto
 			};
 		}
 

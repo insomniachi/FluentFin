@@ -94,6 +94,7 @@ public partial class App : Application
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
             services.AddDialog<EditImagesViewModel, EditImagesDialog>();
+            services.AddDialog<EditSubtitlesViewModel, EditSubtitlesDialog>();
             services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
 

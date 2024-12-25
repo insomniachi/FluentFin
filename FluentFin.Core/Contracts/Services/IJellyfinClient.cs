@@ -1,4 +1,5 @@
 ﻿using Jellyfin.Sdk.Generated.Models;
+using System.Globalization;
 
 namespace FluentFin.Core.Contracts.Services
 {
@@ -75,6 +76,12 @@ namespace FluentFin.Core.Contracts.Services
 		Task<RemoteImageResult?> SearchImages(BaseItemDto dto, ImageType type, string? providerName = null, bool includeAllLanguages = false);
 
 		Task UpdateImage(BaseItemDto dto, RemoteImageInfo info);
+
+		Task<List<RemoteSubtitleInfo>> SearchSubtitles(BaseItemDto dto, CultureInfo culture);
+
+		Task DownloadSubtitle(BaseItemDto dto, RemoteSubtitleInfo info);
+
+		Task DeleteSubtitle(BaseItemDto dto, MediaStream stream);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class EditMetadataViewModel : ObservableObject, IHandleClose
+public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBaseItemDialogViewModel
 {
 	private readonly IJellyfinClient _jellyfinClient;
 

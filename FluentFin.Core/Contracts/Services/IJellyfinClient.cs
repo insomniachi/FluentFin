@@ -52,7 +52,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task Logout();
 
-		Task BitrateTest();
+		Task<int> BitrateTest();
 		
 		Task<List<RemoteSearchResult>> IdentifySeries(BaseItemDto dto, SeriesInfo info);
 		

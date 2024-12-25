@@ -344,10 +344,17 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 
 		if(dto.Type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{
+			var endPointInfo = await EndpointInfo();
+
+			var bitRate = endPointInfo?.IsInNetwork == true ? int.MaxValue : await BitrateTest(); 
+
 			var playbackInfo = await _jellyfinApiClient.Items[id].PlaybackInfo.PostAsync(new PlaybackInfoDto
 			{
 				UserId = UserId,
 				AutoOpenLiveStream = true,
+				DeviceProfile = DeviceProfiles.Flyleaf,
+				MaxStreamingBitrate = bitRate,
+				StartTimeTicks = dto.UserData?.PlaybackPositionTicks
 			});
 
 			if(playbackInfo is null or { PlaySessionId : null } or { MediaSources : null })
@@ -360,14 +367,9 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 
 			if(dto.MediaType == BaseItemDto_MediaType.Video)
 			{
-				if(!string.IsNullOrEmpty(mediaSource?.TranscodingUrl))
+				if(!string.IsNullOrEmpty(mediaSource?.TranscodingUrl) && mediaSource?.SupportsTranscoding == true)
 				{
-					return BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).SetQueryParams(new
-					{
-						api_key = _token,
-						SubtitleMethod = "Hls",
-						StartTimeTicks = dto.UserData?.PlaybackPositionTicks,
-					}).ToUri();
+					return BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).ToUri();
 				}
 				else if(mediaSource?.SupportsDirectPlay == true)
 				{
@@ -548,19 +550,37 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
-	public async Task BitrateTest()
+	public async Task<int> BitrateTest()
 	{
 		try
 		{
-			IEnumerable<int> sizes = [500000, 1000000, 3000000];
+			List<int> sizes = [500_000, 1_000_000, 3_000_000];
+			List<int> bitRates = new(sizes.Count);
 
 			foreach (var size in sizes)
 			{
-				var time1 = TimeProvider.System.GetTimestamp();
+				var start = TimeProvider.System.GetTimestamp();
 				var result = await _jellyfinApiClient.Playback.BitrateTest.GetAsync(x => x.QueryParameters.Size = size);
-				var elapsed = TimeProvider.System.GetElapsedTime(time1);
+				var stream = new MemoryStream();
+				if (result is null)
+				{
+					continue;
+				}
+
+				await result.CopyToAsync(stream);
+				var elapsed = TimeProvider.System.GetElapsedTime(start);
+
+				if (elapsed.TotalSeconds > 10)
+				{
+					break;
+				}
+
+				var length = stream.Length;
+
+				bitRates.Add((int)((length * 8) / elapsed.TotalSeconds));
 			}
 
+			return (int)bitRates.Average();
 		}
 		catch (Exception)
 		{
@@ -767,6 +787,19 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		{
 			logger.LogError(ex, @"Unhandled exception");
 			return [];
+		}
+	}
+
+	private async Task<EndPointInfo?> EndpointInfo()
+	{
+		try
+		{
+			return await _jellyfinApiClient.System.Endpoint.GetAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
 		}
 	}
 

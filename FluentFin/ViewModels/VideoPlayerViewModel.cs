@@ -8,6 +8,7 @@ using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Web;
 
 namespace FluentFin.ViewModels;
 
@@ -29,11 +30,16 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.WhereNotNull()
 			.Subscribe(uri =>
 			{
-				var args = MediaPlayer.Open(uri.ToString());
+				var args = MediaPlayer.Open(HttpUtility.UrlDecode(uri.ToString()));
 
 				if(!args.Success)
 				{
 					logger.LogError("Unable to open media from {URL}", uri);
+				}
+
+				if(Dto?.UserData?.PlaybackPositionTicks is { } ticks)
+				{
+					MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
 				}
 			});
 	}
@@ -157,22 +163,15 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		return true;
 	}
 
-	private async Task<bool> CreateSingleItemPlaylist(BaseItemDto dto)
+	private Task<bool> CreateSingleItemPlaylist(BaseItemDto dto)
 	{
-		var uri = await _jellyfinClient.GetMediaUrl(dto);
-
-		if (uri is null)
-		{
-			return false;
-		}
-
 		Playlist.Items.Add(new PlaylistItem
 		{
 			Title = dto.Name ?? "",
 			Dto = dto
 		});
 
-		return true;
+		return Task.FromResult(true);
 	}
 
 	private async void MediaPlayer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

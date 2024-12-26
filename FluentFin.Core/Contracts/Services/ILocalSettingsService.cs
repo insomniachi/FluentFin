@@ -2,14 +2,15 @@
 
 public interface ILocalSettingsService
 {
-	T? ReadSetting<T>(string key, T? deafultValue = default);
+	T ReadSetting<T>(string key, T defaultValue);
 	void SaveSetting<T>(string key, T value);
 	void RemoveSetting(string key);
+	byte[] GetEntropyBytes();
 }
 
 public static class LocalSettingsServiceExtensions
 {
-	public static T? ReadSetting<T>(this ILocalSettingsService service, Key<T> key)
+	public static T ReadSetting<T>(this ILocalSettingsService service, Key<T> key)
 	{
 		return service.ReadSetting(key.Name, key.Default.Value);
 	}

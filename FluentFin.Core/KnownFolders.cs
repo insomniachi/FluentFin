@@ -8,9 +8,9 @@ public class KnownFolders
 
 	public KnownFolders()
 	{
-		ApplicationData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Totoro");
-		Updates = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Totoro\Updates");
-		Logs = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Totoro\Logs");
+		ApplicationData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin");
+		Updates = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin\Updates");
+		Logs = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin\Logs");
 
 		Directory.CreateDirectory(ApplicationData);
 		Directory.CreateDirectory(Logs);

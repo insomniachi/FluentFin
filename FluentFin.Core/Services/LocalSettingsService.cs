@@ -1,4 +1,5 @@
 ﻿using FluentFin.Core.Contracts.Services;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -27,17 +28,18 @@ public class LocalSettingsService : ILocalSettingsService
 		{
 			_settings = jsonNode.AsObject();
 		}
+
 	}
 
-	public T? ReadSetting<T>(string key, T? deafultValue = default)
+	public T ReadSetting<T>(string key, T defaultValue)
 	{
 		if (!_settings.ContainsKey(key))
 		{
-			SaveSetting(key, deafultValue);
-			return deafultValue;
+			SaveSetting(key, defaultValue);
+			return defaultValue;
 		}
 
-		return _settings[key].Deserialize<T>(_options);
+		return _settings[key].Deserialize<T>(_options) ?? defaultValue;
 	}
 
 	public void RemoveSetting(string key)
@@ -49,5 +51,10 @@ public class LocalSettingsService : ILocalSettingsService
 	{
 		_settings[key] = JsonNode.Parse(JsonSerializer.Serialize(value, _options));
 		File.WriteAllText(_file, _settings.ToJsonString(_options));
+	}
+
+	public byte[] GetEntropyBytes()
+	{
+		return ReadSetting("Entropy", RandomNumberGenerator.GetBytes(20));
 	}
 }

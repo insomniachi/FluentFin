@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
@@ -15,14 +16,17 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	private readonly INavigationService _navigationService;
 	private readonly INavigationViewService _navigationViewService;
 	private readonly IJellyfinClient _jellyfinClient;
+	private readonly ILocalSettingsService _localSettingsService;
 
 	public TitleBarViewModel(INavigationService navigationService,
 							 INavigationViewService navigationViewService,
-							 IJellyfinClient jellyfinClient)
+							 IJellyfinClient jellyfinClient,
+							 ILocalSettingsService localSettingsService)
 	{
 		_navigationService = navigationService;
 		_navigationViewService = navigationViewService;
 		_jellyfinClient = jellyfinClient;
+		_localSettingsService = localSettingsService;
 
 		navigationService.Navigated += NavigationService_Navigated;
 	}
@@ -52,6 +56,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	[RelayCommand]
 	private async Task Logout()
 	{
+		_localSettingsService.SaveSetting(SettingKeys.ServerSettings, new());
 		User = null;
 		await _jellyfinClient.Logout();
 	}

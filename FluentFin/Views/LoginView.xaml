@@ -40,6 +40,7 @@
                     KeyDown="InputFieldKeyDown"
                     PasswordChanged="PasswordBox_PasswordChanged" />
             </StackPanel>
+            <CheckBox Content="Keep me logged in" IsChecked="{x:Bind ViewModel.KeepMeLoggedIn, Mode=TwoWay}" />
             <Grid>
                 <Button
                     HorizontalAlignment="Center"

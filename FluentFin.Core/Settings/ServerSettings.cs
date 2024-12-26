@@ -1,15 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿namespace FluentFin.Core.Settings;
 
-namespace FluentFin.Core.Settings;
-
-public partial class ServerSettings : ObservableObject
+public partial class ServerSettings
 {
-	[ObservableProperty] 
-	public partial string ServerUrl { get; set; }
+	public string ServerUrl { get; set; } = "";
 	
-	[ObservableProperty]
-	public partial string Username { get; set; }
+	public string Username { get; set; } = "";
 	
-	[ObservableProperty] 
-	public partial string Password { get; set; }
+	public byte[] Password { get; set; } = [];
 }

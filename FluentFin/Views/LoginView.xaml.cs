@@ -14,8 +14,9 @@ public sealed partial class LoginView : UserControl
 		Loaded += LoginView_Loaded;
 	}
 
-	private void LoginView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	private async void LoginView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
+		await ViewModel.Initialize();
 		PasswordBox.Password = ViewModel.Password;
 	}
 

@@ -13,26 +13,24 @@ public interface ISettings
 
 public partial class Settings : ObservableObject, ISettings
 {
-	private readonly ILocalSettingsService _localSetitngsSerivce;
+	private readonly ILocalSettingsService _localSettingsService;
 
 	[ObservableProperty]
 	public partial ServerSettings ServerSettings { get; set; }
 
-	public Settings(ILocalSettingsService localSetitngsSerivce)
+	public Settings(ILocalSettingsService localSettingsService)
 	{
-		_localSetitngsSerivce = localSetitngsSerivce;
+		_localSettingsService = localSettingsService;
 		
-		ServerSettings = localSetitngsSerivce.ReadSetting(SettingKeys.ServerSettings)!;
-
-		ObserveObject(ServerSettings, SettingKeys.ServerSettings);
+		ServerSettings = localSettingsService.ReadSetting(SettingKeys.ServerSettings)!;
 	}
 
 	private void ObserveObject<T>(T target, Key<T> key)
-	where T : INotifyPropertyChanged
+		where T : INotifyPropertyChanged
 	{
 		target.WhenAnyPropertyChanged()
 			  .Throttle(TimeSpan.FromMilliseconds(500))
-			  .Subscribe(propInfo => _localSetitngsSerivce.SaveSetting(key, target));
+			  .Subscribe(propInfo => _localSettingsService.SaveSetting(key, target));
 	}
 }
 

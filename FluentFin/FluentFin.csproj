@@ -67,6 +67,9 @@
 	  <Page Update="Dialogs\Views\EditSubtitlesDialog.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>
+	  <Page Update="Dialogs\Views\RefreshMetadataDialog.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Dialogs\Views\MediaInfoDialog.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>

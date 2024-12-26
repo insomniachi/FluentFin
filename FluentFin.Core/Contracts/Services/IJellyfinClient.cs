@@ -1,4 +1,5 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+﻿using Jellyfin.Sdk.Generated.Items.Item.Refresh;
+using Jellyfin.Sdk.Generated.Models;
 using System.Globalization;
 
 namespace FluentFin.Core.Contracts.Services
@@ -82,7 +83,11 @@ namespace FluentFin.Core.Contracts.Services
 		Task DownloadSubtitle(BaseItemDto dto, RemoteSubtitleInfo info);
 
 		Task DeleteSubtitle(BaseItemDto dto, MediaStream stream);
+
+		Task RefreshMetadata(BaseItemDto dto, RefreshMetadataInfo info);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);
+
+	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
 }

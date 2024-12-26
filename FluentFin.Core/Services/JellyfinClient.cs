@@ -850,6 +850,32 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task RefreshMetadata(BaseItemDto dto, RefreshMetadataInfo info)
+	{
+		if (dto.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items[id].Refresh.PostAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.ReplaceAllMetadata = info.ReplaceAllMetadata;
+				query.ReplaceAllImages = info.ReplaceAllImages;
+				query.MetadataRefreshMode = info.MetadataRefreshMode;
+				query.ImageRefreshMode = info.ImageRefreshMode;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+
+	}
+
 	private async Task<EndPointInfo?> EndpointInfo()
 	{
 		try

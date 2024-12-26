@@ -97,7 +97,9 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 		yield return new MenuFlyoutItem
 		{
 			Text = "Refresh metadata",
-			Icon = new SymbolIcon { Symbol = Symbol.Refresh }
+			Icon = new SymbolIcon { Symbol = Symbol.Refresh },
+			Command = App.Dialogs.RefreshMetadataDialogCommand,
+			CommandParameter = dto,
 		};
 	}
 
@@ -162,6 +164,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Command = App.Dialogs.CopyUrlToClipboardCommand,
 				CommandParameter = dto,
 			};
+			
 			yield return new MenuFlyoutItem
 			{
 				Text = "Delete Media",

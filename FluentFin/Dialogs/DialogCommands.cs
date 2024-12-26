@@ -45,6 +45,9 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	[RelayCommand]
 	private async Task EditSubtitlesDialog(BaseItemDto dto) => await ShowBaseItemDialog<EditSubtitlesViewModel>(dto);
 
+	[RelayCommand]
+	private async Task RefreshMetadataDialog(BaseItemDto dto) => await ShowBaseItemDialog<RefreshMetadataViewModel>(dto);
+
 
 	[RelayCommand]
 	private async Task EditImagesDialog(BaseItemDto dto)

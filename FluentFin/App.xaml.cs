@@ -97,6 +97,7 @@ public partial class App : Application
             services.AddDialog<EditSubtitlesViewModel, EditSubtitlesDialog>();
             services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
+            services.AddDialog<RefreshMetadataViewModel, RefreshMetadataDialog>();
 
 			services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

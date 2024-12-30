@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -16,17 +18,15 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposables = new();
 	private readonly IJellyfinClient _jellyfinClient;
-	private readonly ILogger<VideoPlayerViewModel> _logger;
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 								ILogger<VideoPlayerViewModel> logger)
 	{
 		_jellyfinClient = jellyfinClient;
-		_logger = logger;
 
 		this.WhenAnyValue(x => x.Playlist.SelectedItem)
 			.WhereNotNull()
-			.SelectMany(item => jellyfinClient.GetMediaUrl(item.Dto))
+			.SelectMany(item => GetMediaUrl(item.Dto))
 			.WhereNotNull()
 			.Subscribe(uri =>
 			{
@@ -42,6 +42,15 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 					MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
 				}
 			});
+
+		this.WhenAnyValue(x => x.Position)
+			.Where(_ => MediaPlayer.Status == Status.Playing)
+			.Select(x => x.Ticks)
+			.Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))
+			.DistinctUntilChanged()
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.SubscribeOn(RxApp.MainThreadScheduler)
+			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
 	}
 
 
@@ -50,6 +59,12 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	[ObservableProperty]
 	public partial TimeSpan Position { get; set; }
+
+	[ObservableProperty]
+	public partial List<MediaSegmentDto> Segments { get; set; } = [];
+
+	[ObservableProperty]
+	public partial bool IsSkipButtonVisible { get; set; }
 
 	public PlaylistViewModel Playlist { get; } = new PlaylistViewModel();
 
@@ -108,6 +123,31 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
 			.Subscribe(_ => Position = new TimeSpan(MediaPlayer.CurTime))
 			.DisposeWith(_disposables);
+	}
+
+	[RelayCommand]
+	private void Skip(long currentTime)
+	{
+		var segment = Segments.FirstOrDefault(x => currentTime > x.StartTicks && currentTime < x.EndTicks);
+
+		if(segment is not { EndTicks : not null })
+		{
+			return;
+		}
+
+		MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(segment.EndTicks.Value).TotalMilliseconds);
+	}
+
+	private async Task<Uri?> GetMediaUrl(BaseItemDto dto)
+	{
+		var segments = await _jellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
+
+		if(segments is { Items : not null})
+		{
+			Segments = segments.Items;
+		}
+
+		return await _jellyfinClient.GetMediaUrl(dto);
 	}
 
 	private async Task<bool> CreateSeriesPlaylist(BaseItemDto dto)

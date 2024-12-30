@@ -7,6 +7,7 @@ using ReactiveMarbles.ObservableEvents;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Windows.Input;
 
 
 namespace FluentFin.Controls;
@@ -54,6 +55,16 @@ public sealed partial class TransportControls : UserControl
 		get { return (PlaylistViewModel)GetValue(PlaylistProperty); }
 		set { SetValue(PlaylistProperty, value); }
 	}
+
+
+	public ICommand SkipCommand
+	{
+		get { return (ICommand)GetValue(SkipCommandProperty); }
+		set { SetValue(SkipCommandProperty, value); }
+	}
+
+	public static readonly DependencyProperty SkipCommandProperty =
+		DependencyProperty.Register("SkipCommand", typeof(ICommand), typeof(TransportControls), new PropertyMetadata(null));
 
 	public static readonly DependencyProperty PlaylistProperty =
 		DependencyProperty.Register("Playlist", typeof(PlaylistViewModel), typeof(TransportControls), new PropertyMetadata(null));

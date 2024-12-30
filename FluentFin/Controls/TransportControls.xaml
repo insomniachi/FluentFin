@@ -54,7 +54,8 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 VerticalContentAlignment="Center"
-                Content="Skip"
+                Command="{x:Bind SkipCommand, Mode=OneWay}"
+                CommandParameter="{x:Bind Player.CurTime, Mode=OneWay}"
                 FontSize="20"
                 FontWeight="Bold"
                 Foreground="White"
@@ -62,6 +63,13 @@
                 <Button.Background>
                     <SolidColorBrush Opacity="0.5" Color="Black" />
                 </Button.Background>
+                <StackPanel
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xEB9D;" />
+                    <TextBlock VerticalAlignment="Center" Text="Skip" />
+                </StackPanel>
             </Button>
             <Grid>
                 <Border x:Name="ShadowTarget" />

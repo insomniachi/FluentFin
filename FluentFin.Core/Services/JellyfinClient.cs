@@ -876,6 +876,24 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 
 	}
 
+	public async Task<MediaSegmentDtoQueryResult?> GetMediaSegments(BaseItemDto dto, MediaSegmentType[]? types = null)
+	{
+		if (dto.Id is not { } id)
+		{
+			return null;
+		}
+
+		try
+		{
+			return await _jellyfinApiClient.MediaSegments[id].GetAsync(x => x.QueryParameters.IncludeSegmentTypes = types);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	private async Task<EndPointInfo?> EndpointInfo()
 	{
 		try

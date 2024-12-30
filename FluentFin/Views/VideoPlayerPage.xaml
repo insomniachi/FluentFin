@@ -15,7 +15,8 @@
             <controls:TransportControls
                 x:Name="TransportControls"
                 Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
-                Playlist="{x:Bind ViewModel.Playlist}" />
+                Playlist="{x:Bind ViewModel.Playlist}"
+                SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}" />
         </flyleaf:FlyleafHost>
     </flyleaf:FullScreenContainer>
 </Page>

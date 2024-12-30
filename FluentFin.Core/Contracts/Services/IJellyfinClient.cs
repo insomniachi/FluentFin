@@ -85,6 +85,8 @@ namespace FluentFin.Core.Contracts.Services
 		Task DeleteSubtitle(BaseItemDto dto, MediaStream stream);
 
 		Task RefreshMetadata(BaseItemDto dto, RefreshMetadataInfo info);
+
+		Task<MediaSegmentDtoQueryResult?> GetMediaSegments(BaseItemDto dto, MediaSegmentType[]? types = null);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

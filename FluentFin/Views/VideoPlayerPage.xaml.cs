@@ -3,6 +3,7 @@ using FlyleafLib;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -40,6 +41,15 @@ public sealed partial class VideoPlayerPage : Page
 				{
 					TransportControls.Bar.Visibility = Visibility.Collapsed;
 					ProtectedCursor.Dispose();
+				});
+			});
+
+		ViewModel.WhenAnyValue(x => x.IsSkipButtonVisible)
+			.Subscribe(value =>
+			{
+				TransportControls?.DispatcherQueue.TryEnqueue(() =>
+				{
+					TransportControls.IsSkipButtonVisible = value;
 				});
 			});
 

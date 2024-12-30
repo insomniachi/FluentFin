@@ -4,7 +4,7 @@ using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
 using FluentFin.Views;
-
+using FluentFin.Views.JellyfinSettings;
 using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Services;
@@ -21,6 +21,10 @@ public class PageService : IPageService
 		Configure<MovieViewModel, MoviePage>();
 		Configure<SeriesViewModel, SeriesPage>();
 		Configure<SeasonViewModel, SeasonPage>();
+        Configure<JellyfinSettingsViewModel, JellyfinSettingsPage>();
+
+        // Settings Pages
+        Configure<DashboardViewModel, DashboardPage>();
     }
 
     public Type GetPageType(string key)

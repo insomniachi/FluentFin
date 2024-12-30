@@ -22,4 +22,9 @@ public sealed partial class TitleBarControl : UserControl
 	{
 		ViewModel.GoBack();
 	}
+
+	private void CloseTitleBarFooterFlyout(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	{
+		FooterFlyout.Hide();
+    }
 }

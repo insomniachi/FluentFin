@@ -29,6 +29,7 @@
             NotEmptyValue="True" />
         <c:JellyfinImageConverter x:Key="PrimaryImageConverter" />
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
+        <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
     <TitleBar
@@ -96,7 +97,7 @@
                     DisplayName="{x:Bind ViewModel.User.Name}" />
                 <Button.Flyout>
                     <Flyout
-                        AllowFocusOnInteraction="True"
+                        x:Name="FooterFlyout"
                         AreOpenCloseAnimationsEnabled="True"
                         LightDismissOverlayMode="On"
                         Placement="BottomEdgeAlignedRight">
@@ -128,10 +129,15 @@
                             <StackPanel Grid.Row="2">
                                 <lc:MenuFlyoutButton
                                     HorizontalAlignment="Stretch"
+                                    AllowFocusOnInteraction="False"
+                                    Click="CloseTitleBarFooterFlyout"
+                                    Command="{x:Bind ViewModel.GoToDashboardCommand}"
                                     Content="Dashboard"
-                                    Icon="{ui:FontIcon Glyph=&#xE713;}" />
+                                    Icon="{ui:FontIcon Glyph=&#xE713;}"
+                                    Visibility="{x:Bind ViewModel.User.Policy.IsAdministrator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <lc:MenuFlyoutButton
                                     HorizontalAlignment="Stretch"
+                                    Click="CloseTitleBarFooterFlyout"
                                     Command="{x:Bind ViewModel.LogoutCommand}"
                                     Content="Logout"
                                     Icon="{ui:FontIcon Glyph=&#xF3B1;}" />

@@ -907,6 +907,53 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		}
 	}
 
+	public async Task<SystemInfo?> GetSystemInfo()
+	{
+		try
+		{
+			return await _jellyfinApiClient.System.Info.GetAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task<List<SessionInfoDto>> GetActiveSessions()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Sessions.GetAsync(x => x.QueryParameters.ActiveWithinSeconds = 960) ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task<ActivityLogEntryQueryResult?> GetActivities(DateTimeOffset minDate, bool hasUserId)
+	{
+		try
+		{
+			return await _jellyfinApiClient.System.ActivityLog.Entries.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.StartIndex = 0;
+				query.Limit = 7;
+				query.MinDate = minDate;
+				query.HasUserId = hasUserId;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+
 	private async Task<EndPointInfo?> EndpointInfo()
 	{
 		try
@@ -918,22 +965,6 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			logger.LogError(ex, @"Unhandled exception");
 			return null;
 		}
-	}
-
-	private async Task UpdateCapabilities()
-	{
-		await _jellyfinApiClient.Sessions.Capabilities.Full.PostAsync(new ClientCapabilitiesDto
-		{
-			SupportsMediaControl = true,
-			PlayableMediaTypes = [MediaType.Video],
-			DeviceProfile = DeviceProfiles.Flyleaf,
-			SupportedCommands = [ 
-				GeneralCommandType.DisplayMessage, 
-				GeneralCommandType.Play, 
-				GeneralCommandType.PlayNext,
-				GeneralCommandType.SendString,
-			]
-		});
 	}
 
 	private Uri AddApiKey(Uri uri)

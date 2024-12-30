@@ -87,6 +87,12 @@ namespace FluentFin.Core.Contracts.Services
 		Task RefreshMetadata(BaseItemDto dto, RefreshMetadataInfo info);
 
 		Task<MediaSegmentDtoQueryResult?> GetMediaSegments(BaseItemDto dto, MediaSegmentType[]? types = null);
+
+		Task<SystemInfo?> GetSystemInfo();
+
+		Task<List<SessionInfoDto>> GetActiveSessions();
+
+		Task<ActivityLogEntryQueryResult?> GetActivities(DateTimeOffset minDate, bool hasUserId);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

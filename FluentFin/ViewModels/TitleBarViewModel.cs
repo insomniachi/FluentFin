@@ -4,6 +4,7 @@ using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.Views;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -59,6 +60,12 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 		_localSettingsService.SaveSetting(SettingKeys.ServerSettings, new());
 		User = null;
 		await _jellyfinClient.Logout();
+	}
+
+	[RelayCommand]
+	private void GoToDashboard()
+	{
+		_navigationService.NavigateTo(typeof(JellyfinSettingsViewModel).FullName!, new object());
 	}
 
 	private void NavigationService_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

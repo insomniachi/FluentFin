@@ -39,7 +39,18 @@ public partial class App : Application
         return service;
     }
 
-    public static WindowEx MainWindow { get; } = new MainWindow();
+	public static T GetKeyedService<T>(object key)
+	where T : class
+	{
+		if ((Current as App)!.Host.Services.GetKeyedService<T>(key) is not T service)
+		{
+			throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
+		}
+
+		return service;
+	}
+
+	public static WindowEx MainWindow { get; } = new MainWindow();
 
     public static GlobalCommands Commands { get; } = GetService<GlobalCommands>();
 
@@ -61,13 +72,21 @@ public partial class App : Application
             // Other Activation Handlers
 
             // Services
-            services.AddSingleton<INavigationViewService, NavigationViewService>();
-
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
+            services.AddSingleton<INavigationViewService, NavigationViewService>();
             services.AddSingleton<INavigationService, NavigationService>();
 			services.AddSingleton<INavigationServiceCore>(sp => sp.GetRequiredService<INavigationService>());
             services.AddTransient<IContentDialogService, ContentDialogService>();
+
+			services.AddKeyedSingleton<INavigationViewService, NavigationViewService>("Settings", (sp, key) =>
+			{
+				return new NavigationViewService(sp.GetRequiredKeyedService<INavigationService>(key),
+												 sp.GetRequiredService<IPageService>(),
+												 sp.GetRequiredService<IJellyfinClient>());
+			});
+			services.AddKeyedSingleton<INavigationService, NavigationService>("Settings");
+			services.AddKeyedSingleton<INavigationServiceCore>("Settings", (sp, key) => sp.GetRequiredKeyedService<INavigationService>(key));
 
 			// Core Services
 			services.AddTransient<LoginViewModel>();
@@ -90,6 +109,9 @@ public partial class App : Application
 			services.AddTransient<MovieViewModel>();
 			services.AddTransient<SeriesViewModel>();
 			services.AddTransient<SeasonViewModel>();
+			services.AddTransient<JellyfinSettingsViewModel>();
+
+			services.AddTransient<DashboardViewModel>();
 
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

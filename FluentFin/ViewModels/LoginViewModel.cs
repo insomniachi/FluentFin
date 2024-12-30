@@ -5,7 +5,6 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using ReactiveUI;
-using System.ComponentModel.DataAnnotations;
 using System.Reactive.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -19,8 +18,7 @@ public partial class LoginViewModel : ObservableObject
 	private readonly INavigationViewService _navigationViewService;
 	private readonly ILocalSettingsService _settingsService;
 
-	public LoginViewModel(IMainWindowViewModel mainWindowViewModel,
-						  IJellyfinAuthenticationService jellyfinAuthenticator,
+	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
 						  INavigationService navigationService,
 						  INavigationViewService navigationViewService,
 						  ILocalSettingsService settingsService)

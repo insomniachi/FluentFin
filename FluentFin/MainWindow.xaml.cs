@@ -15,7 +15,8 @@ public sealed partial class MainWindow : WindowEx
     {
         InitializeComponent();
         ExtendsContentIntoTitleBar = true;
-    }
+        AppWindow.SetIcon("Assets/jellyfin.ico");
+	}
 
 
 	private void TitleBar_PaneToggleRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)

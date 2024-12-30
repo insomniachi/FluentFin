@@ -19,7 +19,7 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 	public Guid UserId { get; set; }
 	public string BaseUrl { get; set; } = "";
 
-	public void Initialize(string baseUrl, AuthenticationResult authResult)
+	public async Task Initialize(string baseUrl, AuthenticationResult authResult)
 	{
 		ArgumentNullException.ThrowIfNull(authResult.User);
 		ArgumentNullException.ThrowIfNull(authResult.User.Id);
@@ -36,6 +36,19 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 		_settings.SetAccessToken(_token);
 		_settings.SetServerUrl(baseUrl);
 		_jellyfinApiClient = new Jellyfin.Sdk.JellyfinApiClient(new Jellyfin.Sdk.JellyfinRequestAdapter(new Jellyfin.Sdk.JellyfinAuthenticationProvider(_settings), _settings));
+
+		await _jellyfinApiClient.Sessions.Capabilities.Full.PostAsync(new ClientCapabilitiesDto
+		{
+			//SupportsMediaControl = true,
+			PlayableMediaTypes = [MediaType.Video],
+			DeviceProfile = DeviceProfiles.Flyleaf,
+			//SupportedCommands = [
+			//	GeneralCommandType.DisplayMessage,
+			//	GeneralCommandType.Play,
+			//	GeneralCommandType.PlayNext,
+			//	GeneralCommandType.SendString,
+			//]
+		});
 	}
 
 
@@ -905,6 +918,22 @@ public class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
 			logger.LogError(ex, @"Unhandled exception");
 			return null;
 		}
+	}
+
+	private async Task UpdateCapabilities()
+	{
+		await _jellyfinApiClient.Sessions.Capabilities.Full.PostAsync(new ClientCapabilitiesDto
+		{
+			SupportsMediaControl = true,
+			PlayableMediaTypes = [MediaType.Video],
+			DeviceProfile = DeviceProfiles.Flyleaf,
+			SupportedCommands = [ 
+				GeneralCommandType.DisplayMessage, 
+				GeneralCommandType.Play, 
+				GeneralCommandType.PlayNext,
+				GeneralCommandType.SendString,
+			]
+		});
 	}
 
 	private Uri AddApiKey(Uri uri)

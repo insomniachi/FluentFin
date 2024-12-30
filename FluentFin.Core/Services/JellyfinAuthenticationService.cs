@@ -8,9 +8,9 @@ using System.Reflection;
 
 namespace FluentFin.Core.Services
 {
-	public class JellyfinAuthentionService(IJellyfinClient jellyfinClient,
-										   ITitleBarViewModel titleBarViewModel,
-										   ILogger<JellyfinAuthentionService> logger) : IJellyfinAuthenticationService
+	public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
+										       ITitleBarViewModel titleBarViewModel,
+										       ILogger<JellyfinAuthenticationService> logger) : IJellyfinAuthenticationService
 	{
 
 		public async Task<bool> Authenticate(string url, string username, string password)
@@ -33,7 +33,7 @@ namespace FluentFin.Core.Services
 				if (auth is not null)
 				{
 					titleBarViewModel.User = auth.User;
-					jellyfinClient.Initialize(url, auth);
+					await jellyfinClient.Initialize(url, auth);
 				}
 
 				return auth is not null;

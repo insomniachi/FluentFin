@@ -10,7 +10,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Guid UserId { get; }
 
-		void Initialize(string baseUrl, AuthenticationResult authResult);
+		Task Initialize(string baseUrl, AuthenticationResult authResult);
 
 		Task<BaseItemDtoQueryResult?> GetContinueWatching();
 

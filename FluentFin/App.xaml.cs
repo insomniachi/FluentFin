@@ -72,7 +72,7 @@ public partial class App : Application
 			// Core Services
 			services.AddTransient<LoginViewModel>();
 			services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
-			services.AddSingleton<IJellyfinAuthenticationService, JellyfinAuthentionService>();
+			services.AddSingleton<IJellyfinAuthenticationService, JellyfinAuthenticationService>();
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton<KnownFolders>();

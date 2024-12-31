@@ -48,7 +48,7 @@
                                 <lc:PlayableMediaItem
                                     Width="390"
                                     Height="240"
-                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                                    ImageSource="{x:Bind Converter={StaticResource ThumbnailConverter}}"
                                     Model="{x:Bind}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -76,7 +76,7 @@
                                 <lc:PlayableMediaItem
                                     Width="390"
                                     Height="240"
-                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}"
+                                    ImageSource="{x:Bind Converter={StaticResource ThumbnailConverter}}"
                                     Model="{x:Bind}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -107,7 +107,7 @@
                                                 <lc:PlayableMediaItem
                                                     Width="240"
                                                     Height="350"
-                                                    ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource PrimaryImageConverter}}"
+                                                    ImageSource="{x:Bind Converter={StaticResource PrimaryImageConverter}}"
                                                     Model="{x:Bind}" />
                                             </DataTemplate>
                                         </ItemsRepeater.ItemTemplate>

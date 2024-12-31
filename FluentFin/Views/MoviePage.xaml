@@ -352,7 +352,7 @@
 
                                         <controls:LoadingImage
                                             Glyph="&#xE77B;"
-                                            Source="{x:Bind (jm:BaseItemPerson), Converter={StaticResource PersonImageConverter}}"
+                                            Source="{x:Bind Converter={StaticResource PersonImageConverter}}"
                                             Stretch="UniformToFill" />
 
                                         <StackPanel
@@ -393,7 +393,7 @@
                                 <DataTemplate x:DataType="jm:BaseItemDto">
                                     <controls:PlayableMediaItem
                                         Width="200"
-                                        ImageSource="{x:Bind (jm:BaseItemDto), Converter={StaticResource DefaultPrimaryImageConverter}}"
+                                        ImageSource="{x:Bind Converter={StaticResource DefaultPrimaryImageConverter}}"
                                         Model="{x:Bind}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>

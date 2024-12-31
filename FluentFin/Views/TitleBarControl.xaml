@@ -64,12 +64,12 @@
                             <Grid CornerRadius="{StaticResource ControlCornerRadius}">
                                 <Image
                                     Height="100"
-                                    Source="{x:Bind (jm:BaseItemDto), Converter={StaticResource PrimaryImageConverter}}"
+                                    Source="{x:Bind Converter={StaticResource PrimaryImageConverter}}"
                                     Stretch="UniformToFill" />
                             </Grid>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind (jm:BaseItemDto), Converter={StaticResource SubtitleConverter}}" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Converter={StaticResource SubtitleConverter}}" />
                             </StackPanel>
                         </Grid>
                     </DataTemplate>

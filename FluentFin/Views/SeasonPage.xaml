@@ -229,7 +229,7 @@
                                 </i:Interaction.Behaviors>
 
                                 <Grid Grid.Column="0" CornerRadius="{StaticResource ControlCornerRadius}">
-                                    <dw:ImageEx Source="{x:Bind (jm:BaseItemDto), Converter={StaticResource ThumbnailConverter}}" Stretch="UniformToFill" />
+                                    <dw:ImageEx Source="{x:Bind Converter={StaticResource ThumbnailConverter}}" Stretch="UniformToFill" />
                                 </Grid>
 
                                 <StackPanel
@@ -286,7 +286,7 @@
                                         Background="Transparent"
                                         Content="{ui:SymbolIcon Symbol=More}"
                                         CornerRadius="25"
-                                        Flyout="{x:Bind (jm:BaseItemDto), Converter={StaticResource FlyoutConverter}, Mode=OneWay}"
+                                        Flyout="{x:Bind Converter={StaticResource FlyoutConverter}, Mode=OneWay}"
                                         Style="{StaticResource IconButtonStyle}" />
                                 </StackPanel>
 
@@ -317,7 +317,7 @@
 
                                         <controls:LoadingImage
                                             Glyph="&#xE77B;"
-                                            Source="{x:Bind (jm:BaseItemPerson), Converter={StaticResource PersonImageConverter}}"
+                                            Source="{x:Bind Converter={StaticResource PersonImageConverter}}"
                                             Stretch="UniformToFill" />
 
                                         <StackPanel

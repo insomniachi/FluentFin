@@ -163,4 +163,52 @@ public partial class JellyfinClient
 		}
 	}
 
+	public async Task<List<UserDto>> GetUsers()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Users.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task DeleteUser(UserDto user)
+	{
+		if(user.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Users[id].DeleteAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task UpdatePolicy(UserDto user, UserPolicy policy)
+	{
+		if (user.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Users[id].Policy.PostAsync(policy);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
 }

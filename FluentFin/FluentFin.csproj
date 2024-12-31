@@ -19,6 +19,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Dialogs\Views\UserEditorPage.xaml" />
 	  <None Remove="Views\JellyfinSettingsPage.xaml" />
 	  <None Remove="Views\JellyfinSettings\DashboardPage.xaml" />
 	</ItemGroup>
@@ -62,6 +63,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Dialogs\Views\UserEditorPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Dialogs\Views\AddUserDialog.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Views\JellyfinSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -92,6 +102,11 @@
 
 	<ItemGroup>
 	  <Page Update="Styles\ImageEx.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\JellyfinSettings\UsersPage.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

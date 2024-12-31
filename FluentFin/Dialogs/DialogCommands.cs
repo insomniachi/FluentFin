@@ -40,6 +40,35 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	}
 
 	[RelayCommand]
+	private async Task AddUserDialog()
+	{
+		var vm = App.GetService<AddUserViewModel>();
+		await vm.Initialize();
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+	[RelayCommand]
+	private static async Task DeleteUser(UserDto user)
+	{
+		var dialog = new ContentDialog
+		{
+			XamlRoot = App.MainWindow.Content.XamlRoot,
+			Title = "Delete User",
+			Content = $"Are you sure you wan to delete the user : {user.Name}?",
+			CloseButtonText = "No",
+			PrimaryButtonText = "Yes",
+			DefaultButton = ContentDialogButton.Primary
+		};
+
+		var response = await dialog.ShowAsync();
+
+		if(response == ContentDialogResult.Primary)
+		{
+			await App.GetService<IJellyfinClient>().DeleteUser(user);
+		}
+	}
+
+	[RelayCommand]
 	private async Task MediaInfoDialog(BaseItemDto dto) => await ShowBaseItemDialog<MediaInfoViewModel>(dto);
 
 	[RelayCommand]

@@ -88,6 +88,9 @@ public partial class App : Application
 			services.AddKeyedSingleton<INavigationService, NavigationService>("Settings");
 			services.AddKeyedSingleton<INavigationServiceCore>("Settings", (sp, key) => sp.GetRequiredKeyedService<INavigationService>(key));
 
+			services.AddKeyedSingleton<INavigationService, NavigationService>("UserEditor");
+			services.AddKeyedSingleton<INavigationServiceCore>("UserEditor", (sp, key) => sp.GetRequiredKeyedService<INavigationService>(key));
+
 			// Core Services
 			services.AddTransient<LoginViewModel>();
 			services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
@@ -112,6 +115,8 @@ public partial class App : Application
 			services.AddTransient<JellyfinSettingsViewModel>();
 
 			services.AddTransient<DashboardViewModel>();
+			services.AddTransient<UsersViewModel>();
+			services.AddTransient<UserEditorViewModel>();
 
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
@@ -120,6 +125,8 @@ public partial class App : Application
             services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
             services.AddDialog<RefreshMetadataViewModel, RefreshMetadataDialog>();
+
+			services.AddDialog<AddUserViewModel, AddUserDialog>();
 
 			services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="FluentFin.Dialogs.Views.AddUserDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Dialogs.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:FluentFin.Dialogs.ViewModels"
+    Title="Add User"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonCommand="{x:Bind ViewModel.AddUserCommand}"
+    PrimaryButtonText="Save"
+    Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
+    mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <cc:BoolToObjectConverter
+            x:Key="InvertedBooleanToVisiblityConverter"
+            FalseValue="Visible"
+            TrueValue="Collapsed" />
+    </ContentDialog.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+        <StackPanel Spacing="20">
+            <StackPanel Spacing="5">
+                <TextBlock Text="Username" />
+                <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Spacing="5">
+                <TextBlock Text="Password" />
+                <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged" />
+            </StackPanel>
+            <StackPanel Spacing="10">
+                <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="Library Access" />
+                <CheckBox Content="Enable access to all libraries" IsChecked="{x:Bind ViewModel.EnableAllFolders, Mode=TwoWay}" />
+            </StackPanel>
+            <TextBlock
+                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                Text="Libraries"
+                Visibility="{x:Bind ViewModel.EnableAllFolders, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisiblityConverter}}" />
+            <ListView
+                x:Name="ListView"
+                ItemsSource="{x:Bind ViewModel.MediaFolders, Mode=OneWay}"
+                SelectionChanged="ListView_SelectionChanged"
+                SelectionMode="Multiple"
+                Visibility="{x:Bind ViewModel.EnableAllFolders, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisiblityConverter}}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="jm:BaseItemDto">
+                        <TextBlock
+                            Margin="{StaticResource SmallLeftMargin}"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind Name}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+
+
+    </ScrollViewer>
+
+</ContentDialog>

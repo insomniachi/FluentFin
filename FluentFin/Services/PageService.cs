@@ -2,6 +2,8 @@
 
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
+using FluentFin.Dialogs.ViewModels;
+using FluentFin.Dialogs.Views;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
@@ -25,6 +27,8 @@ public class PageService : IPageService
 
         // Settings Pages
         Configure<DashboardViewModel, DashboardPage>();
+        Configure<UsersViewModel, UsersPage>();
+        Configure<UserEditorViewModel, UserEditorPage>();
     }
 
     public Type GetPageType(string key)

@@ -23,6 +23,14 @@ public sealed partial class JellyfinSettingsPage : Page
 		navigationService.Frame = NavFrame;
 		navigationViewService.Initialize(NavView);
 	}
+
+	private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+	{
+		if(NavFrame.CanGoBack)
+		{
+			NavFrame.GoBack();
+		}
+    }
 }
 
 public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAware

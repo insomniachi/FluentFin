@@ -20,6 +20,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent, bool recursive = false);
 
+		Task<BaseItemDtoQueryResult?> GetMediaFolders();
+
 		Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto);
 
 		Task<BaseItemDtoQueryResult?> Search(string searchTerm);
@@ -93,6 +95,14 @@ namespace FluentFin.Core.Contracts.Services
 		Task<List<SessionInfoDto>> GetActiveSessions();
 
 		Task<ActivityLogEntryQueryResult?> GetActivities(DateTimeOffset minDate, bool hasUserId);
+
+		Task<List<UserDto>> GetUsers();
+
+		Task<UserDto?> CreateUser(string username, string password);
+
+		Task DeleteUser(UserDto user);
+
+		Task UpdatePolicy(UserDto user, UserPolicy policy);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

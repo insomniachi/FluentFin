@@ -68,4 +68,34 @@ public partial class JellyfinClient
 			return null;
 		}
 	}
+
+	public async Task<BaseItemDtoQueryResult?> GetMediaFolders()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Library.MediaFolders.GetAsync(x => x.QueryParameters.IsHidden = false);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task<UserDto?> CreateUser(string username, string password)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Users.New.PostAsync(new CreateUserByName
+			{
+				Name = username,
+				Password = password
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
 }

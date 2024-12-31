@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
@@ -9,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace FluentFin.Core.ViewModels;
 
 public partial class UsersViewModel(IJellyfinClient jellyfinClient,
-									[FromKeyedServices("Settings")]INavigationServiceCore navigationService) : ObservableObject, INavigationAware
+									[FromKeyedServices(NavigationRegions.Settings)]INavigationServiceCore navigationService) : ObservableObject, INavigationAware
 {
 	[ObservableProperty]
 	public partial List<UserDto> Users { get; set; } = [];

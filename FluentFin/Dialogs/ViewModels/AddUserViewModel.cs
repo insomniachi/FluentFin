@@ -1,11 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentFin.Contracts.Services;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentFin.Dialogs.ViewModels
 {
-	public partial class AddUserViewModel(IJellyfinClient jellyfinClient) : ObservableObject, IHandleClose
+	public partial class AddUserViewModel(IJellyfinClient jellyfinClient, 
+                                          [FromKeyedServices(NavigationRegions.Settings)] INavigationServiceCore navigationService) : ObservableObject, IHandleClose
     {
         [ObservableProperty]
         public partial string? Username { get; set; }
@@ -65,7 +70,7 @@ namespace FluentFin.Dialogs.ViewModels
 				await jellyfinClient.UpdatePolicy(user, policy);
 			}
 
-			// navigate to editor
+            navigationService.NavigateTo(typeof(UserEditorViewModel).FullName!, new UserEditorViewModelNavigationParameter(user, UserEditorSection.Profile));
 		}
     }
 }

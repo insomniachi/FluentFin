@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
+using FluentFin.Core;
 using FluentFin.Core.ViewModels;
 using FluentFin.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,8 +39,8 @@ public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAw
 	private readonly INavigationService _navigationService;
 	private readonly INavigationViewService _navigationViewService;
 
-	public JellyfinSettingsViewModel([FromKeyedServices("Settings")] INavigationService navigationService,
-									 [FromKeyedServices("Settings")] INavigationViewService navigationViewService)
+	public JellyfinSettingsViewModel([FromKeyedServices(NavigationRegions.Settings)] INavigationService navigationService,
+									 [FromKeyedServices(NavigationRegions.Settings)] INavigationViewService navigationViewService)
 	{
 		_navigationService = navigationService;
 		_navigationViewService = navigationViewService;

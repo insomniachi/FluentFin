@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
+using FluentFin.Core;
 using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,7 @@ using ReactiveUI;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class UserEditorViewModel([FromKeyedServices("UserEditor")]INavigationServiceCore navigationService) : ObservableObject, INavigationAware
+public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.UserEditor)] INavigationServiceCore navigationService) : ObservableObject, INavigationAware
 {
 	[ObservableProperty]
 	public partial UserDto? User { get; set; }

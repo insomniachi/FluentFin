@@ -6,6 +6,7 @@
     xmlns:c="using:FluentFin.Converters"
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
     xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
@@ -24,6 +25,14 @@
             x:Key="InvertedObjectToVisibilityConverter"
             EmptyValue="Visible"
             NotEmptyValue="Collapsed" />
+        <cc:EmptyObjectToObjectConverter x:Key="ImageFillBackgroundConverter">
+            <cc:EmptyObjectToObjectConverter.EmptyValue>
+                <SolidColorBrush Color="Transparent" />
+            </cc:EmptyObjectToObjectConverter.EmptyValue>
+            <cc:EmptyObjectToObjectConverter.NotEmptyValue>
+                <SolidColorBrush Color="{StaticResource ControlOnImageFillColorDefault}" />
+            </cc:EmptyObjectToObjectConverter.NotEmptyValue>
+        </cc:EmptyObjectToObjectConverter>
     </Page.Resources>
 
     <ScrollViewer Padding="36" HorizontalScrollBarVisibility="Hidden">
@@ -114,7 +123,7 @@
                                             Stretch="UniformToFill"
                                             Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}}" />
 
-                                        <Grid Padding="16" Background="{ThemeResource ControlOnImageFillColorDefaultBrush}">
+                                        <Grid Padding="16" Background="{x:Bind NowPlayingItem, Converter={StaticResource ImageFillBackgroundConverter}}">
                                             <StackPanel>
                                                 <TextBlock Text="{x:Bind DeviceName}" />
                                                 <TextBlock>

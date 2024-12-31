@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentFin.Contracts.Services;
+using FluentFin.Core.Contracts.Services;
+using FluentFin.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
 using System.ComponentModel;
@@ -14,6 +17,26 @@ internal static class ServiceCollectionExtensions
 		services.AddTransient<TViewModel>();
 		services.AddTransient<IViewFor<TViewModel>, TView>();
 
+		return services;
+	}
+
+	public static IServiceCollection AddFrameNavigation(this IServiceCollection services, string key)
+	{
+		services.AddKeyedSingleton<INavigationService, NavigationService>(key);
+		services.AddKeyedSingleton<INavigationServiceCore>(key, (sp, key) => sp.GetRequiredKeyedService<INavigationService>(key));
+
+		return services;
+	}
+
+	public static IServiceCollection AddNavigationViewNavigation(this IServiceCollection services, string key)
+	{
+		services.AddFrameNavigation(key);
+		services.AddKeyedSingleton<INavigationViewService, NavigationViewService>(key, (sp, key) =>
+		{
+			return new NavigationViewService(sp.GetRequiredKeyedService<INavigationService>(key),
+											 sp.GetRequiredService<IPageService>(),
+											 sp.GetRequiredService<IJellyfinClient>());
+		});
 		return services;
 	}
 }

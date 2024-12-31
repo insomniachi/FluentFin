@@ -79,17 +79,8 @@ public partial class App : Application
 			services.AddSingleton<INavigationServiceCore>(sp => sp.GetRequiredService<INavigationService>());
             services.AddTransient<IContentDialogService, ContentDialogService>();
 
-			services.AddKeyedSingleton<INavigationViewService, NavigationViewService>("Settings", (sp, key) =>
-			{
-				return new NavigationViewService(sp.GetRequiredKeyedService<INavigationService>(key),
-												 sp.GetRequiredService<IPageService>(),
-												 sp.GetRequiredService<IJellyfinClient>());
-			});
-			services.AddKeyedSingleton<INavigationService, NavigationService>("Settings");
-			services.AddKeyedSingleton<INavigationServiceCore>("Settings", (sp, key) => sp.GetRequiredKeyedService<INavigationService>(key));
-
-			services.AddKeyedSingleton<INavigationService, NavigationService>("UserEditor");
-			services.AddKeyedSingleton<INavigationServiceCore>("UserEditor", (sp, key) => sp.GetRequiredKeyedService<INavigationService>(key));
+			services.AddNavigationViewNavigation(NavigationRegions.Settings);
+			services.AddFrameNavigation(NavigationRegions.UserEditor);
 
 			// Core Services
 			services.AddTransient<LoginViewModel>();

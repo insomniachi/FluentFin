@@ -4,7 +4,7 @@ using FluentFin.Dialogs.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
 
-namespace FluentFin.Dialogs.Views;
+namespace FluentFin.Views;
 
 public sealed partial class UserEditorPage : Page
 {

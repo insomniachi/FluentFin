@@ -61,7 +61,7 @@ public partial class App : Application
     {
 		InitializeComponent();
 
-        Host = Microsoft.Extensions.Hosting.Host.
+		Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
         ConfigureServices((context, services) =>
@@ -76,7 +76,7 @@ public partial class App : Application
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationViewService, NavigationViewService>();
             services.AddSingleton<INavigationService, NavigationService>();
-			services.AddSingleton<INavigationServiceCore>(sp => sp.GetRequiredService<INavigationService>());
+			services.AddSingleton((Func<IServiceProvider, INavigationServiceCore>)(sp => sp.GetRequiredService<INavigationService>()));
             services.AddTransient<IContentDialogService, ContentDialogService>();
 
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
@@ -108,6 +108,7 @@ public partial class App : Application
 			services.AddTransient<DashboardViewModel>();
 			services.AddTransient<UsersViewModel>();
 			services.AddTransient<UserEditorViewModel>();
+			services.AddTransient<UserProfileEditorViewModel>();
 
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

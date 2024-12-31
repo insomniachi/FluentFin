@@ -167,6 +167,57 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 		}
 	}
 
+	public async Task<List<TaskInfo>> GetScheduledTasks(bool? isEnabled)
+	{
+		try
+		{
+			return await _jellyfinApiClient.ScheduledTasks.GetAsync(x => x.QueryParameters.IsEnabled = isEnabled) ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task RunTask(string? taskId)
+	{
+		try
+		{
+			await _jellyfinApiClient.ScheduledTasks.Running[taskId].PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task Restart()
+	{
+		try
+		{
+			await _jellyfinApiClient.System.Restart.PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task Shutdown()
+	{
+		try
+		{
+			await _jellyfinApiClient.System.Shutdown.PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
 
 	private async Task<EndPointInfo?> EndpointInfo()
 	{

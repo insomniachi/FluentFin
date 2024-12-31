@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.UserProfileEditorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Dialogs.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
+    mc:Ignorable="d">
+
+
+    <StackPanel MaxWidth="1000" Spacing="5">
+        <StackPanel.Resources>
+            <Style TargetType="ctk:SettingsExpander">
+                <Setter Property="IsExpanded" Value="True" />
+            </Style>
+        </StackPanel.Resources>
+
+        <ctk:SettingsCard Header="Name">
+            <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsCard Description="If unchecked, all remote connections will be blocked." Header="Allow remote connections to this server">
+            <ToggleSwitch IsOn="{x:Bind ViewModel.AllowRemoteConnections, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsCard Header="Allow this user to manage the server">
+            <ToggleSwitch IsOn="{x:Bind ViewModel.AllowServerManagement, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsCard Header="Allow this user to manage collections">
+            <ToggleSwitch IsOn="{x:Bind ViewModel.AllowCollectionManagement, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsCard Header="Allow this user to edit subtitles">
+            <ToggleSwitch IsOn="{x:Bind ViewModel.AllowSubtitleEdits, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsExpander Header="Feature Access">
+            <ctk:SettingsExpander.Items>
+                <ctk:SettingsCard Header="Allow Live TV access">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowLiveTvAccess, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Header="Allow Live TV access">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowLiveTvRecordingManagement, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+            </ctk:SettingsExpander.Items>
+        </ctk:SettingsExpander>
+        <ctk:SettingsExpander Description="Restricting access to transcoding may cause playback failures in clients due to unsupported media formats." Header="Media Playback">
+            <ctk:SettingsExpander.Items>
+                <ctk:SettingsCard Header="Allow media playback">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowMediaPlayback, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Header="Allow audio playback that requires transcoding">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowAudioPlaybackTranscoding, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Header="Allow video playback that requires transcoding">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowVideoPlaybackTranscoding, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Header="Allow video playback that requires conversion without re-encoding">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowPlaybackWithoutReEncoding, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Header="Force transcoding of remote media sources such as Live TV">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.ForceTranscoding, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+            </ctk:SettingsExpander.Items>
+        </ctk:SettingsExpander>
+        <ctk:SettingsCard Description="An optional per-stream bitrate limit for all out of network devices. This is useful to prevent devices from requesting a higher bitrate than your internet connection can handle. This may result in increased CPU load on your server in order to transcode videos on the fly to a lower bitrate. Override the default global value set in server settings, see Dashboard &gt; Playback &gt; Streaming." Header="Internet streaming bitrate limit (Mbps)">
+            <NumberBox Value="{x:Bind ViewModel.InternetStreamingBitrateLimit, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsCard Description="The SyncPlay feature enables to sync playback with other devices. Select the level of access this user has to the SyncPlay." Header="SyncPlay access">
+            <ComboBox ItemsSource="{ui:EnumValues Type=jm:UserPolicy_SyncPlayAccess}" SelectedItem="{x:Bind ViewModel.SyncPlayAccess, Mode=TwoWay}" />
+        </ctk:SettingsCard>
+        <ctk:SettingsExpander Header="Remote Control">
+            <ctk:SettingsExpander.Items>
+                <ctk:SettingsCard Header="Allow remote control of other users">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowRemoteControlOfOtherUsers, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Header="Allow remote control of shared devices">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowSharedDeviceControl, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+            </ctk:SettingsExpander.Items>
+        </ctk:SettingsExpander>
+        <ctk:SettingsExpander Header="Other">
+            <ctk:SettingsExpander.Items>
+                <ctk:SettingsCard Description="Users can download media and store it on their devices. This is not the same as a sync feature. Book libraries require this enabled to function properly." Header="Allow media downloads">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.AllowMediaDownloads, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Description="The server will not allow any connections from this user. Existing connections will be abruptly ended." Header="Disable this user">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Description="Useful for private or hidden administrator accounts. The user will need to sign in manually by entering their username and password." Header="Hide this user from login screens">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.HideFromLogin, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Description="Determine how many incorrect login tries can be made before lockout occurs. A value of zero means inheriting the default of three tries for normal users and five for administrators. Setting this to -1 will disable the feature." Header="Failed login tries before user is locked out">
+                    <NumberBox Value="{x:Bind ViewModel.FailedLoginTriesBeforeLockout, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+                <ctk:SettingsCard Description="Set the maximum number of simultaneous user sessions. A value of 0 will disable the feature." Header="Maximum number of simultaneous user sessions">
+                    <NumberBox Value="{x:Bind ViewModel.MaximumNumberOfSimultaneousSessions, Mode=TwoWay}" />
+                </ctk:SettingsCard>
+            </ctk:SettingsExpander.Items>
+        </ctk:SettingsExpander>
+    </StackPanel>
+</Page>

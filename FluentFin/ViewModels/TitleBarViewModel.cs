@@ -6,8 +6,6 @@ using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Views;
 using Jellyfin.Sdk.Generated.Models;
-using ReactiveUI;
-using System.Reactive.Linq;
 using System.Reflection;
 
 namespace FluentFin.ViewModels;
@@ -55,7 +53,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	}
 
 	[RelayCommand]
-	private async Task Logout()
+	public async Task Logout()
 	{
 		_localSettingsService.SaveSetting(SettingKeys.ServerSettings, new());
 		User = null;

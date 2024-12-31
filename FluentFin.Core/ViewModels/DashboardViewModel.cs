@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
@@ -6,8 +7,11 @@ using System.Reflection;
 
 namespace FluentFin.Core.ViewModels
 {
-	public partial class DashboardViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+	public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
+											ITitleBarViewModel titlebarViewModel) : ObservableObject, INavigationAware
 	{
+		private string? _scanMediaLibraryTask;
+
 		[ObservableProperty]
 		public partial SystemInfo? SystemInfo { get; set; }
 
@@ -53,6 +57,35 @@ namespace FluentFin.Core.ViewModels
 			{
 				OtherActivities = otherActivityResult.Items;
 			}
+
+			var tasks = await jellyfinClient.GetScheduledTasks(true);
+
+			_scanMediaLibraryTask = tasks.FirstOrDefault(x => x.Name == "Scan Media Library")?.Id;
+		}
+
+		[RelayCommand]
+		private async Task Shutdown()
+		{
+			await titlebarViewModel.Logout();
+			await jellyfinClient.Shutdown();
+		}
+
+		[RelayCommand]
+		private async Task Restart()
+		{
+			await titlebarViewModel.Logout();
+			await jellyfinClient.Restart();
+		}
+
+		[RelayCommand]
+		private async Task StartScan()
+		{
+			if(string.IsNullOrEmpty(_scanMediaLibraryTask))
+			{
+				return;
+			}
+
+			await jellyfinClient.RunTask(_scanMediaLibraryTask);
 		}
 	}
 }

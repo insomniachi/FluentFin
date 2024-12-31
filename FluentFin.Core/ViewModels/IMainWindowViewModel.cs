@@ -24,4 +24,5 @@ public interface ITitleBarViewModel : INotifyPropertyChanged
 	void GoBack();
 	bool CanGoBack { get; }
 	UserDto? User { get; set; }
+	Task Logout();
 }

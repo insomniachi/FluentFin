@@ -28,7 +28,8 @@ public class PageService : IPageService
         // Settings Pages
         Configure<DashboardViewModel, DashboardPage>();
         Configure<UsersViewModel, UsersPage>();
-        Configure<UserEditorViewModel, UserEditorPage>();
+		Configure<UserEditorViewModel, UserEditorPage>();
+        Configure<UserProfileEditorViewModel, UserProfileEditorPage>();
     }
 
     public Type GetPageType(string key)

@@ -44,6 +44,7 @@
             <StackPanel Spacing="20">
                 <StackPanel Spacing="20">
                     <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="Server" />
+
                     <Grid
                         Padding="16"
                         Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
@@ -96,6 +97,12 @@
                             Text="{x:Bind ViewModel.Version, Mode=OneWay}" />
 
                     </Grid>
+
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <Button Command="{x:Bind ViewModel.StartScanCommand}" Content="Scan All Libraries" />
+                        <Button Command="{x:Bind ViewModel.RestartCommand}" Content="Restart" />
+                        <Button Command="{x:Bind ViewModel.ShutdownCommand}" Content="Shutdown" />
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="20">
@@ -119,6 +126,7 @@
                                         </Grid.RowDefinitions>
 
                                         <controls:LoadingImage
+                                            CornerRadius="{StaticResource ControlCornerRadius}"
                                             Source="{x:Bind NowPlayingItem, Converter={StaticResource ImageConveter}}"
                                             Stretch="UniformToFill"
                                             Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}}" />
@@ -142,6 +150,7 @@
                                             <StackPanel
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Bottom"
+                                                Spacing="16"
                                                 Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}}">
                                                 <Image
                                                     Height="50"

@@ -103,6 +103,14 @@ namespace FluentFin.Core.Contracts.Services
 		Task DeleteUser(UserDto user);
 
 		Task UpdatePolicy(UserDto user, UserPolicy policy);
+
+		Task<List<TaskInfo>> GetScheduledTasks(bool? isEnabled);
+
+		Task RunTask(string? taskId);
+
+		Task Restart();
+
+		Task Shutdown();
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

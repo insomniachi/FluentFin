@@ -25,10 +25,10 @@
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}" Spacing="20">
                     <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
                     <SelectorBar x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged">
-                        <SelectorBarItem Tag="{x:Bind vm:UserEditorSection.Profile}" Text="Profile" />
-                        <SelectorBarItem Tag="{x:Bind vm:UserEditorSection.Access}" Text="Access" />
-                        <SelectorBarItem Tag="{x:Bind vm:UserEditorSection.ParentalControl}" Text="Parental Control" />
-                        <SelectorBarItem Tag="{x:Bind vm:UserEditorSection.Password}" Text="Password" />
+                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Profile), Mode=OneWay}" Text="Profile" />
+                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Access), Mode=OneWay}" Text="Access" />
+                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.ParentalControl), Mode=OneWay}" Text="Parental Control" />
+                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Password), Mode=OneWay}" Text="Password" />
                     </SelectorBar>
                 </StackPanel>
 
@@ -45,8 +45,8 @@
             FlowDirection="RightToLeft"
             Orientation="Horizontal"
             Spacing="16">
-            <Button Content="Save" />
-            <Button Content="Reset" />
+            <Button Command="{x:Bind ViewModel.SaveCommand}" Content="Save" />
+            <Button Command="{x:Bind ViewModel.ResetCommand}" Content="Reset" />
         </StackPanel>
     </Grid>
 

@@ -2,6 +2,8 @@
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -133,5 +135,23 @@ public partial class UserProfileEditorViewModel(IJellyfinClient jellyfinClient) 
 		{
 			AllowContentDeletionFromFolders = policy.EnableContentDeletionFromFolders.Select(x => folders.Items.First(folder => folder.Id == Guid.Parse(x))).ToList() ?? [];
 		}
+
+		this.WhenAnyValue(x => x.AllowRemoteConnections).Subscribe(value => policy.EnableRemoteAccess = value);
+		this.WhenAnyValue(x => x.AllowServerManagement).Subscribe(value => policy.IsAdministrator = value);
+		this.WhenAnyValue(x => x.AllowCollectionManagement).Subscribe(value => policy.EnableCollectionManagement = value);
+		this.WhenAnyValue(x => x.AllowSubtitleEdits).Subscribe(value => policy.EnableSubtitleManagement = value);
+		this.WhenAnyValue(x => x.AllowLiveTvAccess).Subscribe(value => policy.EnableLiveTvAccess = value);
+		this.WhenAnyValue(x => x.AllowLiveTvRecordingManagement).Subscribe(value => policy.EnableLiveTvManagement = value);
+		this.WhenAnyValue(x => x.AllowMediaPlayback).Subscribe(value => policy.EnableMediaPlayback = value);
+		this.WhenAnyValue(x => x.AllowAudioPlaybackTranscoding).Subscribe(value => policy.EnableAudioPlaybackTranscoding = value);
+		this.WhenAnyValue(x => x.AllowVideoPlaybackTranscoding).Subscribe(value => policy.EnableVideoPlaybackTranscoding = value);
+		this.WhenAnyValue(x => x.AllowPlaybackWithoutReEncoding).Subscribe(value => policy.EnablePlaybackRemuxing = value);
+		this.WhenAnyValue(x => x.ForceTranscoding).Subscribe(value => policy.ForceRemoteSourceTranscoding = value);
+		this.WhenAnyValue(x => x.InternetStreamingBitrateLimit).Subscribe(value => policy.RemoteClientBitrateLimit = (int?)value);
+		this.WhenAnyValue(x => x.SyncPlayAccess).Subscribe(value => policy.SyncPlayAccess = value);
+		this.WhenAnyValue(x => x.AllowMediaDeletionFromAllLibraries).Subscribe(value => policy.EnableContentDeletion = value);
+		this.WhenAnyValue(x => x.IsDisabled).Subscribe(value => policy.IsDisabled = value);
+		this.WhenAnyValue(x => x.AllowMediaDownloads).Subscribe(value => policy.EnableContentDownloading = value);
+		this.WhenAnyValue(x => x.HideFromLogin).Subscribe(value => policy.IsHidden = value);
 	}
 }

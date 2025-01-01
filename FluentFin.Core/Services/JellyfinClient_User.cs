@@ -176,6 +176,19 @@ public partial class JellyfinClient
 		}
 	}
 
+	public async Task<UserDto?> GetUser(Guid id)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Users[id].GetAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async Task DeleteUser(UserDto user)
 	{
 		if(user.Id is not { } id)

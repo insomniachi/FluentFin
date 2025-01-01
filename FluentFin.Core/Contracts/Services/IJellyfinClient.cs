@@ -98,6 +98,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<List<UserDto>> GetUsers();
 
+		Task<UserDto?> GetUser(Guid id);
+
 		Task<UserDto?> CreateUser(string username, string password);
 
 		Task DeleteUser(UserDto user);

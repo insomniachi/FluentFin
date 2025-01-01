@@ -118,4 +118,18 @@ public static class Converters
 
 		return flyout;
 	}
+
+
+	public static string AccessScheduleToString(AccessSchedule schedule)
+	{
+		if (schedule is null)
+		{
+			return string.Empty;
+		}
+
+		var start = DateTime.Today.Add(TimeSpan.FromHours(schedule.StartHour ?? 0));
+		var end = DateTime.Today.Add(TimeSpan.FromHours(schedule.EndHour ?? 0));
+
+		return $"{start:hh:mm tt} - {end:hh:mm tt}";
+	}
 }

@@ -6,13 +6,14 @@ using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs;
+using FluentFin.Dialogs.UserInput;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
 using FluentFin.Services;
 using FluentFin.ViewModels;
 using FluentFin.Views;
-
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -110,6 +111,7 @@ public partial class App : Application
 			services.AddTransient<UserEditorViewModel>();
 			services.AddTransient<UserProfileEditorViewModel>();
 			services.AddTransient<UserAccessEditorViewModel>();
+			services.AddTransient<UserParentalControlEditorViewModel>();
 
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
@@ -118,8 +120,12 @@ public partial class App : Application
             services.AddDialog<IdentifyViewModel, IdentifyDialog>();
             services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
             services.AddDialog<RefreshMetadataViewModel, RefreshMetadataDialog>();
+			services.AddDialog<AccessSchedulePickerViewModel, AccessSchedulePickerDialog>();
 
 			services.AddDialog<AddUserViewModel, AddUserDialog>();
+
+			// Pickers
+			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();
 
 			services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();

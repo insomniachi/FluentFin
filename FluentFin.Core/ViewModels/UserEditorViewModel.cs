@@ -50,7 +50,7 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 		{
 			UserEditorSection.Profile => typeof(UserProfileEditorViewModel).FullName!,
 			UserEditorSection.Access => typeof(UserAccessEditorViewModel).FullName!,
-			UserEditorSection.ParentalControl => "ParentalControl",
+			UserEditorSection.ParentalControl => typeof(UserParentalControlEditorViewModel).FullName!,
 			UserEditorSection.Password => "Password",
 			_ => throw new UnreachableException()
 		};

@@ -90,7 +90,7 @@ public class ContentDialogService : IContentDialogService
 	public Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure, Action<TViewModel> configureVm) where TViewModel : class
 	{
 		var vm = App.GetService<TViewModel>();
-		configureVm(vm);
+		configureVm?.Invoke(vm);
 		return ShowDialog(vm, configure);
 	}
 }

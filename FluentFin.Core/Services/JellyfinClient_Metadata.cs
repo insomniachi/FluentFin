@@ -112,6 +112,19 @@ public partial class JellyfinClient
 		}
 	}
 
+	public async Task<List<ParentalRating>> GetParentalRatings()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Localization.ParentalRatings.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
 	public async Task<List<RemoteSubtitleInfo>> SearchSubtitles(BaseItemDto dto, CultureInfo culture)
 	{
 		if (dto.Id is not { } id)

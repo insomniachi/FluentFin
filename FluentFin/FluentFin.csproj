@@ -63,6 +63,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Dialogs\Views\AccessSchedulePickerDialog.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Dialogs\Views\UserEditorPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -103,6 +106,9 @@
 	<ItemGroup>
 	  <Page Update="Styles\ImageEx.xaml">
 	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\JellyfinSettings\UserParentalControlEditorPage.xaml">
+	    <SubType>Designer</SubType>
 	  </Page>
 	  <Page Update="Views\JellyfinSettings\UserAccessEditorPage.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

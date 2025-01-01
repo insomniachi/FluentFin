@@ -72,6 +72,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<MetadataEditorInfo?> GetMetadataEditorInfo(BaseItemDto dto);
 
+		Task<List<ParentalRating>> GetParentalRatings();
+
 		Task<List<ImageInfo>> GetImages(BaseItemDto dto);
 
 		Task<List<ImageProviderInfo>> GetImageProviders(BaseItemDto dto);

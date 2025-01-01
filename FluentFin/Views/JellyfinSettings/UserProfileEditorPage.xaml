@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
 
-    <StackPanel MaxWidth="1000" Spacing="5">
+    <StackPanel Spacing="5">
         <StackPanel.Resources>
             <Style TargetType="ctk:SettingsExpander">
                 <Setter Property="IsExpanded" Value="True" />

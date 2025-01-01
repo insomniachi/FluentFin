@@ -104,6 +104,10 @@
 	  <Page Update="Styles\ImageEx.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Views\JellyfinSettings\UserAccessEditorPage.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\JellyfinSettings\UsersPage.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	    <SubType>Designer</SubType>

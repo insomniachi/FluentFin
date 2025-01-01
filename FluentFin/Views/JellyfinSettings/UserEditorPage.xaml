@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:FluentFin.Dialogs.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Core.ViewModels"
     mc:Ignorable="d">
 
@@ -16,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer>
-            <Grid MaxWidth="1000" Margin="36,36,36,0">
+            <Grid Width="1000" HorizontalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -25,29 +26,48 @@
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}" Spacing="20">
                     <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
                     <SelectorBar x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged">
-                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Profile), Mode=OneWay}" Text="Profile" />
-                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Access), Mode=OneWay}" Text="Access" />
-                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.ParentalControl), Mode=OneWay}" Text="Parental Control" />
-                        <SelectorBarItem IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Password), Mode=OneWay}" Text="Password" />
+                        <SelectorBarItem
+                            IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Profile), Mode=OneWay}"
+                            Tag="{x:Bind vm:UserEditorSection.Profile}"
+                            Text="Profile" />
+                        <SelectorBarItem
+                            IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Access), Mode=OneWay}"
+                            Tag="{x:Bind vm:UserEditorSection.Access}"
+                            Text="Access" />
+                        <SelectorBarItem
+                            IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.ParentalControl), Mode=OneWay}"
+                            Tag="{x:Bind vm:UserEditorSection.ParentalControl}"
+                            Text="Parental Control" />
+                        <SelectorBarItem
+                            IsSelected="{x:Bind IsSelected(ViewModel.SelectedSectionViewModel, vm:UserEditorSection.Password), Mode=OneWay}"
+                            Tag="{x:Bind vm:UserEditorSection.Password}"
+                            Text="Password" />
                     </SelectorBar>
+                </StackPanel>
+
+                <StackPanel
+                    Padding="16"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <Button Command="{x:Bind ViewModel.SaveCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <SymbolIcon Symbol="Save" />
+                            <TextBlock Text="Save" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.ResetCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <SymbolIcon Symbol="Refresh" />
+                            <TextBlock Text="Reset" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <Frame x:Name="NavFrame" Grid.Row="1" />
             </Grid>
         </ScrollViewer>
-
-        <StackPanel
-            Grid.Row="1"
-            MaxWidth="1000"
-            Padding="16"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            FlowDirection="RightToLeft"
-            Orientation="Horizontal"
-            Spacing="16">
-            <Button Command="{x:Bind ViewModel.SaveCommand}" Content="Save" />
-            <Button Command="{x:Bind ViewModel.ResetCommand}" Content="Reset" />
-        </StackPanel>
     </Grid>
 
 </Page>

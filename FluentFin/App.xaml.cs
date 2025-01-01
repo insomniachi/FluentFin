@@ -109,6 +109,7 @@ public partial class App : Application
 			services.AddTransient<UsersViewModel>();
 			services.AddTransient<UserEditorViewModel>();
 			services.AddTransient<UserProfileEditorViewModel>();
+			services.AddTransient<UserAccessEditorViewModel>();
 
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

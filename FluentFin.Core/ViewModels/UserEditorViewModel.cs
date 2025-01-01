@@ -49,7 +49,7 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 		return section switch
 		{
 			UserEditorSection.Profile => typeof(UserProfileEditorViewModel).FullName!,
-			UserEditorSection.Access => "Access",
+			UserEditorSection.Access => typeof(UserAccessEditorViewModel).FullName!,
 			UserEditorSection.ParentalControl => "ParentalControl",
 			UserEditorSection.Password => "Password",
 			_ => throw new UnreachableException()

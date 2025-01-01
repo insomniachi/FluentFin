@@ -32,7 +32,7 @@ public sealed partial class UserEditorPage : Page
 		return section switch
 		{
 			UserEditorSection.Profile => vm is UserProfileEditorViewModel,
-			//UserEditorSection.Access => vm is UserAccessEditorViewModel,
+			UserEditorSection.Access => vm is UserAccessEditorViewModel,
 			//UserEditorSection.ParentalControl => vm is UserParentalControlEditorViewModel,
 			//UserEditorSection.Password => vm is UserPasswordEditorViewModel,
 			_ => false

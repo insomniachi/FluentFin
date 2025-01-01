@@ -30,6 +30,7 @@ public class PageService : IPageService
         Configure<UsersViewModel, UsersPage>();
 		Configure<UserEditorViewModel, UserEditorPage>();
         Configure<UserProfileEditorViewModel, UserProfileEditorPage>();
+        Configure<UserAccessEditorViewModel, UserAccessEditorPage>();
     }
 
     public Type GetPageType(string key)

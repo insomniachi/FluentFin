@@ -21,8 +21,9 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 
 	[ObservableProperty]
 	public partial UserEditorSection Section { get; set; } = UserEditorSection.Profile;
-	
-	public UserSectionEditorViewModel? SelectedSectionViewModel { get; set; }
+
+	[ObservableProperty]
+	public partial UserSectionEditorViewModel? SelectedSectionViewModel { get; set; }
 
 	public Task OnNavigatedFrom()
 	{
@@ -51,7 +52,7 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 			UserEditorSection.Profile => typeof(UserProfileEditorViewModel).FullName!,
 			UserEditorSection.Access => typeof(UserAccessEditorViewModel).FullName!,
 			UserEditorSection.ParentalControl => typeof(UserParentalControlEditorViewModel).FullName!,
-			UserEditorSection.Password => "Password",
+			UserEditorSection.Password => typeof(UserPasswordEditorViewModel).FullName!,
 			_ => throw new UnreachableException()
 		};
 	}

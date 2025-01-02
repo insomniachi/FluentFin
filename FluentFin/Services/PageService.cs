@@ -3,7 +3,6 @@
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs.ViewModels;
-using FluentFin.Dialogs.Views;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
@@ -32,6 +31,7 @@ public class PageService : IPageService
         Configure<UserProfileEditorViewModel, UserProfileEditorPage>();
         Configure<UserAccessEditorViewModel, UserAccessEditorPage>();
         Configure<UserParentalControlEditorViewModel, UserParentalControlEditorPage>();
+        Configure<UserPasswordEditorViewModel, UserPasswordEditorPage>();
 	}
 
     public Type GetPageType(string key)

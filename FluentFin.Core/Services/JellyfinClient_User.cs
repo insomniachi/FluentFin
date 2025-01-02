@@ -224,4 +224,47 @@ public partial class JellyfinClient
 			return;
 		}
 	}
+
+	public async Task ChangePassword(UserDto user, string currentPassword, string newPassword)
+	{
+		if (user.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Users.Password.PostAsync(new UpdateUserPassword
+			{
+				CurrentPassword = currentPassword,
+				NewPw = newPassword,
+			}, x => x.QueryParameters.UserId = id);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task ResetPassword(UserDto user)
+	{
+		if (user.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Users.Password.PostAsync(new UpdateUserPassword
+			{
+				ResetPassword = true,
+			}, x => x.QueryParameters.UserId = id);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
 }

@@ -107,6 +107,9 @@
 	  <Page Update="Styles\ImageEx.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Views\JellyfinSettings\UserPasswordEditorPage.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Views\JellyfinSettings\UserParentalControlEditorPage.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>

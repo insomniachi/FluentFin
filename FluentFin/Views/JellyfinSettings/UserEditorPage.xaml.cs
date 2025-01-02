@@ -3,9 +3,9 @@ using FluentFin.Core;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Helpers;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using ReactiveUI;
 
 namespace FluentFin.Views;
 
@@ -13,8 +13,8 @@ public sealed partial class UserEditorPage : Page
 {
     private readonly INavigationService _navigationService = App.GetKeyedService<INavigationService>(NavigationRegions.UserEditor);
 	public UserEditorViewModel ViewModel { get; } = App.GetService<UserEditorViewModel>();
-    
-    public UserEditorPage()
+
+	public UserEditorPage()
     {
         InitializeComponent();
 
@@ -22,7 +22,7 @@ public sealed partial class UserEditorPage : Page
 		_navigationService.Navigated += NavigationService_Navigated;
     }
 
-	public bool IsSelected(UserSectionEditorViewModel vm, UserEditorSection section)
+	public static bool IsSelected(UserSectionEditorViewModel vm, UserEditorSection section)
 	{
 		if(vm is null)
 		{
@@ -34,10 +34,12 @@ public sealed partial class UserEditorPage : Page
 			UserEditorSection.Profile => vm is UserProfileEditorViewModel,
 			UserEditorSection.Access => vm is UserAccessEditorViewModel,
 			UserEditorSection.ParentalControl => vm is UserParentalControlEditorViewModel,
-			//UserEditorSection.Password => vm is UserPasswordEditorViewModel,
+			UserEditorSection.Password => vm is UserPasswordEditorViewModel,
 			_ => false
 		};
 	}
+
+	public static Visibility IsSaveResetButtonsVisible(UserSectionEditorViewModel vm) => vm is UserPasswordEditorViewModel ? Visibility.Collapsed : Visibility.Visible;
 
 	private void NavigationService_Navigated(object sender, NavigationEventArgs e)
 	{

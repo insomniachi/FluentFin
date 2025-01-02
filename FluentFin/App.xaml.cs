@@ -112,6 +112,7 @@ public partial class App : Application
 			services.AddTransient<UserProfileEditorViewModel>();
 			services.AddTransient<UserAccessEditorViewModel>();
 			services.AddTransient<UserParentalControlEditorViewModel>();
+			services.AddTransient<UserPasswordEditorViewModel>();
 
             // Dialogs
             services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

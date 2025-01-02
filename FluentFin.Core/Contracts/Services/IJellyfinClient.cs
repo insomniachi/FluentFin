@@ -108,6 +108,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task UpdatePolicy(UserDto user, UserPolicy policy);
 
+		Task ChangePassword(UserDto user, string currentPassword, string newPassword);
+
+		Task ResetPassword(UserDto user);
+
 		Task<List<TaskInfo>> GetScheduledTasks(bool? isEnabled);
 
 		Task RunTask(string? taskId);

@@ -219,6 +219,32 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 		}
 	}
 
+	public async Task<ServerConfiguration?> GetConfiguration()
+	{
+		try
+		{
+			return await _jellyfinApiClient.System.Configuration.GetAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
+	public async Task SaveConfiguration(ServerConfiguration configuration)
+	{
+		try
+		{
+			await _jellyfinApiClient.System.Configuration.PostAsync(configuration);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
 	private async Task<EndPointInfo?> EndpointInfo()
 	{
 		try

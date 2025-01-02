@@ -107,6 +107,7 @@ public partial class App : Application
 			services.AddTransient<JellyfinSettingsViewModel>();
 
 			services.AddTransient<DashboardViewModel>();
+			services.AddTransient<GeneralSettingsViewModel>();
 			services.AddTransient<UsersViewModel>();
 			services.AddTransient<UserEditorViewModel>();
 			services.AddTransient<UserProfileEditorViewModel>();

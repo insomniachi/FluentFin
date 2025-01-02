@@ -26,6 +26,7 @@ public class PageService : IPageService
 
         // Settings Pages
         Configure<DashboardViewModel, DashboardPage>();
+        Configure<GeneralSettingsViewModel, GeneralSettingsPage>();
         Configure<UsersViewModel, UsersPage>();
 		Configure<UserEditorViewModel, UserEditorPage>();
         Configure<UserProfileEditorViewModel, UserProfileEditorPage>();

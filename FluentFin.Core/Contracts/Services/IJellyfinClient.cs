@@ -119,6 +119,10 @@ namespace FluentFin.Core.Contracts.Services
 		Task Restart();
 
 		Task Shutdown();
+
+		Task<ServerConfiguration?> GetConfiguration();
+
+		Task SaveConfiguration(ServerConfiguration configuration);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);

@@ -36,7 +36,7 @@
                 helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.DashboardViewModel"
                 Content="Dashboard"
                 Icon="{ui:FontIcon Glyph=&#xF246;}" />
-            <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.DashboardViewModel" Content="General">
+            <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.GeneralSettingsViewModel" Content="General">
                 <NavigationViewItem.Icon>
                     <AnimatedIcon x:Name="SearchAnimatedIcon">
                         <AnimatedIcon.Source>

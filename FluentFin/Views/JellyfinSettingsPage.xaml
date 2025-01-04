@@ -52,6 +52,17 @@
                 helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.UsersViewModel"
                 Content="Users"
                 Icon="{ui:FontIcon Glyph=&#xE716;}" />
+            <NavigationViewItem
+                Content="Libraries"
+                Icon="{ui:FontIcon Glyph=&#xE8F1;}"
+                SelectsOnInvoked="False">
+                <NavigationViewItem.MenuItems>
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesSettingsViewModel" Content="Libraries" />
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesDisplayViewModel" Content="Display" />
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesMetadataViewModel" Content="Metadata" />
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesNfoSettingsViewModel" Content="NFO Settings" />
+                </NavigationViewItem.MenuItems>
+            </NavigationViewItem>
         </NavigationView.MenuItems>
     </NavigationView>
 </Page>

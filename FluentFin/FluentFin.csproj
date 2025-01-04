@@ -114,6 +114,19 @@
 	  <Page Update="Styles\ImageEx.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Views\JellyfinSettings\LibrariesDisplayPage.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\JellyfinSettings\LibrariesNfoSettingsPage.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\JellyfinSettings\LibrariesMetadataPage.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\JellyfinSettings\UserPasswordEditorPage.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>
@@ -122,6 +135,11 @@
 	  </Page>
 	  <Page Update="Views\JellyfinSettings\UserAccessEditorPage.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\JellyfinSettings\LibrariesSettingsPage.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\JellyfinSettings\UsersPage.xaml">

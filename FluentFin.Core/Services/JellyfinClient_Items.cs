@@ -98,4 +98,17 @@ public partial class JellyfinClient
 			return null;
 		}
 	}
+
+	public async Task<List<VirtualFolderInfo>> GetVirtualFolders()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Library.VirtualFolders.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
 }

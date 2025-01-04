@@ -22,6 +22,7 @@ public static class Converters
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
 	public static double ToDouble(long? value) => value ?? 0;
+	public static Guid ToGuid(string value) => Guid.Parse(value);
 	public static ImageSource? GetImage(Uri? uri)
 	{
 		if(uri is null)

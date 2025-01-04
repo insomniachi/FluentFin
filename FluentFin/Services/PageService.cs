@@ -33,6 +33,10 @@ public class PageService : IPageService
         Configure<UserAccessEditorViewModel, UserAccessEditorPage>();
         Configure<UserParentalControlEditorViewModel, UserParentalControlEditorPage>();
         Configure<UserPasswordEditorViewModel, UserPasswordEditorPage>();
+        Configure<LibrariesSettingsViewModel, LibrariesSettingsPage>();
+        Configure<LibrariesMetadataViewModel, LibrariesMetadataPage>();
+        Configure<LibrariesNfoSettingsViewModel, LibrariesNfoSettingsPage>();
+        Configure<LibrariesDisplayViewModel, LibrariesDisplayPage>();
 	}
 
     public Type GetPageType(string key)

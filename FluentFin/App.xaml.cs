@@ -114,9 +114,13 @@ public partial class App : Application
 			services.AddTransient<UserAccessEditorViewModel>();
 			services.AddTransient<UserParentalControlEditorViewModel>();
 			services.AddTransient<UserPasswordEditorViewModel>();
+			services.AddTransient<LibrariesSettingsViewModel>();
+			services.AddTransient<LibrariesMetadataViewModel>();
+			services.AddTransient<LibrariesNfoSettingsViewModel>();
+			services.AddTransient<LibrariesDisplayViewModel>();
 
-            // Dialogs
-            services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
+			// Dialogs
+			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
             services.AddDialog<EditImagesViewModel, EditImagesDialog>();
             services.AddDialog<EditSubtitlesViewModel, EditSubtitlesDialog>();
             services.AddDialog<IdentifyViewModel, IdentifyDialog>();

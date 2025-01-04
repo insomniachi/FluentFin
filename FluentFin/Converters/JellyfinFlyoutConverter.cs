@@ -99,7 +99,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			Text = "Refresh metadata",
 			Icon = new SymbolIcon { Symbol = Symbol.Refresh },
 			Command = App.Dialogs.RefreshMetadataDialogCommand,
-			CommandParameter = dto,
+			CommandParameter = dto.Id,
 		};
 	}
 

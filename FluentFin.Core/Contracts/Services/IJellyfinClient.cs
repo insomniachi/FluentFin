@@ -22,6 +22,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetMediaFolders();
 
+		Task<List<VirtualFolderInfo>> GetVirtualFolders();
+
 		Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto);
 
 		Task<BaseItemDtoQueryResult?> Search(string searchTerm);
@@ -88,7 +90,11 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task DeleteSubtitle(BaseItemDto dto, MediaStream stream);
 
-		Task RefreshMetadata(BaseItemDto dto, RefreshMetadataInfo info);
+		Task RefreshMetadata(Guid id, RefreshMetadataInfo info);
+
+		Task<List<CountryInfo>> GetCountries();
+
+		Task<List<CultureDto>> GetCultures();
 
 		Task<MediaSegmentDtoQueryResult?> GetMediaSegments(BaseItemDto dto, MediaSegmentType[]? types = null);
 
@@ -122,10 +128,32 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<ServerConfiguration?> GetConfiguration();
 
+		Task<XbmcMetadata> GetXbmcMetadata();
+
+		Task SaveXbmcMetadata(XbmcMetadata metadata);
+
+		Task<Metadata> GetMetadata();
+
+		Task SaveMetadata(Metadata metadata);
+
 		Task SaveConfiguration(ServerConfiguration configuration);
 	}
 
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);
 
 	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
+
+	public class XbmcMetadata
+	{
+		public string? ReleaseDateFormat { get; set; }
+		public bool SaveImagePathsInNfo { get; set; }
+		public bool EnablePathSubstitution { get; set; }
+		public bool EnableExtraThumbsDuplication { get; set; }
+		public Guid? UserId { get; set; }
+	}
+
+	public class Metadata
+	{
+		public bool UseFileCreationTimeForDateAdded { get; set; }
+	}
 }

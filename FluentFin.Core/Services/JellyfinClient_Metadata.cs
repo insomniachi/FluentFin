@@ -1,4 +1,6 @@
 ﻿using FluentFin.Core.Contracts.Services;
+using Flurl;
+using Flurl.Http;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -202,13 +204,8 @@ public partial class JellyfinClient
 		}
 	}
 
-	public async Task RefreshMetadata(BaseItemDto dto, RefreshMetadataInfo info)
+	public async Task RefreshMetadata(Guid id, RefreshMetadataInfo info)
 	{
-		if (dto.Id is not { } id)
-		{
-			return;
-		}
-
 		try
 		{
 			await _jellyfinApiClient.Items[id].Refresh.PostAsync(x =>
@@ -348,5 +345,55 @@ public partial class JellyfinClient
 			logger.LogError(ex, @"Unhandled exception");
 			return;
 		}
+	}
+
+	public async Task<List<CountryInfo>> GetCountries()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Localization.Countries.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task<List<CultureDto>> GetCultures()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Localization.Cultures.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task<XbmcMetadata> GetXbmcMetadata()
+	{
+		var response = _jellyfinApiClient.System.Configuration["xbmcmetadata"].ToGetRequestInformation();
+		return await AddApiKey(response.URI).GetJsonAsync<XbmcMetadata>();
+	}
+
+	public async Task SaveXbmcMetadata(XbmcMetadata metadata)
+	{
+		var response = _jellyfinApiClient.System.Configuration["xbmcmetadata"].ToGetRequestInformation();
+		await AddApiKey(response.URI).PostJsonAsync(metadata);
+	}
+
+	public async Task<Metadata> GetMetadata()
+	{
+		var response = _jellyfinApiClient.System.Configuration["metadata"].ToGetRequestInformation();
+		return await AddApiKey(response.URI).GetJsonAsync<Metadata>();
+	}
+
+	public async Task SaveMetadata(Metadata metadata)
+	{
+		var response = _jellyfinApiClient.System.Configuration["metadata"].ToGetRequestInformation();
+		await AddApiKey(response.URI).PostJsonAsync(metadata);
 	}
 }

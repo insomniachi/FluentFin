@@ -2,13 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Items.Item.Refresh;
-using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class RefreshMetadataViewModel(IJellyfinClient jellyfinClient) : ObservableObject, IBaseItemDialogViewModel
+public partial class RefreshMetadataViewModel(IJellyfinClient jellyfinClient) : ObservableObject, IItemDialogViewModel
 {
-	public BaseItemDto? Item { get; set; }
+	public Guid? Item { get; set; }
 
 	public List<string> RefreshModes { get; } = ["Scan for new and updated files", "Search for missing metadata", "Replace all metadata"];
 
@@ -21,7 +20,7 @@ public partial class RefreshMetadataViewModel(IJellyfinClient jellyfinClient) : 
 	[ObservableProperty]
 	public partial bool ReplaceExistingTrickplayImages { get; set; }
 
-	public Task Initialize(BaseItemDto item)
+	public Task Initialize(Guid? item)
 	{
 		Item = item;
 		SelectedRefreshMode = RefreshModes.First();
@@ -43,7 +42,7 @@ public partial class RefreshMetadataViewModel(IJellyfinClient jellyfinClient) : 
 
 		var info = new RefreshMetadataInfo(imageRefreshMode, metadataRefreshModel, ReplaceExistingImages, ReplaceExistingTrickplayImages, replaceAllMetadata);
 
-		await jellyfinClient.RefreshMetadata(Item, info);
+		await jellyfinClient.RefreshMetadata(Item.Value, info);
 	}
 
 }

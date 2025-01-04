@@ -75,7 +75,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	private async Task EditSubtitlesDialog(BaseItemDto dto) => await ShowBaseItemDialog<EditSubtitlesViewModel>(dto);
 
 	[RelayCommand]
-	private async Task RefreshMetadataDialog(BaseItemDto dto) => await ShowBaseItemDialog<RefreshMetadataViewModel>(dto);
+	private async Task RefreshMetadataDialog(Guid id) => await ShowBaseItemDialog<RefreshMetadataViewModel>(id);
 
 
 	[RelayCommand]
@@ -104,6 +104,14 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	{
 		var vm = App.GetService<TViewModel>();
 		await vm.Initialize(dto);
+		await dialogService.ShowDialog(vm, null!);
+	}
+
+	private async Task ShowBaseItemDialog<TViewModel>(Guid? id)
+	where TViewModel : class, IItemDialogViewModel
+	{
+		var vm = App.GetService<TViewModel>();
+		await vm.Initialize(id);
 		await dialogService.ShowDialog(vm, null!);
 	}
 

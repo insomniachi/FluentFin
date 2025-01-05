@@ -37,6 +37,8 @@ public class PageService : IPageService
         Configure<LibrariesMetadataViewModel, LibrariesMetadataPage>();
         Configure<LibrariesNfoSettingsViewModel, LibrariesNfoSettingsPage>();
         Configure<LibrariesDisplayViewModel, LibrariesDisplayPage>();
+        Configure<PlaybackResumeViewModel, PlaybackResumePage>();
+        Configure<PlaybackTrickplayViewModel, PlaybackTrickplayPage>();
 	}
 
     public Type GetPageType(string key)

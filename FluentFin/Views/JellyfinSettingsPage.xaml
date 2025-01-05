@@ -63,6 +63,15 @@
                     <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesNfoSettingsViewModel" Content="NFO Settings" />
                 </NavigationViewItem.MenuItems>
             </NavigationViewItem>
+            <NavigationViewItem
+                Content="Playback"
+                Icon="{ui:FontIcon Glyph=&#xEC58;}"
+                SelectsOnInvoked="False">
+                <NavigationViewItem.MenuItems>
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.PlaybackResumeViewModel" Content="Resume &amp; Streaming" />
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.PlaybackTrickplayViewModel" Content="Trickplay" />
+                </NavigationViewItem.MenuItems>
+            </NavigationViewItem>
         </NavigationView.MenuItems>
     </NavigationView>
 </Page>

@@ -118,6 +118,8 @@ public partial class App : Application
 			services.AddTransient<LibrariesMetadataViewModel>();
 			services.AddTransient<LibrariesNfoSettingsViewModel>();
 			services.AddTransient<LibrariesDisplayViewModel>();
+			services.AddTransient<PlaybackResumeViewModel>();
+			services.AddTransient<PlaybackTrickplayViewModel>();
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

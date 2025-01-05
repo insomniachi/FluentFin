@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.JellyfinSettings.PlaybackResumePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Views.JellyfinSettings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:FluentFin"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
+    x:Name="Page"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <c:JellyfinVirtualFolderImageConverter x:Key="ImageConverter" />
+        <c:HumanizeConverter x:Key="HumanizeConverter" />
+    </Page.Resources>
+
+    <Grid Width="1000">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,40,0,0">
+            <TextBlock
+                HorizontalAlignment="Left"
+                Style="{ThemeResource SubheaderTextBlockStyle}"
+                Text="Resume" />
+            <StackPanel
+                Padding="16"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Orientation="Horizontal"
+                Spacing="16">
+                <Button Command="{x:Bind ViewModel.SaveCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <SymbolIcon Symbol="Save" />
+                        <TextBlock Text="Save" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{x:Bind ViewModel.ResetCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <SymbolIcon Symbol="Refresh" />
+                        <TextBlock Text="Reset" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Spacing="5">
+            <ctk:SettingsCard Description="Titles are assumed unplayed if stopped before this time." Header="Minimum resume percentage">
+                <NumberBox Value="{x:Bind ViewModel.MinimumResumePercentage, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Description="Titles are assumed fully played if stopped after this time." Header="Maximum resume percentage">
+                <NumberBox Value="{x:Bind ViewModel.MaximumResumePercentage, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Description="The shortest video length in seconds that will save playback location and let you resume." Header="Minimum resume duration">
+                <NumberBox Value="{x:Bind ViewModel.MinimumResumeDuration, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Description="An optional per-stream bitrate limit for all out of network devices. This is useful to prevent devices from requesting a higher bitrate than your internet connection can handle. This may result in increased CPU load on your server in order to transcode videos on the fly to a lower bitrate." Header="Internet streaming bitrate limit (Mbps)">
+                <NumberBox Value="{x:Bind ViewModel.MinimumResumeDuration, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+        </StackPanel>
+
+    </Grid>
+
+</Page>

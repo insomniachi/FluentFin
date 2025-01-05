@@ -69,8 +69,13 @@ public partial class JellyfinClient
 			return null;
 		}
 
+		if(dto.ImageTags is null)
+		{
+			return null;
+		}
+
 		object? requestTag = null;
-		var hasRequestTag = dto.ImageTags?.AdditionalData.TryGetValue($"{type}", out requestTag);
+		var hasRequestTag = dto.ImageTags.AdditionalData.TryGetValue($"{type}", out requestTag);
 		var backdropTag = dto.BackdropImageTags?.FirstOrDefault();
 		var parentBackdropTag = dto.ParentBackdropImageTags?.FirstOrDefault();
 
@@ -93,9 +98,13 @@ public partial class JellyfinClient
 			id = pid;
 		}
 
-		if (type == ImageType.Thumb && dto.Type == BaseItemDto_Type.Episode)
+		if (type == ImageType.Thumb && !hasRequestTag)
 		{
 			type = ImageType.Primary;
+			if (dto.ImageTags.AdditionalData.TryGetValue($"{ImageType.Primary}", out var primaryTag))
+			{
+				tag = $"{primaryTag}";
+			}
 		}
 
 		else if (type == ImageType.Primary && dto.Type == BaseItemDto_Type.Episode)
@@ -106,8 +115,6 @@ public partial class JellyfinClient
 				tag = $"{dto.SeriesPrimaryImageTag}";
 			}
 		}
-
-
 
 		var uri = BaseUrl.AppendPathSegment($"/Items/{id}/Images/{type}");
 

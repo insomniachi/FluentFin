@@ -119,6 +119,12 @@
 	    <SubType>Designer</SubType>
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Views\JellyfinSettings\PlaybackTrickplayPage.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\JellyfinSettings\PlaybackResumePage.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Views\JellyfinSettings\LibrariesNfoSettingsPage.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>

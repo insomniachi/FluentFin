@@ -1,6 +1,7 @@
 ﻿using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
+using System.Web;
 
 namespace FluentFin.Core.Services;
 
@@ -243,5 +244,10 @@ public partial class JellyfinClient
 			logger.LogError(ex, @"Unhandled exception");
 			return null;
 		}
+	}
+
+	public Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution)
+	{
+		return new Uri(HttpUtility.HtmlDecode(BaseUrl.AppendPathSegment($"/Videos/{dto?.Id}/Trickplay/{resolution}/{index}.jpg").AppendQueryParam("api_key", _token).ToString()));
 	}
 }

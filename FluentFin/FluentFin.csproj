@@ -23,6 +23,7 @@
 	  <None Remove="Views\JellyfinSettingsPage.xaml" />
 	  <None Remove="Views\JellyfinSettings\DashboardPage.xaml" />
 	  <None Remove="Views\JellyfinSettings\GeneralSettingsPage.xaml" />
+	  <None Remove="Views\TrickplayTestPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,6 +62,12 @@
 	  <Content Update="Assets\jellyfin.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\TrickplayTestPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

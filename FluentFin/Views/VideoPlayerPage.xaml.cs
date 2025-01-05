@@ -3,6 +3,7 @@ using FlyleafLib;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -53,6 +54,41 @@ public sealed partial class VideoPlayerPage : Page
 				});
 			});
 
+		TransportControls?.DispatcherQueue.TryEnqueue(() =>
+		{
+			TransportControls.Trickplay = ViewModel.TrickplayViewModel;
+		});
+
+		ViewModel.TrickplayViewModel.WhenAnyValue(x => x.TileImage)
+			.WhereNotNull()
+			.Subscribe(url =>
+			{
+				TransportControls?.TrickplayImage.DispatcherQueue.TryEnqueue(() =>
+				{
+					TransportControls.TrickplayImage.Source = new BitmapImage(url);
+				});
+			});
+
+		ViewModel.TrickplayViewModel.WhenAnyValue(x => x.Translate)
+			.WhereNotNull()
+			.Subscribe(translate =>
+			{
+				TransportControls?.TranslateTransform.DispatcherQueue.TryEnqueue(() =>
+				{
+					TransportControls.TranslateTransform.X = translate.X;
+					TransportControls.TranslateTransform.Y = translate.Y;
+				});
+			});
+
+		ViewModel.TrickplayViewModel.WhenAnyValue(x => x.Clip)
+			.WhereNotNull()
+			.Subscribe(clip =>
+			{
+				TransportControls?.ClipGeometry.DispatcherQueue.TryEnqueue(() =>
+				{
+					TransportControls.ClipGeometry.Rect = new Windows.Foundation.Rect(clip.X, clip.Y, clip.Width, clip.Height);
+				});
+			});
 	}
 
 	private void FSC_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)

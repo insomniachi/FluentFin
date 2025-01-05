@@ -21,5 +21,5 @@ public partial class MainViewModel : ObservableObject, IMainWindowViewModel
 	public ITitleBarViewModel TitleBarViewModel { get; }
 
 	[ObservableProperty]
-	public partial MainWindowViewState ViewState { get; set; }
+	public partial MainWindowViewState ViewState { get; set; } = MainWindowViewState.Login;
 }

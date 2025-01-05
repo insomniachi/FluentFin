@@ -6,7 +6,6 @@ using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
-using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -20,13 +19,27 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	private readonly IJellyfinClient _jellyfinClient;
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
+								TrickplayViewModel trickplayViewModel,
 								ILogger<VideoPlayerViewModel> logger)
 	{
 		_jellyfinClient = jellyfinClient;
 
+		TrickplayViewModel = trickplayViewModel;
+
 		this.WhenAnyValue(x => x.Playlist.SelectedItem)
 			.WhereNotNull()
-			.SelectMany(item => GetMediaUrl(item.Dto))
+			.Do(async item =>
+			{
+				var full = await jellyfinClient.GetItem(item.Dto.Id ?? Guid.Empty);
+
+				if(full is null)
+				{
+					return;
+				}
+
+				TrickplayViewModel.SetItem(full);
+			})
+			.SelectMany(item => GetMediaUrl(item.Dto!))
 			.WhereNotNull()
 			.Subscribe(uri =>
 			{
@@ -53,9 +66,12 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
 	}
 
+	public TrickplayViewModel TrickplayViewModel { get; }
 
 	public Player MediaPlayer { get; private set; } = new();
-	public BaseItemDto? Dto { get; set; }
+
+	[ObservableProperty]
+	public partial BaseItemDto? Dto { get; set; }
 
 	[ObservableProperty]
 	public partial TimeSpan Position { get; set; }
@@ -94,9 +110,15 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		{
 			return;
 		}
+
+		if(dto.Id is not { } id)
+		{
+			return;
+		}
 		
-		Dto = dto;
+		Dto = await _jellyfinClient.GetItem(id);
 		MediaPlayer.PropertyChanged += MediaPlayer_PropertyChanged;
+
 
 		var success = dto.Type switch
 		{
@@ -110,6 +132,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		{
 			return;
 		}
+
+		await TrickplayViewModel.Initialize();
 
 		Playlist.AutoSelect();
 
@@ -186,12 +210,13 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 				continue;
 			}
 
-			Playlist.Items.Add(new PlaylistItem
+			var playlistItem = new PlaylistItem
 			{
 				Title = item.Name ?? "",
 				Dto = item
-			});
+			};
 
+			Playlist.Items.Add(playlistItem);
 		}
 
 		if(Playlist.Items.Count == 0)
@@ -205,11 +230,13 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	private Task<bool> CreateSingleItemPlaylist(BaseItemDto dto)
 	{
-		Playlist.Items.Add(new PlaylistItem
+		var item = new PlaylistItem
 		{
 			Title = dto.Name ?? "",
 			Dto = dto
-		});
+		};
+
+		Playlist.Items.Add(item);
 
 		return Task.FromResult(true);
 	}

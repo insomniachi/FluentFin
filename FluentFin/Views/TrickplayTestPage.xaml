@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.TrickplayTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <StackPanel>
+        <ScrollViewer
+            Width="320"
+            Height="180"
+            HorizontalScrollBarVisibility="Hidden"
+            HorizontalScrollMode="Enabled"
+            VerticalScrollBarVisibility="Hidden"
+            VerticalScrollMode="Enabled">
+            <Image
+                x:Name="Image"
+                Source="http://192.168.1.200:8096/jellyfin/Videos/428a5ae67047b8d5af47996169f98e43/Trickplay/320/0.jpg?api_key=347b3d50a0fe4ee8913241935c7ff2fb"
+                Stretch="None">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="Translate" />
+                    </TransformGroup>
+                </Image.RenderTransform>
+                <Image.Clip>
+                    <RectangleGeometry x:Name="Clip" />
+                </Image.Clip>
+            </Image>
+        </ScrollViewer>
+
+
+        <StackPanel Grid.Row="1">
+            <NumberBox
+                x:Name="RowIndex"
+                PlaceholderText="Row index"
+                SpinButtonPlacementMode="Inline"
+                ValueChanged="RowIndex_ValueChanged"
+                Value="0" />
+            <NumberBox
+                x:Name="ColumnIndex"
+                PlaceholderText="Column index"
+                SpinButtonPlacementMode="Inline"
+                ValueChanged="ColumnIndex_ValueChanged"
+                Value="0" />
+        </StackPanel>
+    </StackPanel>
+</Page>

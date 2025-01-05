@@ -35,7 +35,9 @@
             <controls:Case IsDefault="true" Value="Login">
                 <views:LoginView />
             </controls:Case>
-            <controls:Case Value="LoginFailed" />
+            <controls:Case Value="LoginFailed">
+                <views:TrickplayTestPage />
+            </controls:Case>
         </controls:SwitchPresenter>
 
     </Grid>

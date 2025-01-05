@@ -1,13 +1,21 @@
+using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
+using Flurl;
 using FlyleafLib.MediaFramework.MediaStream;
 using FlyleafLib.MediaPlayer;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using ReactiveMarbles.ObservableEvents;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
+using Windows.Foundation;
 using System.Windows.Input;
+using System.Web;
+using ReactiveUI;
+using System.Reactive.Subjects;
 
 
 namespace FluentFin.Controls;
@@ -15,6 +23,8 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
+	private ScheduledSubject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _sliderMoved = new(RxApp.MainThreadScheduler);
+
 	public bool IsSkipButtonVisible
 	{
 		get { return (bool)GetValue(IsSkipButtonVisibleProperty); }
@@ -63,6 +73,17 @@ public sealed partial class TransportControls : UserControl
 		set { SetValue(SkipCommandProperty, value); }
 	}
 
+
+	public TrickplayViewModel Trickplay
+	{
+		get { return (TrickplayViewModel)GetValue(TrickplayProperty); }
+		set { SetValue(TrickplayProperty, value); }
+	}
+
+	public static readonly DependencyProperty TrickplayProperty =
+		DependencyProperty.Register("Trickplay", typeof(TrickplayViewModel), typeof(TransportControls), new PropertyMetadata(null));
+
+
 	public static readonly DependencyProperty SkipCommandProperty =
 		DependencyProperty.Register("SkipCommand", typeof(ICommand), typeof(TransportControls), new PropertyMetadata(null));
 
@@ -97,6 +118,8 @@ public sealed partial class TransportControls : UserControl
 			.ValueChanged
 			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TiksToSeconds(Player.CurTime)) > 1)
 			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
+
+		TrickplayTip.TemplateSettings.IconElement = null;
 	}
 
 	public string TimeRemaining(long currentTime, long duration)
@@ -147,6 +170,26 @@ public sealed partial class TransportControls : UserControl
 
 		var flyout = CCSelectionButton.Flyout as MenuFlyout;
 		Player.OpenAsync(stream);
+	}
+
+	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	{
+		if (Trickplay is null)
+		{
+			return;
+		}
+
+		TrickplayTip.IsOpen = true;
+
+		var point = e.GetCurrentPoint(TimeSlider);
+		var maxSeconds = TimeSlider.Maximum;
+		var width = TimeSlider.ActualWidth;
+		Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / width) * maxSeconds);
+	}
+
+	private void TimeSlider_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	{
+		TrickplayTip.IsOpen = false;
 	}
 }
 

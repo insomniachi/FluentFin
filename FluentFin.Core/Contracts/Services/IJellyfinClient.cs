@@ -46,6 +46,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri GetImage(BaseItemDto item, ImageInfo info);
 
+		Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
+
 		Task Playing(BaseItemDto dto);
 
 		Task Progress(BaseItemDto dto, TimeSpan position);

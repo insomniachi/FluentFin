@@ -105,6 +105,7 @@ public partial class App : Application
 			services.AddTransient<SeriesViewModel>();
 			services.AddTransient<SeasonViewModel>();
 			services.AddTransient<JellyfinSettingsViewModel>();
+			services.AddTransient<TrickplayViewModel>();
 
 			services.AddTransient<DashboardViewModel>();
 			services.AddTransient<GeneralSettingsViewModel>();

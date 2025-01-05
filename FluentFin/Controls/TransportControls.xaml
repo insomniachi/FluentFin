@@ -93,6 +93,35 @@
                     </ui:Effects.Shadow>
                 </TextBlock>
             </Grid>
+            <TeachingTip
+                x:Name="TrickplayTip"
+                PreferredPlacement="Auto"
+                Style="{ThemeResource NoHeaderClose}"
+                Target="{x:Bind TimeSlider}">
+                <TeachingTip.Content>
+                    <ScrollViewer
+                        x:Name="TrickplayScrollViewer"
+                        Width="{x:Bind Trickplay.Width, Mode=OneWay}"
+                        Height="{x:Bind Trickplay.Height, Mode=OneWay}"
+                        x:FieldModifier="Public"
+                        HorizontalScrollBarVisibility="Hidden"
+                        HorizontalScrollMode="Enabled"
+                        VerticalScrollBarVisibility="Hidden"
+                        VerticalScrollMode="Enabled">
+                        <Image
+                            x:Name="TrickplayImage"
+                            x:FieldModifier="Public"
+                            Stretch="None">
+                            <Image.RenderTransform>
+                                <TranslateTransform x:Name="TranslateTransform" x:FieldModifier="Public" />
+                            </Image.RenderTransform>
+                            <Image.Clip>
+                                <RectangleGeometry x:Name="ClipGeometry" x:FieldModifier="Public" />
+                            </Image.Clip>
+                        </Image>
+                    </ScrollViewer>
+                </TeachingTip.Content>
+            </TeachingTip>
 
         </Grid>
 
@@ -150,6 +179,8 @@
                             VerticalAlignment="Center"
                             IsTabStop="False"
                             Maximum="{x:Bind c:Converters.TiksToSeconds(Player.Duration), Mode=OneWay}"
+                            PointerExited="TimeSlider_PointerExited"
+                            PointerMoved="TimeSlider_PointerEntered"
                             Value="{x:Bind c:Converters.TiksToSeconds(Player.CurTime), Mode=OneWay}" />
                     </ctk:Case>
                 </ctk:SwitchPresenter>

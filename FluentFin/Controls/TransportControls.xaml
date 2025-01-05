@@ -95,9 +95,8 @@
             </Grid>
             <TeachingTip
                 x:Name="TrickplayTip"
-                PreferredPlacement="Auto"
-                Style="{ThemeResource NoHeaderClose}"
-                Target="{x:Bind TimeSlider}">
+                PreferredPlacement="BottomLeft"
+                Style="{ThemeResource NoHeaderClose}">
                 <TeachingTip.Content>
                     <ScrollViewer
                         x:Name="TrickplayScrollViewer"
@@ -186,6 +185,7 @@
                 </ctk:SwitchPresenter>
 
                 <TextBlock
+                    x:Name="TxtCurrentTime"
                     Grid.Column="2"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

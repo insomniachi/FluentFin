@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Web;
 using ReactiveUI;
 using System.Reactive.Subjects;
+using DevWinUI;
 
 
 namespace FluentFin.Controls;
@@ -23,8 +24,6 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
-	private ScheduledSubject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _sliderMoved = new(RxApp.MainThreadScheduler);
-
 	public bool IsSkipButtonVisible
 	{
 		get { return (bool)GetValue(IsSkipButtonVisibleProperty); }
@@ -181,10 +180,14 @@ public sealed partial class TransportControls : UserControl
 
 		TrickplayTip.IsOpen = true;
 
+		var navView = this.FindAscendantOrSelf<NavigationView>();
+		var offset = navView.IsPaneOpen ? navView.OpenPaneLength - 30 : 0;
+
 		var point = e.GetCurrentPoint(TimeSlider);
-		var maxSeconds = TimeSlider.Maximum;
-		var width = TimeSlider.ActualWidth;
-		Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / width) * maxSeconds);
+		var globalPoint = e.GetCurrentPoint(this);
+		Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
+		var margin = Math.Min(globalPoint.Position.X + offset, ActualWidth - ((FrameworkElement)TrickplayTip.Content).Width - 10 + offset);
+		TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 	}
 
 	private void TimeSlider_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)

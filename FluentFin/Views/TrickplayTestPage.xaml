@@ -9,43 +9,34 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
-    <StackPanel>
-        <ScrollViewer
-            Width="320"
-            Height="180"
-            HorizontalScrollBarVisibility="Hidden"
-            HorizontalScrollMode="Enabled"
-            VerticalScrollBarVisibility="Hidden"
-            VerticalScrollMode="Enabled">
-            <Image
-                x:Name="Image"
-                Source="http://192.168.1.200:8096/jellyfin/Videos/428a5ae67047b8d5af47996169f98e43/Trickplay/320/0.jpg?api_key=347b3d50a0fe4ee8913241935c7ff2fb"
-                Stretch="None">
-                <Image.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="Translate" />
-                    </TransformGroup>
-                </Image.RenderTransform>
-                <Image.Clip>
-                    <RectangleGeometry x:Name="Clip" />
-                </Image.Clip>
-            </Image>
-        </ScrollViewer>
+    <Grid>
+        <Grid Height="100">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Border
+                x:Name="TeachingTipThumb"
+                Width="5"
+                Height="5"
+                HorizontalAlignment="Left"
+                BorderBrush="Black"
+                BorderThickness="1"
+                CornerRadius="10" />
+            <Slider
+                x:Name="TimeSlider"
+                Grid.Row="1"
+                Maximum="0"
+                PointerMoved="Slider_PointerMoved" />
+            <TeachingTip
+                x:Name="TeachingTip"
+                Title="Test"
+                Width="320"
+                Height="180"
+                PreferredPlacement="BottomLeft"
+                Subtitle="Test test" />
+        </Grid>
 
 
-        <StackPanel Grid.Row="1">
-            <NumberBox
-                x:Name="RowIndex"
-                PlaceholderText="Row index"
-                SpinButtonPlacementMode="Inline"
-                ValueChanged="RowIndex_ValueChanged"
-                Value="0" />
-            <NumberBox
-                x:Name="ColumnIndex"
-                PlaceholderText="Column index"
-                SpinButtonPlacementMode="Inline"
-                ValueChanged="ColumnIndex_ValueChanged"
-                Value="0" />
-        </StackPanel>
-    </StackPanel>
+    </Grid>
 </Page>

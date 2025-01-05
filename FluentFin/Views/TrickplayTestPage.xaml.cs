@@ -23,35 +23,20 @@ namespace FluentFin.Views
     /// </summary>
     public sealed partial class TrickplayTestPage : Page
     {
-        const int imageHeight = 180;
-        const int imageWidth = 320;
-
         public TrickplayTestPage()
         {
             this.InitializeComponent();
         }
 
-		private void RowIndex_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+		private void Slider_PointerMoved(object sender, PointerRoutedEventArgs e)
 		{
-    //        try
-    //        {
-				//Translate.X = -ColumnIndex.Value * imageWidth;
-				//Translate.Y = -RowIndex.Value * imageHeight;
-				//Image.Clip = new RectangleGeometry { Rect = new Rect(ColumnIndex.Value * imageWidth, RowIndex.Value * imageHeight, imageWidth, imageHeight) };
-    //        }
-    //        catch { }
+            TeachingTip.IsOpen = true;
+			var point = e.GetCurrentPoint(TimeSlider);
+            var globalPoint = e.GetCurrentPoint(this);
+            TeachingTipThumb.Margin = new Thickness(point.Position.X, 0, 0, 0);
+            var margin = Math.Min(point.Position.X, TimeSlider.ActualWidth - TeachingTip.Width);
+            TeachingTip.PlacementMargin = new Thickness(margin, 0 , 0, globalPoint.Position.Y);
 		}
-
-		private void ColumnIndex_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-		{
-			//try
-			//{
-			//	Translate.X = -ColumnIndex.Value * imageWidth;
-   //             Translate.Y = -RowIndex.Value * imageHeight;
-			//	Image.Clip = new RectangleGeometry { Rect = new Rect(ColumnIndex.Value * imageWidth, RowIndex.Value * imageHeight, imageWidth, imageHeight) };
-			//}
-			//catch { }
-		}
-    }
+	}
 }
 

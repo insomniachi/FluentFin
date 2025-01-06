@@ -28,7 +28,7 @@ jobs:
             uses: microsoft/setup-msbuild@v1.1
 
         -   name: Add Windows Community Toolkit labs nuget source
-            run: dotnet nuget add source $env:winui_labs_index -n CommunityToolkitLabs
+            run: dotnet nuget add source ${{env.CTK_LABS_INDEX}} -n CommunityToolkitLabs
         
         -   name: 'Get version'
             id: version
@@ -40,11 +40,11 @@ jobs:
         -   name: 'Copy FFMPEG'
             run: xcopy ${{ env.FFMPEG_PATH }} ${{ env.PUBLISH_FOLDER }}\FFmpeg\ /s /e /h
 
-        -   name: 'Remove Trash'
-            run: rd ${{ env.PUBLISH_FOLDER }}\gd-gb\*, ${{ env.PUBLISH_FOLDER }}\mi-NZ\*, ${{ env.PUBLISH_FOLDER }}\ug-CN\*
-
-        -   name: 'Build Installer'
-            run: msbuild ${{ env.INSTALLER_PATH }} /property:Configuration=Release /property:BuildVersion=${{ steps.version.outputs.version-without-v }} /property:BasePath=${{ env.PUBLISH_FOLDER }}
+        -   name: Create Windows Installer
+            uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+            with:
+                path: Installer\script.iss
+                options: /O+
   
         -   name: 'Create Release'
             id: create_release
@@ -54,12 +54,6 @@ jobs:
             with:
                 tag_name: ${{ steps.version.outputs.version-without-v }}
                 release_name: ${{ steps.version.outputs.version-without-v }}
-
-        -   name: Create Windows Installer
-            uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
-            with:
-                path: Installer\script.iss
-                options: /O+
 
         -   name: 'Add Exe to release'
             uses: csexton/release-asset-action@v2

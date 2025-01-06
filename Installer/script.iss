@@ -28,7 +28,7 @@ LicenseFile=..\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=FluentFin {#MyAppVersion}
+OutputBaseFilename=FluentFin_{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

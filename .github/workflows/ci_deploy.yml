@@ -65,5 +65,5 @@ jobs:
             uses: csexton/release-asset-action@v2
             with:
                 github-token: ${{ secrets.GITHUB_TOKEN }}
-                pattern: Totoro.Installer/bin/Release/en-us/Totoro-Release.msi
+                pattern: Installer\Output\FluentFin_${{ steps.version.outputs.version-without-v }}
                 release-url: ${{ steps.create_release.outputs.upload_url }}

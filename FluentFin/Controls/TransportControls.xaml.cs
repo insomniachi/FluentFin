@@ -1,22 +1,14 @@
-using FluentFin.Core.Contracts.Services;
+using DevWinUI;
 using FluentFin.ViewModels;
-using Flurl;
 using FlyleafLib.MediaFramework.MediaStream;
 using FlyleafLib.MediaPlayer;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using ReactiveMarbles.ObservableEvents;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
-using Windows.Foundation;
 using System.Windows.Input;
-using System.Web;
-using ReactiveUI;
-using System.Reactive.Subjects;
-using DevWinUI;
 
 
 namespace FluentFin.Controls;
@@ -178,15 +170,21 @@ public sealed partial class TransportControls : UserControl
 			return;
 		}
 
+		const int teachingTipMargin = 12;
+
 		TrickplayTip.IsOpen = true;
 
 		var navView = this.FindAscendantOrSelf<NavigationView>();
-		var offset = navView.IsPaneOpen ? navView.OpenPaneLength - 30 : 0;
+		var offset = navView?.IsPaneOpen == true ? navView.OpenPaneLength : 0;
+		var trickplayWidth = ((FrameworkElement)TrickplayTip.Content).Width + 2 * teachingTipMargin;
+		var halfTrickplayWidth = trickplayWidth / 2;
 
 		var point = e.GetCurrentPoint(TimeSlider);
 		var globalPoint = e.GetCurrentPoint(this);
 		Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
-		var margin = Math.Min(globalPoint.Position.X + offset, ActualWidth - ((FrameworkElement)TrickplayTip.Content).Width - 10 + offset);
+
+		var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
+		var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
 		TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 	}
 

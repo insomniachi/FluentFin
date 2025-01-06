@@ -10,16 +10,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <flyleaf:FullScreenContainer x:Name="FSC">
-        <flyleaf:FlyleafHost
-            x:Name="flyleafHost"
-            Player="{x:Bind ViewModel.MediaPlayer}"
-            PointerMoved="FSC_PointerMoved">
-            <controls:TransportControls
-                x:Name="TransportControls"
-                Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
-                Playlist="{x:Bind ViewModel.Playlist}"
-                SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}" />
-        </flyleaf:FlyleafHost>
-    </flyleaf:FullScreenContainer>
+    <flyleaf:FlyleafHost
+        x:Name="flyleafHost"
+        DoubleTapped="OnPlayerDoubleTapped"
+        IsDoubleTapEnabled="True"
+        Player="{x:Bind ViewModel.MediaPlayer}"
+        PointerMoved="FSC_PointerMoved">
+        <controls:TransportControls
+            x:Name="TransportControls"
+            Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
+            Playlist="{x:Bind ViewModel.Playlist}"
+            SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}" />
+    </flyleaf:FlyleafHost>
 </Page>

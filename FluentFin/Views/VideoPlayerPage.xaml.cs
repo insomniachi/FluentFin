@@ -1,6 +1,9 @@
+using CommunityToolkit.WinUI;
+using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
 using FlyleafLib;
 using Microsoft.UI.Input;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -20,19 +23,19 @@ public sealed partial class VideoPlayerPage : Page
 	{
 		InitializeComponent();
 
-		FSC.FullScreenExit += (o, e) =>
-		{
-			TransportControls.FullWindowSymbol.Symbol = Symbol.FullScreen;
-			App.MainWindow.IsShownInSwitchers = true;
-			Task.Run(() => { Thread.Sleep(10); Utils.UIInvoke(() => flyleafHost.KFC?.Focus(FocusState.Keyboard)); });
-		};
+		//FSC.FullScreenExit += (o, e) =>
+		//{
+		//	TransportControls.FullWindowSymbol.Symbol = Symbol.FullScreen;
+		//	App.MainWindow.IsShownInSwitchers = true;
+		//	Task.Run(() => { Thread.Sleep(10); Utils.UIInvoke(() => flyleafHost.KFC?.Focus(FocusState.Keyboard)); });
+		//};
 
-		FSC.FullScreenEnter += (o, e) =>
-		{
-			TransportControls.FullWindowSymbol.Symbol = Symbol.BackToWindow;
-			App.MainWindow.IsShownInSwitchers = false;
-			flyleafHost.KFC?.Focus(FocusState.Keyboard);
-		};
+		//FSC.FullScreenEnter += (o, e) =>
+		//{
+		//	TransportControls.FullWindowSymbol.Symbol = Symbol.BackToWindow;
+		//	App.MainWindow.IsShownInSwitchers = false;
+		//	flyleafHost.KFC?.Focus(FocusState.Keyboard);
+		//};
 
 		_pointerMoved
 			.Throttle(TimeSpan.FromSeconds(3))
@@ -89,6 +92,8 @@ public sealed partial class VideoPlayerPage : Page
 					TransportControls.ClipGeometry.Rect = new Windows.Foundation.Rect(clip.X, clip.Y, clip.Width, clip.Height);
 				});
 			});
+
+		TransportControls!.FullWindowButton.Click += (sender, e) => OnPlayerDoubleTapped(sender, null!);
 	}
 
 	private void FSC_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -105,5 +110,27 @@ public sealed partial class VideoPlayerPage : Page
 		});
 
 		_pointerMoved.OnNext(Unit.Default);
+	}
+
+	private void OnPlayerDoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+	{
+		var current = App.MainWindow.AppWindow.Presenter.Kind;
+		var presenterKind = current == AppWindowPresenterKind.Overlapped ? AppWindowPresenterKind.FullScreen : AppWindowPresenterKind.Overlapped;
+
+		TransportControls.FullWindowSymbol.Symbol = presenterKind == AppWindowPresenterKind.FullScreen ? Symbol.BackToWindow : Symbol.FullScreen;
+
+		if (App.GetService<ITitleBarViewModel>() is { } vm)
+		{
+			vm.IsVisible ^= true;
+		}
+
+		if(this.FindAscendant<NavigationView>() is { } navView)
+		{
+			navView.IsPaneVisible ^= true;
+		}
+
+		App.MainWindow.AppWindow.SetPresenter(presenterKind);
+
+		flyleafHost.KFC?.Focus(FocusState.Keyboard);
 	}
 }

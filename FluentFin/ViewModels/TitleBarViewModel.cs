@@ -42,6 +42,9 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	[ObservableProperty]
 	public partial UserDto? User { get; set; }
 
+	[ObservableProperty]
+	public partial bool IsVisible { get; set; } = true;
+
 	public void TogglePane()
 	{
 		_navigationViewService.TogglePane();

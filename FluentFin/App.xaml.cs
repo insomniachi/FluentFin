@@ -62,10 +62,10 @@ public partial class App : Application
     {
 		InitializeComponent();
 
-		Host = Microsoft.Extensions.Hosting.Host.
-        CreateDefaultBuilder().
-        UseContentRoot(AppContext.BaseDirectory).
-        ConfigureServices((context, services) =>
+		Host = Microsoft.Extensions.Hosting.Host
+        .CreateDefaultBuilder()
+        .UseContentRoot(AppContext.BaseDirectory)
+        .ConfigureServices((context, services) =>
         {
             // Default Activation Handler
             services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
@@ -139,7 +139,9 @@ public partial class App : Application
 			services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
-            // Configuration
+			// Configuration
+
+			services.AddHostedService<WindowsUpdateService>();
         }).
         Build();
 
@@ -154,6 +156,7 @@ public partial class App : Application
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
+		await Host.StartAsync();
         base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
@@ -164,6 +167,7 @@ public partial class App : Application
 
 	private async void MainWindow_Closed(object sender, WindowEventArgs args)
 	{
+		await Host.StopAsync();
 		await GetService<IJellyfinClient>().Stop();
 	}
 

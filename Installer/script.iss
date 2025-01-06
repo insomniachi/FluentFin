@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "FluentFin"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion GetFileVersion("..\FluentFin\bin\publish\FluentFin.Exe")
 #define MyAppExeName "FluentFin.exe"
 
 [Setup]
@@ -28,10 +28,13 @@ LicenseFile=..\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=fluentfin
+OutputBaseFilename=FluentFin {#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+WizardSmallImageFile=.\icons8-jellyfin-color-hand-drawn-70.bmp
+WizardImageFile=.\icons8-jellyfin-color-hand-drawn-310.bmp
+SetupIconFile=..\FluentFin\Assets\jellyfin.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -40,7 +43,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Program Files (x86)\Inno Setup 6\Examples\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\FluentFin\bin\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

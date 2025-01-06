@@ -1,0 +1,69 @@
+name: "Build and publish"
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+env:
+  MAIN_PROJECT_PATH: 'FluentFin\FluentFin.csproj'
+  FFMPEG_PATH: 'Installer\FFmpeg'
+  PUBLISH_FOLDER: 'FluentFin\bin\publish'
+  CTK_LABS_INDEX: https://pkgs.dev.azure.com/dotnet/CommunityToolkit/_packaging/CommunityToolkit-Labs/nuget/v3/index.json
+
+jobs:
+    deploy:
+        name: 'Build and deploy'
+        runs-on: 'windows-latest'
+        steps:
+        -   name: 'Checkout'
+            uses: actions/checkout@v2
+  
+        -   name: 'Install dotnet'
+            uses: actions/setup-dotnet@v1
+            with:
+                dotnet-version: '9.0'
+        
+        -   name: 'Add msbuild to PATH'
+            uses: microsoft/setup-msbuild@v1.1
+
+        -   name: Add Windows Community Toolkit labs nuget source
+            run: dotnet nuget add source $env:winui_labs_index -n CommunityToolkitLabs
+        
+        -   name: 'Get version'
+            id: version
+            uses: battila7/get-version-action@v2
+
+        -   name: 'Build Project'
+            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -c Release -r win-x64 -o ${{ env.PUBLISH_FOLDER }}\ /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
+
+        -   name: 'Copy FFMPEG'
+            run: xcopy ${{ env.FFMPEG_PATH }} ${{ env.PUBLISH_FOLDER }}\FFmpeg\ /s /e /h
+
+        -   name: 'Remove Trash'
+            run: rd ${{ env.PUBLISH_FOLDER }}\gd-gb\*, ${{ env.PUBLISH_FOLDER }}\mi-NZ\*, ${{ env.PUBLISH_FOLDER }}\ug-CN\*
+
+        -   name: 'Build Installer'
+            run: msbuild ${{ env.INSTALLER_PATH }} /property:Configuration=Release /property:BuildVersion=${{ steps.version.outputs.version-without-v }} /property:BasePath=${{ env.PUBLISH_FOLDER }}
+  
+        -   name: 'Create Release'
+            id: create_release
+            uses: actions/create-release@v1
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+                tag_name: ${{ steps.version.outputs.version-without-v }}
+                release_name: ${{ steps.version.outputs.version-without-v }}
+
+        -   name: Create Windows Installer
+            uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+            with:
+                path: Installer\script.iss
+                options: /O+
+
+        -   name: 'Add Exe to release'
+            uses: csexton/release-asset-action@v2
+            with:
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                pattern: Totoro.Installer/bin/Release/en-us/Totoro-Release.msi
+                release-url: ${{ steps.create_release.outputs.upload_url }}

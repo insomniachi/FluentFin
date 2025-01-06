@@ -24,7 +24,6 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 	[ObservableProperty]
 	public partial ObservableCollection<string> BlockedTags { get; set; } = [];
 
-	[ObservableProperty]
 	public ObservableCollection<AccessSchedule> AccessSchedules { get; set; } = [];
 
 	public ObservableCollection<UnratedItemViewModel> BlockUnratedItems { get; } = [];
@@ -71,10 +70,7 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 		{
 			foreach (var item in e.NewItems!.OfType<AccessSchedule>())
 			{
-				//if(policy.AccessSchedules?.FirstOrDefault(x => x.DayOfWeek == item.DayOfWeek && x.StartHour == item.StartHour && x.EndHour == item.EndHour) is null)
-				//{
-					policy.AccessSchedules?.Add(item);
-				//}
+				policy.AccessSchedules?.Add(item);
 			}
 		}
 
@@ -82,10 +78,7 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 		{
 			foreach (var item in e.OldItems!.OfType<AccessSchedule>())
 			{
-				//if (policy.AccessSchedules?.FirstOrDefault(x => x.DayOfWeek == item.DayOfWeek && x.StartHour == item.StartHour && x.EndHour == item.EndHour) is { } reference)
-				//{
-					policy.AccessSchedules?.Remove(item);
-				//}
+				policy.AccessSchedules?.Remove(item);
 			}
 		}
 	}

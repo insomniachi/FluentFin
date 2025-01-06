@@ -17,14 +17,9 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<LangVersion>preview</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Version Condition=" '$(BuildVersion)' == '' ">1.0.0.0</Version>
+		<Version Condition=" '$(BuildVersion)' != '' ">$(BuildVersion)</Version>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Dialogs\Views\UserEditorPage.xaml" />
-	  <None Remove="Views\JellyfinSettingsPage.xaml" />
-	  <None Remove="Views\JellyfinSettings\DashboardPage.xaml" />
-	  <None Remove="Views\JellyfinSettings\GeneralSettingsPage.xaml" />
-	  <None Remove="Views\TrickplayTestPage.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />

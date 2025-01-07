@@ -13,7 +13,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 	private string _token = "";
 	private Jellyfin.Sdk.JellyfinSdkSettings _settings = null!;
 	private string _deviceId = "";
-	private BaseItemDto? _currentItem = null;
+	private PlaybackProgressInfo? _currentItem = null;
 
 	public Guid UserId { get; set; }
 	public string BaseUrl { get; set; } = "";

@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FlyleafLib.MediaPlayer;
+using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
@@ -17,6 +19,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposables = new();
 	private readonly IJellyfinClient _jellyfinClient;
+	private readonly PlaybackProgressInfo _playbackProgressInfo = new();
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 								TrickplayViewModel trickplayViewModel,
@@ -37,18 +40,24 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 					return;
 				}
 
+				await jellyfinClient.Stop(); // stop prev episode if in case playing next episode
+
 				TrickplayViewModel.SetItem(full);
 			})
 			.SelectMany(item => GetMediaUrl(item.Dto!))
 			.WhereNotNull()
-			.Subscribe(uri =>
+			.Subscribe(response =>
 			{
-				var args = MediaPlayer.Open(HttpUtility.UrlDecode(uri.ToString()));
+				Playlist.SelectedItem!.Media = response;
+				
+				var args = MediaPlayer.Open(HttpUtility.UrlDecode(response.Uri.ToString()));
 
 				if(!args.Success)
 				{
-					logger.LogError("Unable to open media from {URL}", uri);
+					logger.LogError("Unable to open media from {URL}", response.Uri);
 				}
+
+				PlayMethod = response.PlayMethod;
 
 				if(Dto?.UserData?.PlaybackPositionTicks is { } ticks)
 				{
@@ -64,6 +73,10 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.SubscribeOn(RxApp.MainThreadScheduler)
 			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
+
+		MediaPlayer.WhenAnyValue(x => x.Status)
+			.Where(status => status is Status.Stopped or Status.Failed)
+			.Subscribe(async _ => await jellyfinClient.Stop());
 	}
 
 	public TrickplayViewModel TrickplayViewModel { get; }
@@ -84,6 +97,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	public PlaylistViewModel Playlist { get; } = new PlaylistViewModel();
 
+	public PlaybackProgressInfo_PlayMethod PlayMethod { get; private set; }
+
 	public async Task OnNavigatedFrom()
 	{
 		_disposables.Dispose();
@@ -93,12 +108,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		await _jellyfinClient.Stop(Dto);
-
-		if(MediaPlayer is null)
-		{
-			return;
-		}
+		await _jellyfinClient.Stop();
 
 		MediaPlayer.Pause();
 		MediaPlayer.Dispose();
@@ -117,8 +127,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		}
 		
 		Dto = await _jellyfinClient.GetItem(id);
-		MediaPlayer.PropertyChanged += MediaPlayer_PropertyChanged;
-
 
 		var success = dto.Type switch
 		{
@@ -162,7 +170,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(segment.EndTicks.Value).TotalMilliseconds);
 	}
 
-	private async Task<Uri?> GetMediaUrl(BaseItemDto dto)
+	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
 	{
 		var segments = await _jellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
 
@@ -241,29 +249,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		return Task.FromResult(true);
 	}
 
-	private async void MediaPlayer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-	{
-		if(sender is not Player mp)
-		{
-			return;
-		}
-
-		if (Dto is null)
-		{
-			return;
-		}
-
-		if (e.PropertyName != nameof(MediaPlayer.Status))
-		{
-			return;
-		}
-
-		if(mp.Status == Status.Paused)
-		{
-			await _jellyfinClient.Pause(Dto, Position);
-		}
-	}
-
 	private async Task UpdateStatus()
 	{
 		if(Dto is null)
@@ -271,12 +256,35 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		if(MediaPlayer.Status is not Status.Playing)
+		if(Position.Ticks == 0)
 		{
 			return;
 		}
 
-		await _jellyfinClient.Progress(Dto, new TimeSpan(MediaPlayer.CurTime));
+		if(Playlist.SelectedItem?.Media is not { } media)
+		{
+			return;
+		}
+
+		if(MediaPlayer.Status is Status.Failed or Status.Ended or Status.Opening)
+		{
+			return;
+		}
+
+		_playbackProgressInfo.ItemId = Dto.Id;
+		_playbackProgressInfo.PositionTicks = Position.Ticks;
+		_playbackProgressInfo.IsPaused = !MediaPlayer.IsPlaying;
+		_playbackProgressInfo.MediaSourceId = Dto.Id?.ToString("N");
+		_playbackProgressInfo.IsMuted = MediaPlayer.Audio.Mute;
+		_playbackProgressInfo.PlayMethod = PlayMethod;
+		_playbackProgressInfo.AudioStreamIndex = MediaPlayer.Audio.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
+		_playbackProgressInfo.SubtitleStreamIndex = MediaPlayer.Subtitles.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
+		_playbackProgressInfo.PlaybackStartTimeTicks = TimeProvider.System.GetTimestamp();
+		_playbackProgressInfo.SessionId = media.PlaybackSessionId;
+		_playbackProgressInfo.MediaSourceId = media.MediaSourceId;
+
+
+		await _jellyfinClient.Progress(_playbackProgressInfo);
 
 	}
 

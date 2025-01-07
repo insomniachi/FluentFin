@@ -1,18 +1,23 @@
-﻿using Flurl;
+﻿using FluentFin.Core.Contracts.Services;
+using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using System.Web;
 
 namespace FluentFin.Core.Services;
 
+
+
 public partial class JellyfinClient
 {
-	public async Task<Uri?> GetMediaUrl(BaseItemDto dto)
+	public async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
 	{
 		if (dto.Id is not { } id)
 		{
 			return null;
 		}
+
+		var startTime = TimeProvider.System.GetTimestamp();
 
 		if (dto.Type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{
@@ -26,7 +31,7 @@ public partial class JellyfinClient
 				AutoOpenLiveStream = true,
 				DeviceProfile = DeviceProfiles.Flyleaf,
 				MaxStreamingBitrate = bitRate,
-				StartTimeTicks = dto.UserData?.PlaybackPositionTicks
+				StartTimeTicks = startTime,
 			});
 
 			if (playbackInfo is null or { PlaySessionId: null } or { MediaSources: null })
@@ -41,7 +46,7 @@ public partial class JellyfinClient
 			{
 				if (!string.IsNullOrEmpty(mediaSource?.TranscodingUrl) && mediaSource?.SupportsTranscoding == true)
 				{
-					return BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).ToUri();
+					return new(BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).ToUri(), PlaybackProgressInfo_PlayMethod.Transcode, sessionId, mediaSource.Id ?? "");
 				}
 				else if (mediaSource?.SupportsDirectPlay == true)
 				{
@@ -52,10 +57,10 @@ public partial class JellyfinClient
 						query.PlaySessionId = sessionId;
 						query.Static = true;
 						query.Tag = mediaSource.ETag;
-						query.StartTimeTicks = dto.UserData?.PlaybackPositionTicks;
+						query.StartTimeTicks = startTime;
 					});
 
-					return AddApiKey(info.URI);
+					return new(AddApiKey(info.URI), PlaybackProgressInfo_PlayMethod.DirectPlay, sessionId, mediaSource.Id ?? "");
 				}
 			}
 		}
@@ -144,10 +149,8 @@ public partial class JellyfinClient
 		{
 			await _jellyfinApiClient.Sessions.Playing.PostAsync(new PlaybackStartInfo
 			{
-				Item = dto,
+				ItemId = dto?.Id,
 			});
-
-			_currentItem = dto;
 		}
 		catch (Exception ex)
 		{
@@ -155,50 +158,24 @@ public partial class JellyfinClient
 		}
 	}
 
-	public async Task Progress(BaseItemDto dto, TimeSpan position)
+	public async Task Progress(PlaybackProgressInfo info)
 	{
 		try
 		{
-			await _jellyfinApiClient.Sessions.Playing.Progress.PostAsync(new PlaybackProgressInfo
-			{
-				Item = dto,
-				PositionTicks = position.Ticks,
-			});
+			await _jellyfinApiClient.Sessions.Playing.Progress.PostAsync(info);
+			_currentItem = info;
 		}
 		catch (Exception ex)
 		{
 			logger.LogError(ex, @"Unhandled exception");
-
 		}
 	}
 
-	public async Task Pause(BaseItemDto dto, TimeSpan? position = null)
+	public async Task Stop(PlaybackStopInfo info)
 	{
 		try
 		{
-			await _jellyfinApiClient.Sessions.Playing.Progress.PostAsync(new PlaybackProgressInfo
-			{
-				Item = dto,
-				IsPaused = true,
-				PositionTicks = position?.Ticks
-			});
-		}
-		catch (Exception ex)
-		{
-			logger.LogError(ex, @"Unhandled exception");
-
-		}
-	}
-
-	public async Task Stop(BaseItemDto dto)
-	{
-		try
-		{
-			await _jellyfinApiClient.Sessions.Playing.Stopped.PostAsync(new PlaybackStopInfo
-			{
-				Item = dto
-			});
-
+			await _jellyfinApiClient.Sessions.Playing.Stopped.PostAsync(info);
 			_currentItem = null;
 		}
 		catch (Exception ex)
@@ -214,7 +191,15 @@ public partial class JellyfinClient
 			return;
 		}
 
-		await Stop(_currentItem);
+		var info = new PlaybackStopInfo
+		{
+			ItemId = _currentItem.ItemId,
+			MediaSourceId = _currentItem.MediaSourceId,
+			PositionTicks = _currentItem.PositionTicks,
+			SessionId = _currentItem.SessionId,
+		};
+
+		await Stop(info);
 	}
 
 	public Uri? GetStreamUrl(BaseItemDto dto)

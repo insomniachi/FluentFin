@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -82,4 +83,5 @@ public class PlaylistItem
 {
 	required public string Title { get; set; }
 	required public BaseItemDto Dto { get; set; }
+	public MediaResponse? Media { get; set; }
 }

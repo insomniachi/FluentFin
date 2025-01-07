@@ -1,4 +1,5 @@
-﻿using Jellyfin.Sdk.Generated.Items.Item.Refresh;
+﻿using FluentFin.Core.Services;
+using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Models;
 using System.Globalization;
 
@@ -40,7 +41,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto);
 
-		Task<Uri?> GetMediaUrl(BaseItemDto dto);
+		Task<MediaResponse?> GetMediaUrl(BaseItemDto dto);
 
 		Uri? GetImage(BaseItemDto dto, ImageType type, double? height = null);
 
@@ -50,11 +51,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task Playing(BaseItemDto dto);
 
-		Task Progress(BaseItemDto dto, TimeSpan position);
+		Task Progress(PlaybackProgressInfo info);
 
-		Task Pause(BaseItemDto dto, TimeSpan? position = null);
-
-		Task Stop(BaseItemDto dto);
+		Task Stop(PlaybackStopInfo dto);
 
 		Task Stop();
 
@@ -144,6 +143,8 @@ namespace FluentFin.Core.Contracts.Services
 	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);
 
 	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
+
+	public record MediaResponse(Uri Uri, PlaybackProgressInfo_PlayMethod PlayMethod, string PlaybackSessionId, string MediaSourceId);
 
 	public class XbmcMetadata
 	{

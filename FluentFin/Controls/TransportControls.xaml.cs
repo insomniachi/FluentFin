@@ -181,7 +181,7 @@ public sealed partial class TransportControls : UserControl
 
 		var navView = this.FindAscendantOrSelf<NavigationView>();
 		var offset = navView?.IsPaneOpen == true ? navView.OpenPaneLength : 0;
-		var trickplayWidth = ((FrameworkElement)TrickplayTip.Content).Width + 2 * teachingTipMargin;
+		var trickplayWidth = TrickplayScrollViewer.Width + 2 * teachingTipMargin;
 		var halfTrickplayWidth = trickplayWidth / 2;
 
 		var point = e.GetCurrentPoint(TimeSlider);

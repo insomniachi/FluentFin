@@ -36,7 +36,7 @@
         <LinearGradientBrush x:Name="TransportControlBackground" MappingMode="RelativeToBoundingBox" Opacity="0.2" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Offset="1" Color="Black" />
         </LinearGradientBrush>
-
+        <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -98,27 +98,39 @@
                 PreferredPlacement="BottomLeft"
                 Style="{ThemeResource NoHeaderClose}">
                 <TeachingTip.Content>
-                    <ScrollViewer
-                        x:Name="TrickplayScrollViewer"
-                        Width="{x:Bind Trickplay.Width, Mode=OneWay}"
-                        Height="{x:Bind Trickplay.Height, Mode=OneWay}"
-                        x:FieldModifier="Public"
-                        HorizontalScrollBarVisibility="Hidden"
-                        HorizontalScrollMode="Enabled"
-                        VerticalScrollBarVisibility="Hidden"
-                        VerticalScrollMode="Enabled">
-                        <Image
-                            x:Name="TrickplayImage"
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ScrollViewer
+                            x:Name="TrickplayScrollViewer"
+                            Width="{x:Bind Trickplay.Width, Mode=OneWay}"
+                            Height="{x:Bind Trickplay.Height, Mode=OneWay}"
                             x:FieldModifier="Public"
-                            Stretch="None">
-                            <Image.RenderTransform>
-                                <TranslateTransform x:Name="TranslateTransform" x:FieldModifier="Public" />
-                            </Image.RenderTransform>
-                            <Image.Clip>
-                                <RectangleGeometry x:Name="ClipGeometry" x:FieldModifier="Public" />
-                            </Image.Clip>
-                        </Image>
-                    </ScrollViewer>
+                            HorizontalScrollBarVisibility="Hidden"
+                            HorizontalScrollMode="Enabled"
+                            VerticalScrollBarVisibility="Hidden"
+                            VerticalScrollMode="Enabled">
+                            <Image
+                                x:Name="TrickplayImage"
+                                x:FieldModifier="Public"
+                                Stretch="None">
+                                <Image.RenderTransform>
+                                    <TranslateTransform x:Name="TranslateTransform" x:FieldModifier="Public" />
+                                </Image.RenderTransform>
+                                <Image.Clip>
+                                    <RectangleGeometry x:Name="ClipGeometry" x:FieldModifier="Public" />
+                                </Image.Clip>
+                            </Image>
+                        </ScrollViewer>
+                        <TextBlock
+                            Grid.Row="1"
+                            Margin="{StaticResource XSmallTopMargin}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind c:Converters.TimeSpanToString(Trickplay.Position), Mode=OneWay}" />
+                    </Grid>
                 </TeachingTip.Content>
             </TeachingTip>
 

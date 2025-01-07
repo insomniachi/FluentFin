@@ -21,6 +21,10 @@ public static class Converters
 	public static double TiksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static string TimeSpanToString(TimeSpan ts)
+	{
+		return ts.Hours > 0 ? ts.ToString("hh\\:mm\\:ss") : ts.ToString("mm\\:ss");
+	}
 	public static double ToDouble(long? value) => value ?? 0;
 	public static Guid ToGuid(string value) => Guid.Parse(value);
 	public static ImageSource? GetImage(Uri? uri)

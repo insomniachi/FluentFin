@@ -170,6 +170,11 @@ public sealed partial class TransportControls : UserControl
 			return;
 		}
 
+		if(Trickplay.Item?.Trickplay?.AdditionalData?.Count is not > 0)
+		{
+			return;
+		}
+
 		const int teachingTipMargin = 12;
 
 		TrickplayTip.IsOpen = true;

@@ -15,7 +15,7 @@
         ExpandedModeThresholdWidth="1280"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="False"
-        IsSettingsVisible="False"
+        IsSettingsVisible="True"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
         <NavigationView.MenuItems>
             <NavigationViewItem

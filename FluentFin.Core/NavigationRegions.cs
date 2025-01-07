@@ -4,4 +4,5 @@ public static class NavigationRegions
 {
 	public const string Settings = nameof(Settings);
 	public const string UserEditor = nameof(UserEditor);
+	public const string InitialSetup = nameof(InitialSetup);
 }

@@ -16,6 +16,12 @@ public class PageService : IPageService
 
     public PageService()
     {
+        // Setup Section
+        Configure<ShellViewModel, ShellPage>();
+        Configure<SelectServerViewModel, SelectServerPage>();
+        Configure<LoginViewModel, LoginPage>();
+
+        // Main NavView Pages
 		Configure<HomeViewModel, HomePage>();
 		Configure<LibraryViewModel, LibraryPage>();
 		Configure<VideoPlayerViewModel, VideoPlayerPage>();
@@ -23,8 +29,9 @@ public class PageService : IPageService
 		Configure<SeriesViewModel, SeriesPage>();
 		Configure<SeasonViewModel, SeasonPage>();
         Configure<JellyfinSettingsViewModel, JellyfinSettingsPage>();
+        Configure<SettingsViewModel, SettingsPage>();
 
-        // Settings Pages
+        // Dashboard Pages
         Configure<DashboardViewModel, DashboardPage>();
         Configure<GeneralSettingsViewModel, GeneralSettingsPage>();
         Configure<UsersViewModel, UsersPage>();

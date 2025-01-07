@@ -1,9 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
+using FluentFin.Contracts.ViewModels;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Security.Cryptography;
@@ -11,34 +15,32 @@ using System.Text;
 
 namespace FluentFin.ViewModels;
 
-public partial class LoginViewModel : ObservableObject
+public partial class LoginViewModel : ObservableObject, INavigationAware
 {
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
 	private readonly INavigationService _navigationService;
+	private readonly INavigationService _setupNavigationService;
 	private readonly INavigationViewService _navigationViewService;
 	private readonly ILocalSettingsService _settingsService;
 
 	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
 						  INavigationService navigationService,
+						  [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService setupNavigationServer,
 						  INavigationViewService navigationViewService,
 						  ILocalSettingsService settingsService)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
 		_navigationService = navigationService;
+		_setupNavigationService = setupNavigationServer;
 		_navigationViewService = navigationViewService;
 		_settingsService = settingsService;
 
-		this.WhenAnyValue(x => x.ServerUrl, x => x.Username, x => x.Password)
-			.Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2) && !string.IsNullOrEmpty(x.Item3))
+
+		this.WhenAnyValue(x => x.Username, x => x.Password)
+			.Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2) && Server is not null)
 			.Subscribe(validDetails => CanLogin = validDetails);
 	}
 
-
-	//[ObservableProperty]
-	//public partial string ServerUrl { get; set; } = "https://jellyfin.chaithram.xyz/jellyfin";
-
-	[ObservableProperty]
-	public partial string ServerUrl { get; set; } = "http://192.168.1.200:8096/jellyfin";
 
 	[ObservableProperty]
 	public partial string Username { get; set; } = "";
@@ -53,61 +55,66 @@ public partial class LoginViewModel : ObservableObject
 	[NotifyCanExecuteChangedFor(nameof(LoginCommand))]
 	public partial bool CanLogin { get; set; }
 
-	public async Task Initialize()
-	{
-		var serverSettings = _settingsService.ReadSetting(SettingKeys.ServerSettings);
+	[ObservableProperty]
+	public partial List<string> SavedUsers { get; set; } = [];
 
-		if(string.IsNullOrEmpty(serverSettings.ServerUrl) || string.IsNullOrEmpty(serverSettings.Username) || serverSettings.Password.Length == 0)
-		{
-			return;
-		}
+	public SavedServer? Server { get; private set; }
 
-		ServerUrl = serverSettings.ServerUrl;
-		Username = serverSettings.Username;
-
-		try
-		{
-			Password = Encoding.UTF8.GetString(ProtectedData.Unprotect(serverSettings.Password, _settingsService.GetEntropyBytes(), DataProtectionScope.CurrentUser));
-		}
-		catch { }
-
-		await Login();
-	}
 
 	[RelayCommand(CanExecute = nameof(CanLogin))]
 	public async Task Login()
 	{
-		var authenticated = await _jellyfinAuthenticator.Authenticate(ServerUrl, Username, Password);
-
-		if (authenticated)
+		if(Server is null)
 		{
-			if(KeepMeLoggedIn)
-			{
-				SaveLogin(ServerUrl, Username, Password);
-			}
-
-			Username = "";
-			Password = "";
-			KeepMeLoggedIn = false;
-
-			await _navigationViewService.InitializeLibraries();
-			_navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new object());
+			return;
 		}
+
+		var authenticated = await _jellyfinAuthenticator.Authenticate(Server.GetServerUrl(), Username, Password);
+
+		if (!authenticated)
+		{
+			return;
+		}
+
+		if (KeepMeLoggedIn)
+		{
+			var users = _settingsService.ReadSetting(SettingKeys.Users);
+			var passwordBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(Password), _settingsService.GetEntropyBytes(), DataProtectionScope.CurrentUser);
+			if (users.All(x => x.Username != Username && !ByteArraysEqual(x.Password, passwordBytes) && x.ServerId != Server.Id))
+			{
+				var user = new SavedUser
+				{
+					Username = Username,
+					Password = passwordBytes,
+					ServerId = Server.Id
+				};
+				users.Add(user);
+				_settingsService.SaveSetting(SettingKeys.Users, users);
+			}
+		}
+
+		_setupNavigationService.NavigateTo(typeof(ShellViewModel).FullName!);
 	}
 
-	public void SaveLogin(string server, string username, string password)
+	public async Task OnNavigatedFrom()
 	{
-		try
-		{
-			var serverSettings = new ServerSettings
-			{
-				ServerUrl = server,
-				Username = username,
-				Password = ProtectedData.Protect(Encoding.UTF8.GetBytes(password), _settingsService.GetEntropyBytes(), DataProtectionScope.CurrentUser)
-			};
+		_navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new object());
+	}
 
-			_settingsService.SaveSetting(SettingKeys.ServerSettings, serverSettings);
+	public Task OnNavigatedTo(object parameter)
+	{
+		if(parameter is not SavedServer server)
+		{
+			return Task.CompletedTask;
 		}
-		catch { }
+
+		SavedUsers = _settingsService.ReadSetting(SettingKeys.Users).Where(x => x.ServerId == server.Id).Select(x => x.Username).ToList();
+		Server = server;
+		return Task.CompletedTask;
+	}
+
+	static bool ByteArraysEqual(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
+	{
+		return a1.SequenceEqual(a2);
 	}
 }

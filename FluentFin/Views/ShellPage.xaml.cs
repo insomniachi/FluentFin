@@ -1,8 +1,9 @@
 ﻿using FluentFin.Contracts.Services;
+using FluentFin.Services;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-
+using Microsoft.UI.Xaml.Navigation;
 using Windows.System;
 
 namespace FluentFin.Views;
@@ -24,7 +25,12 @@ public sealed partial class ShellPage : Page
         ViewModel.NavigationViewService.Initialize(NavigationViewControl);
     }
 
-    private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	protected override async void OnNavigatedTo(NavigationEventArgs e)
+	{
+		await ViewModel.NavigationViewService.InitializeLibraries();
+	}
+
+	private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));

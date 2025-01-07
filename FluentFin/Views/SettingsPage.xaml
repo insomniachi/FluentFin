@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.JellyfinSettings.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Views.JellyfinSettings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:FluentFin"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
+    x:Name="Page"
+    mc:Ignorable="d">
+
+
+    <Grid Width="1000">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,40,0,0">
+            <TextBlock
+                HorizontalAlignment="Left"
+                Style="{ThemeResource SubheaderTextBlockStyle}"
+                Text="Settings" />
+        </Grid>
+
+        <StackPanel Grid.Row="1" Spacing="5" />
+
+    </Grid>
+
+</Page>

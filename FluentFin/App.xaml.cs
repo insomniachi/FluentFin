@@ -82,6 +82,7 @@ public partial class App : Application
 
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
 			services.AddFrameNavigation(NavigationRegions.UserEditor);
+			services.AddFrameNavigation(NavigationRegions.InitialSetup);
 
 			// Core Services
 			services.AddTransient<LoginViewModel>();
@@ -96,6 +97,7 @@ public partial class App : Application
 			services.AddSingleton<DialogCommands>();
 
 			// Views and ViewModels
+			services.AddTransient<ShellViewModel>();
 			services.AddSingleton<IMainWindowViewModel, MainViewModel>();
 			services.AddSingleton<ITitleBarViewModel, TitleBarViewModel>();
 			services.AddTransient<HomeViewModel>();
@@ -105,7 +107,9 @@ public partial class App : Application
 			services.AddTransient<SeriesViewModel>();
 			services.AddTransient<SeasonViewModel>();
 			services.AddTransient<JellyfinSettingsViewModel>();
+			services.AddTransient<SettingsViewModel>();
 			services.AddTransient<TrickplayViewModel>();
+			services.AddTransient<SelectServerViewModel>();
 
 			services.AddTransient<DashboardViewModel>();
 			services.AddTransient<GeneralSettingsViewModel>();
@@ -137,7 +141,6 @@ public partial class App : Application
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();
 
 			services.AddTransient<ShellPage>();
-            services.AddTransient<ShellViewModel>();
 
 			// Configuration
 
@@ -157,7 +160,10 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
 		await Host.StartAsync();
-        base.OnLaunched(args);
+
+		var x = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+
+		base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
         StartFlyleaf();

@@ -60,6 +60,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\SelectServerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\SettingsPage.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\TrickplayTestPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -218,7 +229,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\LoginView.xaml">
+	  <Page Update="Views\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

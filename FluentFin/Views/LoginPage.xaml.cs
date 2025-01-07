@@ -3,20 +3,21 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Views;
 
-public sealed partial class LoginView : UserControl
+public sealed partial class LoginPage
 {
 	public LoginViewModel ViewModel { get; }
 
-	public LoginView()
+	public LoginPage()
 	{
 		ViewModel = App.GetService<LoginViewModel>();
 		InitializeComponent();
 		Loaded += LoginView_Loaded;
 	}
 
+
+
 	private async void LoginView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		await ViewModel.Initialize();
 		PasswordBox.Password = ViewModel.Password;
 	}
 

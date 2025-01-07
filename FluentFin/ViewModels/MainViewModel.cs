@@ -1,25 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DynamicData.Binding;
+using FluentFin.Contracts.Services;
+using FluentFin.Core;
 using FluentFin.Core.ViewModels;
-using System.Reactive.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentFin.ViewModels;
 
 public partial class MainViewModel : ObservableObject, IMainWindowViewModel
 {
-	public MainViewModel(ITitleBarViewModel titleBarViewModel)
+	public MainViewModel(ITitleBarViewModel titleBarViewModel,
+						 [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService)
 	{
 		TitleBarViewModel = titleBarViewModel;
-
-		titleBarViewModel.WhenPropertyChanged(x => x.User, notifyOnInitialValue: false)
-			.Select(x => x.Value is not null)
-			.Subscribe(isLoggedIin =>
-			{
-				ViewState = isLoggedIin ? MainWindowViewState.LoggedIn : MainWindowViewState.Login;
-			});
 	}
 	public ITitleBarViewModel TitleBarViewModel { get; }
 
 	[ObservableProperty]
-	public partial MainWindowViewState ViewState { get; set; } = MainWindowViewState.Login;
+	public partial MainWindowViewState ViewState { get; set; } = MainWindowViewState.SelectServer;
+
 }

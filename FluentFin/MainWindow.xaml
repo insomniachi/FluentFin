@@ -25,7 +25,9 @@
 
         <views:TitleBarControl Grid.Row="0" />
 
-        <controls:SwitchPresenter
+        <Frame x:Name="RootFrame" Grid.Row="1" />
+
+        <!--<controls:SwitchPresenter
             Grid.Row="1"
             TargetType="core:MainWindowViewState"
             Value="{x:Bind ViewModel.ViewState, Mode=OneWay}">
@@ -38,7 +40,10 @@
             <controls:Case Value="LoginFailed">
                 <views:TrickplayTestPage />
             </controls:Case>
-        </controls:SwitchPresenter>
+            <controls:Case Value="SelectServer">
+                <views:SelectServerPage />
+            </controls:Case>
+        </controls:SwitchPresenter>-->
 
     </Grid>
 

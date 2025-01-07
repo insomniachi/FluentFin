@@ -7,7 +7,8 @@ public enum MainWindowViewState
 {
 	Login,
 	LoggedIn,
-	LoginFailed
+	LoginFailed,
+	SelectServer,
 }
 
 public interface IMainWindowViewModel : INotifyPropertyChanged

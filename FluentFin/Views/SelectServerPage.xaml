@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.SelectServerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settings="using:FluentFin.Core.Settings"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <cc:EmptyCollectionToObjectConverter
+            x:Name="EmptyCollectionToVisibilityConverter"
+            EmptyValue="Collapsed"
+            NotEmptyValue="Visible" />
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel
+            MinWidth="500"
+            Padding="50"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+            CornerRadius="8"
+            Spacing="20">
+            <StackPanel.Resources>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Spacing" Value="5" />
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+            </StackPanel.Resources>
+
+            <StackPanel Margin="{StaticResource MediumBottomMargin}" Visibility="{x:Bind ViewModel.Servers, Converter={StaticResource EmptyCollectionToVisibilityConverter}}">
+                <TextBlock Text="Saved Servers" />
+                <ItemsView
+                    IsItemInvokedEnabled="True"
+                    ItemInvoked="ServerSelected"
+                    ItemsSource="{x:Bind ViewModel.Servers}"
+                    SelectionMode="None">
+                    <ItemsView.ItemTemplate>
+                        <DataTemplate x:DataType="settings:SavedServer">
+                            <ItemContainer
+                                Width="100"
+                                Height="100"
+                                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}">
+                                <Grid Padding="8">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Viewbox Width="50">
+                                        <FontIcon Glyph="&#xED47;" />
+                                    </Viewbox>
+
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Center"
+                                        Text="{x:Bind DisplayName}" />
+                                </Grid>
+                            </ItemContainer>
+                        </DataTemplate>
+                    </ItemsView.ItemTemplate>
+                    <ItemsView.Layout>
+                        <StackLayout Orientation="Horizontal" Spacing="10" />
+                    </ItemsView.Layout>
+                </ItemsView>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Server" />
+                <TextBox x:Name="TxtUrl" KeyDown="InputFieldKeyDown" />
+            </StackPanel>
+            <Grid>
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.CheckConnectivityAndGoToLoginCommand}"
+                    CommandParameter="{x:Bind TxtUrl.Text, Mode=OneWay}"
+                    Style="{ThemeResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE725;" />
+                        <TextBlock Text="Next" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

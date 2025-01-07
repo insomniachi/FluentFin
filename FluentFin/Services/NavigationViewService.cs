@@ -104,7 +104,7 @@ public class NavigationViewService : INavigationViewService
     {
         if (args.IsSettingsInvoked)
         {
-            // Navigate to the settings page.
+            _navigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
         }
         else
         {

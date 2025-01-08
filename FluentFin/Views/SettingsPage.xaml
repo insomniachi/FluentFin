@@ -11,6 +11,7 @@
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:root="using:FluentFin"
+    xmlns:settings="using:FluentFin.Core.Settings"
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
@@ -23,14 +24,38 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Margin="0,40,0,0">
+        <Grid Margin="0,40,0,36">
             <TextBlock
                 HorizontalAlignment="Left"
                 Style="{ThemeResource SubheaderTextBlockStyle}"
                 Text="Settings" />
         </Grid>
 
-        <StackPanel Grid.Row="1" Spacing="5" />
+        <StackPanel Grid.Row="1" Spacing="5">
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.Servers}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="settings:SavedServer">
+                        <ctk:SettingsExpander
+                            Header="{x:Bind DisplayName}"
+                            ItemsSource="{x:Bind Users}"
+                            Tag="{x:Bind}">
+                            <Button Content="Delete Server" Style="{ThemeResource AccentButtonStyle}" />
+                            <ctk:SettingsExpander.ItemTemplate>
+                                <DataTemplate x:DataType="settings:SavedUser">
+                                    <ctk:SettingsCard Header="{x:Bind Username}">
+                                        <Button
+                                            Click="RemoveUser"
+                                            Content="Delete User"
+                                            Style="{ThemeResource AccentButtonStyle}"
+                                            Tag="{x:Bind}" />
+                                    </ctk:SettingsCard>
+                                </DataTemplate>
+                            </ctk:SettingsExpander.ItemTemplate>
+                        </ctk:SettingsExpander>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </StackPanel>
 
     </Grid>
 

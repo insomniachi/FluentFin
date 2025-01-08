@@ -9,6 +9,8 @@ public interface ISettings
 	ObservableCollection<SavedServer> Servers { get; }
 
 	void ListenToChanges();
+
+	void SaveServerDetails();
 }
 
 public partial class Settings(ILocalSettingsService localSettingsService) : ObservableObject, ISettings
@@ -16,6 +18,8 @@ public partial class Settings(ILocalSettingsService localSettingsService) : Obse
 	private bool _isListening;
 
 	public ObservableCollection<SavedServer> Servers { get; set; } = localSettingsService.ReadSetting(SettingKeys.Servers);
+
+	public void SaveServerDetails() => localSettingsService.SaveSetting(SettingKeys.Servers, Servers);
 
 	public void ListenToChanges()
 	{

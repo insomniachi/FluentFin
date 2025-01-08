@@ -15,8 +15,9 @@ using System.Reflection;
 namespace FluentFin.Services;
 
 public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
-										   ITitleBarViewModel titlebarViewModel,
+										   ITitleBarViewModel titleBarViewModel,
 										   ILocalSettingsService settingsService,
+										   ISettings settings,
 										   [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService setupNavigationService,
 										   ILogger<JellyfinAuthenticationService> logger) : IJellyfinAuthenticationService
 {
@@ -40,7 +41,8 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 
 		if(success)
 		{
-			titlebarViewModel.CurrentServer = server;
+			await TryUpdateLocalServerValues(server);
+			titleBarViewModel.CurrentServer = server;
 		}
 
 		return success;
@@ -52,7 +54,9 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 
 		if(success)
 		{
-			titlebarViewModel.CurrentServer = server;
+			await TryUpdateLocalServerValues(server);
+
+			titleBarViewModel.CurrentServer = server;
 
 			if (remember)
 			{
@@ -67,7 +71,6 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 					};
 
 					server.Users.Add(user);
-					settingsService.Save();
 				}
 			}
 
@@ -92,7 +95,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 
 			if (auth is not null)
 			{
-				titlebarViewModel.User = auth.User;
+				titleBarViewModel.User = auth.User;
 				await jellyfinClient.Initialize(url, auth);
 			}
 
@@ -117,5 +120,28 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 	private static bool ByteArraysEqual(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
 	{
 		return a1.SequenceEqual(a2);
+	}
+
+	private async Task TryUpdateLocalServerValues(SavedServer server)
+	{
+		var endpoint = await jellyfinClient.EndpointInfo();
+
+		if (endpoint?.IsInNetwork == true && server.LocalNetworkNames.Count == 0)
+		{
+			server.LocalUrl = jellyfinClient.BaseUrl;
+			server.LocalNetworkNames = [..NetworkHelper.Instance.ConnectionInformation.NetworkNames];
+
+			if(server.LocalUrl == server.PublicUrl)
+			{
+				server.PublicUrl = "";
+			}
+
+			settings.SaveServerDetails();
+		}
+		else if (endpoint?.IsInNetwork == false && string.IsNullOrEmpty(server.PublicUrl))
+		{
+			server.PublicUrl = jellyfinClient.BaseUrl;
+			settings.SaveServerDetails();
+		}
 	}
 }

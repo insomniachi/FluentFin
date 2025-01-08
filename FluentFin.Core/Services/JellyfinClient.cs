@@ -245,7 +245,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 		}
 	}
 
-	private async Task<EndPointInfo?> EndpointInfo()
+	public async Task<EndPointInfo?> EndpointInfo()
 	{
 		try
 		{

@@ -6,7 +6,6 @@ public interface ILocalSettingsService
 	void SaveSetting<T>(string key, T value);
 	void RemoveSetting(string key);
 	byte[] GetEntropyBytes();
-	void Save();
 }
 
 public static class LocalSettingsServiceExtensions

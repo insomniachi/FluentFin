@@ -13,6 +13,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task Initialize(string baseUrl, AuthenticationResult authResult);
 
+		Task<EndPointInfo?> EndpointInfo();
+
 		Task<BaseItemDtoQueryResult?> GetContinueWatching();
 
 		Task<BaseItemDtoQueryResult?> GetNextUp();

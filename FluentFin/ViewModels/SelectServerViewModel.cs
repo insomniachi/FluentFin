@@ -31,16 +31,13 @@ public partial class SelectServerViewModel(ISettings settings,
 		{
 			Id = info.Id ?? "",
 			DisplayName = info.ServerName ?? "",
+			LocalUrl = info.LocalAddress ?? ""
 		};
 
-		var isLocalAddress = info.LocalAddress == url;
+		var networkNames = NetworkHelper.Instance.ConnectionInformation.NetworkNames;
+		var isLocalAddress = info.LocalAddress == url || server.LocalNetworkNames.SequenceEqual(networkNames);
 
-		if(isLocalAddress)
-		{
-			server.LocalUrl = url;
-			server.LocalNetworkNames = [.. NetworkHelper.Instance.ConnectionInformation.NetworkNames];
-		}
-		else
+		if(!isLocalAddress)
 		{
 			server.PublicUrl = url;
 		}

@@ -3,7 +3,6 @@ Welcome to FluentFin, a simple and user-friendly native Jellyfin client built wi
 <div style="display: flex; flex-direction: row; gap: 8px">
   <img height=240 src="./Screenshots/movie.png" />
   <img height=240 src="./Screenshots/dashboard.png" />
-  <img height=240 src="./Screenshots/trickplay.png" />
 </div>
 
 ## 🌟 Features

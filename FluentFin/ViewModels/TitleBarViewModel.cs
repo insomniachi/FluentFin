@@ -18,7 +18,6 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	private readonly INavigationService _setupNavigationService;
 	private readonly INavigationViewService _navigationViewService;
 	private readonly IJellyfinClient _jellyfinClient;
-	private readonly ILocalSettingsService _localSettingsService;
 
 	public TitleBarViewModel(INavigationService navigationService,
 							 [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService setupNavigationService,
@@ -30,7 +29,6 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 		_setupNavigationService = setupNavigationService;
 		_navigationViewService = navigationViewService;
 		_jellyfinClient = jellyfinClient;
-		_localSettingsService = localSettingsService;
 
 		navigationService.Navigated += NavigationService_Navigated;
 	}
@@ -50,6 +48,9 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	[ObservableProperty]
 	public partial bool IsVisible { get; set; } = true;
 
+	[ObservableProperty]
+	public partial SavedServer? CurrentServer { get; set; }
+
 	public void TogglePane()
 	{
 		_navigationViewService.TogglePane();
@@ -67,6 +68,15 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 		_setupNavigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
 		await _jellyfinClient.Logout();
 	}
+
+	[RelayCommand]
+	public async Task SwitchUser()
+	{
+		User = null;
+		_setupNavigationService.NavigateTo(typeof(LoginViewModel).FullName!, CurrentServer);
+		await _jellyfinClient.Logout();
+	}
+
 
 	[RelayCommand]
 	private void GoToDashboard()

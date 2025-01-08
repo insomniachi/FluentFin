@@ -27,7 +27,12 @@
             </StackPanel.Resources>
             <StackPanel>
                 <TextBlock Text="Username" />
-                <AutoSuggestBox ItemsSource="{x:Bind ViewModel.SavedUsers}" Text="{x:Bind ViewModel.Username, Mode=TwoWay}" />
+                <AutoSuggestBox
+                    DisplayMemberPath="Username"
+                    ItemsSource="{x:Bind ViewModel.Server.Users}"
+                    SuggestionChosen="AutoSuggestBox_SuggestionChosen"
+                    Text="{x:Bind ViewModel.Username, Mode=TwoWay}"
+                    TextMemberPath="Username" />
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Password" />

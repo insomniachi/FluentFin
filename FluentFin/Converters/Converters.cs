@@ -6,6 +6,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using System.Collections.ObjectModel;
+using FluentFin.Core.Settings;
 
 namespace FluentFin.Converters;
 
@@ -21,6 +24,9 @@ public static class Converters
 	public static double TiksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static Visibility VisibleIfMoreThanOne(ObservableCollection<SavedUser> users) => VisibleIfMoreThanOne<SavedUser>(users);
+	public static Visibility VisibleIfMoreThanOne<T>(IList<T> values) => values.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+
 	public static string TimeSpanToString(TimeSpan ts)
 	{
 		return ts.Hours > 0 ? ts.ToString("hh\\:mm\\:ss") : ts.ToString("mm\\:ss");

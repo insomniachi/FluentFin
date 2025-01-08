@@ -57,4 +57,6 @@ public class LocalSettingsService : ILocalSettingsService
 	{
 		return ReadSetting("Entropy", RandomNumberGenerator.GetBytes(20));
 	}
+
+	public void Save() => File.WriteAllText(_file, _settings.ToJsonString(_options));
 }

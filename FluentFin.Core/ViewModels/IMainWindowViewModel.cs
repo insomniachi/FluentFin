@@ -1,20 +1,13 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+﻿using FluentFin.Core.Settings;
+using Jellyfin.Sdk.Generated.Models;
 using System.ComponentModel;
 
 namespace FluentFin.Core.ViewModels;
 
-public enum MainWindowViewState
-{
-	Login,
-	LoggedIn,
-	LoginFailed,
-	SelectServer,
-}
-
 public interface IMainWindowViewModel : INotifyPropertyChanged
 {
 	ITitleBarViewModel TitleBarViewModel { get; }
-	MainWindowViewState ViewState { get; set; }
+
 }
 
 public interface ITitleBarViewModel : INotifyPropertyChanged
@@ -26,5 +19,6 @@ public interface ITitleBarViewModel : INotifyPropertyChanged
 	bool CanGoBack { get; }
 	UserDto? User { get; set; }
 	bool IsVisible { get; set; }
+	SavedServer? CurrentServer { get; set; }
 	Task Logout();
 }

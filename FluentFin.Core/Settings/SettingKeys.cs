@@ -1,11 +1,10 @@
 ﻿using FluentFin.Core.Contracts.Services;
+using System.Collections.ObjectModel;
 
 namespace FluentFin.Core.Settings;
 
 public static class SettingKeys
 {
-	public static Key<ServerSettings> ServerSettings { get; } = new Key<ServerSettings>("ServerSettings", new ServerSettings());
-	public static Key<List<SavedServer>> Servers { get; } = new Key<List<SavedServer>>("Servers", []);
-	public static Key<List<SavedUser>> Users { get; } = new Key<List<SavedUser>>("Users", []);
+	public static Key<ObservableCollection<SavedServer>> Servers { get; } = new Key<ObservableCollection<SavedServer>>("Servers", []);
 }
 

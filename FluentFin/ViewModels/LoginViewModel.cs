@@ -5,22 +5,16 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
-using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System.Reactive.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace FluentFin.ViewModels;
 
 public partial class LoginViewModel : ObservableObject, INavigationAware
 {
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
-	private readonly INavigationService _navigationService;
-	private readonly INavigationService _setupNavigationService;
-	private readonly INavigationViewService _navigationViewService;
 	private readonly ILocalSettingsService _settingsService;
 
 	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
@@ -30,9 +24,6 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 						  ILocalSettingsService settingsService)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
-		_navigationService = navigationService;
-		_setupNavigationService = setupNavigationServer;
-		_navigationViewService = navigationViewService;
 		_settingsService = settingsService;
 
 
@@ -56,9 +47,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 	public partial bool CanLogin { get; set; }
 
 	[ObservableProperty]
-	public partial List<string> SavedUsers { get; set; } = [];
-
-	public SavedServer? Server { get; private set; }
+	public partial SavedServer? Server { get; private set; }
 
 
 	[RelayCommand(CanExecute = nameof(CanLogin))]
@@ -69,37 +58,15 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		var authenticated = await _jellyfinAuthenticator.Authenticate(Server.GetServerUrl(), Username, Password);
+		var success = await _jellyfinAuthenticator.Authenticate(Server, Username, Password, KeepMeLoggedIn);
 
-		if (!authenticated)
+		if(!success)
 		{
-			return;
+			// message ?
 		}
-
-		if (KeepMeLoggedIn)
-		{
-			var users = _settingsService.ReadSetting(SettingKeys.Users);
-			var passwordBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(Password), _settingsService.GetEntropyBytes(), DataProtectionScope.CurrentUser);
-			if (users.All(x => x.Username != Username && !ByteArraysEqual(x.Password, passwordBytes) && x.ServerId != Server.Id))
-			{
-				var user = new SavedUser
-				{
-					Username = Username,
-					Password = passwordBytes,
-					ServerId = Server.Id
-				};
-				users.Add(user);
-				_settingsService.SaveSetting(SettingKeys.Users, users);
-			}
-		}
-
-		_setupNavigationService.NavigateTo(typeof(ShellViewModel).FullName!);
 	}
 
-	public async Task OnNavigatedFrom()
-	{
-		_navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new object());
-	}
+	public Task OnNavigatedFrom() => Task.CompletedTask;
 
 	public Task OnNavigatedTo(object parameter)
 	{
@@ -108,13 +75,9 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			return Task.CompletedTask;
 		}
 
-		SavedUsers = _settingsService.ReadSetting(SettingKeys.Users).Where(x => x.ServerId == server.Id).Select(x => x.Username).ToList();
 		Server = server;
 		return Task.CompletedTask;
 	}
 
-	static bool ByteArraysEqual(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
-	{
-		return a1.SequenceEqual(a2);
-	}
+	public string Unprotect(byte[] protectedBytes) => protectedBytes.Unprotect(_settingsService.GetEntropyBytes());
 }

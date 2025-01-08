@@ -1,43 +1,63 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DynamicData.Binding;
 using FluentFin.Core.Contracts.Services;
-using System.ComponentModel;
-using System.Reactive.Linq;
+using System.Collections.ObjectModel;
 
 namespace FluentFin.Core.Settings;
 
 public interface ISettings
 {
-	ServerSettings ServerSettings { get; }
-	List<SavedServer> Servers { get; }
-	List<SavedUser> Users { get; }
+	ObservableCollection<SavedServer> Servers { get; }
+
+	void ListenToChanges();
 }
 
-public partial class Settings : ObservableObject, ISettings
+public partial class Settings(ILocalSettingsService localSettingsService) : ObservableObject, ISettings
 {
-	private readonly ILocalSettingsService _localSettingsService;
+	private bool _isListening;
 
-	[ObservableProperty]
-	public partial ServerSettings ServerSettings { get; set; }
+	public ObservableCollection<SavedServer> Servers { get; set; } = localSettingsService.ReadSetting(SettingKeys.Servers);
 
-	public List<SavedServer> Servers { get; set; } = [];
-	public List<SavedUser> Users { get; set; } = [];
-
-	public Settings(ILocalSettingsService localSettingsService)
+	public void ListenToChanges()
 	{
-		_localSettingsService = localSettingsService;
-		
-		ServerSettings = localSettingsService.ReadSetting(SettingKeys.ServerSettings)!;
-		Servers = localSettingsService.ReadSetting(SettingKeys.Servers);
-		Users = localSettingsService.ReadSetting(SettingKeys.Users);
+		if(_isListening)
+		{
+			return;
+		}
+
+		Servers.CollectionChanged += Servers_CollectionChanged;
+		foreach (var server in Servers)
+		{
+			server.Users.CollectionChanged += Users_CollectionChanged;
+		}
+
+
+		_isListening = true;
 	}
 
-	//private void ObserveObject<T>(T target, Key<T> key)
-	//	where T : INotifyPropertyChanged
-	//{
-	//	target.WhenAnyPropertyChanged()
-	//		  .Throttle(TimeSpan.FromMilliseconds(500))
-	//		  .Subscribe(propInfo => _localSettingsService.SaveSetting(key, target));
-	//}
+	private void Servers_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+		{
+			foreach (SavedServer newServer in e.NewItems?.OfType<SavedServer>() ?? [])
+			{
+				newServer.Users.CollectionChanged += Users_CollectionChanged;
+			}
+		}
+
+		else if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+		{
+			foreach (SavedServer oldServer in e.OldItems?.OfType<SavedServer>() ?? [])
+			{
+				oldServer.Users.CollectionChanged -= Users_CollectionChanged;
+			}
+		}
+
+		localSettingsService.SaveSetting(SettingKeys.Servers, Servers);
+	}
+
+	private void Users_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		localSettingsService.SaveSetting(SettingKeys.Servers, Servers);
+	}
 }
 

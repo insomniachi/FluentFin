@@ -1,5 +1,5 @@
 ﻿using FluentFin.Contracts.Services;
-using FluentFin.Services;
+using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -8,7 +8,6 @@ using Windows.System;
 
 namespace FluentFin.Views;
 
-// TODO: Update NavigationViewItem titles and icons in ShellPage.xaml.
 public sealed partial class ShellPage : Page
 {
     public ShellViewModel ViewModel
@@ -28,6 +27,7 @@ public sealed partial class ShellPage : Page
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
 		await ViewModel.NavigationViewService.InitializeLibraries();
+        ViewModel.NavigationService.NavigateTo(typeof(HomeViewModel).FullName!);
 	}
 
 	private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

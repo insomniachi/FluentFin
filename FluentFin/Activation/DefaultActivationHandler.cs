@@ -3,12 +3,9 @@ using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
-using FluentFin.Helpers;
 using FluentFin.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace FluentFin.Activation;
 
@@ -31,6 +28,8 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
         _settings = settings;
 		_jellyfinAuthenticationService = jellyfinAuthenticationService;
         _settingsService = settingsService;
+
+        _settings.ListenToChanges();
 	}
 
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
@@ -41,30 +40,18 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 
     protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
-        var servers = _settings.Servers;
-
-        if(_settings.Servers.Count == 1)
+        if(_settings.Servers.Count == 1 && _settings.Servers[0].Users.Count == 1)
         {
-            var server = _settings.Servers[0];
-            var users = _settings.Users.Where(x => x.ServerId == server.Id).ToList();
+            var result = await _jellyfinAuthenticationService.Authenticate(_settings.Servers[0], _settings.Servers[0].Users[0]);
 
-            if(users.Count == 1)
+            if(result)
             {
-                var user = users[0];
-                var password = Encoding.UTF8.GetString(ProtectedData.Unprotect(user.Password, _settingsService.GetEntropyBytes(), DataProtectionScope.CurrentUser));
-                var result = await _jellyfinAuthenticationService.Authenticate(server.GetServerUrl(), user.Username, password);
-
-                if(result)
-                {
-                    _navigationService.NavigateTo(typeof(ShellViewModel).FullName!);
-                    _coreNavigationService.NavigateTo(typeof(HomeViewModel).FullName!);
-				}
-                else
-                {
-					_navigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
-				}
-
-            }
+                _navigationService.NavigateTo(typeof(ShellViewModel).FullName!);
+			}
+            else
+            {
+				_navigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
+			}
         }
         else
         {

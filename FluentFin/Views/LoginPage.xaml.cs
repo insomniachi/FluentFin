@@ -1,3 +1,5 @@
+using FluentFin.Core.Settings;
+using FluentFin.Helpers;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
@@ -14,9 +16,7 @@ public sealed partial class LoginPage
 		Loaded += LoginView_Loaded;
 	}
 
-
-
-	private async void LoginView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	private void LoginView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
 		PasswordBox.Password = ViewModel.Password;
 	}
@@ -32,5 +32,15 @@ public sealed partial class LoginPage
 		{
 			ViewModel.LoginCommand.Execute(null);
 		}
+    }
+
+	private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+	{
+		if(args.SelectedItem is not SavedUser user)
+		{
+			return;
+		}
+
+		PasswordBox.Password = ViewModel.Unprotect(user.Password);
     }
 }

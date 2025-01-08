@@ -142,6 +142,13 @@
                                     Command="{x:Bind ViewModel.LogoutCommand}"
                                     Content="Logout"
                                     Icon="{ui:FontIcon Glyph=&#xF3B1;}" />
+                                <lc:MenuFlyoutButton
+                                    HorizontalAlignment="Stretch"
+                                    Click="CloseTitleBarFooterFlyout"
+                                    Command="{x:Bind ViewModel.SwitchUserCommand}"
+                                    Content="Switch user"
+                                    Icon="{ui:FontIcon Glyph=&#xE748;}"
+                                    Visibility="{x:Bind c:Converters.VisibleIfMoreThanOne(ViewModel.CurrentServer.Users), Mode=OneWay}" />
                             </StackPanel>
 
                         </Grid>

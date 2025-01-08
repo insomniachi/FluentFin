@@ -16,13 +16,18 @@ public sealed partial class SelectServerPage : Page
 
 	private void InputFieldKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 	{
+		if(sender is not TextBox tb)
+		{
+			return;
+		}
+
 		if (e.Key == Windows.System.VirtualKey.Enter)
 		{
-			//ViewModel.LoginCommand.Execute(null);
+			ViewModel.CheckConnectivityAndGoToLoginCommand.Execute(tb.Text);
 		}
 	}
 
-	private async void ServerSelected(ItemsView sender, ItemsViewItemInvokedEventArgs args)
+	private void ServerSelected(ItemsView sender, ItemsViewItemInvokedEventArgs args)
 	{
 		if(args.InvokedItem is not SavedServer server)
 		{

@@ -2,20 +2,19 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using FluentFin.Contracts.Services;
-using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
+using FluentFin.Services;
 using FluentFin.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
 
 namespace FluentFin.Core.ViewModels;
 
 public partial class SelectServerViewModel(ISettings settings,
-										   ILocalSettingsService localSettingsService,
 										   [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService) : ObservableObject
 {
 
-	public List<SavedServer> Servers => settings.Servers;
+	public ObservableCollection<SavedServer> Servers => settings.Servers;
 
 	[RelayCommand]
 	private async Task CheckConnectivityAndGoToLogin(string url)
@@ -49,7 +48,6 @@ public partial class SelectServerViewModel(ISettings settings,
 		if(!Servers.Any(x => x.Id == info.Id))
 		{
 			Servers.Add(server);
-			localSettingsService.SaveSetting(SettingKeys.Servers, Servers);
 		}
 
 		navigationService.NavigateTo(typeof(LoginViewModel).FullName!, server);

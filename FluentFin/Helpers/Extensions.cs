@@ -1,5 +1,7 @@
-﻿using FluentFin.Core.Settings;
+﻿using CommunityToolkit.WinUI.Helpers;
+using FluentFin.Core.Settings;
 using Microsoft.UI.Xaml.Controls;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -15,19 +17,19 @@ public static class SavedServerExtensions
 {
     public static string GetServerUrl(this SavedServer? server)
     {
-        if(server is null)
+        if (server is null)
         {
             return "";
         }
 
         // if not internet, try local
-        if(!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+        if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
         {
             return server.LocalUrl;
         }
 
         var networkNames = NetworkHelper.Instance.ConnectionInformation.NetworkNames;
-        if(networkNames.Count != server.LocalNetworkNames.Count)
+        if (networkNames.Count != server.LocalNetworkNames.Count)
         {
             return server.PublicUrl;
         }
@@ -41,6 +43,27 @@ public static class SavedServerExtensions
         }
 
         return server.LocalUrl;
+    }
+
+    public static bool IsLocalUrl(this string url)
+    {
+        Uri uri = new(url);
+        var addresses = Dns.GetHostAddresses(uri.Host);
+        foreach (var address in addresses)
+        {
+            if (IsLocalIpAddress(address))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool IsLocalIpAddress(IPAddress ipAddress)
+    {
+        byte[] bytes = ipAddress.GetAddressBytes();
+        // Check for local IP ranges (e.g., 192.168.x.x, 10.x.x.x, 172.16.x.x - 172.31.x.x)
+        return (bytes[0] == 10) || (bytes[0] == 172 && (bytes[1] >= 16 && bytes[1] <= 31)) || (bytes[0] == 192 && bytes[1] == 168);
     }
 }
 

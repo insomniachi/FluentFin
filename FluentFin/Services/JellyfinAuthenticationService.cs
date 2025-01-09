@@ -41,7 +41,6 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 
 		if(success)
 		{
-			await TryUpdateLocalServerValues(server);
 			titleBarViewModel.CurrentServer = server;
 		}
 
@@ -54,8 +53,6 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 
 		if(success)
 		{
-			await TryUpdateLocalServerValues(server);
-
 			titleBarViewModel.CurrentServer = server;
 
 			if (remember)
@@ -120,28 +117,5 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 	private static bool ByteArraysEqual(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
 	{
 		return a1.SequenceEqual(a2);
-	}
-
-	private async Task TryUpdateLocalServerValues(SavedServer server)
-	{
-		var endpoint = await jellyfinClient.EndpointInfo();
-
-		if (endpoint?.IsInNetwork == true && server.LocalNetworkNames.Count == 0)
-		{
-			server.LocalUrl = jellyfinClient.BaseUrl;
-			server.LocalNetworkNames = [..NetworkHelper.Instance.ConnectionInformation.NetworkNames];
-
-			if(server.LocalUrl == server.PublicUrl)
-			{
-				server.PublicUrl = "";
-			}
-
-			settings.SaveServerDetails();
-		}
-		else if (endpoint?.IsInNetwork == false && string.IsNullOrEmpty(server.PublicUrl))
-		{
-			server.PublicUrl = jellyfinClient.BaseUrl;
-			settings.SaveServerDetails();
-		}
 	}
 }

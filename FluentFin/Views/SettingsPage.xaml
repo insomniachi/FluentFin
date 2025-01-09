@@ -39,7 +39,11 @@
                             Header="{x:Bind DisplayName}"
                             ItemsSource="{x:Bind Users}"
                             Tag="{x:Bind}">
-                            <Button Content="Delete Server" Style="{ThemeResource AccentButtonStyle}" />
+                            <Button
+                                Command="{Binding ElementName=Page, Path=ViewModel.DeleteServerCommand}"
+                                CommandParameter="{x:Bind}"
+                                Content="Delete Server"
+                                Style="{ThemeResource AccentButtonStyle}" />
                             <ctk:SettingsExpander.ItemTemplate>
                                 <DataTemplate x:DataType="settings:SavedUser">
                                     <ctk:SettingsCard Header="{x:Bind Username}">

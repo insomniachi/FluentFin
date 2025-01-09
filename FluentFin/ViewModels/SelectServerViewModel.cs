@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.Settings;
+using FluentFin.Helpers;
 using FluentFin.Services;
 using FluentFin.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,14 +36,22 @@ public partial class SelectServerViewModel(ISettings settings,
 		};
 
 		var networkNames = NetworkHelper.Instance.ConnectionInformation.NetworkNames;
-		var isLocalAddress = info.LocalAddress == url || server.LocalNetworkNames.SequenceEqual(networkNames);
+		var isLocalAddress = url.IsLocalUrl() || server.LocalNetworkNames.SequenceEqual(networkNames);
 
-		if(!isLocalAddress)
+		if(isLocalAddress)
+		{
+			if(server.LocalNetworkNames.Count == 0)
+			{
+				server.LocalNetworkNames = [.. networkNames];
+				settings.SaveServerDetails();
+			}
+		}
+		else
 		{
 			server.PublicUrl = url;
 		}
 
-		if(!Servers.Any(x => x.Id == info.Id))
+		if (!Servers.Any(x => x.Id == info.Id))
 		{
 			Servers.Add(server);
 		}

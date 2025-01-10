@@ -107,20 +107,16 @@
                             x:Name="TrickplayScrollViewer"
                             Width="{x:Bind Trickplay.Width, Mode=OneWay}"
                             Height="{x:Bind Trickplay.Height, Mode=OneWay}"
-                            x:FieldModifier="Public"
                             HorizontalScrollBarVisibility="Hidden"
                             HorizontalScrollMode="Enabled"
                             VerticalScrollBarVisibility="Hidden"
                             VerticalScrollMode="Enabled">
-                            <Image
-                                x:Name="TrickplayImage"
-                                x:FieldModifier="Public"
-                                Stretch="None">
+                            <Image Source="{x:Bind c:Converters.GetImage(Trickplay.TileImage), Mode=OneWay}" Stretch="None">
                                 <Image.RenderTransform>
-                                    <TranslateTransform x:Name="TranslateTransform" x:FieldModifier="Public" />
+                                    <TranslateTransform X="{x:Bind Trickplay.Translate.X, Mode=OneWay}" Y="{x:Bind Trickplay.Translate.Y, Mode=OneWay}" />
                                 </Image.RenderTransform>
                                 <Image.Clip>
-                                    <RectangleGeometry x:Name="ClipGeometry" x:FieldModifier="Public" />
+                                    <RectangleGeometry Rect="{x:Bind c:Converters.ToRect(Trickplay.Clip), Mode=OneWay}" />
                                 </Image.Clip>
                             </Image>
                         </ScrollViewer>

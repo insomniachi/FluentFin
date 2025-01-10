@@ -71,7 +71,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))
 			.DistinctUntilChanged()
 			.ObserveOn(RxApp.MainThreadScheduler)
-			.SubscribeOn(RxApp.MainThreadScheduler)
 			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
 
 		MediaPlayer.WhenAnyValue(x => x.Status)

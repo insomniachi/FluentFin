@@ -2,6 +2,7 @@
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
@@ -20,14 +21,14 @@ public partial class TrickplayViewModel : ObservableObject
 	[ObservableProperty]
 	public partial RectModel? Clip { get; set; }
 
-	[ObservableProperty]
-	public partial TranslateModel? Translate { get; set; }
 
 	[ObservableProperty]
 	public partial double Height { get; set; }
 
 	[ObservableProperty]
 	public partial double Width { get; set; }
+
+	public TranslateModel Translate { get; } = new();
 
 	public int Index { get; set; }
 
@@ -77,12 +78,20 @@ public partial class TrickplayViewModel : ObservableObject
 
 				if(TileImage is null || Index != index)
 				{
-					TileImage = jellyfinClient.GetTrickplayImage(Item, index, (int)Width);
+					RxApp.MainThreadScheduler.Schedule(() =>
+					{
+						TileImage = jellyfinClient.GetTrickplayImage(Item, index, (int)Width);
+					});
 				}
 
 				Index = index;
-				Translate = new(-tileOffsetX * Width, -tileOffsetY * Height);
-				Clip = new (tileOffsetX * Width, tileOffsetY * Height, Width, Height);
+
+				RxApp.MainThreadScheduler.Schedule(() => 
+				{
+					Translate.X = -tileOffsetX * Width;
+					Translate.Y = -tileOffsetY * Height;
+					Clip = new(tileOffsetX * Width, tileOffsetY * Height, Width, Height);
+				});
 			});
 	}
 
@@ -141,4 +150,11 @@ public partial class TrickplayViewModel : ObservableObject
 }
 
 public record RectModel(double X, double Y, double Width, double Height);
-public record TranslateModel(double X, double Y);
+public partial class TranslateModel : ObservableObject
+{
+	[ObservableProperty]
+	public partial double X { get; set; }
+
+	[ObservableProperty]
+	public partial double Y { get; set; }
+}

@@ -18,8 +18,10 @@
         PointerMoved="FSC_PointerMoved">
         <controls:TransportControls
             x:Name="TransportControls"
+            IsSkipButtonVisible="{x:Bind ViewModel.IsSkipButtonVisible, Mode=OneWay}"
             Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
             Playlist="{x:Bind ViewModel.Playlist}"
-            SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}" />
+            SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}"
+            Trickplay="{x:Bind ViewModel.TrickplayViewModel}" />
     </flyleaf:FlyleafHost>
 </Page>

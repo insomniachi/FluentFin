@@ -52,16 +52,16 @@
                         <TextBlock Text="Switch server" />
                     </StackPanel>
                 </Button>
-                <Button Command="{x:Bind ViewModel.LoginCommand}" Style="{ThemeResource AccentButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE725;" />
-                        <TextBlock Text="Login" />
-                    </StackPanel>
-                </Button>
                 <Button Command="{x:Bind ViewModel.QuickConnectCommand}" Style="{ThemeResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon Glyph="&#xE703;" />
                         <TextBlock Text="Quick Connect" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{x:Bind ViewModel.LoginCommand}" Style="{ThemeResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE725;" />
+                        <TextBlock Text="Login" />
                     </StackPanel>
                 </Button>
             </StackPanel>

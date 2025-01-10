@@ -9,6 +9,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
 using FluentFin.Core.Settings;
+using Windows.Foundation;
+using FluentFin.ViewModels;
 
 namespace FluentFin.Converters;
 
@@ -33,6 +35,7 @@ public static class Converters
 	}
 	public static double ToDouble(long? value) => value ?? 0;
 	public static Guid ToGuid(string value) => Guid.Parse(value);
+	public static Rect ToRect(RectModel? clip) => clip is null ? new() : new(clip.X, clip.Y, clip.Width, clip.Height);
 	public static ImageSource? GetImage(Uri? uri)
 	{
 		if(uri is null)

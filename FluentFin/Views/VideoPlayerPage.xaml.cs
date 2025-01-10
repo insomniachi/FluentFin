@@ -23,20 +23,6 @@ public sealed partial class VideoPlayerPage : Page
 	{
 		InitializeComponent();
 
-		//FSC.FullScreenExit += (o, e) =>
-		//{
-		//	TransportControls.FullWindowSymbol.Symbol = Symbol.FullScreen;
-		//	App.MainWindow.IsShownInSwitchers = true;
-		//	Task.Run(() => { Thread.Sleep(10); Utils.UIInvoke(() => flyleafHost.KFC?.Focus(FocusState.Keyboard)); });
-		//};
-
-		//FSC.FullScreenEnter += (o, e) =>
-		//{
-		//	TransportControls.FullWindowSymbol.Symbol = Symbol.BackToWindow;
-		//	App.MainWindow.IsShownInSwitchers = false;
-		//	flyleafHost.KFC?.Focus(FocusState.Keyboard);
-		//};
-
 		_pointerMoved
 			.Throttle(TimeSpan.FromSeconds(3))
 			.Subscribe(_ =>
@@ -45,51 +31,6 @@ public sealed partial class VideoPlayerPage : Page
 				{
 					TransportControls.Bar.Visibility = Visibility.Collapsed;
 					ProtectedCursor.Dispose();
-				});
-			});
-
-		ViewModel.WhenAnyValue(x => x.IsSkipButtonVisible)
-			.Subscribe(value =>
-			{
-				TransportControls?.DispatcherQueue.TryEnqueue(() =>
-				{
-					TransportControls.IsSkipButtonVisible = value;
-				});
-			});
-
-		TransportControls?.DispatcherQueue.TryEnqueue(() =>
-		{
-			TransportControls.Trickplay = ViewModel.TrickplayViewModel;
-		});
-
-		ViewModel.TrickplayViewModel.WhenAnyValue(x => x.TileImage)
-			.WhereNotNull()
-			.Subscribe(url =>
-			{
-				TransportControls?.TrickplayImage.DispatcherQueue.TryEnqueue(() =>
-				{
-					TransportControls.TrickplayImage.Source = new BitmapImage(url);
-				});
-			});
-
-		ViewModel.TrickplayViewModel.WhenAnyValue(x => x.Translate)
-			.WhereNotNull()
-			.Subscribe(translate =>
-			{
-				TransportControls?.TranslateTransform.DispatcherQueue.TryEnqueue(() =>
-				{
-					TransportControls.TranslateTransform.X = translate.X;
-					TransportControls.TranslateTransform.Y = translate.Y;
-				});
-			});
-
-		ViewModel.TrickplayViewModel.WhenAnyValue(x => x.Clip)
-			.WhereNotNull()
-			.Subscribe(clip =>
-			{
-				TransportControls?.ClipGeometry.DispatcherQueue.TryEnqueue(() =>
-				{
-					TransportControls.ClipGeometry.Rect = new Windows.Foundation.Rect(clip.X, clip.Y, clip.Width, clip.Height);
 				});
 			});
 

@@ -46,6 +46,7 @@ public class PageService : IPageService
         Configure<LibrariesDisplayViewModel, LibrariesDisplayPage>();
         Configure<PlaybackResumeViewModel, PlaybackResumePage>();
         Configure<PlaybackTrickplayViewModel, PlaybackTrickplayPage>();
+        Configure<ActivitiesViewModel, ActivitiesPage>();
 	}
 
     public Type GetPageType(string key)

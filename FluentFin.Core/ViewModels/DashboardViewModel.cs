@@ -8,7 +8,7 @@ using System.Reflection;
 namespace FluentFin.Core.ViewModels
 {
 	public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
-											ITitleBarViewModel titlebarViewModel) : ObservableObject, INavigationAware
+											ITitleBarViewModel titleBarViewModel) : ObservableObject, INavigationAware
 	{
 		private string? _scanMediaLibraryTask;
 
@@ -66,14 +66,14 @@ namespace FluentFin.Core.ViewModels
 		[RelayCommand]
 		private async Task Shutdown()
 		{
-			await titlebarViewModel.Logout();
+			await titleBarViewModel.Logout();
 			await jellyfinClient.Shutdown();
 		}
 
 		[RelayCommand]
 		private async Task Restart()
 		{
-			await titlebarViewModel.Logout();
+			await titleBarViewModel.Logout();
 			await jellyfinClient.Restart();
 		}
 

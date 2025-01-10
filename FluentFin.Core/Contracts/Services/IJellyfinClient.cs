@@ -107,6 +107,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<ActivityLogEntryQueryResult?> GetActivities(DateTimeOffset minDate, bool hasUserId);
 
+		Task<ActivityLogEntryQueryResult?> GetAllActivities();
+
 		Task<List<UserDto>> GetUsers();
 
 		Task<UserDto?> GetUser(Guid id);

@@ -122,6 +122,7 @@ public partial class App : Application
 			services.AddTransient<LibrariesDisplayViewModel>();
 			services.AddTransient<PlaybackResumeViewModel>();
 			services.AddTransient<PlaybackTrickplayViewModel>();
+			services.AddTransient<ActivitiesViewModel>();
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

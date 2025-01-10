@@ -167,6 +167,23 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 		}
 	}
 
+	public async Task<ActivityLogEntryQueryResult?> GetAllActivities()
+	{
+		try
+		{
+			return await _jellyfinApiClient.System.ActivityLog.Entries.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.StartIndex = 0;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async Task<List<TaskInfo>> GetScheduledTasks(bool? isEnabled)
 	{
 		try

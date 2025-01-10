@@ -72,6 +72,10 @@
                     <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.PlaybackTrickplayViewModel" Content="Trickplay" />
                 </NavigationViewItem.MenuItems>
             </NavigationViewItem>
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.ActivitiesViewModel"
+                Content="Activity"
+                Icon="{ui:FontIcon Glyph=&#xE81C;}" />
         </NavigationView.MenuItems>
     </NavigationView>
 </Page>

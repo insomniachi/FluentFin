@@ -57,15 +57,17 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*" />
+            <RowDefinition Height="0.5*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.ColumnSpan="2">
+        <Grid Grid.RowSpan="4" Grid.ColumnSpan="2">
             <Grid>
                 <Image
                     x:Name="BackdropImage"
@@ -77,20 +79,43 @@
                     </media:PipelineVisualFactory>
                 </media:UIElementExtensions.VisualFactory>
             </Grid>
-            <Grid Grid.Column="1" Grid.ColumnSpan="2">
-                <Image
-                    Height="200"
-                    Source="{x:Bind ViewModel.Dto, Converter={StaticResource LogoImageConverter}, Mode=OneWay}"
-                    Stretch="Uniform" />
-            </Grid>
-            <Border
-                Height="{StaticResource ButtonStripHeight}"
-                VerticalAlignment="Bottom"
-                Background="{StaticResource BackgroundOnImageBrush}" />
+        </Grid>
+
+        <Grid
+            Grid.Row="2"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2">
+            <media:UIElementExtensions.VisualFactory>
+                <media:PipelineVisualFactory>
+                    <media:BlurEffect Amount="40" />
+                    <media:CrossFadeEffect
+                        Factor="1"
+                        IsAnimatable="True"
+                        Source="{media:BackdropSource}" />
+                </media:PipelineVisualFactory>
+            </media:UIElementExtensions.VisualFactory>
+        </Grid>
+
+        <Border
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            Height="{StaticResource ButtonStripHeight}"
+            VerticalAlignment="Bottom"
+            Background="{StaticResource BackgroundOnImageBrush}" />
+
+        <Grid
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="0,0,36,0">
+            <Image
+                Height="200"
+                Source="{x:Bind ViewModel.Dto, Converter={StaticResource LogoImageConverter}, Mode=OneWay}"
+                Stretch="Uniform" />
         </Grid>
 
         <Grid
             x:Name="ButtonStrip"
+            Grid.RowSpan="2"
             Grid.Column="1"
             Height="{StaticResource ButtonStripHeight}"
             VerticalAlignment="Bottom">
@@ -147,9 +172,9 @@
 
 
         <Grid
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.RowSpan="2"
-            Margin="36,-300,36,0"
+            Margin="36,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             CornerRadius="15">
@@ -160,7 +185,8 @@
         </Grid>
 
         <ScrollViewer
-            Grid.Row="1"
+            Grid.Row="2"
+            Grid.RowSpan="2"
             Grid.Column="1"
             Margin="{StaticResource MediumTopBottomMargin}">
             <StackPanel Spacing="45">

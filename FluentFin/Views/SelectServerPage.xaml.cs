@@ -2,6 +2,7 @@ using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using Microsoft.UI.Xaml.Controls;
+using ReactiveUI;
 
 namespace FluentFin.Views;
 

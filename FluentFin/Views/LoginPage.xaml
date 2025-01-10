@@ -41,18 +41,24 @@
                     KeyDown="InputFieldKeyDown"
                     PasswordChanged="PasswordBox_PasswordChanged" />
             </StackPanel>
-            <CheckBox Content="Keep me logged in" IsChecked="{x:Bind ViewModel.KeepMeLoggedIn, Mode=TwoWay}" />
-            <Grid>
-                <Button
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind ViewModel.LoginCommand}"
-                    Style="{ThemeResource AccentButtonStyle}">
+            <CheckBox Content="Remember me" IsChecked="{x:Bind ViewModel.KeepMeLoggedIn, Mode=TwoWay}" />
+            <StackPanel
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="10">
+                <Button Command="{x:Bind ViewModel.SwitchServerCommand}" Style="{ThemeResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE8AB;" />
+                        <TextBlock Text="Switch server" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{x:Bind ViewModel.LoginCommand}" Style="{ThemeResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon Glyph="&#xE725;" />
                         <TextBlock Text="Login" />
                     </StackPanel>
                 </Button>
-            </Grid>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

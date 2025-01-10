@@ -18,9 +18,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
-using ReactiveUI;
-using System.ComponentModel;
-using System.Text.Json;
 
 namespace FluentFin;
 
@@ -160,8 +157,6 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
 		await Host.StartAsync();
-
-		var x = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
 
 		base.OnLaunched(args);
 

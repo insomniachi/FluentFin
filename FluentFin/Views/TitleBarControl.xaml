@@ -147,8 +147,7 @@
                                     Click="CloseTitleBarFooterFlyout"
                                     Command="{x:Bind ViewModel.SwitchUserCommand}"
                                     Content="Switch user"
-                                    Icon="{ui:FontIcon Glyph=&#xE748;}"
-                                    Visibility="{x:Bind c:Converters.VisibleIfMoreThanOne(ViewModel.CurrentServer.Users), Mode=OneWay}" />
+                                    Icon="{ui:FontIcon Glyph=&#xE748;}" />
                             </StackPanel>
 
                         </Grid>

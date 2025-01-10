@@ -5,6 +5,7 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
+using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
@@ -16,15 +17,16 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 {
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
 	private readonly ILocalSettingsService _settingsService;
+	private readonly INavigationService _navigationService;
 
 	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
-						  INavigationService navigationService,
-						  [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService setupNavigationServer,
+						  [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService navigationService,
 						  INavigationViewService navigationViewService,
 						  ILocalSettingsService settingsService)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
 		_settingsService = settingsService;
+		_navigationService = navigationService;
 
 
 		this.WhenAnyValue(x => x.Username, x => x.Password)
@@ -64,6 +66,12 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 		{
 			// message ?
 		}
+	}
+
+	[RelayCommand]
+	private void SwitchServer()
+	{
+		_navigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
 	}
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;

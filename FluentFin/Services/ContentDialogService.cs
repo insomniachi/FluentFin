@@ -12,6 +12,7 @@ public interface IContentDialogService
 	Task<ContentDialogResult> ShowDialog<TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure, Action<TViewModel> configureVm) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TView, TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TView : ContentDialog, IViewFor, new();
+	Task ShowMessage(string title, string message);
 }
 
 public class ContentDialogService : IContentDialogService
@@ -21,6 +22,20 @@ public class ContentDialogService : IContentDialogService
 	{
 		var vm = App.GetService<TViewModel>();
 		return await ShowDialog(vm, configure);
+	}
+
+	public async Task ShowMessage(string title, string message)
+	{
+		var dialog = new ContentDialog
+		{
+			XamlRoot = App.MainWindow.Content.XamlRoot,
+			Title = title,
+			Content = message,
+			PrimaryButtonText = "OK",
+			DefaultButton = ContentDialogButton.Primary
+		};
+
+		await dialog.ShowAsync();
 	}
 
 	public async Task<ContentDialogResult> ShowDialog<TView, TViewModel>(TViewModel viewModel, Action<ContentDialog> configure)

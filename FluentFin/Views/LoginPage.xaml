@@ -58,6 +58,12 @@
                         <TextBlock Text="Login" />
                     </StackPanel>
                 </Button>
+                <Button Command="{x:Bind ViewModel.QuickConnectCommand}" Style="{ThemeResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE703;" />
+                        <TextBlock Text="Quick Connect" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -17,7 +17,6 @@ namespace FluentFin.Services;
 public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 										   ITitleBarViewModel titleBarViewModel,
 										   ILocalSettingsService settingsService,
-										   ISettings settings,
 										   [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService setupNavigationService,
 										   ILogger<JellyfinAuthenticationService> logger) : IJellyfinAuthenticationService
 {
@@ -32,6 +31,61 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		catch
 		{
 			return null;
+		}
+	}
+
+	public async Task<QuickConnectResult?> GetQuickConnectCode(SavedServer server)
+	{
+		var client = GetClient(server.GetServerUrl());
+		try
+		{
+			return await client.QuickConnect.Initiate.PostAsync();
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	public async Task<QuickConnectResult?> CheckQuickConnectStatus(SavedServer server, QuickConnectResult result)
+	{
+		var client = GetClient(server.GetServerUrl());
+		try
+		{
+			return await client.QuickConnect.Connect.GetAsync(x =>
+			{
+				x.QueryParameters.Secret = result.Secret;
+			});
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	public async Task<bool> Authenticate(SavedServer server, QuickConnectResult result)
+	{
+		var url = server.GetServerUrl();
+		var client = GetClient(url);
+		try
+		{
+			var auth = await client.Users.AuthenticateWithQuickConnect.PostAsync(new QuickConnectDto
+			{
+				Secret = result.Secret,
+			});
+
+			if (auth is not null)
+			{
+				titleBarViewModel.User = auth.User;
+				await jellyfinClient.Initialize(url, auth);
+				setupNavigationService.NavigateTo(typeof(ShellViewModel).FullName!);
+			}
+
+			return auth is not null;
+		}
+		catch
+		{
+			return false;
 		}
 	}
 

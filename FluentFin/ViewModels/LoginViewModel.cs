@@ -7,8 +7,12 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
+using FluentFin.Services;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
@@ -17,15 +21,18 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 {
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
 	private readonly ILocalSettingsService _settingsService;
+	private readonly IContentDialogService _contentDialogService;
 	private readonly INavigationService _navigationService;
+	private CompositeDisposable? _disposable;
 
 	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
 						  [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService navigationService,
-						  INavigationViewService navigationViewService,
-						  ILocalSettingsService settingsService)
+						  ILocalSettingsService settingsService,
+						  IContentDialogService contentDialogService)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
 		_settingsService = settingsService;
+		_contentDialogService = contentDialogService;
 		_navigationService = navigationService;
 
 
@@ -67,6 +74,54 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			// message ?
 		}
 	}
+
+	[RelayCommand]
+	private async Task QuickConnect()
+	{
+		if(Server is null)
+		{
+			return;
+		}
+
+		var response = await _jellyfinAuthenticator.GetQuickConnectCode(Server);
+
+		if(response is null)
+		{
+			return;
+		}
+
+		_disposable = new();
+
+		
+		var dialog = new ContentDialog
+		{
+			XamlRoot = App.MainWindow.Content.XamlRoot,
+			Title = "Quick connect",
+			Content = $"Enter code {response.Code} to login",
+			PrimaryButtonText = "OK",
+			DefaultButton = ContentDialogButton.Primary
+		};
+
+
+		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5))
+			.Where(_ => Server is not null)
+			.SelectMany(_ => _jellyfinAuthenticator.CheckQuickConnectStatus(Server, response))
+			.WhereNotNull()
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(result =>
+			{
+				if(result.Authenticated == true)
+				{
+					_disposable?.Dispose();
+					dialog.Hide();
+					var isAuthenticated = _jellyfinAuthenticator.Authenticate(Server, result);
+				}
+			})
+			.DisposeWith(_disposable);
+
+		await dialog.ShowAsync();
+	}
+
 
 	[RelayCommand]
 	private void SwitchServer()

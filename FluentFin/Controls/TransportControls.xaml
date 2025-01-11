@@ -7,13 +7,17 @@
     xmlns:b="using:FluentFin.Behaviors"
     xmlns:c="using:FluentFin.Converters"
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fmp="using:FlyleafLib.MediaPlayer"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:viewmodels="using:FluentFin.ViewModels"
+    x:Name="Control"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -27,7 +31,14 @@
                 <SymbolIcon Symbol="Play" />
             </ctk:Case>
         </cc:SwitchConverter>
-        <cc:SwitchConverter x:Name="FullScreenRestoreIconConverter" />
+        <cc:SwitchConverter x:Name="PlaylistVisibilityConverter" TargetType="jm:BaseItemDto_Type">
+            <ctk:Case Value="Episode">
+                <Visibility>Visible</Visibility>
+            </ctk:Case>
+            <ctk:Case IsDefault="True">
+                <Visibility>Collapsed</Visibility>
+            </ctk:Case>
+        </cc:SwitchConverter>
         <cc:EmptyObjectToObjectConverter
             x:Key="ObjectToVisibilityConverter"
             EmptyValue="Collapsed"
@@ -37,6 +48,11 @@
             <GradientStop Offset="1" Color="Black" />
         </LinearGradientBrush>
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
+        <c:JellyfinImageConverter
+            x:Key="ImageConverter"
+            ImageHeight="100"
+            TypeRequest="Thumb" />
+        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -275,6 +291,48 @@
                     <AppBarSeparator />
 
                     <AppBarButton
+                        Icon="{ui:FontIcon Glyph=&#xE8FD;}"
+                        IsTabStop="False"
+                        Label="Playlist"
+                        Visibility="{x:Bind c:Converters.VisibleIfMoreThanOne(Playlist.Items), Mode=OneWay}">
+                        <AppBarButton.Flyout>
+                            <Flyout>
+                                <ListView ItemsSource="{x:Bind Playlist.Items, Mode=OneWay}" SelectedItem="{x:Bind Playlist.SelectedItem, Mode=TwoWay}">
+                                    <ListView.Header>
+                                        <TextBlock
+                                            Margin="{StaticResource SmallTopBottomMargin}"
+                                            Style="{ThemeResource SubheaderTextBlockStyle}"
+                                            Text="Playlist" />
+                                    </ListView.Header>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="viewmodels:PlaylistItem">
+                                            <Grid ColumnSpacing="10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <local:LoadingImage Height="50" Source="{x:Bind Dto, Converter={StaticResource ImageConverter}}" />
+
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Dto.Name}" />
+                                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Dto, Converter={StaticResource SubtitleConverter}}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="Padding" Value="4" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+
+                    <AppBarButton
                         x:Name="FullWindowButton"
                         x:FieldModifier="Public"
                         Command="{x:Bind Player.Commands.ToggleFullScreen, Mode=OneWay}"
@@ -306,24 +364,19 @@
 
                     <AppBarButton
                         x:Name="CCSelectionButton"
+                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Player.Subtitles.Streams), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1E;}"
                         IsTabStop="False"
-                        Label="Subtitles">
-                        <i:Interaction.Behaviors>
-                            <b:SubtitlesButtonBehavior MediaPlayer="{x:Bind Player, Mode=OneWay}" />
-                        </i:Interaction.Behaviors>
-                    </AppBarButton>
+                        Label="Subtitles"
+                        Visibility="{x:Bind CCSelectionButton.Flyout, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
 
                     <AppBarButton
                         x:Name="AudioSelectionButton"
+                        Flyout="{x:Bind c:Converters.GetAudiosFlyout(Player, Player.Audio.Streams), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1F;}"
                         IsTabStop="False"
-                        Label="Audio">
-                        <i:Interaction.Behaviors>
-                            <b:AudioButtonBehavior MediaPlayer="{x:Bind Player, Mode=OneWay}" />
-                        </i:Interaction.Behaviors>
-                    </AppBarButton>
-
+                        Label="Audio"
+                        Visibility="{x:Bind AudioSelectionButton.Flyout, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
 
                 </CommandBar>
             </Grid>

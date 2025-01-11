@@ -3,13 +3,15 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
+using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
 
 public partial class PlaylistViewModel : ObservableObject
 {
-	public List<PlaylistItem> Items { get; } = [];
+	public ObservableCollection<PlaylistItem> Items { get; } = [];
 
 	[ObservableProperty]
 	public partial PlaylistItem? SelectedItem { get; set; }
@@ -21,7 +23,6 @@ public partial class PlaylistViewModel : ObservableObject
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(SelectPrevCommand))]
 	public partial bool CanSelectPrev { get; set; }
-
 
 	public PlaylistViewModel()
 	{
@@ -69,13 +70,13 @@ public partial class PlaylistViewModel : ObservableObject
 	[RelayCommand(CanExecute = nameof(CanSelectNext))]
 	public void SelectNext()
 	{
-		SelectedItem = Items.First(x => x.Dto.IndexNumber > SelectedItem?.Dto.IndexNumber);
+		RxApp.MainThreadScheduler.Schedule(() => SelectedItem = Items.First(x => x.Dto.IndexNumber > SelectedItem?.Dto.IndexNumber));
 	}
 
 	[RelayCommand(CanExecute = nameof(CanSelectPrev))]
 	public void SelectPrev()
 	{
-		SelectedItem = Items.First(x => x.Dto.IndexNumber < SelectedItem?.Dto.IndexNumber);
+		RxApp.MainThreadScheduler.Schedule(() => SelectedItem = Items.First(x => x.Dto.IndexNumber < SelectedItem?.Dto.IndexNumber));
 	}
 }
 

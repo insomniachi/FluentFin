@@ -2,9 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.Services;
 using FlyleafLib.MediaPlayer;
-using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
@@ -20,50 +18,18 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	private readonly CompositeDisposable _disposables = new();
 	private readonly IJellyfinClient _jellyfinClient;
 	private readonly PlaybackProgressInfo _playbackProgressInfo = new();
+	private readonly ILogger<VideoPlayerViewModel> _logger;
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 								TrickplayViewModel trickplayViewModel,
 								ILogger<VideoPlayerViewModel> logger)
 	{
 		_jellyfinClient = jellyfinClient;
+		_logger = logger;
 
 		TrickplayViewModel = trickplayViewModel;
 
-		this.WhenAnyValue(x => x.Playlist.SelectedItem)
-			.WhereNotNull()
-			.Do(async item =>
-			{
-				var full = await jellyfinClient.GetItem(item.Dto.Id ?? Guid.Empty);
-
-				if(full is null)
-				{
-					return;
-				}
-
-				await jellyfinClient.Stop(); // stop prev episode if in case playing next episode
-
-				TrickplayViewModel.SetItem(full);
-			})
-			.SelectMany(item => GetMediaUrl(item.Dto!))
-			.WhereNotNull()
-			.Subscribe(response =>
-			{
-				Playlist.SelectedItem!.Media = response;
-				
-				var args = MediaPlayer.Open(HttpUtility.UrlDecode(response.Uri.ToString()));
-
-				if(!args.Success)
-				{
-					logger.LogError("Unable to open media from {URL}", response.Uri);
-				}
-
-				PlayMethod = response.PlayMethod;
-
-				if(Dto?.UserData?.PlaybackPositionTicks is { } ticks)
-				{
-					MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
-				}
-			});
+		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
 
 		this.WhenAnyValue(x => x.Position)
 			.Where(_ => MediaPlayer.Status == Status.Playing)
@@ -76,6 +42,58 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		MediaPlayer.WhenAnyValue(x => x.Status)
 			.Where(status => status is Status.Stopped or Status.Failed)
 			.Subscribe(async _ => await jellyfinClient.Stop());
+	}
+
+	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	{
+		if(e.PropertyName != nameof(Playlist.SelectedItem))
+		{
+			return;
+		}
+
+		if(Playlist.SelectedItem is not { } selectedItem)
+		{
+			return;
+		}
+
+		MediaPlayer.Stop();
+
+		var full = await _jellyfinClient.GetItem(selectedItem.Dto.Id ?? Guid.Empty);
+
+		if (full is null)
+		{
+			return;
+		}
+
+		var mediaResponse = await GetMediaUrl(full);
+
+		if(mediaResponse is null)
+		{
+			return;
+		}
+
+
+		await _jellyfinClient.Stop();
+		TrickplayViewModel.SetItem(full);
+
+		selectedItem.Media = mediaResponse;
+
+		var args = MediaPlayer.Open(HttpUtility.UrlDecode(mediaResponse.Uri.ToString()));
+		if (!args.Success)
+		{
+			_logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
+		}
+
+		PlayMethod = mediaResponse.PlayMethod;
+
+		if (selectedItem.Dto?.UserData?.PlaybackPositionTicks is { } ticks)
+		{
+			MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
+		}
+		else
+		{
+			//MediaPlayer.SeekAccurate(0);
+		}
 	}
 
 	public TrickplayViewModel TrickplayViewModel { get; }
@@ -94,7 +112,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial bool IsSkipButtonVisible { get; set; }
 
-	public PlaylistViewModel Playlist { get; } = new PlaylistViewModel();
+	public PlaylistViewModel Playlist { get;  } = new PlaylistViewModel();
 
 	public PlaybackProgressInfo_PlayMethod PlayMethod { get; private set; }
 
@@ -129,7 +147,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		var success = dto.Type switch
 		{
-			BaseItemDto_Type.Movie or BaseItemDto_Type.Episode => await CreateSingleItemPlaylist(dto),
+			BaseItemDto_Type.Movie  => await CreateSingleItemPlaylist(dto),
+			BaseItemDto_Type.Episode => await CreateSeasonPlaylistFromEpisode(dto),
 			BaseItemDto_Type.Series => await CreateSeriesPlaylist(dto),
 			BaseItemDto_Type.Season => await CreateSeasonPlaylist(dto),
 			_ => false
@@ -181,9 +200,9 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		return await _jellyfinClient.GetMediaUrl(dto);
 	}
 
-	private async Task<bool> CreateSeriesPlaylist(BaseItemDto dto)
+	private async Task<bool> CreateSeriesPlaylist(BaseItemDto series)
 	{
-		var response = await _jellyfinClient.GetItems(dto);
+		var response = await _jellyfinClient.GetItems(series);
 
 		if (response is null or { Items: null })
 		{
@@ -200,9 +219,26 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		return await CreateSeasonPlaylist(season);
 	}
 
-	private async Task<bool> CreateSeasonPlaylist(BaseItemDto dto)
+	private async Task<bool> CreateSeasonPlaylistFromEpisode(BaseItemDto episode)
 	{
-		var response = await _jellyfinClient.GetItems(dto);
+		if(episode.SeasonId is not { } seasonId)
+		{
+			return false;
+		}
+
+		var season = await _jellyfinClient.GetItem(seasonId);
+
+		if(season is null)
+		{
+			return false;
+		}
+
+		return await CreateSeasonPlaylist(season);
+	}
+
+	private async Task<bool> CreateSeasonPlaylist(BaseItemDto season)
+	{
+		var response = await _jellyfinClient.GetItems(season);
 
 		if (response is null or { Items: null })
 		{
@@ -282,9 +318,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		_playbackProgressInfo.SessionId = media.PlaybackSessionId;
 		_playbackProgressInfo.MediaSourceId = media.MediaSourceId;
 
-
 		await _jellyfinClient.Progress(_playbackProgressInfo);
-
 	}
 
 }

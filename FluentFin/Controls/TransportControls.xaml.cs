@@ -5,9 +5,11 @@ using FlyleafLib.MediaPlayer;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
+using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows.Input;
 
 
@@ -16,6 +18,8 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
+	private readonly Subject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _onPointerMoved = new();
+
 	public bool IsSkipButtonVisible
 	{
 		get { return (bool)GetValue(IsSkipButtonVisibleProperty); }
@@ -110,7 +114,27 @@ public sealed partial class TransportControls : UserControl
 			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TiksToSeconds(Player.CurTime)) > 1)
 			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
 
-		TrickplayTip.TemplateSettings.IconElement = null;
+		_onPointerMoved
+			.Throttle(TimeSpan.FromMilliseconds(200))
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(e =>
+			{
+				const int teachingTipMargin = 12;
+				TrickplayTip.IsOpen = true;
+
+				var navView = this.FindAscendantOrSelf<NavigationView>();
+				var offset = navView?.IsPaneOpen == true ? navView.OpenPaneLength : 0;
+				var trickplayWidth = TrickplayScrollViewer.Width + 2 * teachingTipMargin;
+				var halfTrickplayWidth = trickplayWidth / 2;
+
+				var point = e.GetCurrentPoint(TimeSlider);
+				var globalPoint = e.GetCurrentPoint(this);
+				Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
+
+				var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
+				var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
+				TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
+			});
 	}
 
 	public string TimeRemaining(long currentTime, long duration)
@@ -175,22 +199,7 @@ public sealed partial class TransportControls : UserControl
 			return;
 		}
 
-		const int teachingTipMargin = 12;
-
-		TrickplayTip.IsOpen = true;
-
-		var navView = this.FindAscendantOrSelf<NavigationView>();
-		var offset = navView?.IsPaneOpen == true ? navView.OpenPaneLength : 0;
-		var trickplayWidth = TrickplayScrollViewer.Width + 2 * teachingTipMargin;
-		var halfTrickplayWidth = trickplayWidth / 2;
-
-		var point = e.GetCurrentPoint(TimeSlider);
-		var globalPoint = e.GetCurrentPoint(this);
-		Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
-
-		var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
-		var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
-		TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
+		_onPointerMoved.OnNext(e);
 	}
 
 	private void TimeSlider_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)

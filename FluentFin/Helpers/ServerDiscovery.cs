@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 
 namespace FluentFin.Helpers;
 
@@ -28,7 +29,7 @@ public class ServerDiscovery
 			{
 				var result = await udpClient.ReceiveAsync();
 				var response = Encoding.UTF8.GetString(result.Buffer);
-				var discoveryInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<DiscoveryInfo>(response);
+				var discoveryInfo = JsonSerializer.Deserialize<DiscoveryInfo>(response);
 				if (discoveryInfo is null)
 				{
 					return;

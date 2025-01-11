@@ -21,7 +21,6 @@ using Microsoft.UI.Xaml;
 
 namespace FluentFin;
 
-// To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
 {
     public IHost Host { get; }

@@ -8,14 +8,13 @@ public abstract class WebSocketMessage
 	[JsonConverter(typeof(JsonStringEnumConverter<SessionMessageType>))]
 	public abstract SessionMessageType MessageType { get; }
 	
-	[JsonIgnore]
 	public string? ServerId { get; set; }
 }
 
 public abstract class InboundSocketMessage<T> : WebSocketMessage, IInboundSocketMessage
 {
-	[JsonConverter(typeof(JsonGuidConverter))]
-	public Guid MessageId { get; set; }
+	[JsonConverter(typeof(JsonNullableGuidConverter))]
+	public Guid? MessageId { get; set; }
 	public T? Data { get; set; }
 }
 

@@ -24,8 +24,6 @@ namespace FluentFin.Core.ViewModels
 		public async Task OnNavigatedTo(object parameter)
 		{
 			await Task.WhenAll(UpdateContinueItems(), UpdateNextUpItems(), UpdateRecentItems());
-
-			//await jellyfinClient.BitrateTest();
 		}
 
 		private async Task UpdateContinueItems()

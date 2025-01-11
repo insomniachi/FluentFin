@@ -4,26 +4,6 @@ using System.Text.Json.Serialization;
 
 namespace FluentFin.Core.WebSockets;
 
-internal static class MessageConverter
-{
-	internal static WebSocketMessage? Parse(this SessionMessageType messageType, JsonDocument jsonDocument)
-	{
-		try
-		{
-			return messageType switch
-			{
-				SessionMessageType.GeneralCommand => jsonDocument.Deserialize<GeneralCommandMessage>(),
-				SessionMessageType.Playstate => jsonDocument.Deserialize<PlayStateMessage>(),
-				_ => null
-			};
-		}
-		catch (Exception ex)
-		{
-
-			return null;
-		}
-	}
-}
 
 internal sealed class JsonGuidConverter : JsonConverter<Guid>
 {

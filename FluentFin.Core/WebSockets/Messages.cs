@@ -12,3 +12,8 @@ public class PlayStateMessage : InboundSocketMessage<PlaystateRequest>
 {
 	public override SessionMessageType MessageType => SessionMessageType.Playstate;
 }
+
+public class UserDataChangeMessage : InboundSocketMessage<UserDataChangeInfo>
+{
+	public override SessionMessageType MessageType => SessionMessageType.UserDataChanged;
+}

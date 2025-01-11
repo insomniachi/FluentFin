@@ -12,6 +12,7 @@ Welcome to FluentFin, a simple and user-friendly native Jellyfin client built wi
 - 👥 **Multiple server/users**: Seamlessly switch between multiple servers.
 - 🖥️ **Local connection handling**: use internal network address / public address based on current network.
 - 🎛️ **Transcoding and Direct Play**
+- 📡 **Remote Controllable**
 
 ## 🧪 Experimental Features
 

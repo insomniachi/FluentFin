@@ -1,7 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.ViewModels;
+using FluentFin.Core.WebSockets;
+using FluentFin.Services;
 using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
@@ -22,7 +26,10 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 								TrickplayViewModel trickplayViewModel,
-								ILogger<VideoPlayerViewModel> logger)
+								ILogger<VideoPlayerViewModel> logger,
+								IObservable<IInboundSocketMessage> webSocketMessages,
+								IContentDialogService contentDialogService,
+								INavigationService navigationService)
 	{
 		_jellyfinClient = jellyfinClient;
 		_logger = logger;
@@ -42,6 +49,29 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		MediaPlayer.WhenAnyValue(x => x.Status)
 			.Where(status => status is Status.Stopped or Status.Failed)
 			.Subscribe(async _ => await jellyfinClient.Stop());
+
+		webSocketMessages
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(async message =>
+			{
+				switch (message) 
+				{
+					case GeneralCommandMessage { Data.Name: GeneralCommandType.DisplayMessage } gcm:
+						await contentDialogService.ShowMessage(gcm.Data.Arguments["Header"],
+															   gcm.Data.Arguments["Text"], 
+															   TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
+						break;
+					case PlayStateMessage { Data.Command : Core.WebSockets.Messages.PlaystateCommand.PlayPause } :
+						MediaPlayer.TogglePlayPause();
+						await UpdateStatus();
+						break;
+					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.Stop }:
+						MediaPlayer.Stop();
+						await jellyfinClient.Stop();
+						navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new());
+						break;
+				}
+			});
 	}
 
 	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

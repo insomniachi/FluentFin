@@ -1,13 +1,17 @@
 ﻿using DeviceId;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.WebSockets;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
+using System.Net.WebSockets;
 using System.Reflection;
+using System.Text.Json;
 
 namespace FluentFin.Core.Services;
 
-public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinClient
+public partial class JellyfinClient(ILogger<JellyfinClient> logger,
+									IObserver<IInboundSocketMessage> socketMessageSender) : IJellyfinClient
 {
 	private Jellyfin.Sdk.JellyfinApiClient _jellyfinApiClient = null!;
 	private string _token = "";
@@ -38,16 +42,15 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 
 		await _jellyfinApiClient.Sessions.Capabilities.Full.PostAsync(new ClientCapabilitiesDto
 		{
-			//SupportsMediaControl = true,
+			SupportsMediaControl = true,
 			PlayableMediaTypes = [MediaType.Video],
 			DeviceProfile = DeviceProfiles.Flyleaf,
-			//SupportedCommands = [
-			//	GeneralCommandType.DisplayMessage,
-			//	GeneralCommandType.Play,
-			//	GeneralCommandType.PlayNext,
-			//	GeneralCommandType.SendString,
-			//]
+			SupportedCommands = [
+				GeneralCommandType.DisplayMessage,
+			]
 		});
+
+		await CreateSocketConnection(CancellationToken.None);
 	}
 
 	public async Task<BaseItemDtoQueryResult?> Search(string searchTerm)
@@ -273,6 +276,75 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger) : IJellyfinC
 			logger.LogError(ex, @"Unhandled exception");
 			return null;
 		}
+	}
+
+	private async Task CreateSocketConnection(CancellationToken ct)
+	{
+		var socket = new ClientWebSocket();
+		socket.Options.SetRequestHeader("Authorization", _settings.GetAuthorizationHeader());
+
+		try
+		{
+			await socket.ConnectAsync(new Uri(BaseUrl.Replace("http", "ws").AppendPathSegment("/socket")), ct);
+			await Task.Factory.StartNew(async () => await ReceiveLoop(socket, ct), ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+		}
+	}
+
+	private async Task ReceiveLoop(WebSocket socket, CancellationToken token)
+	{
+		var loopToken = token;
+		MemoryStream? outputStream = null;
+		WebSocketReceiveResult receiveResult;
+		var buffer = new byte[8192];
+		try
+		{
+			while (!loopToken.IsCancellationRequested)
+			{
+				outputStream = new MemoryStream(8192);
+				do
+				{
+					receiveResult = await socket.ReceiveAsync(buffer, token);
+					if (receiveResult.MessageType != WebSocketMessageType.Close)
+					{
+						outputStream.Write(buffer, 0, receiveResult.Count);
+					}
+				}
+				while (!receiveResult.EndOfMessage);
+				
+				if (receiveResult.MessageType == WebSocketMessageType.Close)
+				{
+					break;
+				}
+				
+				outputStream.Position = 0;
+				await ResponseReceived(outputStream);
+			}
+		}
+		catch (TaskCanceledException) { }
+		finally
+		{
+			outputStream?.Dispose();
+		}
+	}
+
+	private async Task ResponseReceived(Stream inputStream)
+	{
+		using var reader = new StreamReader(inputStream);
+		var socketMessage = await reader.ReadToEndAsync();
+
+		var document = JsonDocument.Parse(socketMessage);
+		var type = document.RootElement.GetProperty("MessageType").GetString();
+
+		if (Enum.TryParse<SessionMessageType>(type, out var messageType) && messageType.Parse(document) is IInboundSocketMessage message)
+		{
+			socketMessageSender.OnNext(message);
+		}
+
+		inputStream.Dispose();
 	}
 
 	private Uri AddApiKey(Uri uri)

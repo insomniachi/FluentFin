@@ -12,7 +12,7 @@ public interface IContentDialogService
 	Task<ContentDialogResult> ShowDialog<TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure, Action<TViewModel> configureVm) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TView, TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TView : ContentDialog, IViewFor, new();
-	Task ShowMessage(string title, string message);
+	Task ShowMessage(string title, string message, TimeSpan? timeout);
 }
 
 public class ContentDialogService : IContentDialogService
@@ -24,7 +24,7 @@ public class ContentDialogService : IContentDialogService
 		return await ShowDialog(vm, configure);
 	}
 
-	public async Task ShowMessage(string title, string message)
+	public async Task ShowMessage(string title, string message, TimeSpan? timeout = null)
 	{
 		var dialog = new ContentDialog
 		{
@@ -34,6 +34,11 @@ public class ContentDialogService : IContentDialogService
 			PrimaryButtonText = "OK",
 			DefaultButton = ContentDialogButton.Primary
 		};
+
+		if(timeout is not null)
+		{
+			Observable.Timer(timeout.Value).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => dialog.Hide());
+		}
 
 		await dialog.ShowAsync();
 	}

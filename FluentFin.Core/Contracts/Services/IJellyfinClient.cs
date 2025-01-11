@@ -1,5 +1,4 @@
-﻿using FluentFin.Core.Services;
-using Jellyfin.Sdk.Generated.Items.Item.Refresh;
+﻿using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Models;
 using System.Globalization;
 

@@ -5,6 +5,7 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.Core.WebSockets;
 using FluentFin.Dialogs;
 using FluentFin.Dialogs.UserInput;
 using FluentFin.Dialogs.ViewModels;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using System.Reactive.Subjects;
 
 namespace FluentFin;
 
@@ -87,6 +89,10 @@ public partial class App : Application
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton<KnownFolders>();
+			services.AddSingleton<Subject<IInboundSocketMessage>>();
+			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
+			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
+
 
 			// Commands
 			services.AddSingleton<GlobalCommands>();

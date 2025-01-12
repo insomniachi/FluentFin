@@ -135,25 +135,28 @@
 
         </StackPanel>
 
-        <ItemsView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
-            <ItemsView.ItemTemplate>
-                <DataTemplate x:DataType="jm:BaseItemDto">
-                    <ItemContainer Style="{StaticResource BareItemContainerStyle}">
-                        <lc:PlayableMediaItem ImageSource="{x:Bind Converter={StaticResource PrimaryImageConverter}}" Model="{x:Bind}" />
-                    </ItemContainer>
-                </DataTemplate>
-            </ItemsView.ItemTemplate>
-            <ItemsView.Layout>
-                <UniformGridLayout
-                    ItemsJustification="Start"
-                    ItemsStretch="Fill"
-                    MinColumnSpacing="20"
-                    MinItemHeight="390"
-                    MinItemWidth="240"
-                    MinRowSpacing="20"
-                    Orientation="Horizontal" />
-            </ItemsView.Layout>
-        </ItemsView>
+        <ScrollView Grid.Row="1">
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="jm:BaseItemDto">
+                        <ItemContainer Style="{StaticResource BareItemContainerStyle}">
+                            <lc:PlayableMediaItem ImageSource="{x:Bind Converter={StaticResource PrimaryImageConverter}}" Model="{x:Bind}" />
+                        </ItemContainer>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout
+                        ItemsJustification="Start"
+                        ItemsStretch="Fill"
+                        MinColumnSpacing="20"
+                        MinItemHeight="390"
+                        MinItemWidth="240"
+                        MinRowSpacing="20"
+                        Orientation="Horizontal" />
+                </ItemsRepeater.Layout>
+            </ItemsRepeater>
+        </ScrollView>
+
 
         <dw:PagerControl
             Grid.Row="2"

@@ -26,12 +26,12 @@
         <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter" />
         <c:NullableIntToValueOrDefaultConverter x:Key="NullableIntToValueOrDefaultConverter" />
         <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter" />
-        <cc:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter" />
+        <cc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <ScrollViewer Margin="0,10">
         <StackPanel Spacing="20">
-            <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.ContinueItems, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
+            <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.HasContinueItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"
                     Style="{StaticResource TitleTextBlockStyle}"
@@ -59,7 +59,7 @@
                 </ScrollViewer>
             </StackPanel>
 
-            <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.NextUpItems, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
+            <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.HasNextUpItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"
                     Style="{StaticResource TitleTextBlockStyle}"
@@ -101,8 +101,8 @@
                                     HorizontalScrollMode="Enabled"
                                     VerticalScrollBarVisibility="Disabled"
                                     VerticalScrollMode="Disabled">
-                                    <ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}">
-                                        <ItemsRepeater.ItemTemplate>
+                                    <ItemsControl ItemsSource="{x:Bind Items, Mode=OneWay}">
+                                        <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="jm:BaseItemDto">
                                                 <lc:PlayableMediaItem
                                                     Width="240"
@@ -110,11 +110,13 @@
                                                     ImageSource="{x:Bind Converter={StaticResource PrimaryImageConverter}}"
                                                     Model="{x:Bind}" />
                                             </DataTemplate>
-                                        </ItemsRepeater.ItemTemplate>
-                                        <ItemsRepeater.Layout>
-                                            <StackLayout Orientation="Horizontal" Spacing="10" />
-                                        </ItemsRepeater.Layout>
-                                    </ItemsRepeater>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="10" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
                                 </ScrollViewer>
                             </StackPanel>
                         </ItemContainer>

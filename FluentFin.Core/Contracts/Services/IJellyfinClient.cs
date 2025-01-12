@@ -1,5 +1,6 @@
 ﻿using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Models;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace FluentFin.Core.Contracts.Services
@@ -143,7 +144,7 @@ namespace FluentFin.Core.Contracts.Services
 		Task SaveConfiguration(ServerConfiguration configuration);
 	}
 
-	public record NamedDtoQueryResult(string Name, List<BaseItemDto> Items);
+	public record NamedDtoQueryResult(string Name, ObservableCollection<BaseItemDto> Items);
 
 	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
 

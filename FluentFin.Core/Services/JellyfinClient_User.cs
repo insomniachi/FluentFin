@@ -93,7 +93,7 @@ public partial class JellyfinClient
 
 			if (info is not null and { Count: > 0 })
 			{
-				yield return new(library.Name ?? "", info);
+				yield return new(library.Name ?? "", new(info));
 			}
 		}
 	}

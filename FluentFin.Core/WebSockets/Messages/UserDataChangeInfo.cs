@@ -1,5 +1,4 @@
-﻿using Microsoft.Kiota.Abstractions.Serialization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace FluentFin.Core.WebSockets.Messages;
 

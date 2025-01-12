@@ -11,6 +11,10 @@ using System.Collections.ObjectModel;
 using FluentFin.Core.Settings;
 using Windows.Foundation;
 using FluentFin.ViewModels;
+using FluentFin.Core.Contracts.Services;
+using Flurl;
+using System.Web;
+using System.Reflection;
 
 namespace FluentFin.Converters;
 
@@ -67,6 +71,7 @@ public static class Converters
 		var disableSubtitles = new RelayCommand(() =>
 		{
 			player.Config.Subtitles.Enabled = false;
+
 		});
 
 		var flyout = new MenuBarItemFlyout();
@@ -131,6 +136,81 @@ public static class Converters
 		}
 
 		return flyout;
+	}
+
+	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> internalSubtitles, MediaResponse response)
+	{
+		var subtitles = response.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+
+		if(subtitles.Count == 0)
+		{
+			return null;
+		}
+
+		const string groupName = "Subtitles";
+		var command = new RelayCommand<MediaStream>(stream =>
+		{
+			if(stream is null)
+			{
+				return;
+			}
+
+			if(stream.IsExternal == true)
+			{
+				player.Config.Subtitles.Enabled = true;
+				var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+
+				MethodInfo? dynMethod = player.GetType().GetMethod("OpenSubtitles", BindingFlags.NonPublic | BindingFlags.Instance);
+				dynMethod?.Invoke(player, [url]);
+			}
+			else
+			{
+				var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
+				var index = internalSubtitleInfo.IndexOf(stream);
+				player.Open(internalSubtitles[index]);
+			}
+		});
+		var disableSubtitles = new RelayCommand(() =>
+		{
+			player.Config.Subtitles.Enabled = false;
+		});
+
+		var flyout = new MenuBarItemFlyout();
+		flyout.Items.Add(new RadioMenuFlyoutItem
+		{
+			Text = "None",
+			GroupName = groupName,
+			Command = disableSubtitles,
+			IsChecked = !subtitles.Any(x => x.IsDefault ?? false)
+		});
+
+		foreach (var item in subtitles)
+		{
+
+			var flyoutItem = new RadioMenuFlyoutItem
+			{
+				Text = $"{item.DisplayTitle}",
+				GroupName = groupName,
+				IsChecked = item.IsDefault ?? false,
+				Command =  command,
+				CommandParameter = item
+			};
+
+			flyout.Items.Add(flyoutItem);
+		}
+
+		return flyout;
+	}
+
+	public static string GetUrlExtention(string url)
+	{
+		if (url.LastIndexOf(".") <= 0)
+		{
+			return "";
+		}
+
+		int num = url.LastIndexOf(".") + 1;
+		return url.Substring(num, url.Length - num).ToLower();
 	}
 
 

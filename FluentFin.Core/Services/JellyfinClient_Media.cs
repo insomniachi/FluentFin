@@ -42,11 +42,16 @@ public partial class JellyfinClient
 			var sessionId = playbackInfo.PlaySessionId;
 			var mediaSource = playbackInfo.MediaSources.FirstOrDefault(x => x.Id == id.ToString("N"));
 
+			if(mediaSource is null)
+			{
+				return null;
+			}
+
 			if (dto.MediaType == BaseItemDto_MediaType.Video)
 			{
-				if (!string.IsNullOrEmpty(mediaSource?.TranscodingUrl) && mediaSource?.SupportsTranscoding == true)
+				if (!string.IsNullOrEmpty(mediaSource.TranscodingUrl) && mediaSource.SupportsTranscoding == true)
 				{
-					return new(BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).ToUri(), PlaybackProgressInfo_PlayMethod.Transcode, sessionId, mediaSource.Id ?? "");
+					return new(BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).ToUri(), PlaybackProgressInfo_PlayMethod.Transcode, sessionId, mediaSource.Id ?? "", mediaSource);
 				}
 				else if (mediaSource?.SupportsDirectPlay == true)
 				{
@@ -60,7 +65,7 @@ public partial class JellyfinClient
 						query.StartTimeTicks = startTime;
 					});
 
-					return new(AddApiKey(info.URI), PlaybackProgressInfo_PlayMethod.DirectPlay, sessionId, mediaSource.Id ?? "");
+					return new(AddApiKey(info.URI), PlaybackProgressInfo_PlayMethod.DirectPlay, sessionId, mediaSource.Id ?? "", mediaSource);
 				}
 			}
 		}

@@ -80,9 +80,11 @@ public partial class PlaylistViewModel : ObservableObject
 	}
 }
 
-public class PlaylistItem
+public partial class PlaylistItem : ObservableObject
 {
 	required public string Title { get; set; }
 	required public BaseItemDto Dto { get; set; }
-	public MediaResponse? Media { get; set; }
+	
+	[ObservableProperty]
+	public partial MediaResponse? Media { get; set; }
 }

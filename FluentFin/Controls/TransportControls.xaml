@@ -390,7 +390,7 @@
 
                     <AppBarButton
                         x:Name="CCSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Player.Subtitles.Streams), Mode=OneWay}"
+                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Player.Subtitles.Streams, Playlist.SelectedItem.Media), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1E;}"
                         IsTabStop="False"
                         Label="Subtitles"

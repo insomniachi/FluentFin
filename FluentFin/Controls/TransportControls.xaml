@@ -52,6 +52,7 @@
             x:Key="ImageConverter"
             ImageHeight="100"
             TypeRequest="Thumb" />
+        <c:JellyfinImageConverter x:Key="LogoConverter" TypeRequest="Logo" />
         <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
     </UserControl.Resources>
 
@@ -62,6 +63,7 @@
         </Grid.RowDefinitions>
 
         <Grid>
+            <!--  Skip  -->
             <Button
                 x:Name="DynamicSkipIntroButton"
                 Width="150"
@@ -87,6 +89,8 @@
                     <TextBlock VerticalAlignment="Center" Text="Skip" />
                 </StackPanel>
             </Button>
+
+            <!--  Subtitles  -->
             <Grid>
                 <Border x:Name="ShadowTarget" />
                 <TextBlock
@@ -109,6 +113,29 @@
                     </ui:Effects.Shadow>
                 </TextBlock>
             </Grid>
+
+            <!--  Logo  -->
+            <Grid
+                x:Name="TitleSection"
+                Margin="36,36,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                x:FieldModifier="Public">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Image Height="100" Source="{x:Bind Playlist.SelectedItem.Dto, Mode=OneWay, Converter={StaticResource LogoConverter}}" />
+                <TextBlock
+                    x:Name="TxtTitleTime"
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    x:FieldModifier="Public"
+                    Style="{ThemeResource TitleLargeTextBlockStyle}" />
+            </Grid>
+
+
+            <!--  Trickplay  -->
             <TeachingTip
                 x:Name="TrickplayTip"
                 PreferredPlacement="BottomLeft"
@@ -145,7 +172,6 @@
                     </Grid>
                 </TeachingTip.Content>
             </TeachingTip>
-
         </Grid>
 
         <Grid

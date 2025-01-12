@@ -30,6 +30,7 @@ public sealed partial class VideoPlayerPage : Page
 				TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
 				{
 					TransportControls.Bar.Visibility = Visibility.Collapsed;
+					TransportControls.TitleSection.Visibility = Visibility.Collapsed;
 					ProtectedCursor.Dispose();
 				});
 			});
@@ -49,6 +50,8 @@ public sealed partial class VideoPlayerPage : Page
 		TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
 		{
 			TransportControls.Bar.Visibility = Visibility.Visible;
+			TransportControls.TitleSection.Visibility = Visibility.Visible;
+			TransportControls.TxtTitleTime.Text = DateTime.Now.ToString("hh:mm tt");
 			ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
 		});
 

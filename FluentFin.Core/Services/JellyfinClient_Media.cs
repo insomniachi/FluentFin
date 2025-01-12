@@ -121,6 +121,14 @@ public partial class JellyfinClient
 				tag = $"{dto.SeriesPrimaryImageTag}";
 			}
 		}
+		else if(type == ImageType.Logo && dto.Type == BaseItemDto_Type.Episode)
+		{
+			if (!string.IsNullOrEmpty(dto.SeriesPrimaryImageTag) && dto.SeriesId is { } seriesId)
+			{
+				id = seriesId;
+				tag = $"{dto.ParentLogoImageTag}";
+			}
+		}
 
 		var uri = BaseUrl.AppendPathSegment($"/Items/{id}/Images/{type}");
 

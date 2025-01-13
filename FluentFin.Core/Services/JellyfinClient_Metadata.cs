@@ -4,6 +4,7 @@ using Flurl.Http;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Text.Json;
 
 namespace FluentFin.Core.Services;
 
@@ -397,15 +398,22 @@ public partial class JellyfinClient
 		await AddApiKey(response.URI).PostJsonAsync(metadata);
 	}
 
-	public async Task CreateMediaSegment(BaseItemDto dto, MediaSegmentDto segmentDto)
+	public async Task CreateMediaSegment(MediaSegmentDto segmentDto)
 	{
 		try
 		{
 			var response = await BaseUrl
-				.AppendPathSegment($"/MediaSegmentsApi/{dto.Id}")
-				.SetQueryParam("providerId", "FluentFin")
-				.WithHeader("Authorization", _settings.GetAuthorizationHeader())
-				.PostJsonAsync(segmentDto);
+				.AppendPathSegment($"/MediaSegmentsApi/{segmentDto.ItemId:N}")
+				.SetQueryParam("providerId", "Intro Skipper")
+				.SetQueryParam("ApiKey", _token)
+				.PostJsonAsync(new
+				{
+					Id = segmentDto.Id?.ToString("N"),
+					ItemId = segmentDto.ItemId?.ToString("N"),
+					Type = segmentDto.Type?.ToString(),
+					segmentDto.StartTicks,
+					segmentDto.EndTicks,
+				});
 		}
 		catch (Exception ex)
 		{
@@ -419,8 +427,8 @@ public partial class JellyfinClient
 		try
 		{
 			await BaseUrl
-				.AppendPathSegment($"/MediaSegmentsApi/{segmentId}")
-				.WithHeader("Authorization", _settings.GetAuthorizationHeader())
+				.AppendPathSegment($"/MediaSegmentsApi/{segmentId:N}")
+				.SetQueryParam("api_key", _token)
 				.DeleteAsync();
 		}
 		catch (Exception ex)

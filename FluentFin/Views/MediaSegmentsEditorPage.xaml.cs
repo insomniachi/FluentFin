@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 
 namespace FluentFin.Views;
@@ -16,7 +17,7 @@ public sealed partial class MediaSegmentsEditorPage : Page
 
 	private void UpdateTime(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		if(sender is not Button b)
+		if(sender is not RepeatButton b)
 		{
 			return;
 		}

@@ -96,7 +96,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 	{
 		Segments.Remove(vm);
 
-		if(vm.ItemId is { } id)
+		if(vm.Id is { } id)
 		{
 			await jellyfinClient.DeleteMediaSegment(id);
 		}
@@ -110,12 +110,12 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 			return;
 		}
 
-		if(vm.ItemId is { } id)
+		if(vm.Id is { } id)
 		{
 			await jellyfinClient.DeleteMediaSegment(id);
 		}
 
-		await jellyfinClient.CreateMediaSegment(Item, vm.ToDto());
+		await jellyfinClient.CreateMediaSegment(vm.ToDto());
 	}
 
 	[RelayCommand]
@@ -141,12 +141,15 @@ public partial class MediaSegmentViewModel : ObservableObject
 	[ObservableProperty]
 	public partial MediaSegmentDto_Type? Type { get; set; }
 
+	public Guid? Id { get; set; }
+
 	public MediaSegmentDto ToDto() => new()
 	{
 		StartTicks = (long)StartTicks,
 		EndTicks = (long)EndTicks,
 		ItemId = ItemId ?? Guid.NewGuid(),
-		Type = Type
+		Type = Type,
+		Id = Id ?? Guid.NewGuid()
 	};
 
 	public static MediaSegmentViewModel FromDto(MediaSegmentDto dto) => new()
@@ -154,6 +157,7 @@ public partial class MediaSegmentViewModel : ObservableObject
 		StartTicks = dto.StartTicks ?? 0,
 		EndTicks = dto.EndTicks ?? 0,
 		ItemId = dto.ItemId,
-		Type = dto.Type
+		Type = dto.Type,
+		Id = dto.Id
 	};
 }

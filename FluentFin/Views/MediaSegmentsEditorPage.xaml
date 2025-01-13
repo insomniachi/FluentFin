@@ -48,7 +48,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <NumberBox PlaceholderText="Start ticks" Value="{x:Bind StartTicks, Mode=TwoWay}" />
-                                    <Button
+                                    <RepeatButton
                                         Grid.Column="1"
                                         Click="UpdateTime"
                                         Content="Use Current Time" />
@@ -59,7 +59,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <NumberBox PlaceholderText="End ticks" Value="{x:Bind EndTicks, Mode=TwoWay}" />
-                                    <Button
+                                    <RepeatButton
                                         Grid.Column="1"
                                         Click="UpdateTime"
                                         Content="Use Current Time" />

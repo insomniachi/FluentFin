@@ -112,6 +112,7 @@ public partial class App : Application
 			services.AddTransient<SettingsViewModel>();
 			services.AddTransient<TrickplayViewModel>();
 			services.AddTransient<SelectServerViewModel>();
+			services.AddTransient<MediaSegmentsEditorViewModel>();
 
 			services.AddTransient<DashboardViewModel>();
 			services.AddTransient<GeneralSettingsViewModel>();

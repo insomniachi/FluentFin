@@ -101,6 +101,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<MediaSegmentDtoQueryResult?> GetMediaSegments(BaseItemDto dto, MediaSegmentType[]? types = null);
 
+		Task CreateMediaSegment(BaseItemDto dto, MediaSegmentDto segmentDto);
+
+		Task DeleteMediaSegment(Guid segmentId);
+
 		Task<SystemInfo?> GetSystemInfo();
 
 		Task<List<SessionInfoDto>> GetActiveSessions();

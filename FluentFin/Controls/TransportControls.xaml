@@ -180,8 +180,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             x:FieldModifier="public"
-            Background="{StaticResource TransportControlBackground}"
-            Visibility="Visible">
+            Background="{StaticResource TransportControlBackground}">
             <animations:Implicit.ShowAnimations>
                 <animations:OpacityAnimation
                     From="0"

@@ -17,6 +17,7 @@ Welcome to FluentFin, a simple and user-friendly native Jellyfin client built wi
 ## 🧪 Experimental Features
 
 - 🛡️ **Jellyfin Dashboard**: manage jellyfin server directly from the application.
+- 📺 **Media Segments Editor**
 
 ## 🚀 Getting Started
 

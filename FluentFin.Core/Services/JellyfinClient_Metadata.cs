@@ -396,4 +396,50 @@ public partial class JellyfinClient
 		var response = _jellyfinApiClient.System.Configuration["metadata"].ToGetRequestInformation();
 		await AddApiKey(response.URI).PostJsonAsync(metadata);
 	}
+
+	public async Task CreateMediaSegment(BaseItemDto dto, MediaSegmentDto segmentDto)
+	{
+		try
+		{
+			var response = await BaseUrl
+				.AppendPathSegment($"/MediaSegmentsApi/{dto.Id}")
+				.SetQueryParam("providerId", "FluentFin")
+				.WithHeader("Authorization", _settings.GetAuthorizationHeader())
+				.PostJsonAsync(segmentDto);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task DeleteMediaSegment(Guid segmentId)
+	{
+		try
+		{
+			await BaseUrl
+				.AppendPathSegment($"/MediaSegmentsApi/{segmentId}")
+				.WithHeader("Authorization", _settings.GetAuthorizationHeader())
+				.DeleteAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	private async Task GetPlugins()
+	{
+		try
+		{
+			SessionInfo.Plugins = await _jellyfinApiClient.Plugins.GetAsync() ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
 }

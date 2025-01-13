@@ -1,4 +1,5 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+﻿using FluentFin.Core;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 
@@ -70,6 +71,17 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Command = App.Dialogs.EditSubtitlesDialogCommand,
 				CommandParameter = dto
 			};
+
+			if(SessionInfo.CanEditMediaSegments())
+			{
+				yield return new MenuFlyoutItem
+				{
+					Text = "Edit Segments",
+					Icon = new FontIcon { Glyph = "\uE7A8" },
+					Command = App.Commands.NavigateToSegmentsEditorCommand,
+					CommandParameter = dto
+				};
+			}
 		}
 
 		if(type is not BaseItemDto_Type.CollectionFolder)

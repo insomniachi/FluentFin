@@ -42,4 +42,10 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 				break;
 		}
 	}
+
+	[RelayCommand]
+	public void NavigateToSegmentsEditor(BaseItemDto dto)
+	{
+		navigationService.NavigateTo("FluentFin.ViewModels.MediaSegmentsEditorViewModel", dto);
+	}
 }

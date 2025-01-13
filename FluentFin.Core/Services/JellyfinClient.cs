@@ -28,6 +28,9 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 
 		_token = authResult.AccessToken;
 
+		SessionInfo.CurrentUser = authResult.User;
+		SessionInfo.BaseUrl = baseUrl;
+
 		UserId = authResult.User.Id.Value;
 		BaseUrl = baseUrl;
 
@@ -48,6 +51,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 			]
 		});
 
+		await GetPlugins();
 		await CreateSocketConnection(CancellationToken.None);
 	}
 

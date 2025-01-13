@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.MediaSegmentsEditorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:flyleaf="using:FlyleafLib.Controls.WinUI"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:viewmodels="using:FluentFin.ViewModels"
+    x:Name="Page"
+    mc:Ignorable="d">
+
+    <Grid Margin="36">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <flyleaf:FlyleafHost
+            x:Name="flyleafHost"
+            Margin="200,0,200,36"
+            Player="{x:Bind ViewModel.MediaPlayer}">
+            <controls:TransportControls Player="{x:Bind ViewModel.MediaPlayer}" Playlist="{x:Bind ViewModel.Playlist}" />
+        </flyleaf:FlyleafHost>
+
+        <ScrollView Grid.Row="1">
+            <StackPanel Spacing="10">
+                <Button Command="{x:Bind ViewModel.AddSegmentCommand}" Content="Add New Segment" />
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Segments}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:MediaSegmentViewModel">
+                            <StackPanel
+                                Padding="16"
+                                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
+                                CornerRadius="{StaticResource ControlCornerRadius}"
+                                Spacing="10">
+                                <ComboBox
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{ui:EnumValues Type=jm:MediaSegmentDto_Type}"
+                                    SelectedItem="{x:Bind Type, Mode=TwoWay}" />
+                                <Grid ColumnSpacing="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <NumberBox PlaceholderText="Start ticks" Value="{x:Bind StartTicks, Mode=TwoWay}" />
+                                    <Button
+                                        Grid.Column="1"
+                                        Click="UpdateTime"
+                                        Content="Use Current Time" />
+                                </Grid>
+                                <Grid ColumnSpacing="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <NumberBox PlaceholderText="End ticks" Value="{x:Bind EndTicks, Mode=TwoWay}" />
+                                    <Button
+                                        Grid.Column="1"
+                                        Click="UpdateTime"
+                                        Content="Use Current Time" />
+                                </Grid>
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="10">
+                                    <Button
+                                        Command="{Binding ElementName=Page, Path=ViewModel.PlaySegmentCommand}"
+                                        CommandParameter="{x:Bind}"
+                                        Content="Play" />
+                                    <Button
+                                        Command="{Binding ElementName=Page, Path=ViewModel.SubmitSegmentCommand}"
+                                        CommandParameter="{x:Bind}"
+                                        Content="Submit" />
+                                    <Button
+                                        Command="{Binding ElementName=Page, Path=ViewModel.DeleteSegmentCommand}"
+                                        CommandParameter="{x:Bind}"
+                                        Content="Delete" />
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            ItemsStretch="Fill"
+                            MinColumnSpacing="16"
+                            MinItemWidth="300"
+                            MinRowSpacing="16" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </StackPanel>
+        </ScrollView>
+
+    </Grid>
+</Page>

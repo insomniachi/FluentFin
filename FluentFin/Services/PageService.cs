@@ -30,6 +30,7 @@ public class PageService : IPageService
 		Configure<SeasonViewModel, SeasonPage>();
         Configure<JellyfinSettingsViewModel, JellyfinSettingsPage>();
         Configure<SettingsViewModel, SettingsPage>();
+        Configure<MediaSegmentsEditorViewModel, MediaSegmentsEditorPage>();
 
         // Dashboard Pages
         Configure<DashboardViewModel, DashboardPage>();

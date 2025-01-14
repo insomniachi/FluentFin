@@ -27,9 +27,10 @@ public static class Converters
 	public static IEnumerable<string?> GetSubtitleStreams(BaseItemDto? dto) => dto?.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle)?.Select(x => x.DisplayTitle) ?? [];
 	public static IEnumerable<BaseItemPerson> GetDirectors(List<BaseItemPerson>? people) => people?.Where(x => x.Type == BaseItemPerson_Type.Director) ?? [];
 	public static IEnumerable<BaseItemPerson> GetWriters(List<BaseItemPerson>? people) => people?.Where(x => x.Type == BaseItemPerson_Type.Writer) ?? [];
-	public static double TiksToSeconds(long value) => value / 10000000.0;
+	public static double TicksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static string TicksToSecondsString(long value) => TimeSpanToString(new TimeSpan(value));
 	public static Visibility VisibleIfMoreThanOne(ObservableCollection<PlaylistItem> items) => VisibleIfMoreThanOne<PlaylistItem>(items);
 	public static Visibility VisibleIfMoreThanOne<T>(IList<T> values) => values.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -140,7 +141,7 @@ public static class Converters
 
 	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> internalSubtitles, MediaResponse response)
 	{
-		var subtitles = response.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+		var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
 
 		if(subtitles.Count == 0)
 		{
@@ -201,18 +202,6 @@ public static class Converters
 
 		return flyout;
 	}
-
-	public static string GetUrlExtention(string url)
-	{
-		if (url.LastIndexOf(".") <= 0)
-		{
-			return "";
-		}
-
-		int num = url.LastIndexOf(".") + 1;
-		return url.Substring(num, url.Length - num).ToLower();
-	}
-
 
 	public static string AccessScheduleToString(AccessSchedule schedule)
 	{

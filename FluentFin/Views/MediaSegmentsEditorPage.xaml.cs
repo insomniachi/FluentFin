@@ -22,9 +22,18 @@ public sealed partial class MediaSegmentsEditorPage : Page
 			return;
 		}
 
-		if(b.FindAscendant<Grid>()?.FindDescendant<NumberBox>() is { } numberBox)
+		if(b.FindAscendant<StackPanel>()?.Tag is not MediaSegmentViewModel vm)
 		{
-			numberBox.Value = ViewModel.CurrentTimeTicks;
+			return;
+		}
+
+		if(b.Tag is "Start")
+		{
+			vm.StartTicks = ViewModel.CurrentTimeTicks;
+		}
+		else
+		{
+			vm.EndTicks = ViewModel.CurrentTimeTicks;
 		}
 	}
 }

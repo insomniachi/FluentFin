@@ -27,14 +27,18 @@
 
         <flyleaf:FlyleafHost
             x:Name="flyleafHost"
-            Margin="200,0,200,36"
+            Margin="100,0,100,36"
             Player="{x:Bind ViewModel.MediaPlayer}">
             <controls:TransportControls Player="{x:Bind ViewModel.MediaPlayer}" Playlist="{x:Bind ViewModel.Playlist}" />
         </flyleaf:FlyleafHost>
 
         <ScrollView Grid.Row="1">
             <StackPanel Spacing="10">
-                <Button Command="{x:Bind ViewModel.AddSegmentCommand}" Content="Add New Segment" />
+                <Button
+                    Margin="{StaticResource MediumBottomMargin}"
+                    Command="{x:Bind ViewModel.AddSegmentCommand}"
+                    Content="Add New Segment"
+                    Style="{ThemeResource AccentButtonStyle}" />
                 <ItemsRepeater ItemsSource="{x:Bind ViewModel.Segments}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="viewmodels:MediaSegmentViewModel">
@@ -42,7 +46,8 @@
                                 Padding="16"
                                 Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
                                 CornerRadius="{StaticResource ControlCornerRadius}"
-                                Spacing="10">
+                                Spacing="10"
+                                Tag="{x:Bind}">
                                 <ComboBox
                                     HorizontalAlignment="Stretch"
                                     ItemsSource="{ui:EnumValues Type=jm:MediaSegmentDto_Type}"
@@ -52,22 +57,30 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <NumberBox PlaceholderText="Start ticks" Value="{x:Bind StartTicks, Mode=TwoWay}" />
+                                    <TextBox
+                                        IsReadOnly="True"
+                                        PlaceholderText="Start ticks"
+                                        Text="{x:Bind c:Converters.TicksToSecondsString(StartTicks), Mode=OneWay}" />
                                     <RepeatButton
                                         Grid.Column="1"
                                         Click="UpdateTime"
-                                        Content="Use Current Time" />
+                                        Content="Use Current Time"
+                                        Tag="Start" />
                                 </Grid>
                                 <Grid ColumnSpacing="10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <NumberBox PlaceholderText="End ticks" Value="{x:Bind EndTicks, Mode=TwoWay}" />
+                                    <TextBox
+                                        IsReadOnly="True"
+                                        PlaceholderText="End ticks"
+                                        Text="{x:Bind c:Converters.TicksToSecondsString(EndTicks), Mode=OneWay}" />
                                     <RepeatButton
                                         Grid.Column="1"
                                         Click="UpdateTime"
-                                        Content="Use Current Time" />
+                                        Content="Use Current Time"
+                                        Tag="End" />
                                 </Grid>
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -104,12 +117,13 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             ItemsSource="{x:Bind ViewModel.Playlist.Items, Mode=OneWay}"
-            SelectedItem="{x:Bind ViewModel.Playlist.SelectedItem, Mode=TwoWay}">
+            SelectedItem="{x:Bind ViewModel.Playlist.SelectedItem, Mode=TwoWay}"
+            Visibility="{x:Bind c:Converters.VisibleIfMoreThanOne(ViewModel.Playlist.Items), Mode=OneWay}">
             <ListView.Header>
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"
                     Style="{ThemeResource SubheaderTextBlockStyle}"
-                    Text="Playlist" />
+                    Text="Episodes" />
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewmodels:PlaylistItem">

@@ -3,6 +3,7 @@ Welcome to FluentFin, a simple and user-friendly native Jellyfin client built wi
 <div style="display: flex; flex-direction: row; gap: 8px">
   <img height=240 src="./Screenshots/movie.png" />
   <img height=240 src="./Screenshots/dashboard.png" />
+  <img height=240 src="./Screenshots/segment-editor.png" />
 </div>
 
 ## 🌟 Features
@@ -40,3 +41,4 @@ FluentFin is not affiliated with Jellyfin. The app is built with Windows App SDK
 I'd like to thank the following people and projects for their contributions to FluentFin:
 
 - [jellyfin-sdk-csharp](https://github.com/jellyfin/jellyfin-sdk-csharp) for the C# SDK.
+- [CommunityToolkit Windows](https://github.com/CommunityToolkit/Windows)

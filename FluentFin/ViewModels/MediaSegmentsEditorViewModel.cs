@@ -161,10 +161,10 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 public partial class MediaSegmentViewModel : ObservableObject
 {
 	[ObservableProperty]
-	public partial double StartTicks { get; set; }
+	public partial long StartTicks { get; set; }
 
 	[ObservableProperty]
-	public partial double EndTicks { get; set; }
+	public partial long EndTicks { get; set; }
 
 	[ObservableProperty]
 	public partial Guid? ItemId { get; set; }
@@ -176,8 +176,8 @@ public partial class MediaSegmentViewModel : ObservableObject
 
 	public MediaSegmentDto ToDto() => new()
 	{
-		StartTicks = (long)StartTicks,
-		EndTicks = (long)EndTicks,
+		StartTicks = StartTicks,
+		EndTicks = EndTicks,
 		ItemId = ItemId ?? Guid.NewGuid(),
 		Type = Type,
 		Id = Id ?? Guid.NewGuid()

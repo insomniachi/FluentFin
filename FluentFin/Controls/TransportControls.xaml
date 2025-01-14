@@ -220,10 +220,10 @@
                             Margin="10,0,10,0"
                             VerticalAlignment="Center"
                             IsTabStop="False"
-                            Maximum="{x:Bind c:Converters.TiksToSeconds(Player.Duration), Mode=OneWay}"
+                            Maximum="{x:Bind c:Converters.TicksToSeconds(Player.Duration), Mode=OneWay}"
                             PointerExited="TimeSlider_PointerExited"
                             PointerMoved="TimeSlider_PointerEntered"
-                            Value="{x:Bind c:Converters.TiksToSeconds(Player.CurTime), Mode=OneWay}" />
+                            Value="{x:Bind c:Converters.TicksToSeconds(Player.CurTime), Mode=OneWay}" />
                     </ctk:Case>
                 </ctk:SwitchPresenter>
 

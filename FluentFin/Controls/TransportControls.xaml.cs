@@ -111,7 +111,7 @@ public sealed partial class TransportControls : UserControl
 		TimeSlider
 			.Events()
 			.ValueChanged
-			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TiksToSeconds(Player.CurTime)) > 1)
+			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TicksToSeconds(Player.CurTime)) > 1)
 			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
 
 		_onPointerMoved

@@ -70,10 +70,18 @@ public partial class JellyfinClient
 		var type = document.RootElement.GetProperty("MessageType").GetString();
 
 		if (Enum.TryParse<SessionMessageType>(type, out var messageType) &&
-			messageType is not (SessionMessageType.ForceKeepAlive or SessionMessageType.KeepAlive) &&
-			messageType.Parse(socketMessage) is IInboundSocketMessage message)
+			messageType is not (SessionMessageType.ForceKeepAlive or SessionMessageType.KeepAlive))
 		{
-			socketMessageSender.OnNext(message);
+
+			if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
+			{
+				socketMessageSender.OnNext(message);
+			}
+			else
+			{
+				// for debugging when adding new events
+				;
+			}
 		}
 
 		inputStream.Dispose();

@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace FluentFin.Dialogs.ViewModels;
@@ -14,14 +16,13 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 	public partial BaseItemDto? Item { get; set; }
 
 	[ObservableProperty]
-	public partial List<MediaStream> Subtitles { get; set; } = [];
-
-	[ObservableProperty]
 	public partial CultureInfo? SelectedCulture { get; set; }
 
 	[ObservableProperty]
 	public partial List<RemoteSubtitleInfo> RemoteSubtitles { get; set; } = [];
 
+	public ObservableCollection<MediaStream> Subtitles { get; } = [];
+	
 	public List<CultureInfo> Cultures { get; } = [.. CultureInfo.GetCultures(CultureTypes.NeutralCultures)];
 
 	public async Task Initialize(BaseItemDto item)
@@ -38,7 +39,7 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 			return;
 		}
 
-		Subtitles = Item.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+		Subtitles.AddRange(Item.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? []);
 		SelectedCulture = Cultures.FirstOrDefault(x => x.ThreeLetterISOLanguageName.Equals("eng", StringComparison.OrdinalIgnoreCase));
 	}
 
@@ -76,6 +77,8 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 		{
 			return;
 		}
+
+		Subtitles.Remove(info);
 
 		await jellyfinClient.DeleteSubtitle(Item, info);
 	}

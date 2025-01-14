@@ -10,7 +10,7 @@ namespace FluentFin.Dialogs.ViewModels;
 public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBaseItemDialogViewModel
 {
 	private readonly IJellyfinClient _jellyfinClient;
-	
+
 	public EditImagesViewModel(IJellyfinClient jellyfinClient)
 	{
 		_jellyfinClient = jellyfinClient;
@@ -53,12 +53,12 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 
 	[ObservableProperty]
 	public partial string BackButtonText { get; set; } = "";
-	
+
 	public bool CanClose { get; set; }
 
 	public async Task Initialize(BaseItemDto item)
 	{
-		if(item is null)
+		if (item is null)
 		{
 			return;
 		}
@@ -80,14 +80,14 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 
 		var providers = await _jellyfinClient.GetImageProviders(item);
 		var supportedImages = GetAllSupportedImages(providers);
-		ImageProviders = [new() { Name = "All", SupportedImages =  supportedImages}, ..providers];
+		ImageProviders = [new() { Name = "All", SupportedImages = supportedImages }, .. providers];
 		SelectedProvider = ImageProviders.FirstOrDefault();
 		SelectedImageType = supportedImages.FirstOrDefault();
 	}
 
 	private async Task SearchImages()
 	{
-		if(Item is null || SelectedImageType is null || SelectedProvider is null)
+		if (Item is null || SelectedImageType is null || SelectedProvider is null)
 		{
 			return;
 		}
@@ -99,16 +99,16 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 
 		State = EditImagesViewModelState.Search;
 
-		if(result is null or { Images : null })
+		if (result is null or { Images: null })
 		{
 			return;
 		}
 
-		SearchResults = result.Images;	
+		SearchResults = result.Images;
 	}
 
 	[RelayCommand]
-	private async  Task SwitchView(EditImagesViewModelState state)
+	private async Task SwitchView(EditImagesViewModelState state)
 	{
 		State = state;
 		await SearchImages();
@@ -117,7 +117,7 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 	[RelayCommand]
 	private async Task Search(ImageInfo info)
 	{
-		if(info. ImageType is { })
+		if (info.ImageType is { })
 		{
 			SelectedImageType = (ImageType?)(int)info.ImageType;
 		}

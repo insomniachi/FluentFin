@@ -14,7 +14,7 @@ using System.Reactive.Linq;
 namespace FluentFin.Dialogs.ViewModels;
 
 public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.UserEditor)] INavigationServiceCore navigationService,
-	                                     IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+										 IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
 {
 	[ObservableProperty]
 	public partial UserDto? User { get; set; }
@@ -32,7 +32,7 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 
 	public Task OnNavigatedTo(object parameter)
 	{
-		if(parameter is UserEditorViewModelNavigationParameter args)
+		if (parameter is UserEditorViewModelNavigationParameter args)
 		{
 			User = args.User;
 			Section = args.Section;
@@ -60,7 +60,7 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 	[RelayCommand]
 	private async Task Save()
 	{
-		if(User is not { Policy : not null})
+		if (User is not { Policy: not null })
 		{
 			return;
 		}
@@ -71,14 +71,14 @@ public partial class UserEditorViewModel([FromKeyedServices(NavigationRegions.Us
 	[RelayCommand]
 	private async Task Reset()
 	{
-		if(User?.Id is not { } id)
+		if (User?.Id is not { } id)
 		{
 			return;
 		}
 
 		var user = await jellyfinClient.GetUser(id);
 
-		if(user is null)
+		if (user is null)
 		{
 			return;
 		}

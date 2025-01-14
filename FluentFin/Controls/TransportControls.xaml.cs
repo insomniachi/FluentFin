@@ -34,7 +34,7 @@ public sealed partial class TransportControls : UserControl
 
 	public Player Player
 	{
-		get 
+		get
 		{
 			try
 			{
@@ -194,7 +194,7 @@ public sealed partial class TransportControls : UserControl
 			return;
 		}
 
-		if(Trickplay.Item?.Trickplay?.AdditionalData?.Count is not > 0)
+		if (Trickplay.Item?.Trickplay?.AdditionalData?.Count is not > 0)
 		{
 			return;
 		}

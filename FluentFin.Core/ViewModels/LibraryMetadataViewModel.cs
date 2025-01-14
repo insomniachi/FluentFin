@@ -39,7 +39,7 @@ public partial class LibrariesMetadataViewModel(IJellyfinClient jellyfinClient) 
 
 		_configuration = await jellyfinClient.GetConfiguration();
 
-		if(_configuration is null)
+		if (_configuration is null)
 		{
 			return;
 		}

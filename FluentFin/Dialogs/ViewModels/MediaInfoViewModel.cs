@@ -11,7 +11,7 @@ public partial class MediaInfoViewModel(IJellyfinClient jellyfinClient) : Observ
 
 	public async Task Initialize(BaseItemDto item)
 	{
-		if(item.Id is not { } id)
+		if (item.Id is not { } id)
 		{
 			return;
 		}

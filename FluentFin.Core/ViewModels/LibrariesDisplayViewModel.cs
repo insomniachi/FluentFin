@@ -35,7 +35,7 @@ public partial class LibrariesDisplayViewModel(IJellyfinClient jellyfinClient) :
 		_serverConfiguration = await jellyfinClient.GetConfiguration();
 		_metadata = await jellyfinClient.GetMetadata();
 
-		if(_metadata is not null)
+		if (_metadata is not null)
 		{
 			DateAddedBehaviorForNewContent = _metadata.UseFileCreationTimeForDateAdded ? DateAddedBehaviors[0] : DateAddedBehaviors[1];
 		}

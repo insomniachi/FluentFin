@@ -25,18 +25,18 @@ namespace FluentFin;
 
 public partial class App : Application
 {
-    public IHost Host { get; }
+	public IHost Host { get; }
 
-    public static T GetService<T>()
-        where T : class
-    {
-        if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
-        {
-            throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-        }
+	public static T GetService<T>()
+		where T : class
+	{
+		if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
+		{
+			throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
+		}
 
-        return service;
-    }
+		return service;
+	}
 
 	public static T GetKeyedService<T>(object key)
 	where T : class
@@ -51,32 +51,32 @@ public partial class App : Application
 
 	public static WindowEx MainWindow { get; } = new MainWindow();
 
-    public static GlobalCommands Commands { get; } = GetService<GlobalCommands>();
+	public static GlobalCommands Commands { get; } = GetService<GlobalCommands>();
 
-    public static DialogCommands Dialogs { get; } = GetService<DialogCommands>();
+	public static DialogCommands Dialogs { get; } = GetService<DialogCommands>();
 
 
-    public App()
-    {
+	public App()
+	{
 		InitializeComponent();
 
 		Host = Microsoft.Extensions.Hosting.Host
-        .CreateDefaultBuilder()
-        .UseContentRoot(AppContext.BaseDirectory)
-        .ConfigureServices((context, services) =>
-        {
-            // Default Activation Handler
-            services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
+		.CreateDefaultBuilder()
+		.UseContentRoot(AppContext.BaseDirectory)
+		.ConfigureServices((context, services) =>
+		{
+			// Default Activation Handler
+			services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
-            // Other Activation Handlers
+			// Other Activation Handlers
 
-            // Services
-            services.AddSingleton<IActivationService, ActivationService>();
-            services.AddSingleton<IPageService, PageService>();
-            services.AddSingleton<INavigationViewService, NavigationViewService>();
-            services.AddSingleton<INavigationService, NavigationService>();
+			// Services
+			services.AddSingleton<IActivationService, ActivationService>();
+			services.AddSingleton<IPageService, PageService>();
+			services.AddSingleton<INavigationViewService, NavigationViewService>();
+			services.AddSingleton<INavigationService, NavigationService>();
 			services.AddSingleton((Func<IServiceProvider, INavigationServiceCore>)(sp => sp.GetRequiredService<INavigationService>()));
-            services.AddTransient<IContentDialogService, ContentDialogService>();
+			services.AddTransient<IContentDialogService, ContentDialogService>();
 
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
 			services.AddFrameNavigation(NavigationRegions.UserEditor);
@@ -132,11 +132,11 @@ public partial class App : Application
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
-            services.AddDialog<EditImagesViewModel, EditImagesDialog>();
-            services.AddDialog<EditSubtitlesViewModel, EditSubtitlesDialog>();
-            services.AddDialog<IdentifyViewModel, IdentifyDialog>();
-            services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
-            services.AddDialog<RefreshMetadataViewModel, RefreshMetadataDialog>();
+			services.AddDialog<EditImagesViewModel, EditImagesDialog>();
+			services.AddDialog<EditSubtitlesViewModel, EditSubtitlesDialog>();
+			services.AddDialog<IdentifyViewModel, IdentifyDialog>();
+			services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
+			services.AddDialog<RefreshMetadataViewModel, RefreshMetadataDialog>();
 			services.AddDialog<AccessSchedulePickerViewModel, AccessSchedulePickerDialog>();
 
 			services.AddDialog<AddUserViewModel, AddUserDialog>();
@@ -149,29 +149,29 @@ public partial class App : Application
 			// Configuration
 
 			services.AddHostedService<WindowsUpdateService>();
-        }).
-        Build();
+		}).
+		Build();
 
-        UnhandledException += App_UnhandledException;
-    }
+		UnhandledException += App_UnhandledException;
+	}
 
-    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-    {
+	private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+	{
 		GetService<ILogger<App>>().LogError(e.Exception, "Unhandled exception");
-        e.Handled = true;
-    }
+		e.Handled = true;
+	}
 
-    protected async override void OnLaunched(LaunchActivatedEventArgs args)
-    {
+	protected async override void OnLaunched(LaunchActivatedEventArgs args)
+	{
 		await Host.StartAsync();
 
 		base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
-        StartFlyleaf();
+		StartFlyleaf();
 
-        await GetService<IActivationService>().ActivateAsync(args);
-    }
+		await GetService<IActivationService>().ActivateAsync(args);
+	}
 
 	private async void MainWindow_Closed(object sender, WindowEventArgs args)
 	{

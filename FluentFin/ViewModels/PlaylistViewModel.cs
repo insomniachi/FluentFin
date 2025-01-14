@@ -1,9 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DynamicData;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.Services;
-using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -56,12 +53,12 @@ public partial class PlaylistViewModel : ObservableObject
 
 	public void AutoSelect()
 	{
-		if(SelectedItem is not null)
+		if (SelectedItem is not null)
 		{
 			return;
 		}
 
-		if(Items.Count == 0)
+		if (Items.Count == 0)
 		{
 			return;
 		}
@@ -158,7 +155,7 @@ public partial class PlaylistViewModel : ObservableObject
 	{
 		var episodes = await jellyfinClient.GetItems(season);
 
-		if (episodes is null or { Items : null })
+		if (episodes is null or { Items: null })
 		{
 			return;
 		}
@@ -178,7 +175,7 @@ public partial class PlaylistItem : ObservableObject
 {
 	required public string Title { get; set; }
 	required public BaseItemDto Dto { get; set; }
-	
+
 	[ObservableProperty]
 	public partial MediaResponse? Media { get; set; }
 }

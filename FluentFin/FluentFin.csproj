@@ -21,6 +21,7 @@
 		<Version Condition=" '$(BuildVersion)' != '' ">$(BuildVersion)</Version>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Converters\BaseItemDtoConverters.cs~RF257b8cf.TMP" />
 	  <None Remove="Views\MediaSegmentsEditorPage.xaml" />
 	</ItemGroup>
 

@@ -32,7 +32,7 @@ public partial class LibrariesNfoSettingsViewModel(IJellyfinClient jellyfinClien
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		Users = [new UserDto { Name = "None" }, ..await jellyfinClient.GetUsers()];
+		Users = [new UserDto { Name = "None" }, .. await jellyfinClient.GetUsers()];
 
 		_options = await jellyfinClient.GetXbmcMetadata();
 

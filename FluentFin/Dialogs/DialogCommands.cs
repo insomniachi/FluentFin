@@ -62,7 +62,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 
 		var response = await dialog.ShowAsync();
 
-		if(response == ContentDialogResult.Primary)
+		if (response == ContentDialogResult.Primary)
 		{
 			await App.GetService<IJellyfinClient>().DeleteUser(user);
 		}
@@ -89,7 +89,7 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	[RelayCommand]
 	private void CopyUrlToClipboard(BaseItemDto dto)
 	{
-		if(jellyfinClient.GetStreamUrl(dto) is not { } uri)
+		if (jellyfinClient.GetStreamUrl(dto) is not { } uri)
 		{
 			return;
 		}

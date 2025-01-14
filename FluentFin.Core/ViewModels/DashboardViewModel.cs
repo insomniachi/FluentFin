@@ -37,7 +37,7 @@ namespace FluentFin.Core.ViewModels
 		{
 			SystemInfo = await jellyfinClient.GetSystemInfo();
 			ActiveSessions = await jellyfinClient.GetActiveSessions();
-			
+
 			Paths = [
 				new NameValuePair { Name = "Cache", Value = SystemInfo?.CachePath },
 				new NameValuePair { Name = "Logs", Value = SystemInfo?.LogPath },
@@ -45,9 +45,9 @@ namespace FluentFin.Core.ViewModels
 				new NameValuePair { Name = "Transcodes", Value = SystemInfo?.TranscodingTempPath },
 				new NameValuePair { Name = "Web", Value = SystemInfo?.WebPath },
 			];
-			
+
 			var userActivityResult = await jellyfinClient.GetActivities(TimeProvider.System.GetUtcNow().AddDays(-1), true);
-			if(userActivityResult is { Items.Count : > 0 })
+			if (userActivityResult is { Items.Count: > 0 })
 			{
 				UserActivities = userActivityResult.Items;
 			}
@@ -80,7 +80,7 @@ namespace FluentFin.Core.ViewModels
 		[RelayCommand]
 		private async Task StartScan()
 		{
-			if(string.IsNullOrEmpty(_scanMediaLibraryTask))
+			if (string.IsNullOrEmpty(_scanMediaLibraryTask))
 			{
 				return;
 			}

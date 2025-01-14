@@ -1,4 +1,3 @@
-using CommunityToolkit.WinUI;
 using FluentFin.Dialogs.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
@@ -18,7 +17,7 @@ public sealed partial class AddUserDialog : IViewFor<AddUserViewModel>
 
 	private void PasswordBox_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		if(ViewModel is null)
+		if (ViewModel is null)
 		{
 			return;
 		}
@@ -28,12 +27,12 @@ public sealed partial class AddUserDialog : IViewFor<AddUserViewModel>
 
 	private void ListView_SelectionChanged(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
 	{
-		if(ViewModel is null)
+		if (ViewModel is null)
 		{
 			return;
 		}
 
-		if(ListView.SelectedItems is IEnumerable<BaseItemDto> selected)
+		if (ListView.SelectedItems is IEnumerable<BaseItemDto> selected)
 		{
 			ViewModel.SelectedItems = selected.ToList();
 		}

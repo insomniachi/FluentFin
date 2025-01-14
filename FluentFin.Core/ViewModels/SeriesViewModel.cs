@@ -21,7 +21,7 @@ public partial class SeriesViewModel(IJellyfinClient jellyfinClient) : Observabl
 			return;
 		}
 
-		if(dto.Type is not BaseItemDto_Type.Series)
+		if (dto.Type is not BaseItemDto_Type.Series)
 		{
 			return;
 		}
@@ -61,7 +61,7 @@ public partial class SeriesViewModel(IJellyfinClient jellyfinClient) : Observabl
 	{
 		var response = await jellyfinClient.GetNextUp(dto);
 
-		if (response is null or { Items: null } or { Items.Count : 0})
+		if (response is null or { Items: null } or { Items.Count: 0 })
 		{
 			return;
 		}

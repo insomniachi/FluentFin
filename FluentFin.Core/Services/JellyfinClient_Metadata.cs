@@ -4,7 +4,6 @@ using Flurl.Http;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using System.Text.Json;
 
 namespace FluentFin.Core.Services;
 

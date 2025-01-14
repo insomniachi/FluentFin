@@ -1,6 +1,5 @@
 ﻿using DevWinUI;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Controls;
 

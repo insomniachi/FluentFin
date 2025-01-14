@@ -10,35 +10,35 @@ namespace FluentFin.Services;
 
 public class NavigationViewService : INavigationViewService
 {
-    private readonly INavigationService _navigationService;
-    private readonly IPageService _pageService;
+	private readonly INavigationService _navigationService;
+	private readonly IPageService _pageService;
 	private readonly IJellyfinClient _jellyfinClient;
-    private NavigationView? _navigationView;
+	private NavigationView? _navigationView;
 
-    public IList<object>? MenuItems => _navigationView?.MenuItems;
+	public IList<object>? MenuItems => _navigationView?.MenuItems;
 
-    public object? SettingsItem => _navigationView?.SettingsItem;
+	public object? SettingsItem => _navigationView?.SettingsItem;
 
-    public NavigationViewService(INavigationService navigationService,
+	public NavigationViewService(INavigationService navigationService,
 								 IPageService pageService,
 								 IJellyfinClient jellyfinClient)
-    {
-        _navigationService = navigationService;
-        _pageService = pageService;
+	{
+		_navigationService = navigationService;
+		_pageService = pageService;
 		_jellyfinClient = jellyfinClient;
-    }
+	}
 
-    [MemberNotNull(nameof(_navigationView))]
-    public void Initialize(NavigationView navigationView)
-    {
-        _navigationView = navigationView;
-        _navigationView.BackRequested += OnBackRequested;
-        _navigationView.ItemInvoked += OnItemInvoked;
-    }
+	[MemberNotNull(nameof(_navigationView))]
+	public void Initialize(NavigationView navigationView)
+	{
+		_navigationView = navigationView;
+		_navigationView.BackRequested += OnBackRequested;
+		_navigationView.ItemInvoked += OnItemInvoked;
+	}
 
 	public void TogglePane()
 	{
-		if(_navigationView is null)
+		if (_navigationView is null)
 		{
 			return;
 		}
@@ -48,13 +48,13 @@ public class NavigationViewService : INavigationViewService
 
 	public async Task InitializeLibraries()
 	{
-		var librariesItem = new NavigationViewItem 
+		var librariesItem = new NavigationViewItem
 		{
 			Content = "Libraries",
 			Icon = new SymbolIcon
 			{
 				Symbol = Symbol.Library
-			}, 
+			},
 			SelectsOnInvoked = false
 		};
 		await foreach (var item in _jellyfinClient.GetUserLibraries())
@@ -80,71 +80,71 @@ public class NavigationViewService : INavigationViewService
 	}
 
 	public void UnregisterEvents()
-    {
-        if (_navigationView != null)
-        {
-            _navigationView.BackRequested -= OnBackRequested;
-            _navigationView.ItemInvoked -= OnItemInvoked;
-        }
-    }
+	{
+		if (_navigationView != null)
+		{
+			_navigationView.BackRequested -= OnBackRequested;
+			_navigationView.ItemInvoked -= OnItemInvoked;
+		}
+	}
 
-    public NavigationViewItem? GetSelectedItem(Type pageType)
-    {
-        if (_navigationView != null)
-        {
-            return GetSelectedItem(_navigationView.MenuItems, pageType) ?? GetSelectedItem(_navigationView.FooterMenuItems, pageType);
-        }
+	public NavigationViewItem? GetSelectedItem(Type pageType)
+	{
+		if (_navigationView != null)
+		{
+			return GetSelectedItem(_navigationView.MenuItems, pageType) ?? GetSelectedItem(_navigationView.FooterMenuItems, pageType);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) => _navigationService.GoBack();
+	private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) => _navigationService.GoBack();
 
-    private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-    {
-        if (args.IsSettingsInvoked)
-        {
-            _navigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
-        }
-        else
-        {
-            var selectedItem = args.InvokedItemContainer as NavigationViewItem;
+	private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+	{
+		if (args.IsSettingsInvoked)
+		{
+			_navigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+		}
+		else
+		{
+			var selectedItem = args.InvokedItemContainer as NavigationViewItem;
 
-            if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is string pageKey)
-            {
-                _navigationService.NavigateTo(pageKey);
-            }
-        }
-    }
+			if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is string pageKey)
+			{
+				_navigationService.NavigateTo(pageKey);
+			}
+		}
+	}
 
-    private NavigationViewItem? GetSelectedItem(IEnumerable<object> menuItems, Type pageType)
-    {
-        foreach (var item in menuItems.OfType<NavigationViewItem>())
-        {
-            if (IsMenuItemForPageType(item, pageType))
-            {
-                return item;
-            }
+	private NavigationViewItem? GetSelectedItem(IEnumerable<object> menuItems, Type pageType)
+	{
+		foreach (var item in menuItems.OfType<NavigationViewItem>())
+		{
+			if (IsMenuItemForPageType(item, pageType))
+			{
+				return item;
+			}
 
-            var selectedChild = GetSelectedItem(item.MenuItems, pageType);
-            if (selectedChild != null)
-            {
-                return selectedChild;
-            }
-        }
+			var selectedChild = GetSelectedItem(item.MenuItems, pageType);
+			if (selectedChild != null)
+			{
+				return selectedChild;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private bool IsMenuItemForPageType(NavigationViewItem menuItem, Type sourcePageType)
-    {
-        if (menuItem.GetValue(NavigationHelper.NavigateToProperty) is string pageKey)
-        {
-            return _pageService.GetPageType(pageKey) == sourcePageType;
-        }
+	private bool IsMenuItemForPageType(NavigationViewItem menuItem, Type sourcePageType)
+	{
+		if (menuItem.GetValue(NavigationHelper.NavigateToProperty) is string pageKey)
+		{
+			return _pageService.GetPageType(pageKey) == sourcePageType;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
 	private static FontIcon? GetIcon(BaseItemDto_CollectionType? collectionType)
 	{

@@ -10,53 +10,53 @@ namespace FluentFin.Views;
 
 public sealed partial class ShellPage : Page
 {
-    public ShellViewModel ViewModel
-    {
-        get;
-    }
+	public ShellViewModel ViewModel
+	{
+		get;
+	}
 
-    public ShellPage()
-    {
-        ViewModel = App.GetService<ShellViewModel>();
-        InitializeComponent();
+	public ShellPage()
+	{
+		ViewModel = App.GetService<ShellViewModel>();
+		InitializeComponent();
 
-        ViewModel.NavigationService.Frame = NavigationFrame;
-        ViewModel.NavigationViewService.Initialize(NavigationViewControl);
-    }
+		ViewModel.NavigationService.Frame = NavigationFrame;
+		ViewModel.NavigationViewService.Initialize(NavigationViewControl);
+	}
 
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
 		await ViewModel.NavigationViewService.InitializeLibraries();
-        ViewModel.NavigationService.NavigateTo(typeof(HomeViewModel).FullName!);
+		ViewModel.NavigationService.NavigateTo(typeof(HomeViewModel).FullName!);
 	}
 
 	private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
-        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
-    }
+	{
+		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
+		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
+	}
 
 
-    private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)
-    {
-        var keyboardAccelerator = new KeyboardAccelerator() { Key = key };
+	private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)
+	{
+		var keyboardAccelerator = new KeyboardAccelerator() { Key = key };
 
-        if (modifiers.HasValue)
-        {
-            keyboardAccelerator.Modifiers = modifiers.Value;
-        }
+		if (modifiers.HasValue)
+		{
+			keyboardAccelerator.Modifiers = modifiers.Value;
+		}
 
-        keyboardAccelerator.Invoked += OnKeyboardAcceleratorInvoked;
+		keyboardAccelerator.Invoked += OnKeyboardAcceleratorInvoked;
 
-        return keyboardAccelerator;
-    }
+		return keyboardAccelerator;
+	}
 
-    private static void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
-        var navigationService = App.GetService<INavigationService>();
+	private static void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+	{
+		var navigationService = App.GetService<INavigationService>();
 
-        var result = navigationService.GoBack();
+		var result = navigationService.GoBack();
 
-        args.Handled = result;
-    }
+		args.Handled = result;
+	}
 }

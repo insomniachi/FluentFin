@@ -16,7 +16,7 @@ public sealed partial class TitleBarControl : UserControl
 	private void TitleBar_PaneToggleRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
 	{
 		ViewModel.TogglePane();
-    }
+	}
 
 	private void TitleBar_BackRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
 	{
@@ -26,5 +26,5 @@ public sealed partial class TitleBarControl : UserControl
 	private void CloseTitleBarFooterFlyout(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
 		FooterFlyout.Hide();
-    }
+	}
 }

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace FluentFin.Core.ViewModels;
 
 public partial class UsersViewModel(IJellyfinClient jellyfinClient,
-									[FromKeyedServices(NavigationRegions.Settings)]INavigationServiceCore navigationService) : ObservableObject, INavigationAware
+									[FromKeyedServices(NavigationRegions.Settings)] INavigationServiceCore navigationService) : ObservableObject, INavigationAware
 {
 	[ObservableProperty]
 	public partial List<UserDto> Users { get; set; } = [];

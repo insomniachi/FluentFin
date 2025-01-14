@@ -18,26 +18,26 @@ public sealed partial class SettingsPage : Page
 
 	private void RemoveUser(object sender, RoutedEventArgs e)
 	{
-		if(sender is not FrameworkElement button)
+		if (sender is not FrameworkElement button)
 		{
 			return;
 		}
 
-		if(button.Tag is not SavedUser user)
+		if (button.Tag is not SavedUser user)
 		{
 			return;
 		}
 
-		if(button.FindAscendant<SettingsExpander>() is not { } expander)
+		if (button.FindAscendant<SettingsExpander>() is not { } expander)
 		{
 			return;
 		}
 
-		if(expander.Tag is not SavedServer server)
+		if (expander.Tag is not SavedServer server)
 		{
 			return;
 		}
 
 		server.Users.Remove(user);
-    }
+	}
 }

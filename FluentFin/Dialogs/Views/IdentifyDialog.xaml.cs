@@ -17,12 +17,12 @@ public sealed partial class IdentifyDialog : IViewFor<IdentifyViewModel>
 
 	private void ItemsView_SelectionChanged(Microsoft.UI.Xaml.Controls.ItemsView sender, Microsoft.UI.Xaml.Controls.ItemsViewSelectionChangedEventArgs args)
 	{
-		if(ViewModel is null)
+		if (ViewModel is null)
 		{
 			return;
 		}
 
 		ViewModel.SelectedResult = (RemoteSearchResult)sender.SelectedItem;
-    }
+	}
 
 }

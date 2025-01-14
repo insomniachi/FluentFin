@@ -99,8 +99,8 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 	public async void InstallUpdate(VersionInfo versionInfo)
 	{
 		var canUpdate = await contentDialogService.QuestionYesNo($"New version {versionInfo.Version}", "Install update now?");
-		
-		if(!canUpdate)
+
+		if (!canUpdate)
 		{
 			return;
 		}

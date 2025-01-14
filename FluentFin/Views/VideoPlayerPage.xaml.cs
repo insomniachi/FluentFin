@@ -1,13 +1,10 @@
 using CommunityToolkit.WinUI;
 using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
-using FlyleafLib;
 using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
-using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -68,7 +65,7 @@ public sealed partial class VideoPlayerPage : Page
 			vm.IsVisible ^= true;
 		}
 
-		if(this.FindAscendant<NavigationView>() is { } navView)
+		if (this.FindAscendant<NavigationView>() is { } navView)
 		{
 			navView.IsPaneVisible ^= true;
 		}

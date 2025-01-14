@@ -31,7 +31,7 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 
 	protected override async Task Initialize(UserDto user)
 	{
-		if(user?.Policy is not { } policy)
+		if (user?.Policy is not { } policy)
 		{
 			return;
 		}
@@ -88,7 +88,7 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 	{
 		var result = await accessSchedulePicker.GetValue();
 
-		if(result is null)
+		if (result is null)
 		{
 			return;
 		}

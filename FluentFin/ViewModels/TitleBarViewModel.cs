@@ -20,7 +20,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	private readonly IJellyfinClient _jellyfinClient;
 
 	public TitleBarViewModel(INavigationService navigationService,
-							 [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService setupNavigationService,
+							 [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService setupNavigationService,
 							 INavigationViewService navigationViewService,
 							 IJellyfinClient jellyfinClient,
 							 ILocalSettingsService localSettingsService)

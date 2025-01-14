@@ -52,14 +52,14 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(async message =>
 			{
-				switch (message) 
+				switch (message)
 				{
 					case GeneralCommandMessage { Data.Name: GeneralCommandType.DisplayMessage } gcm:
 						await contentDialogService.ShowMessage(gcm.Data.Arguments["Header"],
-															   gcm.Data.Arguments["Text"], 
+															   gcm.Data.Arguments["Text"],
 															   TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
 						break;
-					case PlayStateMessage { Data.Command : Core.WebSockets.Messages.PlaystateCommand.PlayPause } :
+					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.PlayPause }:
 						MediaPlayer.TogglePlayPause();
 						await UpdateStatus();
 						break;
@@ -74,12 +74,12 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
-		if(e.PropertyName != nameof(Playlist.SelectedItem))
+		if (e.PropertyName != nameof(Playlist.SelectedItem))
 		{
 			return;
 		}
 
-		if(Playlist.SelectedItem is not { } selectedItem)
+		if (Playlist.SelectedItem is not { } selectedItem)
 		{
 			return;
 		}
@@ -95,7 +95,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		var mediaResponse = await GetMediaUrl(full);
 
-		if(mediaResponse is null)
+		if (mediaResponse is null)
 		{
 			return;
 		}
@@ -149,7 +149,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	{
 		_disposables.Dispose();
 
-		if(Dto is null)
+		if (Dto is null)
 		{
 			return;
 		}
@@ -162,28 +162,28 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if(parameter is not BaseItemDto dto)
+		if (parameter is not BaseItemDto dto)
 		{
 			return;
 		}
 
-		if(dto.Id is not { } id)
+		if (dto.Id is not { } id)
 		{
 			return;
 		}
-		
+
 		Dto = await _jellyfinClient.GetItem(id);
 
 		Playlist = dto.Type switch
 		{
-			BaseItemDto_Type.Movie  => PlaylistViewModel.FromMovie(dto),
+			BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(dto),
 			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(_jellyfinClient, dto),
 			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(_jellyfinClient, dto),
 			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(_jellyfinClient, dto),
 			_ => new PlaylistViewModel()
 		};
 
-		if(Playlist.Items.Count == 0)
+		if (Playlist.Items.Count == 0)
 		{
 			return;
 		}
@@ -211,7 +211,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	{
 		var segment = Segments.FirstOrDefault(x => currentTime > x.StartTicks && currentTime < x.EndTicks);
 
-		if(segment is not { EndTicks : not null })
+		if (segment is not { EndTicks: not null })
 		{
 			return;
 		}
@@ -223,7 +223,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	{
 		var segments = await _jellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
 
-		if(segments is { Items : not null})
+		if (segments is { Items: not null })
 		{
 			Segments = segments.Items;
 		}
@@ -242,7 +242,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		var season = response.Items.FirstOrDefault(x => x.UserData?.UnplayedItemCount > 0);
 
-		if(season is null)
+		if (season is null)
 		{
 			return false;
 		}
@@ -252,14 +252,14 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	private async Task<bool> CreateSeasonPlaylistFromEpisode(BaseItemDto episode)
 	{
-		if(episode.SeasonId is not { } seasonId)
+		if (episode.SeasonId is not { } seasonId)
 		{
 			return false;
 		}
 
 		var season = await _jellyfinClient.GetItem(seasonId);
 
-		if(season is null)
+		if (season is null)
 		{
 			return false;
 		}
@@ -279,7 +279,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		foreach (var item in response.Items)
 		{
-			if(item is null)
+			if (item is null)
 			{
 				continue;
 			}
@@ -293,7 +293,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			Playlist.Items.Add(playlistItem);
 		}
 
-		if(Playlist.Items.Count == 0)
+		if (Playlist.Items.Count == 0)
 		{
 			return false;
 		}
@@ -317,22 +317,22 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	private async Task UpdateStatus()
 	{
-		if(Dto is null)
+		if (Dto is null)
 		{
 			return;
 		}
 
-		if(Position.Ticks == 0)
+		if (Position.Ticks == 0)
 		{
 			return;
 		}
 
-		if(Playlist.SelectedItem?.Media is not { } media)
+		if (Playlist.SelectedItem?.Media is not { } media)
 		{
 			return;
 		}
 
-		if(MediaPlayer.Status is Status.Failed or Status.Ended or Status.Opening)
+		if (MediaPlayer.Status is Status.Failed or Status.Ended or Status.Opening)
 		{
 			return;
 		}

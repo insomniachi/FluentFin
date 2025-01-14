@@ -105,7 +105,7 @@ namespace FluentFin.Core.ViewModels
 		{
 			foreach (var library in RecentItems)
 			{
-				if (library.Items.FirstOrDefault(x => x.Id == guid) is not BaseItemDto { UserData : not null } dto)
+				if (library.Items.FirstOrDefault(x => x.Id == guid) is not BaseItemDto { UserData: not null } dto)
 				{
 					continue;
 				}
@@ -123,12 +123,12 @@ namespace FluentFin.Core.ViewModels
 
 		private void ProcessContinueWatchingItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
 		{
-			if(ContinueItems.FirstOrDefault(x => x.Id == guid) is not { } item)
+			if (ContinueItems.FirstOrDefault(x => x.Id == guid) is not { } item)
 			{
 				return;
 			}
 
-			if(userData.PlaybackPositionTicks is null or 0)
+			if (userData.PlaybackPositionTicks is null or 0)
 			{
 				ContinueItems.Remove(item);
 			}

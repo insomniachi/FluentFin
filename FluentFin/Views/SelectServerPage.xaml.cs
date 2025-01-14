@@ -2,7 +2,6 @@ using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using Microsoft.UI.Xaml.Controls;
-using ReactiveUI;
 
 namespace FluentFin.Views;
 
@@ -17,7 +16,7 @@ public sealed partial class SelectServerPage : Page
 
 	private void InputFieldKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 	{
-		if(sender is not TextBox tb)
+		if (sender is not TextBox tb)
 		{
 			return;
 		}
@@ -30,7 +29,7 @@ public sealed partial class SelectServerPage : Page
 
 	private void ServerSelected(ItemsView sender, ItemsViewItemInvokedEventArgs args)
 	{
-		if(args.InvokedItem is not SavedServer server)
+		if (args.InvokedItem is not SavedServer server)
 		{
 			return;
 		}

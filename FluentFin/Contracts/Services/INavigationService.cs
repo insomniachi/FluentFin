@@ -5,7 +5,7 @@ namespace FluentFin.Contracts.Services;
 
 public interface INavigationService : INavigationServiceCore
 {
-    event NavigatedEventHandler Navigated;
+	event NavigatedEventHandler Navigated;
 
-    Frame? Frame { get; set; }
+	Frame? Frame { get; set; }
 }

@@ -7,8 +7,8 @@ public sealed partial class SeasonPage : Page
 {
 	public SeasonViewModel ViewModel { get; } = App.GetService<SeasonViewModel>();
 
-    public SeasonPage()
-    {
-        InitializeComponent();
-    }
+	public SeasonPage()
+	{
+		InitializeComponent();
+	}
 }

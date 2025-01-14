@@ -15,22 +15,22 @@ public sealed partial class UsersPage : Page
 
 	private void MenuFlyoutItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		if(ViewModel is null)
+		if (ViewModel is null)
 		{
 			return;
 		}
 
-		if(sender is not MenuFlyoutItem item)
+		if (sender is not MenuFlyoutItem item)
 		{
 			return;
 		}
 
-		if(item.CommandParameter is not UserDto user)
+		if (item.CommandParameter is not UserDto user)
 		{
 			return;
 		}
 
-		if(item.Tag is not UserEditorSection section)
+		if (item.Tag is not UserEditorSection section)
 		{
 			return;
 		}

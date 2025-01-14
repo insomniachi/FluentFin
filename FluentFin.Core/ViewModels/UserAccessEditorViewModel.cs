@@ -16,7 +16,7 @@ public partial class UserAccessEditorViewModel(IJellyfinClient jellyfinClient) :
 
 	protected override async Task Initialize(UserDto user)
 	{
-		if(User?.Policy is not { } policy)
+		if (User?.Policy is not { } policy)
 		{
 			return;
 		}

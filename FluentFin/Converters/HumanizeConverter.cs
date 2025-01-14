@@ -7,7 +7,7 @@ public partial class HumanizeConverter : IValueConverter
 {
 	public object Convert(object value, Type targetType, object parameter, string language)
 	{
-		if(value is DateTimeOffset offset)
+		if (value is DateTimeOffset offset)
 		{
 			return offset.Humanize();
 		}

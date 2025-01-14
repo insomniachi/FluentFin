@@ -30,7 +30,7 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	[RelayCommand]
 	public void DisplayDto(BaseItemDto dto)
 	{
-		switch(dto.Type)
+		switch (dto.Type)
 		{
 			case BaseItemDto_Type.Movie:
 				navigationService.NavigateTo(typeof(MovieViewModel).FullName!, dto); break;

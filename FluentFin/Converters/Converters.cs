@@ -1,20 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using FluentFin.Core.Contracts.Services;
+using FluentFin.ViewModels;
+using Flurl;
 using FlyleafLib.MediaFramework.MediaStream;
 using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
-using FluentFin.Core.Settings;
-using Windows.Foundation;
-using FluentFin.ViewModels;
-using FluentFin.Core.Contracts.Services;
-using Flurl;
-using System.Web;
 using System.Reflection;
+using System.Web;
+using Windows.Foundation;
 
 namespace FluentFin.Converters;
 
@@ -43,7 +42,7 @@ public static class Converters
 	public static Rect ToRect(RectModel? clip) => clip is null ? new() : new(clip.X, clip.Y, clip.Width, clip.Height);
 	public static ImageSource? GetImage(Uri? uri)
 	{
-		if(uri is null)
+		if (uri is null)
 		{
 			return null;
 		}
@@ -53,12 +52,12 @@ public static class Converters
 
 	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> subtitles)
 	{
-		if(subtitles is null || player is null)
+		if (subtitles is null || player is null)
 		{
 			return null;
 		}
 
-		if(subtitles.Count < 1)
+		if (subtitles.Count < 1)
 		{
 			return null;
 		}
@@ -121,7 +120,7 @@ public static class Converters
 		});
 
 		var flyout = new MenuBarItemFlyout();
-		
+
 		foreach (var item in audios)
 		{
 			var flyoutItem = new RadioMenuFlyoutItem
@@ -143,7 +142,7 @@ public static class Converters
 	{
 		var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
 
-		if(subtitles.Count == 0)
+		if (subtitles.Count == 0)
 		{
 			return null;
 		}
@@ -151,12 +150,12 @@ public static class Converters
 		const string groupName = "Subtitles";
 		var command = new RelayCommand<MediaStream>(stream =>
 		{
-			if(stream is null)
+			if (stream is null)
 			{
 				return;
 			}
 
-			if(stream.IsExternal == true)
+			if (stream.IsExternal == true)
 			{
 				player.Config.Subtitles.Enabled = true;
 				var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
@@ -193,7 +192,7 @@ public static class Converters
 				Text = $"{item.DisplayTitle}",
 				GroupName = groupName,
 				IsChecked = item.IsDefault ?? false,
-				Command =  command,
+				Command = command,
 				CommandParameter = item
 			};
 

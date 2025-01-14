@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
-using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.ViewModels;

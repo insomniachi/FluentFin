@@ -23,7 +23,7 @@ public partial class Settings(ILocalSettingsService localSettingsService) : Obse
 
 	public void ListenToChanges()
 	{
-		if(_isListening)
+		if (_isListening)
 		{
 			return;
 		}
@@ -48,7 +48,7 @@ public partial class Settings(ILocalSettingsService localSettingsService) : Obse
 			}
 		}
 
-		else if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+		else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
 		{
 			foreach (SavedServer oldServer in e.OldItems?.OfType<SavedServer>() ?? [])
 			{

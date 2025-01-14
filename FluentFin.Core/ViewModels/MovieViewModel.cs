@@ -11,12 +11,12 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if(parameter is not BaseItemDto dto)
+		if (parameter is not BaseItemDto dto)
 		{
 			return;
 		}
 
-		if(dto.Id is not { } id)
+		if (dto.Id is not { } id)
 		{
 			return;
 		}

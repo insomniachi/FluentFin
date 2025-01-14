@@ -43,23 +43,23 @@ public partial class TrickplayViewModel : ObservableObject
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(x =>
 			{
-				if(Item is null)
+				if (Item is null)
 				{
 					return;
 				}
 
-				if(_trickplayOptions is null)
+				if (_trickplayOptions is null)
 				{
 					return;
 				}
 
-				if(Height == 0 ||
+				if (Height == 0 ||
 				   Width == 0)
 				{
 					return;
 				}
-				
-				if(_trickplayOptions.Interval is null ||
+
+				if (_trickplayOptions.Interval is null ||
 				   _trickplayOptions.TileHeight is null ||
 				   _trickplayOptions.TileWidth is null)
 				{
@@ -76,7 +76,7 @@ public partial class TrickplayViewModel : ObservableObject
 				var tileOffsetX = tileOffset % (int)_trickplayOptions.TileWidth;
 				var tileOffsetY = Math.Floor(tileOffset / (int)_trickplayOptions.TileHeight);
 
-				if(TileImage is null || Index != index)
+				if (TileImage is null || Index != index)
 				{
 					RxApp.MainThreadScheduler.Schedule(() =>
 					{
@@ -86,7 +86,7 @@ public partial class TrickplayViewModel : ObservableObject
 
 				Index = index;
 
-				RxApp.MainThreadScheduler.Schedule(() => 
+				RxApp.MainThreadScheduler.Schedule(() =>
 				{
 					Translate.X = -tileOffsetX * Width;
 					Translate.Y = -tileOffsetY * Height;
@@ -99,7 +99,7 @@ public partial class TrickplayViewModel : ObservableObject
 	public async Task Initialize()
 	{
 		var serverConfiguration = await _jellyfinClient.GetConfiguration();
-		if(serverConfiguration?.TrickplayOptions is not { } trickplay)
+		if (serverConfiguration?.TrickplayOptions is not { } trickplay)
 		{
 			return;
 		}
@@ -107,7 +107,7 @@ public partial class TrickplayViewModel : ObservableObject
 		_trickplayOptions = trickplay;
 		var width = _trickplayOptions.WidthResolutions?.FirstOrDefault();
 
-		if(width is { } value)
+		if (width is { } value)
 		{
 			Width = value;
 		}
@@ -117,20 +117,20 @@ public partial class TrickplayViewModel : ObservableObject
 	{
 		Item = item;
 
-		if(Width == 0)
+		if (Width == 0)
 		{
 			return;
 		}
 
 		var aspect = Item.MediaStreams?.FirstOrDefault(x => x.Type == MediaStream_Type.Video)?.AspectRatio;
 
-		if(string.IsNullOrEmpty(aspect))
+		if (string.IsNullOrEmpty(aspect))
 		{
 			return;
 		}
 
 		var split = aspect.Split(':', StringSplitOptions.RemoveEmptyEntries);
-		if(split.Length != 2)
+		if (split.Length != 2)
 		{
 			return;
 		}

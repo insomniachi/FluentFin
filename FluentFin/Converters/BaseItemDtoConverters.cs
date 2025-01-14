@@ -1,10 +1,7 @@
 ﻿using FluentFin.Core;
 using Flurl;
-using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Newtonsoft.Json.Linq;
-using System.Buffers.Text;
 
 namespace FluentFin.Converters;
 
@@ -12,7 +9,7 @@ public static class BaseItemDtoConverters
 {
 	public static string GetCardTitle(this BaseItemDto? dto)
 	{
-		if(dto is null)
+		if (dto is null)
 		{
 			return string.Empty;
 		}
@@ -50,12 +47,12 @@ public static class BaseItemDtoConverters
 
 	public static string GetSeasonAndEpisodeNumber(this BaseItemDto? dto)
 	{
-		if(dto is null)
+		if (dto is null)
 		{
 			return string.Empty;
 		}
 
-		if(dto.Type is not BaseItemDto_Type.Episode)
+		if (dto.Type is not BaseItemDto_Type.Episode)
 		{
 			return string.Empty;
 		}
@@ -75,7 +72,7 @@ public static class BaseItemDtoConverters
 
 	public static BitmapImage? GetImage(BaseItemDto? dto, ImageType imageType, double height)
 	{
-		if(dto is null)
+		if (dto is null)
 		{
 			return null;
 		}

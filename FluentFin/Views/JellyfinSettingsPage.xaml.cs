@@ -3,7 +3,6 @@ using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
 using FluentFin.Core.ViewModels;
-using FluentFin.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -27,11 +26,11 @@ public sealed partial class JellyfinSettingsPage : Page
 
 	private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
 	{
-		if(NavFrame.CanGoBack)
+		if (NavFrame.CanGoBack)
 		{
 			NavFrame.GoBack();
 		}
-    }
+	}
 }
 
 public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAware
@@ -45,10 +44,10 @@ public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAw
 		_navigationService = navigationService;
 		_navigationViewService = navigationViewService;
 
-		_navigationService.Navigated += OnNavigated;	
+		_navigationService.Navigated += OnNavigated;
 	}
 
-	[ObservableProperty] 
+	[ObservableProperty]
 	public partial NavigationViewItem? Selected { get; set; }
 
 	private void OnNavigated(object sender, NavigationEventArgs e)

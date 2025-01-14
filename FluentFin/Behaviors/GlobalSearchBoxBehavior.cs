@@ -37,7 +37,7 @@ public partial class GlobalSearchBoxBehavior : Behavior<AutoSuggestBox>
 
 	private void AssociatedObject_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
 	{
-		if(args.SelectedItem is not BaseItemDto dto)
+		if (args.SelectedItem is not BaseItemDto dto)
 		{
 			return;
 		}
@@ -49,17 +49,17 @@ public partial class GlobalSearchBoxBehavior : Behavior<AutoSuggestBox>
 
 	private void AssociatedObject_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 	{
-		if(args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
+		if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
 		{
 			return;
 		}
 
-		if(string.IsNullOrEmpty(sender.Text))
+		if (string.IsNullOrEmpty(sender.Text))
 		{
 			return;
 		}
 
-		if(sender.Text is { Length : < 3})
+		if (sender.Text is { Length: < 3 })
 		{
 			return;
 		}

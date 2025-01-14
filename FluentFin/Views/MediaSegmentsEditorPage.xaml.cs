@@ -17,17 +17,17 @@ public sealed partial class MediaSegmentsEditorPage : Page
 
 	private void UpdateTime(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		if(sender is not RepeatButton b)
+		if (sender is not RepeatButton b)
 		{
 			return;
 		}
 
-		if(b.FindAscendant<StackPanel>()?.Tag is not MediaSegmentViewModel vm)
+		if (b.FindAscendant<StackPanel>()?.Tag is not MediaSegmentViewModel vm)
 		{
 			return;
 		}
 
-		if(b.Tag is "Start")
+		if (b.Tag is "Start")
 		{
 			vm.StartTicks = ViewModel.CurrentTimeTicks;
 		}

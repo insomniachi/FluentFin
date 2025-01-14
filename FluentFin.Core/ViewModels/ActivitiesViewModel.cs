@@ -33,7 +33,7 @@ public partial class ActivitiesViewModel : ObservableObject, INavigationAware
 	{
 		var activities = await _jellyfinClient.GetAllActivities();
 
-		if(activities is not { Items.Count : > 0})
+		if (activities is not { Items.Count: > 0 })
 		{
 			return;
 		}

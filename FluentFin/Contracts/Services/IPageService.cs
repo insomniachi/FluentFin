@@ -2,5 +2,5 @@
 
 public interface IPageService
 {
-    Type GetPageType(string key);
+	Type GetPageType(string key);
 }

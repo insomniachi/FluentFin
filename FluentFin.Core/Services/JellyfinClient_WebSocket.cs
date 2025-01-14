@@ -69,7 +69,7 @@ public partial class JellyfinClient
 		using var document = JsonDocument.Parse(socketMessage);
 		var type = document.RootElement.GetProperty("MessageType").GetString();
 
-		if (Enum.TryParse<SessionMessageType>(type, out var messageType) && 
+		if (Enum.TryParse<SessionMessageType>(type, out var messageType) &&
 			messageType is not (SessionMessageType.ForceKeepAlive or SessionMessageType.KeepAlive) &&
 			messageType.Parse(socketMessage) is IInboundSocketMessage message)
 		{
@@ -95,7 +95,7 @@ internal static class MessageConverter
 				_ => null
 			};
 		}
-		catch(Exception ex)
+		catch (Exception)
 		{
 			return null;
 		}

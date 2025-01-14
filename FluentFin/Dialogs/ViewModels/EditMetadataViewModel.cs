@@ -75,7 +75,7 @@ public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBa
 	[ObservableProperty]
 	public partial List<KeyValueViewModel> ExternalIds { get; set; } = [];
 
-	public ObservableCollection<string> Genres { get; }	= [];
+	public ObservableCollection<string> Genres { get; } = [];
 
 	public List<string?> StatusValues { get; } = [null, "Ended", "Continuing", "Not yet released"];
 
@@ -88,14 +88,14 @@ public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBa
 
 	public async Task Initialize(BaseItemDto dto)
 	{
-		if(dto.Id is not { } id)
+		if (dto.Id is not { } id)
 		{
 			return;
 		}
 
 		Item = await _jellyfinClient.GetItem(id);
 
-		if(Item is null)
+		if (Item is null)
 		{
 			return;
 		}
@@ -108,7 +108,7 @@ public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBa
 
 		Video3DFormatValues = [null, .. Enum.GetValues<BaseItemDto_Video3DFormat>()];
 
-		if(MetadataEditorInfo is { ExternalIdInfos: not null})
+		if (MetadataEditorInfo is { ExternalIdInfos: not null })
 		{
 			ExternalIds = MetadataEditorInfo.ExternalIdInfos
 				.Where(x => !string.IsNullOrEmpty(x.Name) || !string.IsNullOrEmpty(x.Key))
@@ -147,7 +147,7 @@ public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBa
 	[RelayCommand]
 	public void AddGenre(string genre)
 	{
-		if(Genres.Contains(genre))
+		if (Genres.Contains(genre))
 		{
 			return;
 		}
@@ -185,10 +185,10 @@ public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBa
 	[RelayCommand]
 	public async Task Save()
 	{
-		if(Item is null)
+		if (Item is null)
 		{
 			return;
-		}	
+		}
 
 		Item.Name = Title;
 		Item.OriginalTitle = OriginalTitle;
@@ -206,7 +206,7 @@ public partial class EditMetadataViewModel : ObservableObject, IHandleClose, IBa
 
 		foreach (var item in ExternalIds)
 		{
-			if(Item.ProviderIds?.AdditionalData?.ContainsKey(item.Key) == true)
+			if (Item.ProviderIds?.AdditionalData?.ContainsKey(item.Key) == true)
 			{
 				Item.ProviderIds.AdditionalData[item.Key] = item.Value;
 			}

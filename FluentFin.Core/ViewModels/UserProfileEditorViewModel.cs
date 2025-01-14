@@ -16,7 +16,7 @@ public partial class UserSectionEditorViewModel : ObservableObject, INavigationA
 
 	public Task OnNavigatedTo(object parameter)
 	{
-		if(parameter is not UserDto user)
+		if (parameter is not UserDto user)
 		{
 			return Task.CompletedTask;
 		}
@@ -89,7 +89,7 @@ public partial class UserProfileEditorViewModel(IJellyfinClient jellyfinClient) 
 
 	[ObservableProperty]
 	public partial bool IsDisabled { get; set; }
-	
+
 	[ObservableProperty]
 	public partial bool HideFromLogin { get; set; }
 
@@ -104,7 +104,7 @@ public partial class UserProfileEditorViewModel(IJellyfinClient jellyfinClient) 
 
 	protected override async Task Initialize(UserDto user)
 	{
-		if(user.Policy is not { } policy)
+		if (user.Policy is not { } policy)
 		{
 			return;
 		}
@@ -131,7 +131,7 @@ public partial class UserProfileEditorViewModel(IJellyfinClient jellyfinClient) 
 		HideFromLogin = policy.IsHidden ?? false;
 
 
-		if (folders is { Items.Count: > 0 } && policy.EnableContentDeletionFromFolders is { Count : > 0})
+		if (folders is { Items.Count: > 0 } && policy.EnableContentDeletionFromFolders is { Count: > 0 })
 		{
 			AllowContentDeletionFromFolders = policy.EnableContentDeletionFromFolders.Select(x => folders.Items.First(folder => folder.Id == Guid.Parse(x))).ToList() ?? [];
 		}

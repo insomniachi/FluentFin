@@ -28,7 +28,7 @@ namespace FluentFin.Core.ViewModels
 		{
 			_serverConfiguration = await jellyfinClient.GetConfiguration();
 
-			if(_serverConfiguration is null)
+			if (_serverConfiguration is null)
 			{
 				return;
 			}

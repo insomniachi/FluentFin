@@ -32,7 +32,7 @@ namespace FluentFin.Core.Contracts.Services
 		Task<BaseItemDtoQueryResult?> Search(string searchTerm);
 
 		Task<BaseItemDto?> GetItem(Guid id);
-		
+
 		IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries();
 
 		IAsyncEnumerable<BaseItemDto> GetUserLibraries();
@@ -62,11 +62,11 @@ namespace FluentFin.Core.Contracts.Services
 		Task Logout();
 
 		Task<int> BitrateTest();
-		
+
 		Task<List<RemoteSearchResult>> IdentifySeries(BaseItemDto dto, SeriesInfo info);
-		
+
 		Task<List<RemoteSearchResult>> IdentifyMovie(BaseItemDto dto, MovieInfo info);
-		
+
 		Task ApplyRemoteResult(BaseItemDto dto, RemoteSearchResult remoteResult);
 
 		Task UpdateMetadata(BaseItemDto dto);

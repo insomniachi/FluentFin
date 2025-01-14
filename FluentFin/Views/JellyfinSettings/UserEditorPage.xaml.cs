@@ -11,20 +11,20 @@ namespace FluentFin.Views;
 
 public sealed partial class UserEditorPage : Page
 {
-    private readonly INavigationService _navigationService = App.GetKeyedService<INavigationService>(NavigationRegions.UserEditor);
+	private readonly INavigationService _navigationService = App.GetKeyedService<INavigationService>(NavigationRegions.UserEditor);
 	public UserEditorViewModel ViewModel { get; } = App.GetService<UserEditorViewModel>();
 
 	public UserEditorPage()
-    {
-        InitializeComponent();
+	{
+		InitializeComponent();
 
 		_navigationService.Frame = NavFrame;
 		_navigationService.Navigated += NavigationService_Navigated;
-    }
+	}
 
 	public static bool IsSelected(UserSectionEditorViewModel vm, UserEditorSection section)
 	{
-		if(vm is null)
+		if (vm is null)
 		{
 			return false;
 		}
@@ -56,15 +56,15 @@ public sealed partial class UserEditorPage : Page
 
 	private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
 	{
-        if(ViewModel is null)
-        {
-            return;
-        }
+		if (ViewModel is null)
+		{
+			return;
+		}
 
 
-        if(sender.SelectedItem.Tag is UserEditorSection section)
-        {
-            ViewModel.Section = section;
-        }
-    }
+		if (sender.SelectedItem.Tag is UserEditorSection section)
+		{
+			ViewModel.Section = section;
+		}
+	}
 }

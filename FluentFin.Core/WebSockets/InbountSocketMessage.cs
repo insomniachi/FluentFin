@@ -7,7 +7,7 @@ public abstract class WebSocketMessage
 {
 	[JsonConverter(typeof(JsonStringEnumConverter<SessionMessageType>))]
 	public abstract SessionMessageType MessageType { get; }
-	
+
 	public string? ServerId { get; set; }
 }
 

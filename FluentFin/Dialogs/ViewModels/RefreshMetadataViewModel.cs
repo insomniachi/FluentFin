@@ -31,7 +31,7 @@ public partial class RefreshMetadataViewModel(IJellyfinClient jellyfinClient) : 
 	[RelayCommand]
 	private async Task Refresh()
 	{
-		if(Item is null)
+		if (Item is null)
 		{
 			return;
 		}

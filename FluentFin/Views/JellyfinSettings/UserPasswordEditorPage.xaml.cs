@@ -6,15 +6,15 @@ namespace FluentFin.Views;
 public sealed partial class UserPasswordEditorPage : Page
 {
 	public UserPasswordEditorViewModel ViewModel { get; } = App.GetService<UserPasswordEditorViewModel>();
-    
-    public UserPasswordEditorPage()
-    {
-        InitializeComponent();
-    }
+
+	public UserPasswordEditorPage()
+	{
+		InitializeComponent();
+	}
 
 	private async void ChangePasswordClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		if(ConfirmPassword.Password != NewPassword.Password)
+		if (ConfirmPassword.Password != NewPassword.Password)
 		{
 			var dialog = new ContentDialog
 			{
@@ -30,7 +30,7 @@ public sealed partial class UserPasswordEditorPage : Page
 			return;
 		}
 
-        await ViewModel.ChangePassword(CurrentPassword.Password, NewPassword.Password);
+		await ViewModel.ChangePassword(CurrentPassword.Password, NewPassword.Password);
 	}
 
 	private async void ResetPasswordClicked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

@@ -42,7 +42,7 @@ public partial class JellyfinClient
 			var sessionId = playbackInfo.PlaySessionId;
 			var mediaSource = playbackInfo.MediaSources.FirstOrDefault(x => x.Id == id.ToString("N"));
 
-			if(mediaSource is null)
+			if (mediaSource is null)
 			{
 				return null;
 			}
@@ -80,7 +80,7 @@ public partial class JellyfinClient
 			return null;
 		}
 
-		if(dto.ImageTags is null)
+		if (dto.ImageTags is null)
 		{
 			return null;
 		}
@@ -126,7 +126,7 @@ public partial class JellyfinClient
 				tag = $"{dto.SeriesPrimaryImageTag}";
 			}
 		}
-		else if(type == ImageType.Logo && dto.Type == BaseItemDto_Type.Episode)
+		else if (type == ImageType.Logo && dto.Type == BaseItemDto_Type.Episode)
 		{
 			if (!string.IsNullOrEmpty(dto.SeriesPrimaryImageTag) && dto.SeriesId is { } seriesId)
 			{

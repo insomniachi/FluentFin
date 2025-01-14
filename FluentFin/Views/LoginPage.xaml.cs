@@ -1,5 +1,4 @@
 using FluentFin.Core.Settings;
-using FluentFin.Helpers;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
@@ -28,19 +27,19 @@ public sealed partial class LoginPage
 
 	private void InputFieldKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 	{
-		if(e.Key == Windows.System.VirtualKey.Enter)
+		if (e.Key == Windows.System.VirtualKey.Enter)
 		{
 			ViewModel.LoginCommand.Execute(null);
 		}
-    }
+	}
 
 	private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
 	{
-		if(args.SelectedItem is not SavedUser user)
+		if (args.SelectedItem is not SavedUser user)
 		{
 			return;
 		}
 
 		PasswordBox.Password = ViewModel.Unprotect(user.Password);
-    }
+	}
 }

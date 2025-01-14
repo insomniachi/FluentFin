@@ -1,6 +1,5 @@
 using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 
@@ -10,10 +9,10 @@ public sealed partial class MoviePage : Page
 {
 	public MovieViewModel ViewModel { get; } = App.GetService<MovieViewModel>();
 
-    public MoviePage()
-    {
-        InitializeComponent();
-    }
+	public MoviePage()
+	{
+		InitializeComponent();
+	}
 
 	public static string? GetVideoTitle(BaseItemDto? dto) => dto?.MediaStreams?.FirstOrDefault(x => x.Type == MediaStream_Type.Video)?.DisplayTitle;
 

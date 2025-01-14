@@ -8,7 +8,7 @@ public partial class StringJoinConverter : IValueConverter
 
 	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
-		if(value is not IEnumerable<object> enumerable)
+		if (value is not IEnumerable<object> enumerable)
 		{
 			return null;
 		}

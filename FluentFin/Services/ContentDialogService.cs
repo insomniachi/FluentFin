@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using ReactiveUI;
 using System.Reactive.Linq;
-using System.Threading;
 
 namespace FluentFin.Services;
 
@@ -53,7 +52,7 @@ public class ContentDialogService : IContentDialogService
 			DefaultButton = ContentDialogButton.Primary
 		};
 
-		if(timeout is not null)
+		if (timeout is not null)
 		{
 			Observable.Timer(timeout.Value).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => dialog.Hide());
 		}

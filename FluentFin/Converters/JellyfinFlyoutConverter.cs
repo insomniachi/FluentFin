@@ -9,12 +9,12 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 {
 	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
-		if(value is not BaseItemDto dto)
+		if (value is not BaseItemDto dto)
 		{
 			return null;
 		}
 
-		if(dto.Type is not { } type)
+		if (dto.Type is not { } type)
 		{
 			return null;
 		}
@@ -84,7 +84,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 		}
 
-		if(type is not BaseItemDto_Type.CollectionFolder)
+		if (type is not BaseItemDto_Type.CollectionFolder)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -95,7 +95,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 		}
 
-		if(type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
+		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -117,7 +117,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 
 	private static IEnumerable<MenuFlyoutItemBase> GetPlayItems(BaseItemDto dto, BaseItemDto_Type type)
 	{
-		if(type is BaseItemDto_Type.Movie or BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.Episode)
+		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.Episode)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -128,7 +128,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 		}
 
-		if(type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
+		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -137,7 +137,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 		}
 
-		if(type is BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.CollectionFolder)
+		if (type is BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.CollectionFolder)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -167,7 +167,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 		}
 
-		if(type is BaseItemDto_Type.Movie)
+		if (type is BaseItemDto_Type.Movie)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -176,7 +176,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Command = App.Dialogs.CopyUrlToClipboardCommand,
 				CommandParameter = dto,
 			};
-			
+
 			yield return new MenuFlyoutItem
 			{
 				Text = "Delete Media",
@@ -184,7 +184,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 		}
 
-		if(type is BaseItemDto_Type.Series or BaseItemDto_Type.Season)
+		if (type is BaseItemDto_Type.Series or BaseItemDto_Type.Season)
 		{
 			yield return new MenuFlyoutItem
 			{

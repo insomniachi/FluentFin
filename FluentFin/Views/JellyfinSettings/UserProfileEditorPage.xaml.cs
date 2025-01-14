@@ -5,10 +5,10 @@ namespace FluentFin.Views;
 
 public sealed partial class UserProfileEditorPage : Page
 {
-    public UserProfileEditorViewModel ViewModel { get; } = App.GetService<UserProfileEditorViewModel>();
-    
-    public UserProfileEditorPage()
-    {
-        InitializeComponent();
-    }
+	public UserProfileEditorViewModel ViewModel { get; } = App.GetService<UserProfileEditorViewModel>();
+
+	public UserProfileEditorPage()
+	{
+		InitializeComponent();
+	}
 }

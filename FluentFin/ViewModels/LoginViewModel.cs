@@ -8,7 +8,6 @@ using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using FluentFin.Services;
-using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
@@ -26,7 +25,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 	private CompositeDisposable? _disposable;
 
 	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
-						  [FromKeyedServices(NavigationRegions.InitialSetup)]INavigationService navigationService,
+						  [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
 						  ILocalSettingsService settingsService,
 						  IContentDialogService contentDialogService)
 	{
@@ -62,14 +61,14 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 	[RelayCommand(CanExecute = nameof(CanLogin))]
 	public async Task Login()
 	{
-		if(Server is null)
+		if (Server is null)
 		{
 			return;
 		}
 
 		var success = await _jellyfinAuthenticator.Authenticate(Server, Username, Password, KeepMeLoggedIn);
 
-		if(!success)
+		if (!success)
 		{
 			// message ?
 		}
@@ -78,21 +77,21 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 	[RelayCommand]
 	private async Task QuickConnect()
 	{
-		if(Server is null)
+		if (Server is null)
 		{
 			return;
 		}
 
 		var response = await _jellyfinAuthenticator.GetQuickConnectCode(Server);
 
-		if(response is null)
+		if (response is null)
 		{
 			return;
 		}
 
 		_disposable = new();
 
-		
+
 		var dialog = new ContentDialog
 		{
 			XamlRoot = App.MainWindow.Content.XamlRoot,
@@ -110,7 +109,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(result =>
 			{
-				if(result.Authenticated == true)
+				if (result.Authenticated == true)
 				{
 					_disposable?.Dispose();
 					dialog.Hide();
@@ -133,7 +132,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 
 	public Task OnNavigatedTo(object parameter)
 	{
-		if(parameter is not SavedServer server)
+		if (parameter is not SavedServer server)
 		{
 			return Task.CompletedTask;
 		}

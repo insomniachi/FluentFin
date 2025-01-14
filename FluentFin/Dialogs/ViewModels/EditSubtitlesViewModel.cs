@@ -45,7 +45,7 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 	[RelayCommand]
 	public async Task SearchSubtitles()
 	{
-		if(Item is null || SelectedCulture is null)
+		if (Item is null || SelectedCulture is null)
 		{
 			return;
 		}
@@ -56,7 +56,7 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 	[RelayCommand]
 	public async Task DownloadSubtitle(RemoteSubtitleInfo info)
 	{
-		if(Item is null)
+		if (Item is null)
 		{
 			return;
 		}
@@ -72,7 +72,7 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 			return;
 		}
 
-		if(info.IsExternal == false)
+		if (info.IsExternal == false)
 		{
 			return;
 		}

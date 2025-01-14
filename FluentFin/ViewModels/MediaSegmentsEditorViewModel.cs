@@ -28,11 +28,11 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if(parameter is not BaseItemDto dto)
+		if (parameter is not BaseItemDto dto)
 		{
 			return;
 		}
-		
+
 		MediaPlayer.PropertyChanged += MediaPlayer_PropertyChanged;
 
 
@@ -52,7 +52,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
 
-		if(dto.Type == BaseItemDto_Type.Episode)
+		if (dto.Type == BaseItemDto_Type.Episode)
 		{
 			Playlist.SelectedItem = Playlist.Items.FirstOrDefault(x => x.Dto.IndexNumber == dto.IndexNumber && x.Dto.ParentIndexNumber == dto.ParentIndexNumber);
 		}
@@ -116,7 +116,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 			if (PlayingSegment is { } segment && CurrentTimeTicks > segment.EndTicks)
 			{
 				MediaPlayer.Pause();
-				PlayingSegment = null; 
+				PlayingSegment = null;
 			}
 		}
 	}
@@ -132,7 +132,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 	{
 		Segments.Remove(vm);
 
-		if(vm.Id is { } id)
+		if (vm.Id is { } id)
 		{
 			await jellyfinClient.DeleteMediaSegment(id);
 		}
@@ -141,7 +141,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 	[RelayCommand]
 	private async Task SubmitSegment(MediaSegmentViewModel vm)
 	{
-		if(vm.Id is { } id)
+		if (vm.Id is { } id)
 		{
 			await jellyfinClient.DeleteMediaSegment(id);
 		}

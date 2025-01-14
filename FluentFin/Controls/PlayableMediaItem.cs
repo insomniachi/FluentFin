@@ -48,7 +48,7 @@ public sealed partial class PlayableMediaItem : Control
 
 	private void PlayableMediaItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
 	{
-		if(e.OriginalSource is not (Grid or Image))
+		if (e.OriginalSource is not (Grid or Image))
 		{
 			return;
 		}
@@ -79,7 +79,7 @@ public sealed partial class PlayableMediaItem : Control
 	{
 		var response = await _jellyfinClient.ToggleMarkAsWatched(Model);
 
-		if(response is null)
+		if (response is null)
 		{
 			return;
 		}

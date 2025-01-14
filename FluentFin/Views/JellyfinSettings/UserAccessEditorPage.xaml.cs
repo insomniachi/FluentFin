@@ -6,9 +6,9 @@ namespace FluentFin.Views;
 public sealed partial class UserAccessEditorPage : Page
 {
 	public UserAccessEditorViewModel ViewModel { get; } = App.GetService<UserAccessEditorViewModel>();
-    
-    public UserAccessEditorPage()
-    {
-        InitializeComponent();
-    }
+
+	public UserAccessEditorPage()
+	{
+		InitializeComponent();
+	}
 }

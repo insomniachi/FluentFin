@@ -120,7 +120,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 
 		var result = await _jellyfinClient.GetItems(libraryDto);
 
-		if(result is null or { Items : null })
+		if (result is null or { Items: null })
 		{
 			return;
 		}
@@ -130,7 +130,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 
 		var filters = await _jellyfinClient.GetFilters(libraryDto);
 
-		if(filters is null)
+		if (filters is null)
 		{
 			return;
 		}
@@ -179,7 +179,7 @@ public partial class LibraryFilter : ObservableObject
 		bool hasMatchingOfficialRatings = true;
 		bool hasMatchingYears = true;
 
-		if(Tags is { Count : > 0})
+		if (Tags is { Count: > 0 })
 		{
 			hasMatchingTags = dto.Tags?.Intersect(Tags).Count() == Tags.Count;
 		}
@@ -189,12 +189,12 @@ public partial class LibraryFilter : ObservableObject
 			hasMatchingGenres = dto.Genres?.Intersect(Genres).Count() == Genres.Count;
 		}
 
-		if (OfficialRatings is { Count : > 0})
+		if (OfficialRatings is { Count: > 0 })
 		{
 			hasMatchingOfficialRatings = OfficialRatings.Contains(dto.OfficialRating ?? "");
 		}
 
-		if (dto.ProductionYear is > 0 && Years is { Count : > 0})
+		if (dto.ProductionYear is > 0 && Years is { Count: > 0 })
 		{
 			hasMatchingYears = Years.Contains(dto.ProductionYear.Value.ToString());
 		}

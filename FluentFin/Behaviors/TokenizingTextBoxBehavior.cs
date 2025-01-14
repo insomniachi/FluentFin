@@ -18,7 +18,7 @@ public class TokenizingTextBoxBehavior : Behavior<TokenizingTextBox>
 
 	private static void OnSuggestionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
-		if(e.NewValue is not IEnumerable<string> s)
+		if (e.NewValue is not IEnumerable<string> s)
 		{
 			return;
 		}
@@ -44,7 +44,7 @@ public class TokenizingTextBoxBehavior : Behavior<TokenizingTextBox>
 	{
 		var text = sender.Text;
 
-		if(string.IsNullOrEmpty(text))
+		if (string.IsNullOrEmpty(text))
 		{
 			AssociatedObject.SuggestedItemsSource = Suggestions;
 			return;

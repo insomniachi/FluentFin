@@ -11,7 +11,7 @@ public partial class JellyfinTitleConverter : IValueConverter
 			return "";
 		}
 
-		if(bid.Type == BaseItemDto_Type.Episode)
+		if (bid.Type == BaseItemDto_Type.Episode)
 		{
 			return bid.SeriesName ?? "";
 		}
@@ -42,7 +42,7 @@ public partial class JellyfinSubtitleConverter : IValueConverter
 		{
 			return $"{bid.ProductionYear}";
 		}
-		if(bid.Type == BaseItemDto_Type.Series)
+		if (bid.Type == BaseItemDto_Type.Series)
 		{
 			return $"{bid.ProductionYear} - {(string.Equals(bid.Status, "Continuing", StringComparison.OrdinalIgnoreCase) ? "Present" : bid.EndDate?.Year)}";
 		}

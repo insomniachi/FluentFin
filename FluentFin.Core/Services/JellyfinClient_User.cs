@@ -191,7 +191,7 @@ public partial class JellyfinClient
 
 	public async Task DeleteUser(UserDto user)
 	{
-		if(user.Id is not { } id)
+		if (user.Id is not { } id)
 		{
 			return;
 		}

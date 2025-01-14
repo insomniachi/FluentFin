@@ -69,7 +69,7 @@ public partial class IdentifyViewModel : ObservableObject, IBaseItemDialogViewMo
 
 		foreach (var item in externalIds)
 		{
-			if(string.IsNullOrEmpty(item.Key) || string.IsNullOrEmpty(item.Name))
+			if (string.IsNullOrEmpty(item.Key) || string.IsNullOrEmpty(item.Name))
 			{
 				continue;
 			}
@@ -81,11 +81,11 @@ public partial class IdentifyViewModel : ObservableObject, IBaseItemDialogViewMo
 	[RelayCommand]
 	public async Task PrimaryButtonExecute()
 	{
-		if(ViewState == IdentifyViewModelState.Input)
+		if (ViewState == IdentifyViewModelState.Input)
 		{
 			await Search();
 		}
-		else if(ViewState == IdentifyViewModelState.Result)
+		else if (ViewState == IdentifyViewModelState.Result)
 		{
 			await Submit();
 		}
@@ -96,7 +96,7 @@ public partial class IdentifyViewModel : ObservableObject, IBaseItemDialogViewMo
 
 	private async Task Submit()
 	{
-		if(SelectedResult is null)
+		if (SelectedResult is null)
 		{
 			return;
 		}

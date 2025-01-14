@@ -52,7 +52,7 @@ public partial class PlaybackTrickplayViewModel(IJellyfinClient jellyfinClient) 
 	{
 		_serverConfiguration = await jellyfinClient.GetConfiguration();
 
-		if(_serverConfiguration?.TrickplayOptions is not { } trickplay)
+		if (_serverConfiguration?.TrickplayOptions is not { } trickplay)
 		{
 			return;
 		}
@@ -75,7 +75,7 @@ public partial class PlaybackTrickplayViewModel(IJellyfinClient jellyfinClient) 
 	[RelayCommand]
 	private async Task Save()
 	{
-		if(_serverConfiguration?.TrickplayOptions is not { } trickplay)
+		if (_serverConfiguration?.TrickplayOptions is not { } trickplay)
 		{
 			return;
 		}

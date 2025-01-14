@@ -93,7 +93,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 	{
 		var success = await Authenticate(server.GetServerUrl(), user.Username, user.Password.Unprotect(settingsService.GetEntropyBytes()));
 
-		if(success)
+		if (success)
 		{
 			titleBarViewModel.CurrentServer = server;
 		}
@@ -105,7 +105,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 	{
 		var success = await Authenticate(server.GetServerUrl(), username, password);
 
-		if(success)
+		if (success)
 		{
 			titleBarViewModel.CurrentServer = server;
 

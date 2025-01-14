@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 
 namespace FluentFin.Helpers
 {

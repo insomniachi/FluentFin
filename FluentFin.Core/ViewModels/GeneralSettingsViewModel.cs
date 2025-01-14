@@ -56,7 +56,7 @@ public partial class GeneralSettingsViewModel(IJellyfinClient jellyfinClient) : 
 
 	private void ListenForChanges()
 	{
-		if(_configuration is null)
+		if (_configuration is null)
 		{
 			return;
 		}

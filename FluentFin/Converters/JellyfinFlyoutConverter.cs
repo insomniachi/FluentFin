@@ -62,7 +62,18 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			CommandParameter = dto
 		};
 
-		if(type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
+		if (SessionInfo.CanEditMediaSegments())
+		{
+			yield return new MenuFlyoutItem
+			{
+				Text = "Edit Segments",
+				Icon = new FontIcon { Glyph = "\uE7A8" },
+				Command = App.Commands.NavigateToSegmentsEditorCommand,
+				CommandParameter = dto
+			};
+		}
+
+		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{
 			yield return new MenuFlyoutItem
 			{
@@ -71,17 +82,6 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Command = App.Dialogs.EditSubtitlesDialogCommand,
 				CommandParameter = dto
 			};
-
-			if(SessionInfo.CanEditMediaSegments())
-			{
-				yield return new MenuFlyoutItem
-				{
-					Text = "Edit Segments",
-					Icon = new FontIcon { Glyph = "\uE7A8" },
-					Command = App.Commands.NavigateToSegmentsEditorCommand,
-					CommandParameter = dto
-				};
-			}
 		}
 
 		if(type is not BaseItemDto_Type.CollectionFolder)

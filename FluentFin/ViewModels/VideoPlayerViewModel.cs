@@ -36,8 +36,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		TrickplayViewModel = trickplayViewModel;
 
-		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
-
 		this.WhenAnyValue(x => x.Position)
 			.Where(_ => MediaPlayer.Status == Status.Playing)
 			.Select(x => x.Ticks)
@@ -142,7 +140,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial bool IsSkipButtonVisible { get; set; }
 
-	public PlaylistViewModel Playlist { get;  } = new PlaylistViewModel();
+	[ObservableProperty]
+	public partial PlaylistViewModel Playlist { get; set; } = new PlaylistViewModel();
 
 	public PlaybackProgressInfo_PlayMethod PlayMethod { get; private set; }
 
@@ -175,19 +174,21 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		
 		Dto = await _jellyfinClient.GetItem(id);
 
-		var success = dto.Type switch
+		Playlist = dto.Type switch
 		{
-			BaseItemDto_Type.Movie  => await CreateSingleItemPlaylist(dto),
-			BaseItemDto_Type.Episode => await CreateSeasonPlaylistFromEpisode(dto),
-			BaseItemDto_Type.Series => await CreateSeriesPlaylist(dto),
-			BaseItemDto_Type.Season => await CreateSeasonPlaylist(dto),
-			_ => false
+			BaseItemDto_Type.Movie  => PlaylistViewModel.FromMovie(dto),
+			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(_jellyfinClient, dto),
+			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(_jellyfinClient, dto),
+			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(_jellyfinClient, dto),
+			_ => new PlaylistViewModel()
 		};
 
-		if(!success)
+		if(Playlist.Items.Count == 0)
 		{
 			return;
 		}
+
+		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
 
 		await TrickplayViewModel.Initialize();
 

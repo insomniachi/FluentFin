@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
+using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -77,6 +80,97 @@ public partial class PlaylistViewModel : ObservableObject
 	public void SelectPrev()
 	{
 		RxApp.MainThreadScheduler.Schedule(() => SelectedItem = Items.First(x => x.Dto.IndexNumber < SelectedItem?.Dto.IndexNumber));
+	}
+
+	public static PlaylistViewModel FromMovie(BaseItemDto dto)
+	{
+		return new PlaylistViewModel
+		{
+			Items =
+			{
+				new PlaylistItem
+				{
+					Title = dto.Name ?? "",
+					Dto = dto
+				}
+			}
+		};
+	}
+
+	public static async Task<PlaylistViewModel> FromSeries(IJellyfinClient jellyfinClient, BaseItemDto series)
+	{
+		var playlist = new PlaylistViewModel();
+
+		var seasons = await jellyfinClient.GetItems(series);
+
+		if (seasons is null or { Items: null })
+		{
+			return playlist;
+		}
+
+		foreach (var season in seasons.Items)
+		{
+			await FromSeason(jellyfinClient, season, playlist);
+		}
+
+		return playlist;
+	}
+
+	public static async Task<PlaylistViewModel> FromEpisode(IJellyfinClient jellyfinClient, BaseItemDto episode)
+	{
+		var playlist = new PlaylistViewModel();
+
+		if (episode.SeriesId is not { } seriesId)
+		{
+			return playlist;
+		}
+
+		var series = await jellyfinClient.GetItem(seriesId);
+
+		if (series is null)
+		{
+			return playlist;
+		}
+
+		return await FromSeries(jellyfinClient, series);
+	}
+
+	public static async Task<PlaylistViewModel> FromSeason(IJellyfinClient jellyfinClient, BaseItemDto season)
+	{
+		var playlist = new PlaylistViewModel();
+
+		if (season.SeriesId is not { } seriesId)
+		{
+			return playlist;
+		}
+
+		var series = await jellyfinClient.GetItem(seriesId);
+
+		if (series is null)
+		{
+			return playlist;
+		}
+
+		return await FromSeries(jellyfinClient, series);
+	}
+
+	public static async Task FromSeason(IJellyfinClient jellyfinClient, BaseItemDto season, PlaylistViewModel playlist)
+	{
+		var episodes = await jellyfinClient.GetItems(season);
+
+		if (episodes is null or { Items : null })
+		{
+			return;
+		}
+
+		foreach (var episode in episodes.Items)
+		{
+			playlist.Items.Add(new PlaylistItem
+			{
+				Title = episode.Name ?? "",
+				Dto = episode
+			});
+		}
 	}
 }
 

@@ -11,19 +11,10 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:lc="using:FluentFin.Controls"
-    xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <c:JellyfinImageConverter x:Key="PrimaryImageConverter" />
-        <c:JellyfinTitleConverter x:Key="NameConverter" />
-        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
-        <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter" />
-        <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter" />
-    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -139,8 +130,8 @@
             <ItemsRepeater ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="jm:BaseItemDto">
-                        <ItemContainer Style="{StaticResource BareItemContainerStyle}">
-                            <lc:PlayableMediaItem ImageSource="{x:Bind Converter={StaticResource PrimaryImageConverter}}" Model="{x:Bind}" />
+                        <ItemContainer CornerRadius="{StaticResource ControlCornerRadius}" Style="{StaticResource BareItemContainerStyle}">
+                            <lc:PlayableMediaItem ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 352)}" Model="{x:Bind}" />
                         </ItemContainer>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>

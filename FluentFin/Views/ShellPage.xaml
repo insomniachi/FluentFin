@@ -16,6 +16,7 @@
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="False"
         IsSettingsVisible="True"
+        PaneDisplayMode="LeftCompact"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
         <NavigationView.MenuItems>
             <NavigationViewItem

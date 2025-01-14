@@ -48,12 +48,6 @@
             <GradientStop Offset="1" Color="Black" />
         </LinearGradientBrush>
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
-        <c:JellyfinImageConverter
-            x:Key="ImageConverter"
-            ImageHeight="100"
-            TypeRequest="Thumb" />
-        <c:JellyfinImageConverter x:Key="LogoConverter" TypeRequest="Logo" />
-        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -125,7 +119,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Image Height="100" Source="{x:Bind Playlist.SelectedItem.Dto, Mode=OneWay, Converter={StaticResource LogoConverter}}" />
+                <Image Height="100" Source="{x:Bind c:BaseItemDtoConverters.GetImage(Playlist.SelectedItem.Dto, jm:ImageType.Logo, 100), Mode=OneWay}" />
                 <TextBlock
                     x:Name="TxtTitleTime"
                     Grid.Row="1"
@@ -337,11 +331,11 @@
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <local:LoadingImage Height="50" Source="{x:Bind Dto, Converter={StaticResource ImageConverter}}" />
+                                                <local:LoadingImage Height="50" Source="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Thumb, 50)}" />
 
                                                 <StackPanel Grid.Column="1">
-                                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Dto.Name}" />
-                                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Dto, Converter={StaticResource SubtitleConverter}}" />
+                                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind c:BaseItemDtoConverters.GetSeasonAndEpisodeNumber(Dto)}" />
+                                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Dto.Name}" />
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>

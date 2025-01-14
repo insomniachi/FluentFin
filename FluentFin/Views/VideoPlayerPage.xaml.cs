@@ -35,8 +35,6 @@ public sealed partial class VideoPlayerPage : Page
 				});
 			});
 
-		TransportControls.DispatcherQueue.TryEnqueue(() => TransportControls.Playlist = ViewModel.Playlist);
-
 		TransportControls!.FullWindowButton.Click += (sender, e) => OnPlayerDoubleTapped(sender, null!);
 	}
 

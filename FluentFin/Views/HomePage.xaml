@@ -16,16 +16,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <c:JellyfinImageConverter
-            x:Key="ThumbnailConverter"
-            ImageHeight="200"
-            TypeRequest="Thumb" />
-        <c:JellyfinImageConverter x:Key="PrimaryImageConverter" />
-        <c:JellyfinTitleConverter x:Key="NameConverter" />
-        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
-        <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter" />
-        <c:NullableIntToValueOrDefaultConverter x:Key="NullableIntToValueOrDefaultConverter" />
-        <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter" />
         <cc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
@@ -48,7 +38,7 @@
                                 <lc:PlayableMediaItem
                                     Width="390"
                                     Height="240"
-                                    ImageSource="{x:Bind Converter={StaticResource ThumbnailConverter}}"
+                                    ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Thumb, 192)}"
                                     Model="{x:Bind}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -76,7 +66,7 @@
                                 <lc:PlayableMediaItem
                                     Width="390"
                                     Height="240"
-                                    ImageSource="{x:Bind Converter={StaticResource ThumbnailConverter}}"
+                                    ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Thumb, 192)}"
                                     Model="{x:Bind}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -107,7 +97,7 @@
                                                 <lc:PlayableMediaItem
                                                     Width="240"
                                                     Height="350"
-                                                    ImageSource="{x:Bind Converter={StaticResource PrimaryImageConverter}}"
+                                                    ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
                                                     Model="{x:Bind}" />
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

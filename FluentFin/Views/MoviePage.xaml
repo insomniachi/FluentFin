@@ -19,17 +19,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <c:JellyfinImageConverter
-            x:Key="BackdropImageConverter"
-            ImageHeight="560"
-            TypeRequest="Backdrop" />
-        <c:JellyfinImageConverter x:Key="PrimaryImageConverter" ImageHeight="800" />
-        <c:JellyfinImageConverter x:Key="DefaultPrimaryImageConverter" />
-        <c:JellyfinPersonImageConverter x:Key="PersonImageConverter" />
-        <c:JellyfinImageConverter
-            x:Key="LogoImageConverter"
-            ImageHeight="200"
-            TypeRequest="Logo" />
         <c:JellyfinFlyoutConverter x:Key="FlyoutConverter" />
         <cc:StringVisibilityConverter x:Key="StringVisibilityConverter" />
         <cc:EmptyObjectToObjectConverter
@@ -69,7 +58,7 @@
             <Grid>
                 <Image
                     x:Name="BackdropImage"
-                    Source="{x:Bind ViewModel.Dto, Converter={StaticResource BackdropImageConverter}, Mode=OneWay}"
+                    Source="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Backdrop, 1000), Mode=OneWay}"
                     Stretch="UniformToFill" />
                 <media:UIElementExtensions.VisualFactory>
                     <media:PipelineVisualFactory>
@@ -107,7 +96,7 @@
             Margin="0,0,36,0">
             <Image
                 Height="200"
-                Source="{x:Bind ViewModel.Dto, Converter={StaticResource LogoImageConverter}, Mode=OneWay}"
+                Source="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Logo, 200), Mode=OneWay}"
                 Stretch="Uniform" />
         </Grid>
 
@@ -188,7 +177,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             CornerRadius="15">
-            <Image Source="{x:Bind ViewModel.Dto, Converter={StaticResource PrimaryImageConverter}, Mode=OneWay}" Stretch="Uniform" />
+            <Image Source="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}" Stretch="Uniform" />
         </Grid>
 
         <ScrollViewer
@@ -377,7 +366,7 @@
 
                                         <controls:LoadingImage
                                             Glyph="&#xE77B;"
-                                            Source="{x:Bind Converter={StaticResource PersonImageConverter}}"
+                                            Source="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemPerson), 300)}"
                                             Stretch="UniformToFill" />
 
                                         <StackPanel
@@ -418,7 +407,7 @@
                                 <DataTemplate x:DataType="jm:BaseItemDto">
                                     <controls:PlayableMediaItem
                                         Width="200"
-                                        ImageSource="{x:Bind Converter={StaticResource DefaultPrimaryImageConverter}}"
+                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 300)}"
                                         Model="{x:Bind}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>

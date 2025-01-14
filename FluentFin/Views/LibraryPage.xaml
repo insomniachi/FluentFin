@@ -141,7 +141,7 @@
                         ItemsStretch="Fill"
                         MinColumnSpacing="20"
                         MinItemHeight="390"
-                        MinItemWidth="240"
+                        MinItemWidth="220"
                         MinRowSpacing="20"
                         Orientation="Horizontal" />
                 </ItemsRepeater.Layout>

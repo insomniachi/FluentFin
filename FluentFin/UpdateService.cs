@@ -1,4 +1,5 @@
 ﻿using FluentFin.Core;
+using FluentFin.Services;
 using Flurl.Http;
 using Microsoft.Extensions.Hosting;
 using ReactiveUI;
@@ -11,7 +12,8 @@ using System.Text.Json.Nodes;
 namespace FluentFin;
 
 #nullable disable
-public class WindowsUpdateService(KnownFolders knownFolders) : IHostedService
+public class WindowsUpdateService(KnownFolders knownFolders,
+								  IContentDialogService contentDialogService) : IHostedService
 {
 	private VersionInfo _current;
 	private CancellationTokenSource _cts;
@@ -94,8 +96,15 @@ public class WindowsUpdateService(KnownFolders knownFolders) : IHostedService
 		return versionInfo;
 	}
 
-	public static void InstallUpdate(VersionInfo versionInfo)
+	public async void InstallUpdate(VersionInfo versionInfo)
 	{
+		var canUpdate = await contentDialogService.QuestionYesNo($"New version {versionInfo.Version}", "Install update now?");
+		
+		if(!canUpdate)
+		{
+			return;
+		}
+
 		Process.Start(new ProcessStartInfo
 		{
 			FileName = $"{versionInfo.FilePath}",

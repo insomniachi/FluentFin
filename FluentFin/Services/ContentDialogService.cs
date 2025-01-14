@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using ReactiveUI;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace FluentFin.Services;
 
@@ -13,6 +14,7 @@ public interface IContentDialogService
 	Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure, Action<TViewModel> configureVm) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TView, TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TView : ContentDialog, IViewFor, new();
 	Task ShowMessage(string title, string message, TimeSpan? timeout);
+	Task<bool> QuestionYesNo(string title, string message);
 }
 
 public class ContentDialogService : IContentDialogService
@@ -22,6 +24,22 @@ public class ContentDialogService : IContentDialogService
 	{
 		var vm = App.GetService<TViewModel>();
 		return await ShowDialog(vm, configure);
+	}
+
+	public async Task<bool> QuestionYesNo(string title, string message)
+	{
+		var dialog = new ContentDialog
+		{
+			XamlRoot = App.MainWindow.Content.XamlRoot,
+			Title = title,
+			Content = message,
+			PrimaryButtonText = "Yes",
+			SecondaryButtonText = "Cancel",
+			DefaultButton = ContentDialogButton.Primary
+		};
+
+		var result = await dialog.ShowAsync();
+		return result == ContentDialogResult.Primary;
 	}
 
 	public async Task ShowMessage(string title, string message, TimeSpan? timeout = null)

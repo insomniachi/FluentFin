@@ -44,7 +44,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <controls:LoadingImage Glyph="&#xEA8C;" Source="{x:Bind Converter={StaticResource ImageConverter}}" />
+                            <controls:LoadingImage Glyph="&#xEA8C;" Source="{x:Bind c:BaseItemDtoConverters.GetImage((jm:VirtualFolderInfo))}" />
 
                             <Grid
                                 Grid.Row="1"

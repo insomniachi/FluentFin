@@ -8,11 +8,8 @@ namespace FluentFin.Converters;
 
 public partial class JellyfinImageConverter : IValueConverter
 {
-	private static IJellyfinClient _jellyfinClient = App.GetService<IJellyfinClient>();
-
 	public ImageType TypeRequest { get; set; } = ImageType.Primary;
 	public double ImageHeight { get; set; } = 300;
-
 
 	public object? Convert(object value, Type targetType, object parameter, string language)
 	{
@@ -20,14 +17,8 @@ public partial class JellyfinImageConverter : IValueConverter
 		{
 			return null;
 		}
-		var uri = _jellyfinClient.GetImage(dto, TypeRequest, ImageHeight);
 
-		if(uri is null)
-		{
-			return null;
-		}
-
-		return new BitmapImage(uri);
+		return BaseItemDtoConverters.GetImage(dto, TypeRequest, ImageHeight);
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -64,7 +55,6 @@ public partial class JellyfinVirtualFolderImageConverter : IValueConverter
 
 public partial class JellyfinPersonImageConverter : IValueConverter
 {
-	private static IJellyfinClient _jellyfinClient = App.GetService<IJellyfinClient>();
 	public double ImageHeight { get; set; } = 300;
 
 	public object? Convert(object value, Type targetType, object parameter, string language)
@@ -74,7 +64,7 @@ public partial class JellyfinPersonImageConverter : IValueConverter
 			return null;
 		}
 
-		return new BitmapImage(_jellyfinClient.BaseUrl.AppendPathSegment($"/Items/{dto.Id}/Images/Primary").SetQueryParam("fillHeight", ImageHeight).ToUri());
+		return BaseItemDtoConverters.GetImage(dto, ImageHeight);
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, string language)

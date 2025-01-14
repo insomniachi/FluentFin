@@ -24,9 +24,6 @@ public partial class ShellViewModel : ObservableObject
     {
         IsBackEnabled = NavigationService.CanGoBack;
         var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-        if (selectedItem != null)
-        {
-            Selected = selectedItem;
-        }
-    }
+		Selected = selectedItem;
+	}
 }

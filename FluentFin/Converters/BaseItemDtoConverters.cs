@@ -68,6 +68,11 @@ public static class BaseItemDtoConverters
 		return new BitmapImage(SessionInfo.BaseUrl.AppendPathSegment($"/Items/{personDto.Id}/Images/Primary").SetQueryParam("fillHeight", height).ToUri());
 	}
 
+	public static BitmapImage? GetImage(VirtualFolderInfo folderInfo)
+	{
+		return new BitmapImage(SessionInfo.BaseUrl.AppendPathSegment($"/Items/{folderInfo.ItemId}/Images/Primary").ToUri());
+	}
+
 	public static BitmapImage? GetImage(BaseItemDto? dto, ImageType imageType, double height)
 	{
 		if(dto is null)

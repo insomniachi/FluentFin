@@ -245,7 +245,9 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource NameConverter}}" />
+                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource NameConverter}}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Style="{StaticResource CaptionTextBlockStyle}"

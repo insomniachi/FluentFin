@@ -95,7 +95,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="jm:BaseItemDto">
                                                 <lc:PlayableMediaItem
-                                                    Width="240"
+                                                    Width="205"
                                                     Height="350"
                                                     ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
                                                     Model="{x:Bind}" />

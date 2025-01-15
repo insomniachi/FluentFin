@@ -15,6 +15,7 @@
     Title="{x:Bind ViewModel.Name, Mode=OneWay}"
     CloseButtonText="Close"
     DefaultButton="Primary"
+    PrimaryButtonCommand="{x:Bind ViewModel.SaveCommand}"
     PrimaryButtonText="Save"
     SecondaryButtonCommand="{x:Bind ViewModel.ResetCommand}"
     SecondaryButtonText="Reset"
@@ -75,6 +76,18 @@
             </ctk:SettingsExpander>
             <ctk:SettingsCard Description="Disabling the library will hide it from all user views." Header="Enable the library">
                 <ToggleSwitch IsOn="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Header="Preferred download language">
+                <ComboBox
+                    DisplayMemberPath="DisplayName"
+                    ItemsSource="{x:Bind ViewModel.Cultures, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.PreferredMetadataLanguage, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Header="Country/Region">
+                <ComboBox
+                    DisplayMemberPath="DisplayName"
+                    ItemsSource="{x:Bind ViewModel.Countries, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.MetadataCountryCode, Mode=TwoWay}" />
             </ctk:SettingsCard>
             <ctk:SettingsCard Header="Special season display name">
                 <TextBox Text="{x:Bind ViewModel.SeasonZeroDisplayName, Mode=TwoWay}" />
@@ -138,6 +151,12 @@
                 IsExpanded="True"
                 ItemTemplate="{StaticResource FetcherTemplate}"
                 ItemsSource="{x:Bind ViewModel.EpisodeImageFetchers}" />
+            <ctk:SettingsCard Description="Saving artwork into media folders will put them in a place where they can be easily edited." Header="Save artwork into media folders">
+                <ToggleSwitch IsOn="{x:Bind ViewModel.SaveLocalMetadata, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Description="Series that are spread across multiple folders within this library will be automatically merged into a single series." Header="Automatically merge series that are spread across multiple folders">
+                <ToggleSwitch IsOn="{x:Bind ViewModel.AutomaticallyAddToCollection, Mode=TwoWay}" />
+            </ctk:SettingsCard>
             <ctk:SettingsExpander Header="Trickplay" IsExpanded="True">
                 <ctk:SettingsExpander.Items>
                     <ctk:SettingsCard Description="Trickplay images are similar to chapter images, except they span the entire length of the content and are used to show a preview when scrubbing through videos." Header="Enable trickplay image extraction">
@@ -161,6 +180,11 @@
                     </ctk:SettingsCard>
                 </ctk:SettingsExpander.Items>
             </ctk:SettingsExpander>
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred subtitle downloaders in order of priority."
+                Header="Subtitle downloaders"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.SubtitleFetchers}" />
             <ctk:SettingsExpander Header="Subtitle Downloads" IsExpanded="True">
                 <ctk:SettingsExpander.Items>
                     <ctk:SettingsCard Description="Only download subtitles that are a perfect match for video files" Header="Only download subtitles that are a perfect match for video files">
@@ -168,6 +192,9 @@
                     </ctk:SettingsCard>
                     <ctk:SettingsCard Description="Skip if the default audio track matches the download language" Header="Skip if the default audio track matches the download language">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.SkipSubtitlesIfAudioTrackMatches, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Keeping text versions of subtitles will result in more efficient delivery and decrease the likelihood of video transcoding." Header="Skip if the video already contains embedded subtitles">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.SkipSubtitlesIfEmbeddedSubtitlesPresent, Mode=TwoWay}" />
                     </ctk:SettingsCard>
                     <ctk:SettingsCard Description="Storing subtitles next to video files will allow them to be more easily managed." Header="Save subtitles into media folders">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.SaveSubtitlesWithMedia, Mode=TwoWay}" />

@@ -23,4 +23,21 @@ public partial class JellyfinClient
 			return null;
 		}
 	}
+
+	public async Task SaveLibraryOptions(Guid folderId, LibraryOptions options)
+	{
+		try
+		{
+			await _jellyfinApiClient.Library.VirtualFolders.LibraryOptions.PostAsync(new UpdateLibraryOptionsDto
+			{
+				Id = folderId,
+				LibraryOptions = options
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, "Unhandled Exception");
+			return;
+		}
+	}
 }

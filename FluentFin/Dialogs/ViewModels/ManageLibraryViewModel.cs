@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentFin.Contracts.ViewModels;
+using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using System.Collections.ObjectModel;
@@ -75,17 +75,32 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	[ObservableProperty]
 	public partial LibraryOptionsResultDto? LibraryOptionsInfo { get; set; }
 
+	[ObservableProperty]
+	public partial bool SaveLocalMetadata { get; set; }
+
+	[ObservableProperty]
+	public partial List<CultureDto> SubtitleLanguages { get; set; }
+
+	[ObservableProperty]
+	public partial CultureDto? PreferredMetadataLanguage { get; set; }
+
+	[ObservableProperty]
+	public partial CountryInfo? MetadataCountryCode { get; set; }
+
 	public ObservableCollection<MetadataFetcher> SeriesMetadataFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> SeasonMetadataFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> EpisodeMetadataFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> SeriesImageFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> SeasonImageFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> EpisodeImageFetchers { get; } = [];
+	public ObservableCollection<MetadataFetcher> SubtitleFetchers { get; } = [];
+	public List<CultureDto> Cultures { get; set; } = [];
+	public List<CountryInfo> Countries { get; set; } = [];
 
 
 	public async Task Initialize(VirtualFolderInfo virtualFolder)
 	{
-		if(virtualFolder.LibraryOptions is not { } libraryOptions)
+		if(virtualFolder.LibraryOptions is not { } options)
 		{
 			return;
 		}
@@ -95,38 +110,108 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 			LibraryOptionsInfo = await jellyfinClient.GetAvailableInfo((Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType)(int)virtualFolder.CollectionType, false);
 		}
 
+		Cultures = await jellyfinClient.GetCultures();
+		Countries = await jellyfinClient.GetCountries();
 
 		_info = virtualFolder;
 
 		Name = _info.Name ?? "";
 		Locations = new(_info.Locations ?? []);
-		IsEnabled = libraryOptions.Enabled ?? false;
-		SeasonZeroDisplayName = libraryOptions.SeasonZeroDisplayName ?? string.Empty;
-		EnableEmbeddedTitles = libraryOptions.EnableEmbeddedTitles ?? false;
-		EnableEmbeddedExtrasTitles = libraryOptions.EnableEmbeddedExtrasTitles ?? false;
-		EnableEmbeddedEpisodeInfo = libraryOptions.EnableEmbeddedEpisodeInfos ?? false;
-		AllowEmbeddedSubtitles = libraryOptions.AllowEmbeddedSubtitles;
-		EnableRealtimeMonitor = libraryOptions.EnableRealtimeMonitor ?? false;
-		AutomaticRefreshIntervalDays = libraryOptions.AutomaticRefreshIntervalDays ?? 0;
-		AutomaticallyAddToCollection = libraryOptions.AutomaticallyAddToCollection ?? false;
-		EnableTrickplayImageExtraction = libraryOptions.EnableTrickplayImageExtraction ?? false;
-		ExtractTrickplayImagesDuringLibraryScan = libraryOptions.ExtractTrickplayImagesDuringLibraryScan ?? false;
-		SaveTrickplayWithMedia = libraryOptions.SaveTrickplayWithMedia ?? false;
-		EnableChapterImageExtraction = libraryOptions.EnableChapterImageExtraction ?? false;
-		ExtractChapterImagesDuringLibraryScan = libraryOptions.ExtractChapterImagesDuringLibraryScan ?? false;
-		RequirePerfectSubtitleMatch = libraryOptions.RequirePerfectSubtitleMatch ?? false;
-		SkipSubtitlesIfEmbeddedSubtitlesPresent = libraryOptions.SkipSubtitlesIfEmbeddedSubtitlesPresent ?? false;
-		SkipSubtitlesIfAudioTrackMatches = libraryOptions.SkipSubtitlesIfAudioTrackMatches ?? false;
-		SaveSubtitlesWithMedia = libraryOptions.SaveSubtitlesWithMedia ?? false;
+		IsEnabled = options.Enabled ?? false;
+		SeasonZeroDisplayName = options.SeasonZeroDisplayName ?? string.Empty;
+		EnableEmbeddedTitles = options.EnableEmbeddedTitles ?? false;
+		EnableEmbeddedExtrasTitles = options.EnableEmbeddedExtrasTitles ?? false;
+		EnableEmbeddedEpisodeInfo = options.EnableEmbeddedEpisodeInfos ?? false;
+		AllowEmbeddedSubtitles = options.AllowEmbeddedSubtitles;
+		EnableRealtimeMonitor = options.EnableRealtimeMonitor ?? false;
+		AutomaticRefreshIntervalDays = options.AutomaticRefreshIntervalDays ?? 0;
+		AutomaticallyAddToCollection = options.AutomaticallyAddToCollection ?? false;
+		EnableTrickplayImageExtraction = options.EnableTrickplayImageExtraction ?? false;
+		ExtractTrickplayImagesDuringLibraryScan = options.ExtractTrickplayImagesDuringLibraryScan ?? false;
+		SaveTrickplayWithMedia = options.SaveTrickplayWithMedia ?? false;
+		EnableChapterImageExtraction = options.EnableChapterImageExtraction ?? false;
+		ExtractChapterImagesDuringLibraryScan = options.ExtractChapterImagesDuringLibraryScan ?? false;
+		RequirePerfectSubtitleMatch = options.RequirePerfectSubtitleMatch ?? false;
+		SkipSubtitlesIfEmbeddedSubtitlesPresent = options.SkipSubtitlesIfEmbeddedSubtitlesPresent ?? false;
+		SkipSubtitlesIfAudioTrackMatches = options.SkipSubtitlesIfAudioTrackMatches ?? false;
+		SaveSubtitlesWithMedia = options.SaveSubtitlesWithMedia ?? false;
+		SaveLocalMetadata = options.SaveLocalMetadata ?? false; ;
+		PreferredMetadataLanguage = Cultures.FirstOrDefault(x => x.TwoLetterISOLanguageName == options.PreferredMetadataLanguage);
+		MetadataCountryCode = Countries.FirstOrDefault(x => x.TwoLetterISORegionName == options.MetadataCountryCode);
 
-		PopulateMetadataFetcher("Series", libraryOptions, SeriesMetadataFetchers);
-		PopulateMetadataFetcher("Season", libraryOptions, SeasonMetadataFetchers);
-		PopulateMetadataFetcher("Episode", libraryOptions, EpisodeMetadataFetchers);
-		PopulateImageFetcher("Series", libraryOptions, SeriesImageFetchers);
-		PopulateImageFetcher("Season", libraryOptions, SeasonImageFetchers);
-		PopulateImageFetcher("Episode", libraryOptions, EpisodeImageFetchers);
+		PopulateMetadataFetcher("Series", options, SeriesMetadataFetchers);
+		PopulateMetadataFetcher("Season", options, SeasonMetadataFetchers);
+		PopulateMetadataFetcher("Episode", options, EpisodeMetadataFetchers);
+		PopulateImageFetcher("Series", options, SeriesImageFetchers);
+		PopulateImageFetcher("Season", options, SeasonImageFetchers);
+		PopulateImageFetcher("Episode", options, EpisodeImageFetchers);
+
+		IEnumerable<MetadataFetcher> subtitleFetchers = options.SubtitleFetcherOrder?.Select(x => new MetadataFetcher(x, SubtitleFetchers) { IsSelected = true, CanMoveDown = true, CanMoveUp = true }) ?? [];
+		SubtitleFetchers.AddRange(subtitleFetchers);
+		SubtitleFetchers[0].CanMoveUp = false;
+		SubtitleFetchers[^1].CanMoveDown = false;
+
+		var selectedSubtitleLanguages = new List<CultureDto>();
+		foreach (var item in options.SubtitleDownloadLanguages ?? [])
+		{
+			if (Cultures.FirstOrDefault(x => x.ThreeLetterISOLanguageName == item) is { } culture)
+			{
+				selectedSubtitleLanguages.Add(culture);
+			}
+		}
+		SubtitleLanguages = selectedSubtitleLanguages;
 
 		return;
+	}
+
+	[RelayCommand]
+	private async Task Save()
+	{
+		if(_info is not { ItemId : not null})
+		{
+			return;
+		}
+
+		if(_info.LibraryOptions is not { } options)
+		{
+			return;
+		}
+
+		options.PathInfos = [..Locations.Select(x => new MediaPathInfo { Path = x })];
+		options.Enabled = IsEnabled;
+		options.SeasonZeroDisplayName = SeasonZeroDisplayName;
+		options.EnableEmbeddedTitles = EnableEmbeddedTitles;
+		options.EnableEmbeddedExtrasTitles = EnableEmbeddedExtrasTitles;
+		options.EnableEmbeddedEpisodeInfos = EnableEmbeddedEpisodeInfo;
+		options.AllowEmbeddedSubtitles = AllowEmbeddedSubtitles;
+		options.EnableRealtimeMonitor = EnableRealtimeMonitor;
+		options.AutomaticRefreshIntervalDays = AutomaticRefreshIntervalDays;
+		options.AutomaticallyAddToCollection = AutomaticallyAddToCollection;
+		options.EnableTrickplayImageExtraction = EnableTrickplayImageExtraction;
+		options.ExtractTrickplayImagesDuringLibraryScan = ExtractTrickplayImagesDuringLibraryScan;
+		options.SaveTrickplayWithMedia = SaveTrickplayWithMedia;
+		options.EnableChapterImageExtraction = EnableChapterImageExtraction;
+		options.ExtractChapterImagesDuringLibraryScan = ExtractChapterImagesDuringLibraryScan;
+		options.RequirePerfectSubtitleMatch = RequirePerfectSubtitleMatch;
+		options.SkipSubtitlesIfEmbeddedSubtitlesPresent = SkipSubtitlesIfEmbeddedSubtitlesPresent;
+		options.SkipSubtitlesIfAudioTrackMatches = SkipSubtitlesIfAudioTrackMatches;
+		options.SaveSubtitlesWithMedia = SaveSubtitlesWithMedia;
+		options.SaveLocalMetadata = SaveLocalMetadata;
+		options.PreferredMetadataLanguage = PreferredMetadataLanguage?.TwoLetterISOLanguageName;
+		options.MetadataCountryCode = MetadataCountryCode?.TwoLetterISORegionName;
+
+		UpdateMetadataFetcher("Series", options, SeriesMetadataFetchers);
+		UpdateMetadataFetcher("Season", options, SeasonMetadataFetchers);
+		UpdateMetadataFetcher("Episode", options, EpisodeMetadataFetchers);
+		UpdateImageFetcher("Series", options, SeriesImageFetchers);
+		UpdateImageFetcher("Season", options, SeasonImageFetchers);
+		UpdateImageFetcher("Episode", options, EpisodeImageFetchers);
+
+		options.SubtitleFetcherOrder = [..SubtitleFetchers.Select(x => x.Name)];
+		options.DisabledSubtitleFetchers = [.. SubtitleFetchers.Where(x => !x.IsSelected).Select(x => x.Name)];
+		options.SubtitleDownloadLanguages = [..SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName)];
+
+		await jellyfinClient.SaveLibraryOptions(Guid.Parse(_info.ItemId), options);
 	}
 
 	[RelayCommand]
@@ -159,6 +244,18 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		}
 	}
 
+	private static void UpdateMetadataFetcher(string type, LibraryOptions options, IList<MetadataFetcher> fetcher)
+	{
+		var typeOption = options.TypeOptions?.FirstOrDefault(x => x.Type == type);
+		if(typeOption is null)
+		{
+			return;
+		}
+
+		typeOption.MetadataFetcherOrder = [.. fetcher.Select(x => x.Name)];
+		typeOption.MetadataFetchers = [.. fetcher.Where(x => x.IsSelected).Select(x => x.Name)];
+	}
+
 	private static void PopulateImageFetcher(string type, LibraryOptions options, ObservableCollection<MetadataFetcher> target)
 	{
 		target.Clear();
@@ -176,6 +273,18 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 			target[0].CanMoveUp = false;
 			target[^1].CanMoveDown = false;
 		}
+	}
+
+	private static void UpdateImageFetcher(string type, LibraryOptions options, IList<MetadataFetcher> fetcher)
+	{
+		var typeOption = options.TypeOptions?.FirstOrDefault(x => x.Type == type);
+		if (typeOption is null)
+		{
+			return;
+		}
+
+		typeOption.ImageFetcherOrder = [.. fetcher.Select(x => x.Name)];
+		typeOption.ImageFetchers = [.. fetcher.Where(x => x.IsSelected).Select(x => x.Name)];
 	}
 }
 

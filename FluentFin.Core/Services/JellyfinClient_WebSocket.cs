@@ -69,19 +69,24 @@ public partial class JellyfinClient
 		using var document = JsonDocument.Parse(socketMessage);
 		var type = document.RootElement.GetProperty("MessageType").GetString();
 
-		if (Enum.TryParse<SessionMessageType>(type, out var messageType) &&
-			messageType is not (SessionMessageType.ForceKeepAlive or SessionMessageType.KeepAlive))
+		if(!Enum.TryParse<SessionMessageType>(type, out var messageType))
 		{
+			return;
+		}
 
-			if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
-			{
-				socketMessageSender.OnNext(message);
-			}
-			else
-			{
-				// for debugging when adding new events
-				;
-			}
+		if(messageType is SessionMessageType.KeepAlive or SessionMessageType.ForceKeepAlive)
+		{
+			return;
+		}
+
+		if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
+		{
+			socketMessageSender.OnNext(message);
+		}
+		else
+		{
+			// for debugging when adding new events
+			;
 		}
 
 		inputStream.Dispose();

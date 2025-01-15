@@ -40,6 +40,11 @@ public partial class JellyfinClient
 				query.UserId = UserId;
 				query.ImageTypeLimit = 1;
 				query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Banner, ImageType.Thumb];
+				query.EnableTotalRecordCount = false;
+				query.DisableFirstEpisode = true;
+				query.NextUpDateCutoff = TimeProvider.System.GetUtcNow();
+				query.EnableResumable = false;
+				query.EnableRewatching = false;
 			});
 		}
 		catch (Exception ex)

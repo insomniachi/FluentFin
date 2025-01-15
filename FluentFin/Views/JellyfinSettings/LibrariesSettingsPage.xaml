@@ -69,6 +69,11 @@
                                                 CommandParameter="{x:Bind c:Converters.ToGuid(ItemId)}"
                                                 Icon="{ui:SymbolIcon Symbol=Refresh}"
                                                 Text="Scan library" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind root:App.Dialogs.ManageLibraryDialogCommand}"
+                                                CommandParameter="{x:Bind}"
+                                                Icon="{ui:FontIcon Glyph=&#xE8D5;}"
+                                                Text="Manage" />
                                         </MenuBarItemFlyout>
                                     </Button.Flyout>
                                 </Button>

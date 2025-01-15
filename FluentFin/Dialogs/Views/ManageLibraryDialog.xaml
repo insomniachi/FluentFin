@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="FluentFin.Dialogs.Views.ManageLibraryDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Dialogs.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:vm="using:FluentFin.Dialogs.ViewModels"
+    Title="{x:Bind ViewModel.Name, Mode=OneWay}"
+    CloseButtonText="Close"
+    DefaultButton="Primary"
+    PrimaryButtonText="Save"
+    SecondaryButtonCommand="{x:Bind ViewModel.ResetCommand}"
+    SecondaryButtonText="Reset"
+    Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
+    mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <DataTemplate x:Key="FetcherTemplate" x:DataType="vm:MetadataFetcher">
+            <ctk:SettingsCard Header="{x:Bind Name}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox
+                        Grid.Column="2"
+                        Margin="{StaticResource SmallLeftMargin}"
+                        IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                    <Button
+                        Grid.Column="0"
+                        Command="{x:Bind MoveUpCommand}"
+                        Content="{ui:FontIcon Glyph=&#xE70E;}"
+                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Grid.Column="1"
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        Command="{x:Bind MoveDownCommand}"
+                        Content="{ui:FontIcon Glyph=&#xE70D;}"
+                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
+            </ctk:SettingsCard>
+        </DataTemplate>
+    </ContentDialog.Resources>
+
+    <ScrollView Width="800">
+        <StackPanel Spacing="5">
+            <InfoBar
+                Margin="{StaticResource MediumBottomMargin}"
+                IsClosable="False"
+                IsIconVisible="True"
+                IsOpen="True"
+                Message="Changes to metadata or artwork downloading settings will only apply to new content added to your library. To apply the changes to existing titles, you'll need to refresh their metadata manually."
+                Severity="Informational" />
+            <ctk:SettingsExpander
+                Header="Folder"
+                IsExpanded="True"
+                ItemsSource="{x:Bind ViewModel.Locations, Mode=OneWay}">
+                <Button Content="Add" Style="{ThemeResource AccentButtonStyle}" />
+                <ctk:SettingsExpander.ItemTemplate>
+                    <DataTemplate>
+                        <ctk:SettingsCard Header="{Binding}">
+                            <Button Content="{ui:SymbolIcon Symbol=Remove}" />
+                        </ctk:SettingsCard>
+                    </DataTemplate>
+                </ctk:SettingsExpander.ItemTemplate>
+            </ctk:SettingsExpander>
+            <ctk:SettingsCard Description="Disabling the library will hide it from all user views." Header="Enable the library">
+                <ToggleSwitch IsOn="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsCard Header="Special season display name">
+                <TextBox Text="{x:Bind ViewModel.SeasonZeroDisplayName, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsExpander Header="Embedded Information" IsExpanded="True">
+                <ctk:SettingsExpander.Items>
+                    <ctk:SettingsCard Description="Determine the display title to use when no internet metadata or local metadata is available." Header="Prefer embedded titles over filenames">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.EnableEmbeddedTitles, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Use the episode information from the embedded metadata if available." Header="Prefer embedded episode information over filenames">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.EnableEmbeddedEpisodeInfo, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Disable subtitles that are packaged within media containers. Requires a full library refresh." Header="Disable different types of embedded subtitles">
+                        <ComboBox ItemsSource="{ui:EnumValues Type=jm:LibraryOptions_AllowEmbeddedSubtitles}" SelectedItem="{x:Bind ViewModel.AllowEmbeddedSubtitles, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                </ctk:SettingsExpander.Items>
+            </ctk:SettingsExpander>
+            <ctk:SettingsCard Description="Disable subtitles that are packaged within media containers. Requires a full library refresh." Header="Enable real time monitoring">
+                <ToggleSwitch IsOn="{x:Bind ViewModel.EnableRealtimeMonitor, Mode=TwoWay}" />
+            </ctk:SettingsCard>
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred metadata downloaders in order of priority. Lower priority downloaders will only be used to fill in missing information."
+                Header="Metadata downloaders (TV Shows)"
+                IsExpanded="True"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.SeriesMetadataFetchers}" />
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred metadata downloaders in order of priority. Lower priority downloaders will only be used to fill in missing information."
+                Header="Metadata downloaders (Seasons)"
+                IsExpanded="True"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.SeasonMetadataFetchers}" />
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred metadata downloaders in order of priority. Lower priority downloaders will only be used to fill in missing information."
+                Header="Metadata downloaders (Episodes)"
+                IsExpanded="True"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.EpisodeMetadataFetchers}" />
+            <ctk:SettingsCard Description="Enabling this option may result in significantly longer library scans." Header="Automatically refresh metadata from the internet">
+                <ComboBox SelectedIndex="0">
+                    <ComboBoxItem Content="Never" />
+                    <ComboBoxItem Content="Every 60 Days" />
+                    <ComboBoxItem Content="Every 90 Days" />
+                </ComboBox>
+            </ctk:SettingsCard>
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred image fetchers in order of priority."
+                Header="Image fetchers (TV Shows)"
+                IsExpanded="True"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.SeriesImageFetchers}" />
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred image fetchers in order of priority."
+                Header="Image fetchers (Seasons)"
+                IsExpanded="True"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.SeasonImageFetchers}" />
+            <ctk:SettingsExpander
+                Description="Enable and rank your preferred image fetchers in order of priority."
+                Header="Image fetchers (Episodes)"
+                IsExpanded="True"
+                ItemTemplate="{StaticResource FetcherTemplate}"
+                ItemsSource="{x:Bind ViewModel.EpisodeImageFetchers}" />
+            <ctk:SettingsExpander Header="Trickplay" IsExpanded="True">
+                <ctk:SettingsExpander.Items>
+                    <ctk:SettingsCard Description="Trickplay images are similar to chapter images, except they span the entire length of the content and are used to show a preview when scrubbing through videos." Header="Enable trickplay image extraction">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.EnableTrickplayImageExtraction, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Generate trickplay images when videos are imported during the library scan. Otherwise, they will be extracted during the trickplay images scheduled task. If generation is set to non-blocking this will not affect the time a library scan takes to complete." Header="Extract trickplay images during the library scan">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.ExtractTrickplayImagesDuringLibraryScan, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Saving trickplay images into media folders will put them next to your media for easy migration and access." Header="Save trickplay images next to media">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.SaveTrickplayWithMedia, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                </ctk:SettingsExpander.Items>
+            </ctk:SettingsExpander>
+            <ctk:SettingsExpander Header="Chapter Images" IsExpanded="True">
+                <ctk:SettingsExpander.Items>
+                    <ctk:SettingsCard Description="Extracting chapter images will allow clients to display graphical scene selection menus. The process can be slow, resource intensive, and may require several gigabytes of space. It runs when videos are discovered, and also as a nightly scheduled task. The schedule is configurable in the scheduled tasks area. It is not recommended to run this task during peak usage hours." Header="Enable chapter image extraction">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.EnableChapterImageExtraction, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Generate chapter images when videos are imported during the library scan. Otherwise, they will be extracted during the chapter images scheduled task, allowing the regular library scan to complete faster." Header="Extract chapter images during the library scan">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.ExtractChapterImagesDuringLibraryScan, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                </ctk:SettingsExpander.Items>
+            </ctk:SettingsExpander>
+            <ctk:SettingsExpander Header="Subtitle Downloads" IsExpanded="True">
+                <ctk:SettingsExpander.Items>
+                    <ctk:SettingsCard Description="Only download subtitles that are a perfect match for video files" Header="Only download subtitles that are a perfect match for video files">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.RequirePerfectSubtitleMatch, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Skip if the default audio track matches the download language" Header="Skip if the default audio track matches the download language">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.SkipSubtitlesIfAudioTrackMatches, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                    <ctk:SettingsCard Description="Storing subtitles next to video files will allow them to be more easily managed." Header="Save subtitles into media folders">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.SaveSubtitlesWithMedia, Mode=TwoWay}" />
+                    </ctk:SettingsCard>
+                </ctk:SettingsExpander.Items>
+            </ctk:SettingsExpander>
+        </StackPanel>
+
+    </ScrollView>
+
+</ContentDialog>

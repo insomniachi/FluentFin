@@ -35,7 +35,7 @@
                                 x:Name="BackgroundElement"
                                 MinWidth="{ThemeResource ContentDialogMinWidth}"
                                 MinHeight="{ThemeResource ContentDialogMinHeight}"
-                                MaxWidth="{ThemeResource ContentDialogMaxWidth}"
+                                MaxWidth="1000"
                                 MaxHeight="{ThemeResource ContentDialogMaxHeight}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"

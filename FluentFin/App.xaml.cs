@@ -138,8 +138,8 @@ public partial class App : Application
 			services.AddDialog<MediaInfoViewModel, MediaInfoDialog>();
 			services.AddDialog<RefreshMetadataViewModel, RefreshMetadataDialog>();
 			services.AddDialog<AccessSchedulePickerViewModel, AccessSchedulePickerDialog>();
-
 			services.AddDialog<AddUserViewModel, AddUserDialog>();
+			services.AddDialog<ManageLibraryViewModel, ManageLibraryDialog>();
 
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();

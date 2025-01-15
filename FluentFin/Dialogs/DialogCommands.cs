@@ -99,6 +99,15 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		Clipboard.SetContent(package);
 	}
 
+	[RelayCommand]
+	private async Task ManageLibraryDialog(VirtualFolderInfo info)
+	{
+		var vm = App.GetService<ManageLibraryViewModel>();
+		vm.Initialize(info);
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+
 	private async Task ShowBaseItemDialog<TViewModel>(BaseItemDto dto)
 		where TViewModel : class, IBaseItemDialogViewModel
 	{

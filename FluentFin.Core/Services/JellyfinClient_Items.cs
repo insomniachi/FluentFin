@@ -152,4 +152,23 @@ public partial class JellyfinClient
 			return;
 		}
 	}
+
+	public async Task RenameLibrary(string name, string newName)
+	{
+		try
+		{
+			await _jellyfinApiClient.Library.VirtualFolders.Name.PostAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.RefreshLibrary = true;
+				query.Name = name;
+				query.NewName = newName;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
 }

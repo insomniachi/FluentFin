@@ -17,6 +17,7 @@ public partial class LibrariesSettingsViewModel(IJellyfinClient jellyfinClient) 
 
 	public async Task OnNavigatedTo(object parameter)
 	{
+		VirtualFolders.Clear();
 		VirtualFolders.AddRange(await jellyfinClient.GetVirtualFolders());
 	}
 }

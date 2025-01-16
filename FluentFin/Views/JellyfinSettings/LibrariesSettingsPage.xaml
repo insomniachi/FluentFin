@@ -80,6 +80,11 @@
                                                 Icon="{ui:SymbolIcon Symbol=Delete}"
                                                 Tag="{x:Bind}"
                                                 Text="Delete" />
+                                            <MenuFlyoutItem
+                                                Click="OnRename"
+                                                Icon="{ui:SymbolIcon Symbol=Rename}"
+                                                Tag="{x:Bind}"
+                                                Text="Rename" />
                                         </MenuBarItemFlyout>
                                     </Button.Flyout>
                                 </Button>

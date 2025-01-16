@@ -32,6 +32,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task DeleteLibrary(string name);
 
+		Task RenameLibrary(string name, string newName);
+
 		Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto);
 
 		Task<BaseItemDtoQueryResult?> Search(string searchTerm);

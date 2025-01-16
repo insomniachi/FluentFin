@@ -38,7 +38,10 @@ public static class Converters
 		return ts.Hours > 0 ? ts.ToString("hh\\:mm\\:ss") : ts.ToString("mm\\:ss");
 	}
 	public static double ToDouble(long? value) => value ?? 0;
-	public static Guid ToGuid(string value) => Guid.Parse(value);
+	public static Guid ToGuid(string value)
+	{
+		return Guid.TryParse(value, out var guid) ? guid : Guid.Empty;
+	}
 	public static Rect ToRect(RectModel? clip) => clip is null ? new() : new(clip.X, clip.Y, clip.Width, clip.Height);
 	public static ImageSource? GetImage(Uri? uri)
 	{

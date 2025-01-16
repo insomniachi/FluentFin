@@ -1,3 +1,4 @@
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs;
 using Jellyfin.Sdk.Generated.Models;
@@ -36,6 +37,27 @@ public sealed partial class LibrariesSettingsPage : Page
 		if(delete)
 		{
 			ViewModel.VirtualFolders.Remove(info);
+		}
+	}
+
+	private async void OnRename(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	{
+		if (sender is not MenuFlyoutItem item)
+		{
+			return;
+		}
+
+		if (item.Tag is not VirtualFolderInfo info)
+		{
+			return;
+		}
+
+		var newName = await App.GetService<IUserInput<string>>().GetValue();
+
+		if(!string.IsNullOrEmpty(newName))
+		{
+			await App.GetService<IJellyfinClient>().RenameLibrary(info.Name ?? "", newName);
+			await ViewModel.OnNavigatedTo(new());
 		}
 	}
 }

@@ -65,6 +65,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Dialogs\Views\StringPickerDialog.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Dialogs\Views\ManageLibraryDialog.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>

@@ -13,12 +13,12 @@ Welcome to FluentFin, a simple and user-friendly native Jellyfin client built wi
 - 👥 **Multiple server/users**: Seamlessly switch between multiple servers.
 - 🖥️ **Local connection handling**: use internal network address / public address based on current network.
 - 🎛️ **Transcoding and Direct Play**
-- 📡 **Remote Controllable**
 
 ## 🧪 Experimental Features
 
 - 🛡️ **Jellyfin Dashboard**: manage jellyfin server directly from the application.
 - 📺 **Media Segments Editor**: requires [jellyfin-plugin-ms-api](https://github.com/intro-skipper/jellyfin-plugin-ms-api/) and [Intro Skipper](https://github.com/intro-skipper/intro-skipper) plugins.
+- 📡 **Remote Controllable**
 
 ## 🚀 Getting Started
 

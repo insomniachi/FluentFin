@@ -1,4 +1,5 @@
-﻿using FluentFin.Activation;
+﻿using DynamicData;
+using FluentFin.Activation;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
@@ -140,9 +141,11 @@ public partial class App : Application
 			services.AddDialog<AccessSchedulePickerViewModel, AccessSchedulePickerDialog>();
 			services.AddDialog<AddUserViewModel, AddUserDialog>();
 			services.AddDialog<ManageLibraryViewModel, ManageLibraryDialog>();
+			services.AddDialog<StringPickerViewModel, StringPickerDialog>();
 
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();
+			services.AddTransient<IUserInput<string>, StringUserInput>();
 
 			services.AddTransient<ShellPage>();
 

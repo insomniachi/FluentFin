@@ -1,3 +1,4 @@
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Dialogs.ViewModels;
 using ReactiveUI;
 
@@ -19,4 +20,16 @@ public sealed partial class ManageLibraryDialog : IViewFor<ManageLibraryViewMode
 		0 => "Never",
 		int i => $"Every {i} Days"
 	};
+
+	private async void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	{
+		var input = App.GetService<IServerFolderPicker>();
+		var value = await input.PickFolder();
+		if(string.IsNullOrEmpty(value))
+		{
+			return;
+		}
+
+		ViewModel?.Locations.Add(value);
+    }
 }

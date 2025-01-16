@@ -26,6 +26,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetMediaFolders();
 
+		Task<List<FileSystemEntryInfo>> GetDirectoryContents(string path);
+
 		Task<List<VirtualFolderInfo>> GetVirtualFolders();
 
 		Task CreateLibrary(string name, CollectionTypeOptions collectionType, LibraryOptions options);

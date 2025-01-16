@@ -13,6 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Dialogs.ViewModels"
+    x:Name="Page"
     Title="{x:Bind ViewModel.Name, Mode=OneWay}"
     CloseButtonText="Close"
     DefaultButton="Primary"
@@ -89,11 +90,17 @@
                     Header="Folder"
                     IsExpanded="True"
                     ItemsSource="{x:Bind ViewModel.Locations, Mode=OneWay}">
-                    <Button Content="Add" Style="{ThemeResource AccentButtonStyle}" />
+                    <Button
+                        Click="Button_Click"
+                        Content="Add"
+                        Style="{ThemeResource AccentButtonStyle}" />
                     <ctk:SettingsExpander.ItemTemplate>
                         <DataTemplate>
                             <ctk:SettingsCard Header="{Binding}">
-                                <Button Content="{ui:SymbolIcon Symbol=Remove}" />
+                                <Button
+                                    Command="{Binding ElementName=Page, Path=ViewModel.RemoveFolderCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="{ui:SymbolIcon Symbol=Remove}" />
                             </ctk:SettingsCard>
                         </DataTemplate>
                     </ctk:SettingsExpander.ItemTemplate>

@@ -21,6 +21,7 @@
 		<Version Condition=" '$(BuildVersion)' != '' ">$(BuildVersion)</Version>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Controls\ServerFolderPicker.xaml" />
 	  <None Remove="Converters\BaseItemDtoConverters.cs~RF257b8cf.TMP" />
 	  <None Remove="Views\MediaSegmentsEditorPage.xaml" />
 	</ItemGroup>
@@ -62,6 +63,12 @@
 	  <Content Update="Assets\jellyfin.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Controls\ServerFolderPicker.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

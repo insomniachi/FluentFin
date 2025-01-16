@@ -17,9 +17,6 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	public partial string Name { get; set; }
 
 	[ObservableProperty]
-	public partial ObservableCollection<string> Locations { get; set; } = [];
-
-	[ObservableProperty]
 	public partial bool IsEnabled { get; set; }
 
 	[ObservableProperty]
@@ -117,7 +114,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	public ObservableCollection<MetadataFetcher> EpisodeImageFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> MovieImageFetcher { get; } = [];
 	public ObservableCollection<MetadataFetcher> SubtitleFetchers { get; } = [];
-
+	public ObservableCollection<string> Locations { get; } = [];
 	public List<int> RefreshIntervals { get; set; } = [0, 60, 90];
 
 
@@ -176,7 +173,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		IsSeriesFolder = _info.CollectionType == VirtualFolderInfo_CollectionType.Tvshows;
 
 		Name = _info.Name ?? "";
-		Locations = new(_info.Locations ?? []);
+		Locations.AddRange(_info.Locations ?? []);
 		IsEnabled = options.Enabled ?? false;
 		SeasonZeroDisplayName = options.SeasonZeroDisplayName ?? string.Empty;
 		EnableEmbeddedTitles = options.EnableEmbeddedTitles ?? false;
@@ -302,6 +299,9 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 
 		await Initialize(_info);
 	}
+
+	[RelayCommand]
+	private void RemoveFolder(string folder) => Locations.Remove(folder);
 
 	private static void PopulateMetadataFetcher(string type, LibraryOptions options, ObservableCollection<MetadataFetcher> target)
 	{

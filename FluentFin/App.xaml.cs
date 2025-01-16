@@ -146,6 +146,7 @@ public partial class App : Application
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();
 			services.AddTransient<IUserInput<string>, StringUserInput>();
+			services.AddTransient<IServerFolderPicker, ServerFolderInput>();
 
 			services.AddTransient<ShellPage>();
 

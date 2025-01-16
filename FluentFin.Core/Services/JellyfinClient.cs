@@ -280,6 +280,24 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		}
 	}
 
+	public async Task<List<FileSystemEntryInfo>> GetDirectoryContents(string path)
+	{
+		try
+		{
+			return await _jellyfinApiClient.Environment.DirectoryContents.GetAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.IncludeDirectories = true;
+				query.Path = path;
+			}) ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

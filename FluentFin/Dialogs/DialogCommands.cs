@@ -103,8 +103,39 @@ public partial class DialogCommands(IContentDialogService dialogService,
 	private async Task ManageLibraryDialog(VirtualFolderInfo info)
 	{
 		var vm = App.GetService<ManageLibraryViewModel>();
-		vm.Initialize(info);
+		await vm.Initialize(info);
 		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+	[RelayCommand]
+	private async Task CreateLibraryDialog()
+	{
+		var vm = App.GetService<ManageLibraryViewModel>();
+		await vm.Initialize();
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+	public static async Task<bool> DeleteLibraryDialog(string name)
+	{
+		var dialog = new ContentDialog
+		{
+			XamlRoot = App.MainWindow.Content.XamlRoot,
+			Title = "Delete Library",
+			Content = $"Are you sure you wan to delete the Library : {name}?",
+			CloseButtonText = "No",
+			PrimaryButtonText = "Yes",
+			DefaultButton = ContentDialogButton.Primary
+		};
+
+		var response = await dialog.ShowAsync();
+
+		if (response == ContentDialogResult.Primary)
+		{
+			await App.GetService<IJellyfinClient>().DeleteLibrary(name);
+			return true;
+		}
+
+		return false;
 	}
 
 

@@ -1,4 +1,5 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+﻿using Jellyfin.Sdk.Generated.Library.VirtualFolders;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 
 namespace FluentFin.Core.Services;
@@ -109,6 +110,46 @@ public partial class JellyfinClient
 		{
 			logger.LogError(ex, @"Unhandled exception");
 			return [];
+		}
+	}
+
+	public async Task CreateLibrary(string name, CollectionTypeOptions collectionType, LibraryOptions options)
+	{
+		try
+		{
+			await _jellyfinApiClient.Library.VirtualFolders.PostAsync(new AddVirtualFolderDto
+			{
+				LibraryOptions = options,
+			}, x =>
+			{
+				var query = x.QueryParameters;
+				query.RefreshLibrary = true;
+				query.Name = name;
+				query.CollectionType = collectionType;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task DeleteLibrary(string name)
+	{
+		try
+		{
+			await _jellyfinApiClient.Library.VirtualFolders.DeleteAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.RefreshLibrary = true;
+				query.Name = name;
+			});
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
 		}
 	}
 }

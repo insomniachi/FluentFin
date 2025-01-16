@@ -13,4 +13,10 @@ public sealed partial class ManageLibraryDialog : IViewFor<ManageLibraryViewMode
 	{
 		InitializeComponent();
 	}
+
+	public static string RefreshIntervalToString(int value) => value switch
+	{
+		0 => "Never",
+		int i => $"Every {i} Days"
+	};
 }

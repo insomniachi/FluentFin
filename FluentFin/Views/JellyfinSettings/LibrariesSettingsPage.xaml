@@ -31,6 +31,7 @@
             Orientation="Horizontal"
             Spacing="16">
             <Button Content="Scall All Libraries" />
+            <Button Command="{x:Bind root:App.Dialogs.CreateLibraryDialogCommand}" Content="Add New Library" />
             <HyperlinkButton Content="Help" NavigateUri="https://jellyfin.org/docs/general/server/libraries/" />
         </StackPanel>
 
@@ -74,6 +75,11 @@
                                                 CommandParameter="{x:Bind}"
                                                 Icon="{ui:FontIcon Glyph=&#xE8D5;}"
                                                 Text="Manage" />
+                                            <MenuFlyoutItem
+                                                Click="OnDelete"
+                                                Icon="{ui:SymbolIcon Symbol=Delete}"
+                                                Tag="{x:Bind}"
+                                                Text="Delete" />
                                         </MenuBarItemFlyout>
                                     </Button.Flyout>
                                 </Button>

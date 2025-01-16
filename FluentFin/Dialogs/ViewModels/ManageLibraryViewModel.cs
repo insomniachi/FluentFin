@@ -3,7 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
+using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
 
@@ -87,33 +89,91 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	[ObservableProperty]
 	public partial CountryInfo? MetadataCountryCode { get; set; }
 
+	[ObservableProperty]
+	public partial bool IsMovieFolder { get; set; }
+
+	[ObservableProperty]
+	public partial bool IsSeriesFolder { get; set; }
+
+	[ObservableProperty]
+	public partial List<CultureDto?> Cultures { get; set; } = [];
+
+	[ObservableProperty]
+	public partial List<CountryInfo?> Countries { get; set; } = [];
+
+	[ObservableProperty]
+	public partial bool IsCreateMode { get; set; }
+
+
+	[ObservableProperty]
+	public partial Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType? FolderCollectionType { get; set; }
+
 	public ObservableCollection<MetadataFetcher> SeriesMetadataFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> SeasonMetadataFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> EpisodeMetadataFetchers { get; } = [];
+	public ObservableCollection<MetadataFetcher> MovieMetadataFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> SeriesImageFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> SeasonImageFetchers { get; } = [];
 	public ObservableCollection<MetadataFetcher> EpisodeImageFetchers { get; } = [];
+	public ObservableCollection<MetadataFetcher> MovieImageFetcher { get; } = [];
 	public ObservableCollection<MetadataFetcher> SubtitleFetchers { get; } = [];
-	public List<CultureDto> Cultures { get; set; } = [];
-	public List<CountryInfo> Countries { get; set; } = [];
 
+	public List<int> RefreshIntervals { get; set; } = [0, 60, 90];
+
+
+	public async Task Initialize()
+	{
+		IsCreateMode = true;
+		_info = new VirtualFolderInfo { LibraryOptions = new LibraryOptions() };
+
+		Cultures = [null, .. await jellyfinClient.GetCultures()];
+		Countries = [null, .. await jellyfinClient.GetCountries()];
+
+		this.WhenAnyValue(x => x.FolderCollectionType)
+			.WhereNotNull()
+			.SelectMany(type => jellyfinClient.GetAvailableInfo(type!.Value, true))
+			.WhereNotNull()
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(value =>
+			{
+				if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
+				{
+					PopulateMetadataFetcher("Series", value, SeriesMetadataFetchers);
+					PopulateMetadataFetcher("Season", value, SeasonMetadataFetchers);
+					PopulateMetadataFetcher("Episode", value, EpisodeMetadataFetchers);
+
+					PopulateImageFetcher("Series", value, SeriesImageFetchers);
+					PopulateImageFetcher("Season", value, SeasonImageFetchers);
+					PopulateImageFetcher("Episode", value, EpisodeImageFetchers);
+				}
+				else if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
+				{
+					PopulateMetadataFetcher("Movie", value, MovieMetadataFetchers);
+
+					PopulateImageFetcher("Movie", value, MovieImageFetcher);
+				}
+
+				IsMovieFolder = FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies;
+				IsSeriesFolder = FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows;
+			});
+		
+	}
 
 	public async Task Initialize(VirtualFolderInfo virtualFolder)
 	{
+		IsCreateMode = false;
 		if(virtualFolder.LibraryOptions is not { } options)
 		{
 			return;
 		}
 
-		if(virtualFolder.CollectionType is not null)
-		{
-			LibraryOptionsInfo = await jellyfinClient.GetAvailableInfo((Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType)(int)virtualFolder.CollectionType, false);
-		}
-
-		Cultures = await jellyfinClient.GetCultures();
-		Countries = await jellyfinClient.GetCountries();
+		Cultures = [null, ..await jellyfinClient.GetCultures()];
+		Countries = [null, ..await jellyfinClient.GetCountries()];
 
 		_info = virtualFolder;
+		FolderCollectionType = (Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType)(int)_info.CollectionType!;
+		IsMovieFolder = _info.CollectionType == VirtualFolderInfo_CollectionType.Movies;
+		IsSeriesFolder = _info.CollectionType == VirtualFolderInfo_CollectionType.Tvshows;
 
 		Name = _info.Name ?? "";
 		Locations = new(_info.Locations ?? []);
@@ -136,15 +196,25 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		SkipSubtitlesIfAudioTrackMatches = options.SkipSubtitlesIfAudioTrackMatches ?? false;
 		SaveSubtitlesWithMedia = options.SaveSubtitlesWithMedia ?? false;
 		SaveLocalMetadata = options.SaveLocalMetadata ?? false; ;
-		PreferredMetadataLanguage = Cultures.FirstOrDefault(x => x.TwoLetterISOLanguageName == options.PreferredMetadataLanguage);
-		MetadataCountryCode = Countries.FirstOrDefault(x => x.TwoLetterISORegionName == options.MetadataCountryCode);
+		PreferredMetadataLanguage = Cultures.FirstOrDefault(x => x?.TwoLetterISOLanguageName == options.PreferredMetadataLanguage);
+		MetadataCountryCode = Countries.FirstOrDefault(x => x?.TwoLetterISORegionName == options.MetadataCountryCode);
 
-		PopulateMetadataFetcher("Series", options, SeriesMetadataFetchers);
-		PopulateMetadataFetcher("Season", options, SeasonMetadataFetchers);
-		PopulateMetadataFetcher("Episode", options, EpisodeMetadataFetchers);
-		PopulateImageFetcher("Series", options, SeriesImageFetchers);
-		PopulateImageFetcher("Season", options, SeasonImageFetchers);
-		PopulateImageFetcher("Episode", options, EpisodeImageFetchers);
+		if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
+		{
+			PopulateMetadataFetcher("Series", options, SeriesMetadataFetchers);
+			PopulateMetadataFetcher("Season", options, SeasonMetadataFetchers);
+			PopulateMetadataFetcher("Episode", options, EpisodeMetadataFetchers);
+
+			PopulateImageFetcher("Series", options, SeriesImageFetchers);
+			PopulateImageFetcher("Season", options, SeasonImageFetchers);
+			PopulateImageFetcher("Episode", options, EpisodeImageFetchers);
+		}
+		else if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
+		{
+			PopulateMetadataFetcher("Movie", options, MovieMetadataFetchers);
+
+			PopulateImageFetcher("Movie", options, MovieImageFetcher);
+		}
 
 		IEnumerable<MetadataFetcher> subtitleFetchers = options.SubtitleFetcherOrder?.Select(x => new MetadataFetcher(x, SubtitleFetchers) { IsSelected = true, CanMoveDown = true, CanMoveUp = true }) ?? [];
 		SubtitleFetchers.AddRange(subtitleFetchers);
@@ -154,7 +224,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		var selectedSubtitleLanguages = new List<CultureDto>();
 		foreach (var item in options.SubtitleDownloadLanguages ?? [])
 		{
-			if (Cultures.FirstOrDefault(x => x.ThreeLetterISOLanguageName == item) is { } culture)
+			if (Cultures.FirstOrDefault(x => x?.ThreeLetterISOLanguageName == item) is { } culture)
 			{
 				selectedSubtitleLanguages.Add(culture);
 			}
@@ -200,12 +270,20 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		options.PreferredMetadataLanguage = PreferredMetadataLanguage?.TwoLetterISOLanguageName;
 		options.MetadataCountryCode = MetadataCountryCode?.TwoLetterISORegionName;
 
-		UpdateMetadataFetcher("Series", options, SeriesMetadataFetchers);
-		UpdateMetadataFetcher("Season", options, SeasonMetadataFetchers);
-		UpdateMetadataFetcher("Episode", options, EpisodeMetadataFetchers);
-		UpdateImageFetcher("Series", options, SeriesImageFetchers);
-		UpdateImageFetcher("Season", options, SeasonImageFetchers);
-		UpdateImageFetcher("Episode", options, EpisodeImageFetchers);
+		if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
+		{
+			UpdateMetadataFetcher("Series", options, SeriesMetadataFetchers);
+			UpdateMetadataFetcher("Season", options, SeasonMetadataFetchers);
+			UpdateMetadataFetcher("Episode", options, EpisodeMetadataFetchers);
+			UpdateImageFetcher("Series", options, SeriesImageFetchers);
+			UpdateImageFetcher("Season", options, SeasonImageFetchers);
+			UpdateImageFetcher("Episode", options, EpisodeImageFetchers);
+		}
+		else if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
+		{
+			UpdateMetadataFetcher("Movie", options, MovieMetadataFetchers);
+			UpdateImageFetcher("Movie", options, MovieImageFetcher);
+		}
 
 		options.SubtitleFetcherOrder = [..SubtitleFetchers.Select(x => x.Name)];
 		options.DisabledSubtitleFetchers = [.. SubtitleFetchers.Where(x => !x.IsSelected).Select(x => x.Name)];
@@ -244,6 +322,25 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		}
 	}
 
+	private static void PopulateMetadataFetcher(string type, LibraryOptionsResultDto options, ObservableCollection<MetadataFetcher> target)
+	{
+		target.Clear();
+		var typeOption = options.TypeOptions?.FirstOrDefault(x => x.Type == type);
+		if (typeOption is not null)
+		{
+			foreach (var (index, item) in (typeOption.MetadataFetchers ?? []).Index())
+			{
+				target.Add(new MetadataFetcher(item.Name ?? "", target)
+				{
+					IsSelected = item.DefaultEnabled ?? false
+				});
+			}
+
+			target[0].CanMoveUp = false;
+			target[^1].CanMoveDown = false;
+		}
+	}
+
 	private static void UpdateMetadataFetcher(string type, LibraryOptions options, IList<MetadataFetcher> fetcher)
 	{
 		var typeOption = options.TypeOptions?.FirstOrDefault(x => x.Type == type);
@@ -267,6 +364,25 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 				target.Add(new MetadataFetcher(item, target)
 				{
 					IsSelected = typeOption.ImageFetchers?.Any(x => x == item) == true,
+				});
+			}
+
+			target[0].CanMoveUp = false;
+			target[^1].CanMoveDown = false;
+		}
+	}
+
+	private static void PopulateImageFetcher(string type, LibraryOptionsResultDto options, ObservableCollection<MetadataFetcher> target)
+	{
+		target.Clear();
+		var typeOption = options.TypeOptions?.FirstOrDefault(x => x.Type == type);
+		if (typeOption is not null)
+		{
+			foreach (var (index, item) in (typeOption.ImageFetchers ?? []).Index())
+			{
+				target.Add(new MetadataFetcher(item.Name ?? "", target)
+				{
+					IsSelected = item.DefaultEnabled ?? false
 				});
 			}
 

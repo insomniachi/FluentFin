@@ -1,4 +1,5 @@
 ﻿using Jellyfin.Sdk.Generated.Items.Item.Refresh;
+using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -26,6 +27,10 @@ namespace FluentFin.Core.Contracts.Services
 		Task<BaseItemDtoQueryResult?> GetMediaFolders();
 
 		Task<List<VirtualFolderInfo>> GetVirtualFolders();
+
+		Task CreateLibrary(string name, CollectionTypeOptions collectionType, LibraryOptions options);
+
+		Task DeleteLibrary(string name);
 
 		Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto);
 

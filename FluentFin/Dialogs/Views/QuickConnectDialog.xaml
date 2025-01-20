@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="FluentFin.Dialogs.Views.QuickConnectDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Dialogs.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:vm="using:FluentFin.Dialogs.ViewModels"
+    Title="Quick Connect"
+    CloseButtonText="Close"
+    DefaultButton="Primary"
+    PrimaryButtonCommand="{x:Bind ViewModel.VerifyQuickConnectCommand}"
+    PrimaryButtonText="OK"
+    Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
+    mc:Ignorable="d">
+
+    <StackPanel Width="500" Spacing="20">
+        <InfoBar
+            IsClosable="False"
+            IsIconVisible="True"
+            IsOpen="True"
+            Message="To sign in with Quick Connect, select the 'Quick Connect' button on the device you are logging in from and enter the displayed code below."
+            Severity="Informational" />
+
+        <StackPanel>
+            <TextBlock Text="Quick connect code" />
+            <TextBox Text="{x:Bind ViewModel.QuickConnectCode, Mode=TwoWay}" />
+        </StackPanel>
+    </StackPanel>
+
+</ContentDialog>

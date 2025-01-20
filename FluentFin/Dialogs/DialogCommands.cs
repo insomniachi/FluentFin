@@ -2,6 +2,7 @@
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Services;
+using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
@@ -113,6 +114,13 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		var vm = App.GetService<ManageLibraryViewModel>();
 		await vm.Initialize();
 		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+	[RelayCommand]
+	private async Task QuickConnectAuth()
+	{
+		var vm = App.GetService<QuickConnectViewModel>();
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseButtonClick(dialog, vm));
 	}
 
 	public static async Task<bool> DeleteLibraryDialog(string name)

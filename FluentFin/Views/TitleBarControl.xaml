@@ -15,6 +15,7 @@
     xmlns:lc="using:FluentFin.Controls"
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:FluentFin"
     xmlns:ui="using:CommunityToolkit.WinUI"
     mc:Ignorable="d">
 
@@ -148,6 +149,12 @@
                                     Command="{x:Bind ViewModel.SwitchUserCommand}"
                                     Content="Switch user"
                                     Icon="{ui:FontIcon Glyph=&#xE748;}" />
+                                <lc:MenuFlyoutButton
+                                    HorizontalAlignment="Stretch"
+                                    Click="CloseTitleBarFooterFlyout"
+                                    Command="{x:Bind root:App.Dialogs.QuickConnectAuthCommand}"
+                                    Content="Quick Connect"
+                                    Icon="{ui:FontIcon Glyph=&#xE703;}" />
                             </StackPanel>
 
                         </Grid>

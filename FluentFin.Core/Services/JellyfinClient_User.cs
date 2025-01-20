@@ -272,4 +272,22 @@ public partial class JellyfinClient
 			return;
 		}
 	}
+
+	public async Task<bool> Authenticate(string code)
+	{
+		try
+		{
+			return await _jellyfinApiClient.QuickConnect.Authorize.PostAsync(x =>
+			{
+				var query = x.QueryParameters;
+				query.UserId = UserId;
+				query.Code = code;
+			}) ?? false;
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return false;
+		}
+	}
 }

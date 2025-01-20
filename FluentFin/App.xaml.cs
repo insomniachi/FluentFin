@@ -142,6 +142,7 @@ public partial class App : Application
 			services.AddDialog<AddUserViewModel, AddUserDialog>();
 			services.AddDialog<ManageLibraryViewModel, ManageLibraryDialog>();
 			services.AddDialog<StringPickerViewModel, StringPickerDialog>();
+			services.AddDialog<QuickConnectViewModel, QuickConnectDialog>();
 
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();

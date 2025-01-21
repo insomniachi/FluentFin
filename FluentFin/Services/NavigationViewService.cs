@@ -59,6 +59,11 @@ public class NavigationViewService : INavigationViewService
 		};
 		await foreach (var item in _jellyfinClient.GetUserLibraries())
 		{
+			if(item.CollectionType is BaseItemDto_CollectionType.Music)
+			{
+				continue;
+			}
+
 			var libraryItem = new NavigationViewItem
 			{
 				Content = item.Name,

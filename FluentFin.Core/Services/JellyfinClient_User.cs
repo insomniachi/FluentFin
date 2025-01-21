@@ -59,7 +59,7 @@ public partial class JellyfinClient
 		BaseItemDtoQueryResult? views = null;
 		try
 		{
-			views = await _jellyfinApiClient.UserViews.GetAsync(x => x.QueryParameters.UserId = UserId);
+			views = await _jellyfinApiClient.UserViews.GetAsync(x => x.QueryParameters.UserId = UserId); 
 		}
 		catch (Exception ex)
 		{
@@ -74,6 +74,11 @@ public partial class JellyfinClient
 		foreach (var library in views.Items)
 		{
 			if (library is null)
+			{
+				continue;
+			}
+
+			if(library.CollectionType is BaseItemDto_CollectionType.Music)
 			{
 				continue;
 			}

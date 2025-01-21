@@ -171,4 +171,16 @@ public partial class JellyfinClient
 			return;
 		}
 	}
+
+	public Uri GetSplashScreen()
+	{
+		return _jellyfinApiClient.Branding.Splashscreen.ToGetRequestInformation(x => 
+		{
+			var query = x.QueryParameters;
+			query.Blur = 50;
+			query.Height = 1080;
+			query.Width = 1920;
+			query.Format = Jellyfin.Sdk.Generated.Branding.Splashscreen.ImageFormat.Jpg;
+		}).URI;
+	}
 }

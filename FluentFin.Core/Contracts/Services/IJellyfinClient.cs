@@ -56,9 +56,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<MediaResponse?> GetMediaUrl(BaseItemDto dto);
 
-		Uri? GetImage(BaseItemDto dto, ImageType type, double? height = null);
-
 		Uri GetImage(BaseItemDto item, ImageInfo info);
+
+		Uri GetSplashScreen();
 
 		Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
 

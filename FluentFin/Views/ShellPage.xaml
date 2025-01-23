@@ -2,6 +2,7 @@
     x:Class="FluentFin.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:behaviors="using:FluentFin.Behaviors"
     xmlns:helpers="using:FluentFin.Helpers"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -11,19 +12,37 @@
     <NavigationView
         x:Name="NavigationViewControl"
         x:FieldModifier="Public"
-        Canvas.ZIndex="0"
-        ExpandedModeThresholdWidth="1280"
+        HighContrastAdjustment="None"
         IsBackButtonVisible="Collapsed"
+        IsPaneOpen="False"
         IsPaneToggleButtonVisible="False"
-        IsSettingsVisible="True"
-        PaneDisplayMode="LeftCompact"
-        SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
+        IsSettingsVisible="False"
+        SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
+        Style="{StaticResource MainNavigationViewStyle}">
         <NavigationView.MenuItems>
             <NavigationViewItem
                 helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.HomeViewModel"
                 Content="Home"
                 Icon="{ui:SymbolIcon Symbol=Home}" />
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesLandingPageViewModel"
+                Content="Libraries"
+                Icon="{ui:SymbolIcon Symbol=Library}" />
         </NavigationView.MenuItems>
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem
+                Content="Contribute"
+                SelectsOnInvoked="False"
+                Tapped="OnContributeTapped">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Opacity="0.6" Source="{ThemeResource GitHubIconImage}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.SettingsViewModel"
+                Content="Settings"
+                Icon="{ui:SymbolIcon Symbol=Setting}" />
+        </NavigationView.FooterMenuItems>
         <Frame x:Name="NavigationFrame" x:FieldModifier="Public" />
     </NavigationView>
 </Page>

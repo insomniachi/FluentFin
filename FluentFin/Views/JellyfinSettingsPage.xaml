@@ -43,7 +43,7 @@
                             <animatedvisuals:AnimatedSettingsVisualSource />
                         </AnimatedIcon.Source>
                         <AnimatedIcon.FallbackIconSource>
-                            <SymbolIconSource Symbol="Find" />
+                            <SymbolIconSource Symbol="Setting" />
                         </AnimatedIcon.FallbackIconSource>
                     </AnimatedIcon>
                 </NavigationViewItem.Icon>

@@ -46,44 +46,6 @@ public class NavigationViewService : INavigationViewService
 		_navigationView.IsPaneOpen ^= true;
 	}
 
-	public async Task InitializeLibraries()
-	{
-		var librariesItem = new NavigationViewItem
-		{
-			Content = "Libraries",
-			Icon = new SymbolIcon
-			{
-				Symbol = Symbol.Library
-			},
-			SelectsOnInvoked = false
-		};
-		await foreach (var item in _jellyfinClient.GetUserLibraries())
-		{
-			if(item.CollectionType is BaseItemDto_CollectionType.Music)
-			{
-				continue;
-			}
-
-			var libraryItem = new NavigationViewItem
-			{
-				Content = item.Name,
-				Icon = GetIcon(item.CollectionType),
-				Tag = item
-			};
-			libraryItem.Tapped += LibrariesItem_Tapped;
-
-			librariesItem.MenuItems.Add(libraryItem);
-		}
-
-		MenuItems?.Add(librariesItem);
-	}
-
-	private void LibrariesItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
-	{
-		var dto = (BaseItemDto)((NavigationViewItem)sender).Tag;
-		_navigationService.NavigateTo(typeof(LibraryViewModel).FullName!, dto);
-	}
-
 	public void UnregisterEvents()
 	{
 		if (_navigationView != null)

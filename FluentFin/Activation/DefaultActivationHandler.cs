@@ -14,21 +14,14 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 	private readonly INavigationService _navigationService;
 	private readonly ISettings _settings;
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticationService;
-	private readonly ILocalSettingsService _settingsService;
-	private readonly INavigationService _coreNavigationService;
 
 	public DefaultActivationHandler([FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
-									INavigationService coreNavigationService,
 									ISettings settings,
-									IJellyfinAuthenticationService jellyfinAuthenticationService,
-									ILocalSettingsService settingsService)
+									IJellyfinAuthenticationService jellyfinAuthenticationService)
 	{
 		_navigationService = navigationService;
-		_coreNavigationService = coreNavigationService;
 		_settings = settings;
 		_jellyfinAuthenticationService = jellyfinAuthenticationService;
-		_settingsService = settingsService;
-
 		_settings.ListenToChanges();
 	}
 

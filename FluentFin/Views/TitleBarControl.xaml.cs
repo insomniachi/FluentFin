@@ -13,11 +13,6 @@ public sealed partial class TitleBarControl : UserControl
 		InitializeComponent();
 	}
 
-	private void TitleBar_PaneToggleRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
-	{
-		ViewModel.TogglePane();
-	}
-
 	private void TitleBar_BackRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
 	{
 		ViewModel.GoBack();

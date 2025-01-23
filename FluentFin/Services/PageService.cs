@@ -31,6 +31,7 @@ public class PageService : IPageService
 		Configure<JellyfinSettingsViewModel, JellyfinSettingsPage>();
 		Configure<SettingsViewModel, SettingsPage>();
 		Configure<MediaSegmentsEditorViewModel, MediaSegmentsEditorPage>();
+		Configure<LibrariesLandingPageViewModel, LibrariesLandingPage>();
 
 		// Dashboard Pages
 		Configure<DashboardViewModel, DashboardPage>();

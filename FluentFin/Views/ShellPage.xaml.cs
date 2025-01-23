@@ -24,9 +24,8 @@ public sealed partial class ShellPage : Page
 		ViewModel.NavigationViewService.Initialize(NavigationViewControl);
 	}
 
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
+	protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
-		await ViewModel.NavigationViewService.InitializeLibraries();
 		ViewModel.NavigationService.NavigateTo(typeof(HomeViewModel).FullName!);
 	}
 
@@ -59,4 +58,9 @@ public sealed partial class ShellPage : Page
 
 		args.Handled = result;
 	}
+
+	private async void OnContributeTapped(object sender, TappedRoutedEventArgs e)
+	{
+		await Launcher.LaunchUriAsync(new Uri("https://github.com/insomniachi/FluentFin"));
+    }
 }

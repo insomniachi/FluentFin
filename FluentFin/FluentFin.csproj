@@ -20,11 +20,6 @@
 		<Version Condition=" '$(BuildVersion)' == '' ">1.0.0.0</Version>
 		<Version Condition=" '$(BuildVersion)' != '' ">$(BuildVersion)</Version>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Controls\ServerFolderPicker.xaml" />
-	  <None Remove="Converters\BaseItemDtoConverters.cs~RF257b8cf.TMP" />
-	  <None Remove="Views\MediaSegmentsEditorPage.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
@@ -63,6 +58,12 @@
 	  <Content Update="Assets\jellyfin.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\LibrariesLandingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

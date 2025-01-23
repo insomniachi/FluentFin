@@ -36,6 +36,7 @@ public class ActivationService : IActivationService
 
 		// Activate the MainWindow.
 		App.MainWindow.Activate();
+		App.MainWindow.Maximize();
 
 		// Execute tasks after activation.
 		await StartupAsync();

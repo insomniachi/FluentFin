@@ -11,8 +11,20 @@
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ImageEx.xaml" />
+                <ResourceDictionary Source="/Styles/NavigationView.xaml" />
                 <ResourceDictionary Source="ms-appx:///DevWinUI.Controls/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <ImageSource x:Key="GitHubIconImage">ms-appx:///Assets/GitHub.light.svg</ImageSource>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <ImageSource x:Key="GitHubIconImage">ms-appx:///Assets/GitHub.dark.svg</ImageSource>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <ImageSource x:Key="GitHubIconImage">ms-appx:///Assets/GitHub.dark.svg</ImageSource>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
 
             <Style x:Key="BareItemContainerStyle" TargetType="ItemContainer">
                 <Setter Property="Background" Value="{ThemeResource ItemContainerBackground}" />

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.LibrariesLandingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:FluentFin"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d">
+
+    <ItemsView
+        Margin="36,40,36,40"
+        IsItemInvokedEnabled="True"
+        ItemInvoked="ItemsView_ItemInvoked"
+        ItemsSource="{x:Bind ViewModel.Libraries, Mode=OneWay}"
+        SelectionMode="None">
+        <ItemsView.ItemTemplate>
+            <DataTemplate x:DataType="jm:BaseItemDto">
+                <ItemContainer>
+                    <Grid CornerRadius="{StaticResource ControlCornerRadius}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <controls:LoadingImage
+                            Glyph="&#xEA8C;"
+                            Source="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 270)}"
+                            Stretch="Fill" />
+
+                        <Grid
+                            Grid.Row="1"
+                            Padding="8"
+                            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind Name}" />
+                        </Grid>
+                    </Grid>
+                </ItemContainer>
+            </DataTemplate>
+        </ItemsView.ItemTemplate>
+        <ItemsView.Layout>
+            <UniformGridLayout
+                ItemsStretch="Fill"
+                MinColumnSpacing="16"
+                MinItemHeight="270"
+                MinItemWidth="330"
+                MinRowSpacing="16" />
+        </ItemsView.Layout>
+    </ItemsView>
+</Page>

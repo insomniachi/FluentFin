@@ -21,6 +21,4 @@ public interface INavigationViewService
 	NavigationViewItem? GetSelectedItem(Type pageType);
 
 	void TogglePane();
-
-	Task InitializeLibraries();
 }

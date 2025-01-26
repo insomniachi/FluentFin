@@ -21,6 +21,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using System.Reactive.Subjects;
+using System.Reflection;
+using Windows.ApplicationModel;
 
 namespace FluentFin;
 
@@ -154,7 +156,10 @@ public partial class App : Application
 
 			// Configuration
 
-			services.AddHostedService<WindowsUpdateService>();
+			if(!IsPackaged())
+			{
+				services.AddHostedService<WindowsUpdateService>();
+			}
 		}).
 		Build();
 
@@ -174,9 +179,23 @@ public partial class App : Application
 		base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
+		
 		StartFlyleaf();
 
 		await GetService<IActivationService>().ActivateAsync(args);
+	}
+
+	private static bool IsPackaged()
+	{
+		try
+		{
+			_ = Package.Current;
+			return true;
+		}
+		catch
+		{
+			return false;
+		}
 	}
 
 	private async void MainWindow_Closed(object sender, WindowEventArgs args)
@@ -187,24 +206,16 @@ public partial class App : Application
 
 	private static void StartFlyleaf()
 	{
+		var location = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, "FFMpeg");
 		FlyleafLib.Engine.Start(new FlyleafLib.EngineConfig()
 		{
 			FFmpegDevices = false,    // Prevents loading avdevice/avfilter dll files. Enable it only if you plan to use dshow/gdigrab etc.
-
-#if RELEASE
-            FFmpegPath = @"FFmpeg",
-            FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Quiet,
-            LogLevel = FlyleafLib.LogLevel.Quiet,
-
-#else
-			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Warn,
-			LogLevel = FlyleafLib.LogLevel.Debug,
-			LogOutput = ":debug",
-			FFmpegPath = @"E:\FFmpeg",
-#endif
-			UIRefresh = false,    // Required for Activity, BufferedDuration, Stats in combination with Config.Player.Stats = true
+			FFmpegPath = location ?? "FFmpeg",
+			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Quiet,
+			LogLevel = FlyleafLib.LogLevel.Quiet,
+			UIRefresh = true,    // Required for Activity, BufferedDuration, Stats in combination with Config.Player.Stats = true
 			UIRefreshInterval = 250,      // How often (in ms) to notify the UI
-			UICurTimePerSecond = true,     // Whether to notify UI for CurTime only when it's second changed or by UIRefreshInterval
+			UICurTimePerSecond = true,  // Whether to notify UI for CurTime only when it's second changed or by UIRefreshInterval
 		});
 	}
 }

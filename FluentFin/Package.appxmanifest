@@ -9,11 +9,11 @@
   IgnorableNamespaces="uap rescap uap18">
 
   <Identity
-    Name="c7312d17-1c94-495d-9fa2-833b75adcff2"
-    Publisher="CN=Insomniachi"
-    Version="0.1.0.0" />
+    Name="Insomniachi.1822EAE7DFAF"
+    Publisher="CN=348A3DEB-CA3E-4EEC-B964-9DA8537752C1"
+    Version="0.1.8.0" />
 
-  <mp:PhoneIdentity PhoneProductId="c7312d17-1c94-495d-9fa2-833b75adcff2" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="3090ceee-d0c7-4f4e-8f1b-4222f884cd65" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>FluentFin</DisplayName>

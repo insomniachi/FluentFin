@@ -135,6 +135,7 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 				})
 				.Throttle(TimeSpan.FromSeconds(3))
 				.SelectMany(DownloadUpdate)
+				.ObserveOn(RxApp.MainThreadScheduler)
 				.Subscribe(InstallUpdate)
 				.DisposeWith(_disposable);
 

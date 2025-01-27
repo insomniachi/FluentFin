@@ -64,8 +64,8 @@
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="jm:BaseItemDto">
                             <local:PlayableMediaItem
-                                Width="205"
-                                Height="350"
+                                Width="225"
+                                Height="385"
                                 ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
                                 Model="{x:Bind}" />
                         </DataTemplate>

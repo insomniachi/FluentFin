@@ -139,12 +139,15 @@
                     <UniformGridLayout
                         ItemsJustification="Start"
                         ItemsStretch="Fill"
-                        MinColumnSpacing="20"
+                        MinColumnSpacing="8"
                         MinItemHeight="390"
                         MinItemWidth="220"
-                        MinRowSpacing="20"
+                        MinRowSpacing="8"
                         Orientation="Horizontal" />
                 </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTransitionProvider>
+                    <LinedFlowLayoutItemCollectionTransitionProvider />
+                </ItemsRepeater.ItemTransitionProvider>
             </ItemsRepeater>
         </ScrollView>
 

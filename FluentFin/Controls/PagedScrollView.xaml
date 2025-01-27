@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="FluentFin.Controls.PagedScrollView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="{x:Bind Header, Mode=OneWay}" />
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="10">
+                <Button
+                    x:Name="ScrollLeftBtn"
+                    Width="40"
+                    Height="40"
+                    Click="ScrollLeftBtn_Click"
+                    CornerRadius="25"
+                    Visibility="Collapsed">
+                    <FontIcon FontSize="12" Glyph="&#xedd9;" />
+                </Button>
+                <Button
+                    x:Name="ScrollRightBtn"
+                    Width="40"
+                    Height="40"
+                    Click="ScrollRightBtn_Click"
+                    CornerRadius="25">
+                    <FontIcon FontSize="12" Glyph="&#xEDDA;" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+
+
+        <ScrollViewer
+            x:Name="Scroller"
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Hidden"
+            HorizontalScrollMode="Enabled"
+            SizeChanged="Scroller_SizeChanged"
+            ViewChanging="Scroller_ViewChanging">
+            <Grid x:Name="ContentGrid">
+                <ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="jm:BaseItemDto">
+                            <local:PlayableMediaItem
+                                Width="205"
+                                Height="350"
+                                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
+                                Model="{x:Bind}" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Horizontal" Spacing="10" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

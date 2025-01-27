@@ -17,9 +17,10 @@
 
     <Page.Resources>
         <cc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </Page.Resources>
 
-    <ScrollViewer Margin="0,10">
+    <ScrollViewer Margin="0,36">
         <StackPanel Spacing="20">
             <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.HasContinueItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <TextBlock
@@ -77,45 +78,19 @@
                 </ScrollViewer>
             </StackPanel>
 
-            <ItemsView ItemsSource="{x:Bind ViewModel.RecentItems, Mode=OneWay}" SelectionMode="None">
-                <ItemsView.ItemTemplate>
+            <ItemsRepeater ItemsSource="{x:Bind ViewModel.RecentItems, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="services:NamedDtoQueryResult">
-                        <ItemContainer Margin="{StaticResource SmallLeftRightMargin}" Style="{StaticResource BareItemContainerStyle}">
-                            <StackPanel>
-                                <TextBlock Margin="{StaticResource MediumTopBottomMargin}" Style="{StaticResource TitleTextBlockStyle}">
-                                    <Run Text="Recently Added In" />
-                                    <Run Text="{x:Bind Name, Mode=OneWay}" />
-                                </TextBlock>
-                                <ScrollViewer
-                                    HorizontalScrollBarVisibility="Hidden"
-                                    HorizontalScrollMode="Enabled"
-                                    VerticalScrollBarVisibility="Disabled"
-                                    VerticalScrollMode="Disabled">
-                                    <ItemsControl ItemsSource="{x:Bind Items, Mode=OneWay}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate x:DataType="jm:BaseItemDto">
-                                                <lc:PlayableMediaItem
-                                                    Width="205"
-                                                    Height="350"
-                                                    ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
-                                                    Model="{x:Bind}" />
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" Spacing="10" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                    </ItemsControl>
-                                </ScrollViewer>
-                            </StackPanel>
-                        </ItemContainer>
+                        <lc:PagedScrollView
+                            Margin="{StaticResource SmallLeftRightMargin}"
+                            Header="{x:Bind Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
+                            Items="{x:Bind Items, Mode=OneWay}" />
                     </DataTemplate>
-                </ItemsView.ItemTemplate>
-                <ItemsView.Layout>
+                </ItemsRepeater.ItemTemplate>
+                <ItemsRepeater.Layout>
                     <StackLayout Orientation="Vertical" Spacing="20" />
-                </ItemsView.Layout>
-            </ItemsView>
+                </ItemsRepeater.Layout>
+            </ItemsRepeater>
 
         </StackPanel>
     </ScrollViewer>

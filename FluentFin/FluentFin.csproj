@@ -77,6 +77,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Assets\GitHub.dark.svg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="Assets\GitHub.light.svg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="Assets\icons8-jellyfin-color-hand-drawn-70.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	  <Content Update="Assets\jellyfin.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
@@ -86,6 +95,16 @@
 	  <Content Include="FFmpeg\*.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\github.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Controls\PagedScrollView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

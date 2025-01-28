@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI;
 using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
@@ -11,15 +12,8 @@ public sealed partial class ServerFolderPicker : UserControl
 {
 	private readonly IJellyfinClient _jellyfinClient = App.GetService<IJellyfinClient>();
 
-	public string CurrentFolder
-	{
-		get { return (string)GetValue(CurrentFolderProperty); }
-		set { SetValue(CurrentFolderProperty, value); }
-	}
-
-	public static readonly DependencyProperty CurrentFolderProperty =
-		DependencyProperty.Register("CurrentFolder", typeof(string), typeof(ServerFolderPicker), new PropertyMetadata("/"));
-
+	[GeneratedDependencyProperty(DefaultValue = "/")]
+	public partial string CurrentFolder { get; set; }
 
 	public Action? CloseWindow { get; set; }
 

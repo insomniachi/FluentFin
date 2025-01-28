@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml;
@@ -10,32 +11,14 @@ namespace FluentFin.Controls;
 
 public sealed partial class PlayableMediaItem : Control
 {
-	public ImageSource ImageSource
-	{
-		get { return (ImageSource)GetValue(ImageSourceProperty); }
-		set { SetValue(ImageSourceProperty, value); }
-	}
+	[GeneratedDependencyProperty]
+	public partial ImageSource? ImageSource { get; set; }
 
-	public BaseItemDto Model
-	{
-		get { return (BaseItemDto)GetValue(ModelProperty); }
-		set { SetValue(ModelProperty, value); }
-	}
+	[GeneratedDependencyProperty]
+	public partial BaseItemDto? Model { get; set; }
 
-	public string Glyph
-	{
-		get { return (string)GetValue(GlyphProperty); }
-		set { SetValue(GlyphProperty, value); }
-	}
-
-	public static readonly DependencyProperty GlyphProperty =
-		DependencyProperty.Register("Glyph", typeof(string), typeof(PlayableMediaItem), new PropertyMetadata("\uE8B9"));
-
-	public static readonly DependencyProperty ModelProperty =
-		DependencyProperty.Register("Model", typeof(BaseItemDto), typeof(PlayableMediaItem), new PropertyMetadata(null));
-
-	public static readonly DependencyProperty ImageSourceProperty =
-		DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(PlayableMediaItem), new PropertyMetadata(null));
+	[GeneratedDependencyProperty(DefaultValue = "\uE8B9")]
+	public partial string Glyph { get; set; }
 
 	private static IJellyfinClient _jellyfinClient = App.GetService<IJellyfinClient>();
 
@@ -49,6 +32,11 @@ public sealed partial class PlayableMediaItem : Control
 	private void PlayableMediaItem_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
 	{
 		if (e.OriginalSource is not (Grid or Image))
+		{
+			return;
+		}
+
+		if(Model is null)
 		{
 			return;
 		}
@@ -77,6 +65,11 @@ public sealed partial class PlayableMediaItem : Control
 
 	private async void MarkWatchedButton_Clicked(object sender, RoutedEventArgs e)
 	{
+		if (Model is null)
+		{
+			return;
+		}
+
 		var response = await _jellyfinClient.ToggleMarkAsWatched(Model);
 
 		if (response is null)
@@ -89,6 +82,11 @@ public sealed partial class PlayableMediaItem : Control
 
 	private async void AddToFavoriteButton_Clicked(object sender, RoutedEventArgs e)
 	{
+		if (Model is null)
+		{
+			return;
+		}
+
 		var response = await _jellyfinClient.ToggleMarkAsFavorite(Model);
 
 		if (response is null)

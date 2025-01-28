@@ -1,4 +1,4 @@
-using DevWinUI;
+using CommunityToolkit.WinUI;
 using FluentFin.ViewModels;
 using FlyleafLib.MediaFramework.MediaStream;
 using FlyleafLib.MediaPlayer;
@@ -20,17 +20,18 @@ public sealed partial class TransportControls : UserControl
 {
 	private readonly Subject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _onPointerMoved = new();
 
-	public bool IsSkipButtonVisible
-	{
-		get { return (bool)GetValue(IsSkipButtonVisibleProperty); }
-		set { SetValue(IsSkipButtonVisibleProperty, value); }
-	}
+	[GeneratedDependencyProperty]
+	public partial bool IsSkipButtonVisible { get; set; }
 
-	public string SelectedResolution
-	{
-		get { return (string)GetValue(SelectedResolutionProperty); }
-		set { SetValue(SelectedResolutionProperty, value); }
-	}
+	[GeneratedDependencyProperty]
+	public partial PlaylistViewModel Playlist { get; set; }
+
+
+	[GeneratedDependencyProperty]
+	public partial ICommand SkipCommand { get; set; }
+
+	[GeneratedDependencyProperty]
+	public partial TrickplayViewModel Trickplay { get; set; }
 
 	public Player Player
 	{
@@ -47,54 +48,6 @@ public sealed partial class TransportControls : UserControl
 		}
 		set { SetValue(PlayerProperty, value); }
 	}
-
-	public IEnumerable<string> Resolutions
-	{
-		get { return (IEnumerable<string>)GetValue(ResolutionsProperty); }
-		set { SetValue(ResolutionsProperty, value); }
-	}
-
-
-	public PlaylistViewModel Playlist
-	{
-		get { return (PlaylistViewModel)GetValue(PlaylistProperty); }
-		set { SetValue(PlaylistProperty, value); }
-	}
-
-
-	public ICommand SkipCommand
-	{
-		get { return (ICommand)GetValue(SkipCommandProperty); }
-		set { SetValue(SkipCommandProperty, value); }
-	}
-
-
-	public TrickplayViewModel Trickplay
-	{
-		get { return (TrickplayViewModel)GetValue(TrickplayProperty); }
-		set { SetValue(TrickplayProperty, value); }
-	}
-
-	public static readonly DependencyProperty TrickplayProperty =
-		DependencyProperty.Register("Trickplay", typeof(TrickplayViewModel), typeof(TransportControls), new PropertyMetadata(null));
-
-
-	public static readonly DependencyProperty SkipCommandProperty =
-		DependencyProperty.Register("SkipCommand", typeof(ICommand), typeof(TransportControls), new PropertyMetadata(null));
-
-	public static readonly DependencyProperty PlaylistProperty =
-		DependencyProperty.Register("Playlist", typeof(PlaylistViewModel), typeof(TransportControls), new PropertyMetadata(null));
-
-
-	public static readonly DependencyProperty ResolutionsProperty =
-		DependencyProperty.Register("Resolutions", typeof(IEnumerable<string>), typeof(TransportControls), new PropertyMetadata(null));
-
-	public static readonly DependencyProperty SelectedResolutionProperty =
-		DependencyProperty.Register("SelectedResolution", typeof(string), typeof(TransportControls), new PropertyMetadata(""));
-
-
-	public static readonly DependencyProperty IsSkipButtonVisibleProperty =
-		DependencyProperty.Register("IsSkipButtonVisible", typeof(bool), typeof(TransportControls), new PropertyMetadata(false));
 
 	public static readonly DependencyProperty PlayerProperty =
 		DependencyProperty.Register("Player", typeof(Player), typeof(TransportControls), new PropertyMetadata(null));

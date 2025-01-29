@@ -9,7 +9,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dw="using:DevWinUI"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -225,18 +224,18 @@
                                 </Grid.ColumnDefinitions>
 
                                 <i:Interaction.Behaviors>
-                                    <ic:EventTriggerBehavior EventName="PointerEntered">
-                                        <ic:ChangePropertyAction
+                                    <i:EventTriggerBehavior EventName="PointerEntered">
+                                        <i:ChangePropertyAction
                                             PropertyName="Background"
                                             TargetObject="{Binding ElementName=RootGrid}"
                                             Value="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}" />
-                                    </ic:EventTriggerBehavior>
-                                    <ic:EventTriggerBehavior EventName="PointerExited">
-                                        <ic:ChangePropertyAction
+                                    </i:EventTriggerBehavior>
+                                    <i:EventTriggerBehavior EventName="PointerExited">
+                                        <i:ChangePropertyAction
                                             PropertyName="Background"
                                             TargetObject="{Binding ElementName=RootGrid}"
                                             Value="Transparent" />
-                                    </ic:EventTriggerBehavior>
+                                    </i:EventTriggerBehavior>
                                 </i:Interaction.Behaviors>
 
                                 <Grid Grid.Column="0" CornerRadius="{StaticResource ControlCornerRadius}">

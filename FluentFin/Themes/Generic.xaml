@@ -7,7 +7,6 @@
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
     xmlns:cl="using:FluentFin.Controls.Lights"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:local="using:FluentFin.Controls"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:ui="using:CommunityToolkit.WinUI">

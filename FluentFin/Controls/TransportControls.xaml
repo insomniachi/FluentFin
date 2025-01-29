@@ -7,7 +7,7 @@
     xmlns:b="using:FluentFin.Behaviors"
     xmlns:c="using:FluentFin.Converters"
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:core="using:Microsoft.Xaml.Interactivity"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fmp="using:FlyleafLib.MediaPlayer"

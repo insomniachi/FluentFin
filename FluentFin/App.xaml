@@ -26,6 +26,8 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <StaticResource x:Key="TitleBarBackButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
             <Style x:Key="BareItemContainerStyle" TargetType="ItemContainer">
                 <Setter Property="Background" Value="{ThemeResource ItemContainerBackground}" />
                 <Setter Property="UseSystemFocusVisuals" Value="True" />

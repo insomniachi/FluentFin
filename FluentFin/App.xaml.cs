@@ -1,5 +1,4 @@
-﻿using DynamicData;
-using FluentFin.Activation;
+﻿using FluentFin.Activation;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
@@ -20,9 +19,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Serilog;
 using System.Reactive.Subjects;
 using System.Reflection;
 using Windows.ApplicationModel;
+using Windows.Storage;
 
 namespace FluentFin;
 
@@ -68,6 +69,13 @@ public partial class App : Application
 		.UseContentRoot(AppContext.BaseDirectory)
 		.ConfigureServices((context, services) =>
 		{
+			var knownFolders = new Core.KnownFolders();
+			Log.Logger = new LoggerConfiguration()
+				.Enrich.FromLogContext()
+				.WriteTo.File(Path.Combine(knownFolders.Logs, "log.txt"), Serilog.Events.LogEventLevel.Debug, rollingInterval: RollingInterval.Day)
+				.CreateLogger();
+			services.AddLogging(builder => builder.AddSerilog());
+
 			// Default Activation Handler
 			services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
@@ -91,7 +99,7 @@ public partial class App : Application
 			services.AddSingleton<IJellyfinAuthenticationService, JellyfinAuthenticationService>();
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
-			services.AddSingleton<KnownFolders>();
+			services.AddSingleton(knownFolders);
 			services.AddSingleton<Subject<IInboundSocketMessage>>();
 			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
 			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());

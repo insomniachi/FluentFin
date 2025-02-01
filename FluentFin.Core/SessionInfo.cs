@@ -8,6 +8,7 @@ namespace FluentFin.Core
 		public static string BaseUrl { get; set; }
 		public static UserDto CurrentUser { get; set; }
 		public static List<PluginInfo> Plugins { get; set; }
+		public static string AccessToken { get; set; }
 
 		public static bool CanEditMediaSegments() => CurrentUser?.Policy?.IsAdministrator == true &&
 													 Plugins.FirstOrDefault(x => x.Name == "MediaSegments API") is { } &&

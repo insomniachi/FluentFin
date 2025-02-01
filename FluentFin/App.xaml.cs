@@ -11,6 +11,7 @@ using FluentFin.Dialogs.UserInput;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
+using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using FluentFin.Services;
 using FluentFin.ViewModels;
 using FluentFin.Views;
@@ -92,6 +93,7 @@ public partial class App : Application
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
 			services.AddFrameNavigation(NavigationRegions.UserEditor);
 			services.AddFrameNavigation(NavigationRegions.InitialSetup);
+			services.AddNavigationViewNavigation(NavigationRegions.PlaybackReporting);
 
 			// Core Services
 			services.AddTransient<LoginViewModel>();
@@ -142,6 +144,9 @@ public partial class App : Application
 			services.AddTransient<ActivitiesViewModel>();
 			services.AddTransient<LibrariesLandingPageViewModel>();
 
+			services.AddTransient<PlaybackReportingDashboardViewModel>();
+			services.AddTransient<PlaybackReportingUsersViewModel>();
+
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
 			services.AddDialog<EditImagesViewModel, EditImagesDialog>();
@@ -183,6 +188,8 @@ public partial class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		await Host.StartAsync();
+
+		Locator.SetServiceProvider(Host.Services);
 
 		base.OnLaunched(args);
 

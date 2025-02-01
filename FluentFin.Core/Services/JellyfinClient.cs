@@ -26,14 +26,14 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		ArgumentNullException.ThrowIfNull(authResult.User.Id);
 		ArgumentNullException.ThrowIfNullOrEmpty(authResult.AccessToken);
 
-		_token = authResult.AccessToken;
-
 		SessionInfo.CurrentUser = authResult.User;
 		SessionInfo.BaseUrl = baseUrl;
+		SessionInfo.AccessToken = authResult.AccessToken;
 
 		UserId = authResult.User.Id.Value;
 		BaseUrl = baseUrl;
 
+		_token = authResult.AccessToken;
 		_deviceId = new DeviceIdBuilder().OnWindows(windows => windows.AddWindowsDeviceId()).ToString();
 		_settings = new Jellyfin.Sdk.JellyfinSdkSettings();
 		_settings.Initialize("FluentFin", Assembly.GetEntryAssembly()!.GetName().Version!.ToString()!, Environment.MachineName, _deviceId);

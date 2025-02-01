@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Contracts.Services;
 

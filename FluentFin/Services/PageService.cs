@@ -3,6 +3,8 @@
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs.ViewModels;
+using FluentFin.Plugins.Playback_Reporting.ViewModels;
+using FluentFin.Plugins.Playback_Reporting.Views;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
@@ -49,6 +51,10 @@ public class PageService : IPageService
 		Configure<PlaybackResumeViewModel, PlaybackResumePage>();
 		Configure<PlaybackTrickplayViewModel, PlaybackTrickplayPage>();
 		Configure<ActivitiesViewModel, ActivitiesPage>();
+
+		// Plugin Pages
+		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();
+		Configure<PlaybackReportingUsersViewModel, PlaybackReportingUsersPage>();
 	}
 
 	public Type GetPageType(string key)

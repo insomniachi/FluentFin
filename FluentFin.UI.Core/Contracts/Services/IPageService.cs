@@ -1,4 +1,6 @@
-﻿namespace FluentFin.Contracts.Services;
+﻿using System;
+
+namespace FluentFin.Contracts.Services;
 
 public interface IPageService
 {

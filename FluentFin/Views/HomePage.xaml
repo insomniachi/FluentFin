@@ -20,7 +20,7 @@
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </Page.Resources>
 
-    <ScrollViewer Margin="0,36">
+    <ScrollViewer Margin="0,36" VerticalScrollBarVisibility="Hidden">
         <StackPanel Spacing="20">
             <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.HasContinueItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <TextBlock

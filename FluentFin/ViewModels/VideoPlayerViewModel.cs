@@ -45,6 +45,13 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
 
 		MediaPlayer.WhenAnyValue(x => x.Status)
+			.Do(status =>
+			{
+				if(status == Status.Playing && _disposables?.IsDisposed == true)
+				{
+					MediaPlayer.Stop();
+				}
+			})
 			.Where(status => status is Status.Stopped or Status.Failed)
 			.Subscribe(async _ => await jellyfinClient.Stop());
 
@@ -117,10 +124,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		if (selectedItem.Dto?.UserData?.PlaybackPositionTicks is { } ticks)
 		{
 			MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
-		}
-		else
-		{
-			//MediaPlayer.SeekAccurate(0);
 		}
 	}
 
@@ -229,90 +232,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		}
 
 		return await _jellyfinClient.GetMediaUrl(dto);
-	}
-
-	private async Task<bool> CreateSeriesPlaylist(BaseItemDto series)
-	{
-		var response = await _jellyfinClient.GetItems(series);
-
-		if (response is null or { Items: null })
-		{
-			return false;
-		}
-
-		var season = response.Items.FirstOrDefault(x => x.UserData?.UnplayedItemCount > 0);
-
-		if (season is null)
-		{
-			return false;
-		}
-
-		return await CreateSeasonPlaylist(season);
-	}
-
-	private async Task<bool> CreateSeasonPlaylistFromEpisode(BaseItemDto episode)
-	{
-		if (episode.SeasonId is not { } seasonId)
-		{
-			return false;
-		}
-
-		var season = await _jellyfinClient.GetItem(seasonId);
-
-		if (season is null)
-		{
-			return false;
-		}
-
-		return await CreateSeasonPlaylist(season);
-	}
-
-	private async Task<bool> CreateSeasonPlaylist(BaseItemDto season)
-	{
-		var response = await _jellyfinClient.GetItems(season);
-
-		if (response is null or { Items: null })
-		{
-			return false;
-		}
-
-
-		foreach (var item in response.Items)
-		{
-			if (item is null)
-			{
-				continue;
-			}
-
-			var playlistItem = new PlaylistItem
-			{
-				Title = item.Name ?? "",
-				Dto = item
-			};
-
-			Playlist.Items.Add(playlistItem);
-		}
-
-		if (Playlist.Items.Count == 0)
-		{
-			return false;
-		}
-
-
-		return true;
-	}
-
-	private Task<bool> CreateSingleItemPlaylist(BaseItemDto dto)
-	{
-		var item = new PlaylistItem
-		{
-			Title = dto.Name ?? "",
-			Dto = dto
-		};
-
-		Playlist.Items.Add(item);
-
-		return Task.FromResult(true);
 	}
 
 	private async Task UpdateStatus()

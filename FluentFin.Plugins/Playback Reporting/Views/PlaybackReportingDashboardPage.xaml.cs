@@ -1,4 +1,3 @@
-using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using Microsoft.UI.Xaml.Controls;
@@ -15,11 +14,9 @@ public sealed partial class PlaybackReportingDashboardPage : Page
 	{
 		InitializeComponent();
 
-		var navigationService = Locator.GetKeyedService<INavigationService>(NavigationRegions.PlaybackReporting);
-		var navigationViewService = Locator.GetKeyedService<INavigationViewService>(NavigationRegions.PlaybackReporting);
 
-		navigationService.Frame = NavFrame;
-		navigationViewService.Initialize(NavView);
+		ViewModel.NavigationService.Frame = NavFrame;
+		ViewModel.NavigationViewService.Initialize(NavView);
 	}
 
 	private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -32,6 +29,6 @@ public sealed partial class PlaybackReportingDashboardPage : Page
 
 	protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
-		Locator.GetKeyedService<INavigationService>(NavigationRegions.PlaybackReporting).NavigateTo(typeof(PlaybackReportingUsersViewModel).FullName!);
+		ViewModel.NavigationService.NavigateTo(typeof(PlaybackReportingUsersViewModel).FullName!);
 	}
 }

@@ -11,19 +11,18 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels;
 
 public partial class PlaybackReportViewModel : ObservableObject, INavigationAware
 {
-	public WinUIPlot? WinUIPlot { get; set; }
+	[ObservableProperty]
+	public partial WinUIPlot? PlotContainer { get; set; }
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if(WinUIPlot?.Plot is not { } plot)
-		{
-			return;
-		}
+		PlotContainer = new WinUIPlot();
+		var plot = PlotContainer.Plot;
+		plot.Clear();
 
-		WinUIPlot.UserInputProcessor.Disable();
-
+		PlotContainer.UserInputProcessor.Disable();
 		var data = await PlaybackReportingHelper.GetPlayActivity(28, TimeProvider.System.GetUtcNow());
 
 		if (data.Count < 1)
@@ -35,6 +34,7 @@ public partial class PlaybackReportViewModel : ObservableObject, INavigationAwar
 		var bars = new List<Bar>();
 		var legends = new List<LegendItem>();
 
+		Customize(plot);
 
 		foreach (var user in data.SkipLast(1))
 		{
@@ -77,10 +77,21 @@ public partial class PlaybackReportViewModel : ObservableObject, INavigationAwar
 		plot.Add.Bars(bars);
 		Tick[] ticks = data[0].UserUsage.Keys.Index().Select(x => new Tick(x.Index, x.Item)).ToArray();
 		plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticks);
+
+		plot.ShowLegend(legends, Alignment.UpperRight);
+		PlotContainer.Refresh();
+	}
+
+	private static void Customize(Plot plot)
+	{
+		plot.FigureBackground.Color = Colors.Transparent;
+		plot.Axes.Color(Colors.White);
+		plot.Title("User Playback Report (Play Count)");
+		plot.XLabel("Days");
+		plot.YLabel("Count");
+		plot.Axes.Left.Collapse();
 		plot.Axes.Bottom.MajorTickStyle.Length = 0;
 		plot.HideGrid();
 		plot.Axes.Margins(bottom: 0);
-		plot.ShowLegend(legends, Alignment.UpperRight);
-		WinUIPlot.DispatcherQueue.TryEnqueue(() => WinUIPlot.Refresh());
 	}
 }

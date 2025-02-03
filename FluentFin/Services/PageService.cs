@@ -55,6 +55,7 @@ public class PageService : IPageService
 		// Plugin Pages
 		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();
 		Configure<PlaybackReportingUsersViewModel, PlaybackReportingUsersPage>();
+		Configure<PlaybackReportViewModel, PlaybackReportPage>();
 	}
 
 	public Type GetPageType(string key)

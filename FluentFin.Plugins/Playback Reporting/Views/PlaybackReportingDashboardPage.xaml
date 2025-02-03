@@ -35,6 +35,10 @@
                 helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.PlaybackReportingUsersViewModel"
                 Content="Dashboard"
                 Icon="{ui:FontIcon Glyph=&#xE902;}" />
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.PlaybackReportViewModel"
+                Content="Playback"
+                Icon="{ui:FontIcon Glyph=&#xE902;}" />
         </NavigationView.MenuItems>
     </NavigationView>
 </Page>

@@ -146,6 +146,7 @@ public partial class App : Application
 
 			services.AddTransient<PlaybackReportingDashboardViewModel>();
 			services.AddTransient<PlaybackReportingUsersViewModel>();
+			services.AddTransient<PlaybackReportViewModel>();
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

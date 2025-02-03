@@ -38,6 +38,80 @@ public static class PlaybackReportingHelper
 			return [];
 		}
 	}
+
+	public static async Task<List<PlayActivity>> GetPlayActivity(int days, DateTimeOffset endDate)
+	{
+		try
+		{
+			var stream = await SessionInfo.BaseUrl
+				.AppendPathSegment("/user_usage_stats/PlayActivity")
+				.SetQueryParams(new
+				{
+					days,
+					end_date = endDate,
+					api_key = SessionInfo.AccessToken,
+					filter = "Episode,Movie,Audio,Series",
+					dataType = "count"
+				})
+				.GetStreamAsync();
+
+			var node = JsonNode.Parse(stream)?.AsArray() ?? [];
+
+			return node.Deserialize<List<PlayActivity>>() ?? [];
+		}
+		catch (Exception ex)
+		{
+			Locator.GetService<ILogger<JellyfinClient>>().LogError(ex, "Unhandled exception");
+			return [];
+		}
+	}
+
+	public static async Task<List<ActivityBreakdown>> GetBreakdown(string type, int days, DateTimeOffset endDate)
+	{
+		try
+		{
+			var stream = await SessionInfo.BaseUrl
+				.AppendPathSegment($"/user_usage_stats/{type}/BreakdownReport")
+				.SetQueryParams(new
+				{
+					days,
+					end_date = endDate,
+					api_key = SessionInfo.AccessToken
+				})
+				.GetStreamAsync();
+			var node = JsonNode.Parse(stream)?.AsArray() ?? [];
+			return node.Deserialize<List<ActivityBreakdown>>() ?? [];
+		}
+		catch (Exception ex)
+		{
+			Locator.GetService<ILogger<JellyfinClient>>().LogError(ex, "Unhandled exception");
+			return [];
+		}
+	}
+}
+
+public class PlayActivity
+{
+	[JsonPropertyName("user_id")]
+	public string UserId { get; set; } = "";
+
+	[JsonPropertyName("user_name")]
+	public string UserName { get; set; } = "";
+
+	[JsonPropertyName("user_usage")]
+	public Dictionary<string, int> UserUsage { get; set; } = [];
+}
+
+public class ActivityBreakdown
+{
+	[JsonPropertyName("label")]
+	public string Label { get; set; } = "";
+
+	[JsonPropertyName("count")]
+	public int Count { get; set; }
+
+	[JsonPropertyName("time")]
+	public long Time { get; set; }
 }
 
 public class UserActivity

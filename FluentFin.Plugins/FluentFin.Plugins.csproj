@@ -7,11 +7,15 @@
 	<Platforms>x86;x64;arm64</Platforms>
     <UseWinUI>true</UseWinUI>
 	<LangVersion>preview</LangVersion>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentFin.UI.Core\FluentFin.UI.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Playback Reporting\Views\PlaybackReportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Playback Reporting\Views\PlaybackReportingUsersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

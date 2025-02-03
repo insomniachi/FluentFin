@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -70,8 +71,49 @@ public static class PlaybackReportingHelper
 	{
 		try
 		{
+			Stream stream;
+
+			if(type is "GetTvShowsReport" or "MoviesReport")
+			{
+				stream = await SessionInfo.BaseUrl
+					.AppendPathSegment($"/user_usage_stats/{type}")
+					.SetQueryParams(new
+					{
+						days,
+						end_date = endDate,
+						api_key = SessionInfo.AccessToken
+					})
+					.GetStreamAsync();
+			}
+			else
+			{
+				stream = await SessionInfo.BaseUrl
+					.AppendPathSegment($"/user_usage_stats/{type}/BreakdownReport")
+					.SetQueryParams(new
+					{
+						days,
+						end_date = endDate,
+						api_key = SessionInfo.AccessToken
+					})
+					.GetStreamAsync();
+			}
+
+			var node = JsonNode.Parse(stream)?.AsArray() ?? [];
+			return node.Deserialize<List<ActivityBreakdown>>() ?? [];
+		}
+		catch (Exception ex)
+		{
+			Locator.GetService<ILogger<JellyfinClient>>().LogError(ex, "Unhandled exception");
+			return [];
+		}
+	}
+
+	public static async Task<List<ActivityBreakdown>> GetBreakdownReport(string type, int days, DateTimeOffset endDate)
+	{
+		try
+		{
 			var stream = await SessionInfo.BaseUrl
-				.AppendPathSegment($"/user_usage_stats/{type}/BreakdownReport")
+				.AppendPathSegment($"/user_usage_stats/{type}")
 				.SetQueryParams(new
 				{
 					days,

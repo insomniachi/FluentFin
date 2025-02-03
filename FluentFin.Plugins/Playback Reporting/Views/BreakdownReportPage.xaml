@@ -23,9 +23,9 @@
                 <ItemsRepeater.Layout>
                     <UniformGridLayout
                         ItemsStretch="Fill"
-                        MaximumRowsOrColumns="3"
+                        MaximumRowsOrColumns="1"
                         MinColumnSpacing="8"
-                        MinItemHeight="500"
+                        MinItemHeight="600"
                         MinItemWidth="500"
                         MinRowSpacing="8"
                         Orientation="Horizontal" />

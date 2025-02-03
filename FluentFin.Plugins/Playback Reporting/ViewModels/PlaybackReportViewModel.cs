@@ -84,12 +84,9 @@ public partial class PlaybackReportViewModel : ObservableObject, INavigationAwar
 
 	private static void Customize(Plot plot)
 	{
-		plot.FigureBackground.Color = Colors.Transparent;
-		plot.Axes.Color(Colors.White);
 		plot.Title("User Playback Report (Play Count)");
 		plot.XLabel("Days");
 		plot.YLabel("Count");
-		plot.Axes.Left.Collapse();
 		plot.Axes.Bottom.MajorTickStyle.Length = 0;
 		plot.HideGrid();
 		plot.Axes.Margins(bottom: 0);

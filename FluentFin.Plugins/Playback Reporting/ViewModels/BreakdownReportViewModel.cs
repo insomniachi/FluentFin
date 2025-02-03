@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
-using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
-using ScottPlot.WinUI;
 using ScottPlot;
-using System.Linq;
-using System.Collections.ObjectModel;
-using ScottPlot.Plottables;
+using ScottPlot.WinUI;
 
 namespace FluentFin.Plugins.Playback_Reporting.ViewModels;
 
@@ -18,6 +16,8 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 
 	public async Task OnNavigatedTo(object parameter)
 	{
+		await CreatePlot("GetTvShowsReport");
+		await CreatePlot("MoviesReport");
 		await CreatePlot("UserId");
 		await CreatePlot("ItemType");
 		await CreatePlot("PlaybackMethod");

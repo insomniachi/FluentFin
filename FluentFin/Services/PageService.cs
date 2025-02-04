@@ -57,6 +57,7 @@ public class PageService : IPageService
 		Configure<PlaybackReportingUsersViewModel, PlaybackReportingUsersPage>();
 		Configure<PlaybackReportViewModel, PlaybackReportPage>();
 		Configure<BreakdownReportViewModel, BreakdownReportPage>();
+		Configure<UsageReportViewModel, UsageReportPage>();
 	}
 
 	public Type GetPageType(string key)

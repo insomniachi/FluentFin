@@ -73,7 +73,7 @@ public static class PlaybackReportingHelper
 		{
 			Stream stream;
 
-			if(type is "GetTvShowsReport" or "MoviesReport")
+			if (type is "GetTvShowsReport" or "MoviesReport")
 			{
 				stream = await SessionInfo.BaseUrl
 					.AppendPathSegment($"/user_usage_stats/{type}")
@@ -123,6 +123,28 @@ public static class PlaybackReportingHelper
 				.GetStreamAsync();
 			var node = JsonNode.Parse(stream)?.AsArray() ?? [];
 			return node.Deserialize<List<ActivityBreakdown>>() ?? [];
+		}
+		catch (Exception ex)
+		{
+			Locator.GetService<ILogger<JellyfinClient>>().LogError(ex, "Unhandled exception");
+			return [];
+		}
+	}
+
+	public static async Task<Dictionary<string, int>> GetHourlyReport(int days, DateTimeOffset endDate)
+	{
+		try
+		{
+			return await SessionInfo.BaseUrl
+				.AppendPathSegment("/user_usage_stats/HourlyReport")
+				.SetQueryParams(new
+				{
+					days,
+					end_date = endDate,
+					api_key = SessionInfo.AccessToken,
+					filter = "Episode,Movie,Audio,Series",
+				})
+				.GetJsonAsync<Dictionary<string, int>>();
 		}
 		catch (Exception ex)
 		{

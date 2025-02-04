@@ -1,6 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
+using FluentFin.Core;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace FluentFin.ViewModels;
@@ -12,6 +13,7 @@ public partial class ShellViewModel : ObservableObject
 
 	public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
+	public bool IsReportingVisible { get; } = SessionInfo.HasPlaybackReporting();
 
 	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService)
 	{

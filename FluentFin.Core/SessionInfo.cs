@@ -13,6 +13,9 @@ namespace FluentFin.Core
 		public static bool CanEditMediaSegments() => CurrentUser?.Policy?.IsAdministrator == true &&
 													 Plugins.FirstOrDefault(x => x.Name == "MediaSegments API") is { } &&
 													 Plugins.FirstOrDefault(x => x.Name == "Intro Skipper") is { };
+
+		public static bool HasPlaybackReporting() => CurrentUser?.Policy?.IsAdministrator == true && 
+													 Plugins.FirstOrDefault(x => x.Name == "Playback Reporting") is { };
 	}
 #nullable restore
 }

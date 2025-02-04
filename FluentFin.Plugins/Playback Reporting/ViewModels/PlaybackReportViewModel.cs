@@ -74,11 +74,13 @@ public partial class PlaybackReportViewModel : ObservableObject, INavigationAwar
 			}
 		}
 
+
 		plot.Add.Bars(bars);
 		Tick[] ticks = data[0].UserUsage.Keys.Index().Select(x => new Tick(x.Index, x.Item)).ToArray();
 		plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticks);
-
 		plot.ShowLegend(legends, Alignment.UpperRight);
+		plot.Axes.AutoScale();
+		
 		PlotContainer.Refresh();
 	}
 
@@ -88,7 +90,6 @@ public partial class PlaybackReportViewModel : ObservableObject, INavigationAwar
 		plot.XLabel("Days");
 		plot.YLabel("Count");
 		plot.Axes.Bottom.MajorTickStyle.Length = 0;
-		plot.HideGrid();
 		plot.Axes.Margins(bottom: 0);
 	}
 }

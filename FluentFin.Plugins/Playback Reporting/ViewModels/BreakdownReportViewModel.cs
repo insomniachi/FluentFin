@@ -65,6 +65,9 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 
 		var countPie = countPlot.Add.Pie(countSlices.ToList());
 		var timePie = timePlot.Add.Pie(timeSlices.ToList());
+
+		countPlot.Axes.AutoScale();
+		timePlot.Axes.AutoScale();
 		
 		countPie.SliceLabelDistance = 0.5;
 		countPie.ExplodeFraction = .1;

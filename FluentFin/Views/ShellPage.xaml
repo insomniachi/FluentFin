@@ -4,10 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:behaviors="using:FluentFin.Behaviors"
-    xmlns:helpers="using:FluentFin.Helpers"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:helpers="using:FluentFin.UI.Core"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ui="using:CommunityToolkit.WinUI"
     Loaded="OnLoaded">
+
+    <Page.Resources>
+        <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
 
     <NavigationView
         x:Name="NavigationViewControl"
@@ -31,7 +36,8 @@
             <NavigationViewItem
                 helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.PlaybackReportingDashboardViewModel"
                 Content="Reporting"
-                Icon="{ui:FontIcon Glyph=&#xE9F9;}" />
+                Icon="{ui:FontIcon Glyph=&#xE9F9;}"
+                Visibility="{x:Bind ViewModel.IsReportingVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </NavigationView.MenuItems>
         <NavigationView.FooterMenuItems>
             <NavigationViewItem

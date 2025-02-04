@@ -32,8 +32,8 @@
         </NavigationView.Content>
         <NavigationView.MenuItems>
             <NavigationViewItem
-                helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.PlaybackReportingUsersViewModel"
-                Content="Dashboard"
+                helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.UsersReportViewModel"
+                Content="Users"
                 Icon="{ui:FontIcon Glyph=&#xE902;}" />
             <NavigationViewItem
                 helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.PlaybackReportViewModel"

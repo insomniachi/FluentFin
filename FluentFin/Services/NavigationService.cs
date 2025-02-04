@@ -81,26 +81,34 @@ public class NavigationService : INavigationService
 
 	public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false)
 	{
-		var pageType = _pageService.GetPageType(pageKey);
-
-		if (_frame != null && (_frame.Content?.GetType() != pageType || (parameter != null && !parameter.Equals(_lastParameterUsed))))
+		try
 		{
-			_frame.Tag = clearNavigation;
-			var vmBeforeNavigation = _frame.GetPageViewModel();
-			var navigated = _frame.Navigate(pageType, parameter);
-			if (navigated)
+			var pageType = _pageService.GetPageType(pageKey);
+
+			if (_frame != null && (_frame.Content?.GetType() != pageType || (parameter != null && !parameter.Equals(_lastParameterUsed))))
 			{
-				_lastParameterUsed = parameter;
-				if (vmBeforeNavigation is INavigationAware navigationAware)
+				_frame.Tag = clearNavigation;
+				var vmBeforeNavigation = _frame.GetPageViewModel();
+				var navigated = _frame.Navigate(pageType, parameter);
+				if (navigated)
 				{
-					navigationAware.OnNavigatedFrom();
+					_lastParameterUsed = parameter;
+					if (vmBeforeNavigation is INavigationAware navigationAware)
+					{
+						navigationAware.OnNavigatedFrom();
+					}
 				}
+
+				return navigated;
 			}
 
-			return navigated;
+			return false;
+		}
+		catch
+		{
+			return false;
 		}
 
-		return false;
 	}
 
 	private async void OnNavigated(object sender, NavigationEventArgs e)

@@ -54,7 +54,7 @@ public class PageService : IPageService
 
 		// Playback Reporting Pages
 		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();
-		Configure<PlaybackReportingUsersViewModel, PlaybackReportingUsersPage>();
+		Configure<UsersReportViewModel, UsersReportPage>();
 		Configure<PlaybackReportViewModel, PlaybackReportPage>();
 		Configure<BreakdownReportViewModel, BreakdownReportPage>();
 		Configure<UsageReportViewModel, UsageReportPage>();

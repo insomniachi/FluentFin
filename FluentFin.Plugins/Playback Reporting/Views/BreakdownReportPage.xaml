@@ -7,28 +7,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Margin="36">
+    <Grid Margin="36" RowSpacing="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <StackPanel Orientation="Horizontal" Spacing="16">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock VerticalAlignment="Center" Text="End Date:" />
+                <CalendarDatePicker Date="{x:Bind ViewModel.EndDate, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock VerticalAlignment="Center" Text="Weeks:" />
+                <ComboBox ItemsSource="{x:Bind ViewModel.Weeks}" SelectedItem="{x:Bind ViewModel.NumberOfWeeks, Mode=TwoWay}" />
+            </StackPanel>
+        </StackPanel>
+
         <ScrollView Grid.Row="1">
             <ItemsRepeater ItemsSource="{x:Bind ViewModel.Plots, Mode=OneWay}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <ContentPresenter Content="{Binding}" />
+                        <ContentPresenter Height="500" Content="{Binding}" />
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
                 <ItemsRepeater.Layout>
-                    <UniformGridLayout
-                        ItemsStretch="Fill"
-                        MaximumRowsOrColumns="1"
-                        MinColumnSpacing="8"
-                        MinItemHeight="600"
-                        MinItemWidth="500"
-                        MinRowSpacing="8"
-                        Orientation="Horizontal" />
+                    <StackLayout Orientation="Vertical" Spacing="8" />
                 </ItemsRepeater.Layout>
             </ItemsRepeater>
         </ScrollView>

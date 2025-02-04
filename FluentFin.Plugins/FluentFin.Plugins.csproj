@@ -25,7 +25,7 @@
     <Page Update="Playback Reporting\Views\PlaybackReportPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Playback Reporting\Views\PlaybackReportingUsersPage.xaml">
+    <Page Update="Playback Reporting\Views\UsersReportPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

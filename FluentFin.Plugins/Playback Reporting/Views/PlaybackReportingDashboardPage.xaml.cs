@@ -29,6 +29,6 @@ public sealed partial class PlaybackReportingDashboardPage : Page
 
 	protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
-		ViewModel.NavigationService.NavigateTo(typeof(PlaybackReportingUsersViewModel).FullName!);
+		ViewModel.NavigationService.NavigateTo(typeof(UsersReportViewModel).FullName!);
 	}
 }

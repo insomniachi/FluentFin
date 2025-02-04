@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
+using ReactiveUI;
 using ScottPlot;
 using ScottPlot.WinUI;
 
@@ -12,21 +15,38 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels;
 public partial class BreakdownReportViewModel : ObservableObject, INavigationAware
 {
 	public ObservableCollection<WinUIPlot> Plots { get; } = [];
+
+	[ObservableProperty]
+	public partial DateTimeOffset EndDate { get; set; } = TimeProvider.System.GetLocalNow();
+
+	[ObservableProperty]
+	public partial int NumberOfWeeks { get; set; } = 4;
+
+	public IEnumerable<int> Weeks { get; } = Enumerable.Range(1, 11);
+
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 
-	public async Task OnNavigatedTo(object parameter)
+	public Task OnNavigatedTo(object parameter)
 	{
-		await CreatePlot("GetTvShowsReport");
-		await CreatePlot("MoviesReport");
-		await CreatePlot("UserId");
-		await CreatePlot("ItemType");
-		await CreatePlot("PlaybackMethod");
-		await CreatePlot("ClientName");
-		await CreatePlot("DeviceName");
+		this.WhenAnyValue(x => x.EndDate, x => x.NumberOfWeeks)
+			.Select(x => new { EndDate = x.Item1, Days = x.Item2 * 7 })
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Do(_ => Plots.Clear())
+			.Subscribe( async x =>
+			{
+				await CreatePlot("GetTvShowsReport", x.Days, x.EndDate);
+				await CreatePlot("MoviesReport", x.Days, x.EndDate);
+				await CreatePlot("UserId", x.Days, x.EndDate);
+				await CreatePlot("ItemType", x.Days, x.EndDate);
+				await CreatePlot("PlaybackMethod", x.Days, x.EndDate);
+				await CreatePlot("ClientName", x.Days, x.EndDate);
+				await CreatePlot("DeviceName", x.Days, x.EndDate);
+			});
+
+		return Task.CompletedTask;
 	}
 
-
-	private async Task CreatePlot(string type)
+	private async Task CreatePlot(string type, int days, DateTimeOffset endDate)
 	{
 		var countControl = new WinUIPlot();
 		var timeControl = new WinUIPlot();
@@ -42,7 +62,7 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 		CustomizePlot(countPlot, "Count");
 		CustomizePlot(timePlot, "Time");	
 
-		var data = await PlaybackReportingHelper.GetBreakdown(type, 28, TimeProvider.System.GetUtcNow());
+		var data = await PlaybackReportingHelper.GetBreakdown(type, days, endDate);
 
 		var pallet = new ScottPlot.Palettes.Category10();
 		var maxLength = data.Max(x => x.Label.Length);

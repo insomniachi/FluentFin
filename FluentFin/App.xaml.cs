@@ -147,7 +147,7 @@ public partial class App : Application
 
 			// playback report view models
 			services.AddTransient<PlaybackReportingDashboardViewModel>();
-			services.AddTransient<PlaybackReportingUsersViewModel>();
+			services.AddTransient<UsersReportViewModel>();
 			services.AddTransient<PlaybackReportViewModel>();
 			services.AddTransient<BreakdownReportViewModel>();
 			services.AddTransient<UsageReportViewModel>();

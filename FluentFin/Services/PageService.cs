@@ -52,12 +52,13 @@ public class PageService : IPageService
 		Configure<PlaybackTrickplayViewModel, PlaybackTrickplayPage>();
 		Configure<ActivitiesViewModel, ActivitiesPage>();
 
-		// Plugin Pages
+		// Playback Reporting Pages
 		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();
 		Configure<PlaybackReportingUsersViewModel, PlaybackReportingUsersPage>();
 		Configure<PlaybackReportViewModel, PlaybackReportPage>();
 		Configure<BreakdownReportViewModel, BreakdownReportPage>();
 		Configure<UsageReportViewModel, UsageReportPage>();
+		Configure<SessionDurationReportViewModel, SessionDurationReportPage>();
 	}
 
 	public Type GetPageType(string key)

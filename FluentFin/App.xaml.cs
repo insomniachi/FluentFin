@@ -127,6 +127,7 @@ public partial class App : Application
 			services.AddTransient<SelectServerViewModel>();
 			services.AddTransient<MediaSegmentsEditorViewModel>();
 
+			// dashboard view models
 			services.AddTransient<DashboardViewModel>();
 			services.AddTransient<GeneralSettingsViewModel>();
 			services.AddTransient<UsersViewModel>();
@@ -144,11 +145,13 @@ public partial class App : Application
 			services.AddTransient<ActivitiesViewModel>();
 			services.AddTransient<LibrariesLandingPageViewModel>();
 
+			// playback report view models
 			services.AddTransient<PlaybackReportingDashboardViewModel>();
 			services.AddTransient<PlaybackReportingUsersViewModel>();
 			services.AddTransient<PlaybackReportViewModel>();
 			services.AddTransient<BreakdownReportViewModel>();
 			services.AddTransient<UsageReportViewModel>();
+			services.AddTransient<SessionDurationReportViewModel>();
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();

@@ -53,7 +53,6 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 					{
 						Value = kv.Value,
 						Position = hour,
-						CenterLabel = true,
 						Label = TimeSpan.FromSeconds(kv.Value).ToString()
 					});
 				}
@@ -103,7 +102,6 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 					{
 						Value = kv.Value,
 						Position = day,
-						CenterLabel = true,
 						Label = kv.Value > 0 ? TimeSpan.FromSeconds(kv.Value).ToString() : ""
 					}); 
 				}

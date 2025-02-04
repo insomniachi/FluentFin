@@ -52,7 +52,8 @@ public static class PlaybackReportingHelper
 					end_date = endDate,
 					api_key = SessionInfo.AccessToken,
 					filter = "Episode,Movie,Audio,Series",
-					dataType = "count"
+					dataType = "count",
+					timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 				})
 				.GetStreamAsync();
 
@@ -81,7 +82,8 @@ public static class PlaybackReportingHelper
 					{
 						days,
 						end_date = endDate,
-						api_key = SessionInfo.AccessToken
+						api_key = SessionInfo.AccessToken,
+						timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 					})
 					.GetStreamAsync();
 			}
@@ -93,7 +95,8 @@ public static class PlaybackReportingHelper
 					{
 						days,
 						end_date = endDate,
-						api_key = SessionInfo.AccessToken
+						api_key = SessionInfo.AccessToken,
+						timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 					})
 					.GetStreamAsync();
 			}
@@ -118,7 +121,8 @@ public static class PlaybackReportingHelper
 				{
 					days,
 					end_date = endDate,
-					api_key = SessionInfo.AccessToken
+					api_key = SessionInfo.AccessToken,
+					timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 				})
 				.GetStreamAsync();
 			var node = JsonNode.Parse(stream)?.AsArray() ?? [];
@@ -143,6 +147,29 @@ public static class PlaybackReportingHelper
 					end_date = endDate,
 					api_key = SessionInfo.AccessToken,
 					filter = "Episode,Movie,Audio,Series",
+					timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
+				})
+				.GetJsonAsync<Dictionary<string, int>>();
+		}
+		catch (Exception ex)
+		{
+			Locator.GetService<ILogger<JellyfinClient>>().LogError(ex, "Unhandled exception");
+			return [];
+		}
+	}
+
+	public static async Task<Dictionary<string, int>> GetDurationHistogram(int days, DateTimeOffset endDate)
+	{
+		try
+		{
+			return await SessionInfo.BaseUrl
+				.AppendPathSegment("/user_usage_stats/DurationHistogramReport")
+				.SetQueryParams(new
+				{
+					days,
+					end_date = endDate,
+					api_key = SessionInfo.AccessToken,
+					filter = "Episode,Movie,Audio,Series"
 				})
 				.GetJsonAsync<Dictionary<string, int>>();
 		}

@@ -2,7 +2,6 @@
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Services;
-using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;

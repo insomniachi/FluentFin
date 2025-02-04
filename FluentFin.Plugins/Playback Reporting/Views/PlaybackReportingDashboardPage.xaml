@@ -46,7 +46,11 @@
             <NavigationViewItem
                 helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.UsageReportViewModel"
                 Content="Usage"
-                Icon="{ui:FontIcon Glyph=&#xEC92;}" />
+                Icon="{ui:SymbolIcon Symbol=Calendar}" />
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.SessionDurationReportViewModel"
+                Content="Duration"
+                Icon="{ui:FontIcon Glyph=&#xE823;}" />
         </NavigationView.MenuItems>
     </NavigationView>
 </Page>

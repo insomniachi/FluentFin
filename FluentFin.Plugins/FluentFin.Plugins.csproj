@@ -13,6 +13,9 @@
     <ProjectReference Include="..\FluentFin.UI.Core\FluentFin.UI.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Playback Reporting\Views\SessionDurationReportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Playback Reporting\Views\UsageReportPage.xaml">
       <SubType>Designer</SubType>
     </Page>

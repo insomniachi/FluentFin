@@ -58,6 +58,7 @@ public partial class SelectServerViewModel(ISettings settings,
 		{
 			if (server.LocalNetworkNames.Count == 0)
 			{
+				server.LocalUrl = url; // remove it later once bug is fixed in server version 10.10.5
 				server.LocalNetworkNames = [.. networkNames];
 				settings.SaveServerDetails();
 			}

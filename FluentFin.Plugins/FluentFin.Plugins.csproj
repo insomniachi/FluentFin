@@ -8,6 +8,7 @@
     <UseWinUI>true</UseWinUI>
 	<LangVersion>preview</LangVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentFin.UI.Core\FluentFin.UI.Core.csproj" />

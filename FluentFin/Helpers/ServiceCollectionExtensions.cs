@@ -34,8 +34,7 @@ internal static class ServiceCollectionExtensions
 		services.AddKeyedSingleton<INavigationViewService, NavigationViewService>(key, (sp, key) =>
 		{
 			return new NavigationViewService(sp.GetRequiredKeyedService<INavigationService>(key),
-											 sp.GetRequiredService<IPageService>(),
-											 sp.GetRequiredService<IJellyfinClient>());
+											 sp.GetRequiredService<IPageService>());
 		});
 		return services;
 	}

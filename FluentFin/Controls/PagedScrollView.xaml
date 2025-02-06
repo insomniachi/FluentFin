@@ -56,7 +56,7 @@
             x:Name="Scroller"
             Grid.Row="1"
             HorizontalScrollBarVisibility="Hidden"
-            HorizontalScrollMode="Enabled"
+            HorizontalScrollMode="Disabled"
             SizeChanged="Scroller_SizeChanged"
             ViewChanging="Scroller_ViewChanging">
             <Grid x:Name="ContentGrid">

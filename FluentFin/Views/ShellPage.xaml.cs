@@ -1,9 +1,9 @@
-﻿using FluentFin.Contracts.Services;
-using FluentFin.Core.ViewModels;
+﻿using System.Reactive.Linq;
+using FluentFin.Contracts.Services;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
+using ReactiveUI;
 using Windows.System;
 
 namespace FluentFin.Views;
@@ -22,11 +22,15 @@ public sealed partial class ShellPage : Page
 
 		ViewModel.NavigationService.Frame = NavigationFrame;
 		ViewModel.NavigationViewService.Initialize(NavigationViewControl);
-	}
 
-	protected override void OnNavigatedTo(NavigationEventArgs e)
-	{
-		ViewModel.NavigationService.NavigateTo(typeof(HomeViewModel).FullName!);
+		ViewModel.WhenAnyValue(x => x.Selected)
+			.WhereNotNull()
+			.Where(x => x is NavigationViewItem)
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(item =>
+			{
+				NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => x.Content == ((NavigationViewItem)item).Content);
+			});
 	}
 
 	private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

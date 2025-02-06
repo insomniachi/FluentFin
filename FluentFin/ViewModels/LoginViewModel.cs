@@ -20,23 +20,20 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 {
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
 	private readonly ILocalSettingsService _settingsService;
-	private readonly IContentDialogService _contentDialogService;
 	private readonly INavigationService _navigationService;
 	private CompositeDisposable? _disposable;
 
 	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
 						  [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
-						  ILocalSettingsService settingsService,
-						  IContentDialogService contentDialogService)
+						  ILocalSettingsService settingsService)
 	{
 		_jellyfinAuthenticator = jellyfinAuthenticator;
 		_settingsService = settingsService;
-		_contentDialogService = contentDialogService;
 		_navigationService = navigationService;
 
 
-		this.WhenAnyValue(x => x.Username, x => x.Password)
-			.Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2) && Server is not null)
+		this.WhenAnyValue(x => x.Username)
+			.Select(x => !string.IsNullOrEmpty(x) && Server is not null)
 			.Subscribe(validDetails => CanLogin = validDetails);
 	}
 

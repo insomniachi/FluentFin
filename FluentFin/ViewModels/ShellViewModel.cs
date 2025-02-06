@@ -1,12 +1,14 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
+using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
+using FluentFin.Core.ViewModels;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace FluentFin.ViewModels;
 
-public partial class ShellViewModel : ObservableObject
+public partial class ShellViewModel : ObservableObject, INavigationAware
 {
 	[ObservableProperty] public partial bool IsBackEnabled { get; set; }
 	[ObservableProperty] public partial object? Selected { get; set; }
@@ -28,4 +30,12 @@ public partial class ShellViewModel : ObservableObject
 		var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
 		Selected = selectedItem;
 	}
+
+	public Task OnNavigatedTo(object parameter)
+	{
+		NavigationService.NavigateTo(typeof(HomeViewModel).FullName!, parameter);
+		return Task.CompletedTask;
+	}
+
+	public Task OnNavigatedFrom() => Task.CompletedTask;
 }

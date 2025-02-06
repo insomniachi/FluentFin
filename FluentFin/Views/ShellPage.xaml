@@ -22,7 +22,6 @@
         IsPaneOpen="False"
         IsPaneToggleButtonVisible="False"
         IsSettingsVisible="False"
-        SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
         Style="{StaticResource MainNavigationViewStyle}">
         <NavigationView.MenuItems>
             <NavigationViewItem

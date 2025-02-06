@@ -298,6 +298,32 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		}
 	}
 
+	public async Task<List<TaskInfo>> GetScheduledTasks()
+	{
+		try
+		{
+			return await _jellyfinApiClient.ScheduledTasks.GetAsync(x => x.QueryParameters.IsHidden = false) ?? [];
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return [];
+		}
+	}
+
+	public async Task RunScheduledTask(string id)
+	{
+		try
+		{
+			await _jellyfinApiClient.ScheduledTasks.Running[id].PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("api_key", _token).ToUri();

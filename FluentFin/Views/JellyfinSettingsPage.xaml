@@ -76,6 +76,10 @@
                 helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.ActivitiesViewModel"
                 Content="Activity"
                 Icon="{ui:FontIcon Glyph=&#xE81C;}" />
+            <NavigationViewItem
+                helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.ScheduledTasksViewModel"
+                Content="Scheduled Tasks"
+                Icon="{ui:FontIcon Glyph=&#xE8EE;}" />
         </NavigationView.MenuItems>
     </NavigationView>
 </Page>

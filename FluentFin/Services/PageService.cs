@@ -51,6 +51,7 @@ public class PageService : IPageService
 		Configure<PlaybackResumeViewModel, PlaybackResumePage>();
 		Configure<PlaybackTrickplayViewModel, PlaybackTrickplayPage>();
 		Configure<ActivitiesViewModel, ActivitiesPage>();
+		Configure<ScheduledTasksViewModel, ScheduledTasksPage>();
 
 		// Playback Reporting Pages
 		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();

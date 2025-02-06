@@ -159,7 +159,12 @@ namespace FluentFin.Core.Contracts.Services
 		Task SaveConfiguration(ServerConfiguration configuration);
 
 		Task<LibraryOptionsResultDto?> GetAvailableInfo(Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType libraryContentType, bool isNewLibrary);
+
 		Task SaveLibraryOptions(Guid folderId, LibraryOptions options);
+
+		Task<List<TaskInfo>> GetScheduledTasks();
+
+		Task RunScheduledTask(string id);
 	}
 
 	public record NamedDtoQueryResult(string Name, ObservableCollection<BaseItemDto> Items);

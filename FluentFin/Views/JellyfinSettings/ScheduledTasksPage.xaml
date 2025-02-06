@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="FluentFin.Views.JellyfinSettings.ScheduledTasksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
+    xmlns:local="using:FluentFin.Views.JellyfinSettings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:root="using:FluentFin"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
+    x:Name="Page"
+    mc:Ignorable="d">
+
+    <ScrollView Margin="0,36">
+        <ItemsRepeater Width="1000" ItemsSource="{x:Bind ViewModel.Tasks, Mode=OneWay}">
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="vm:CategoryTaskPair">
+                    <StackPanel Spacing="16">
+                        <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{x:Bind Category}" />
+                        <ItemsRepeater ItemsSource="{x:Bind Tasks}">
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="jm:TaskInfo">
+                                    <ctk:SettingsCard
+                                        ActionIcon="{ui:FontIcon Glyph=&#xF5B0;}"
+                                        Command="{Binding ElementName=Page, Path=ViewModel.RunCommand}"
+                                        CommandParameter="{x:Bind}"
+                                        Description="Update the anime list to the latest version."
+                                        Header="{x:Bind Name}"
+                                        IsClickEnabled="True"
+                                        IsTapEnabled="True" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="5" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+            <ItemsRepeater.Layout>
+                <StackLayout Spacing="16" />
+            </ItemsRepeater.Layout>
+        </ItemsRepeater>
+    </ScrollView>
+</Page>

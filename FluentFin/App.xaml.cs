@@ -144,6 +144,7 @@ public partial class App : Application
 			services.AddTransient<PlaybackTrickplayViewModel>();
 			services.AddTransient<ActivitiesViewModel>();
 			services.AddTransient<LibrariesLandingPageViewModel>();
+			services.AddTransient<ScheduledTasksViewModel>();
 
 			// playback report view models
 			services.AddTransient<PlaybackReportingDashboardViewModel>();

@@ -172,6 +172,24 @@ public partial class JellyfinClient
 		}
 	}
 
+	public async Task DeleteItem(BaseItemDto dto)
+	{
+		if(dto?.Id is not { } id)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items[id].DeleteAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
 	public Uri GetSplashScreen()
 	{
 		return _jellyfinApiClient.Branding.Splashscreen.ToGetRequestInformation(x => 

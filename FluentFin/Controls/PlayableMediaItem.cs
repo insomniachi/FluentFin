@@ -70,14 +70,7 @@ public sealed partial class PlayableMediaItem : Control
 			return;
 		}
 
-		var response = await _jellyfinClient.ToggleMarkAsWatched(Model);
-
-		if (response is null)
-		{
-			return;
-		}
-
-		Model.UserData = response;
+		await _jellyfinClient.SetPlayed(Model, !(Model.UserData?.Played ?? false));
 	}
 
 	private async void AddToFavoriteButton_Clicked(object sender, RoutedEventArgs e)
@@ -87,13 +80,6 @@ public sealed partial class PlayableMediaItem : Control
 			return;
 		}
 
-		var response = await _jellyfinClient.ToggleMarkAsFavorite(Model);
-
-		if (response is null)
-		{
-			return;
-		}
-
-		Model.UserData = response;
+		await _jellyfinClient.SetIsFavorite(Model, !(Model.UserData?.IsFavorite ?? false));
 	}
 }

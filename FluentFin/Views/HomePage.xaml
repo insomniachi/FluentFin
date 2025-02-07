@@ -44,7 +44,7 @@
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>
-                            <StackLayout Orientation="Horizontal" Spacing="10" />
+                            <StackLayout Orientation="Horizontal" Spacing="0" />
                         </ItemsRepeater.Layout>
                     </ItemsRepeater>
                 </ScrollViewer>
@@ -72,7 +72,7 @@
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>
-                            <StackLayout Orientation="Horizontal" Spacing="10" />
+                            <StackLayout Orientation="Horizontal" />
                         </ItemsRepeater.Layout>
                     </ItemsRepeater>
                 </ScrollViewer>

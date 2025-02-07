@@ -146,6 +146,7 @@
                     Command="{x:Bind root:App.Commands.ToggleWatchedCommand}"
                     Content="{ui:FontIcon Glyph=&#xE73E;}"
                     CornerRadius="25"
+                    IsChecked="{x:Bind ViewModel.Dto.UserData.Played, Mode=OneWay}"
                     Style="{StaticResource IconToggleButtonStyle}" />
                 <ToggleButton
                     Width="50"
@@ -154,6 +155,7 @@
                     Command="{x:Bind root:App.Commands.ToggleFavoriteCommand}"
                     Content="{ui:FontIcon Glyph=&#xEB52;}"
                     CornerRadius="25"
+                    IsChecked="{x:Bind ViewModel.Dto.UserData.IsFavorite, Mode=OneWay}"
                     Style="{StaticResource IconToggleButtonStyle}" />
                 <Button
                     Width="50"

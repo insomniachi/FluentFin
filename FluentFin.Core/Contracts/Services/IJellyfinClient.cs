@@ -30,6 +30,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<List<VirtualFolderInfo>> GetVirtualFolders();
 
+		Task DeleteItem(BaseItemDto dto);
+
 		Task CreateLibrary(string name, CollectionTypeOptions collectionType, LibraryOptions options);
 
 		Task DeleteLibrary(string name);
@@ -48,9 +50,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<QueryFiltersLegacy?> GetFilters(BaseItemDto library);
 
-		Task<UserItemDataDto?> ToggleMarkAsFavorite(BaseItemDto dto);
+		Task SetIsFavorite(BaseItemDto dto, bool isFavorite);
 
-		Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto);
+		Task SetPlayed(BaseItemDto dto, bool played);
 
 		Task<bool> Authenticate(string code);
 

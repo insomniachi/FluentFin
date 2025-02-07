@@ -35,7 +35,8 @@
                     <Grid
                         x:Name="RootGrid"
                         ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5"
-                        ui:VisualExtensions.Scale="0.9">
+                        ui:VisualExtensions.Scale="0.9"
+                        ContextFlyout="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource FlyoutConverter}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />

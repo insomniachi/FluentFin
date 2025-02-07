@@ -133,6 +133,7 @@
                     CommandParameter="{x:Bind ViewModel.Dto, Mode=OneWay}"
                     Content="{ui:FontIcon Glyph=&#xE73E;}"
                     CornerRadius="25"
+                    IsChecked="{x:Bind ViewModel.Dto.UserData.Played, Mode=OneWay}"
                     Style="{StaticResource IconToggleButtonStyle}" />
                 <ToggleButton
                     Width="50"
@@ -142,6 +143,7 @@
                     CommandParameter="{x:Bind ViewModel.Dto, Mode=OneWay}"
                     Content="{ui:FontIcon Glyph=&#xEB52;}"
                     CornerRadius="25"
+                    IsChecked="{x:Bind ViewModel.Dto.UserData.IsFavorite, Mode=OneWay}"
                     Style="{StaticResource IconToggleButtonStyle}" />
                 <Button
                     Width="50"
@@ -280,6 +282,7 @@
                                         CommandParameter="{x:Bind}"
                                         Content="{ui:FontIcon Glyph=&#xE73E;}"
                                         CornerRadius="25"
+                                        IsChecked="{x:Bind UserData.Played}"
                                         Style="{StaticResource IconToggleButtonStyle}" />
                                     <ToggleButton
                                         Width="50"
@@ -289,6 +292,7 @@
                                         CommandParameter="{x:Bind}"
                                         Content="{ui:FontIcon Glyph=&#xEB52;}"
                                         CornerRadius="25"
+                                        IsChecked="{x:Bind UserData.IsFavorite}"
                                         Style="{StaticResource IconToggleButtonStyle}" />
                                     <Button
                                         Width="50"

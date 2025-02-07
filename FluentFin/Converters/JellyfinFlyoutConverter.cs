@@ -177,20 +177,31 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				CommandParameter = dto,
 			};
 
-			yield return new MenuFlyoutItem
+
+			if(SessionInfo.CurrentUser?.Policy?.IsAdministrator == true)
 			{
-				Text = "Delete Media",
-				Icon = new SymbolIcon { Symbol = Symbol.Delete }
-			};
+				yield return new MenuFlyoutItem
+				{
+					Text = "Delete Media",
+					Icon = new SymbolIcon { Symbol = Symbol.Delete },
+					Command = App.Commands.DeleteItemCommand,
+					CommandParameter = dto,
+				};
+			}
 		}
 
 		if (type is BaseItemDto_Type.Series or BaseItemDto_Type.Season)
 		{
-			yield return new MenuFlyoutItem
+			if (SessionInfo.CurrentUser?.Policy?.IsAdministrator == true)
 			{
-				Text = "Delete Series",
-				Icon = new SymbolIcon { Symbol = Symbol.Delete }
-			};
+				yield return new MenuFlyoutItem
+				{
+					Text = "Delete Series",
+					Icon = new SymbolIcon { Symbol = Symbol.Delete },
+					Command = App.Commands.DeleteItemCommand,
+					CommandParameter = dto,
+				};
+			}
 		}
 
 		yield return new MenuFlyoutSeparator();

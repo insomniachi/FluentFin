@@ -131,45 +131,53 @@ public partial class JellyfinClient
 		}
 	}
 
-	public async Task<UserItemDataDto?> ToggleMarkAsFavorite(BaseItemDto dto)
+	public async Task SetIsFavorite(BaseItemDto dto, bool isFavorite)
 	{
 		try
 		{
 			if (dto.Id is null)
 			{
-				return null;
+				return;
 			}
 
-			return await _jellyfinApiClient.UserItems[dto.Id.Value].UserData.PostAsync(new UpdateUserItemDataDto
+			if (isFavorite)
 			{
-				IsFavorite = !(dto.UserData?.IsFavorite ?? false)
-			});
+				await _jellyfinApiClient.UserFavoriteItems[dto.Id.Value].PostAsync();
+			}
+			else
+			{
+				await _jellyfinApiClient.UserFavoriteItems[dto.Id.Value].DeleteAsync();
+			}
 		}
 		catch (Exception ex)
 		{
 			logger.LogError(ex, @"Unhandled exception");
-			return null;
+			return;
 		}
 	}
 
-	public async Task<UserItemDataDto?> ToggleMarkAsWatched(BaseItemDto dto)
+	public async Task SetPlayed(BaseItemDto dto, bool played)
 	{
 		try
 		{
 			if (dto.Id is null)
 			{
-				return null;
+				return;
 			}
 
-			return await _jellyfinApiClient.UserItems[dto.Id.Value].UserData.PostAsync(new UpdateUserItemDataDto
+			if (played)
 			{
-				Played = !(dto.UserData?.Played ?? false)
-			});
+				await _jellyfinApiClient.UserPlayedItems[dto.Id.Value].PostAsync(x => x.QueryParameters.DatePlayed = TimeProvider.System.GetUtcNow());
+			}
+			else
+			{
+				await _jellyfinApiClient.UserPlayedItems[dto.Id.Value].DeleteAsync();
+			}
 		}
 		catch (Exception ex)
 		{
 			logger.LogError(ex, @"Unhandled exception");
-			return null;
+			return;
 		}
 	}
 

@@ -16,15 +16,15 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	}
 
 	[RelayCommand]
-	public async Task<UserItemDataDto?> ToggleWatched(BaseItemDto dto)
+	public async Task ToggleWatched(BaseItemDto dto)
 	{
-		return await jellyfinClient.ToggleMarkAsWatched(dto);
+		await jellyfinClient.SetPlayed(dto, !(dto.UserData?.Played ?? false));
 	}
 
 	[RelayCommand]
-	public async Task<UserItemDataDto?> ToggleFavorite(BaseItemDto dto)
+	public async Task ToggleFavorite(BaseItemDto dto)
 	{
-		return await jellyfinClient.ToggleMarkAsFavorite(dto);
+		await jellyfinClient.SetIsFavorite(dto, !(dto.UserData?.IsFavorite ?? false));
 	}
 
 	[RelayCommand]
@@ -47,5 +47,11 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	public void NavigateToSegmentsEditor(BaseItemDto dto)
 	{
 		navigationService.NavigateTo("FluentFin.ViewModels.MediaSegmentsEditorViewModel", dto);
+	}
+
+	[RelayCommand]
+	public async Task DeleteItem(BaseItemDto dto)
+	{
+		await jellyfinClient.DeleteItem(dto);
 	}
 }

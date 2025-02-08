@@ -12,7 +12,7 @@ public interface IContentDialogService
 	Task<ContentDialogResult> ShowDialog<TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure, Action<TViewModel> configureVm) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TView, TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TView : ContentDialog, IViewFor, new();
-	Task ShowMessage(string title, string message, TimeSpan? timeout);
+	Task ShowMessage(string title, string message, TimeSpan? timeout = null);
 	Task<bool> QuestionYesNo(string title, string message);
 }
 

@@ -4,6 +4,7 @@ using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
@@ -16,27 +17,12 @@ using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
 
-public partial class LoginViewModel : ObservableObject, INavigationAware
+public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
+									[FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
+								    ILocalSettingsService settingsService,
+									IContentDialogService contentDialogService) : ObservableObject, INavigationAware
 {
-	private readonly IJellyfinAuthenticationService _jellyfinAuthenticator;
-	private readonly ILocalSettingsService _settingsService;
-	private readonly INavigationService _navigationService;
 	private CompositeDisposable? _disposable;
-
-	public LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
-						  [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
-						  ILocalSettingsService settingsService)
-	{
-		_jellyfinAuthenticator = jellyfinAuthenticator;
-		_settingsService = settingsService;
-		_navigationService = navigationService;
-
-
-		this.WhenAnyValue(x => x.Username)
-			.Select(x => !string.IsNullOrEmpty(x) && Server is not null)
-			.Subscribe(validDetails => CanLogin = validDetails);
-	}
-
 
 	[ObservableProperty]
 	public partial string Username { get; set; } = "";
@@ -63,11 +49,11 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		var success = await _jellyfinAuthenticator.Authenticate(Server, Username, Password, KeepMeLoggedIn);
+		var success = await jellyfinAuthenticator.Authenticate(Server, Username, Password, KeepMeLoggedIn);
 
 		if (!success)
 		{
-			// message ?
+			await contentDialogService.ShowMessage("Authentication Failed", "Incorrect username or password");
 		}
 	}
 
@@ -79,14 +65,14 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		var response = await _jellyfinAuthenticator.GetQuickConnectCode(Server);
+		var response = await jellyfinAuthenticator.GetQuickConnectCode(Server);
 
 		if (response is null)
 		{
 			return;
 		}
 
-		_disposable = new();
+		_disposable = [];
 
 
 		var dialog = new ContentDialog
@@ -101,7 +87,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5))
 			.Where(_ => Server is not null)
-			.SelectMany(_ => _jellyfinAuthenticator.CheckQuickConnectStatus(Server, response))
+			.SelectMany(_ => jellyfinAuthenticator.CheckQuickConnectStatus(Server, response))
 			.WhereNotNull()
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(result =>
@@ -110,7 +96,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 				{
 					_disposable?.Dispose();
 					dialog.Hide();
-					var isAuthenticated = _jellyfinAuthenticator.Authenticate(Server, result);
+					var isAuthenticated = jellyfinAuthenticator.Authenticate(Server, result);
 				}
 			})
 			.DisposeWith(_disposable);
@@ -122,7 +108,7 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 	[RelayCommand]
 	private void SwitchServer()
 	{
-		_navigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
+		navigationService.NavigateTo<SelectServerViewModel>();
 	}
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
@@ -134,9 +120,14 @@ public partial class LoginViewModel : ObservableObject, INavigationAware
 			return Task.CompletedTask;
 		}
 
+		this.WhenAnyValue(x => x.Username)
+			.Select(x => !string.IsNullOrEmpty(x) && Server is not null)
+			.Subscribe(validDetails => CanLogin = validDetails);
+
 		Server = server;
+
 		return Task.CompletedTask;
 	}
 
-	public string Unprotect(byte[] protectedBytes) => protectedBytes.Unprotect(_settingsService.GetEntropyBytes());
+	public string Unprotect(byte[] protectedBytes) => protectedBytes.Unprotect(settingsService.GetEntropyBytes());
 }

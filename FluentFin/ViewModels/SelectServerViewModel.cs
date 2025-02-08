@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using FluentFin.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Helpers;
 using FluentFin.Services;
@@ -14,7 +15,8 @@ using System.Reactive.Concurrency;
 namespace FluentFin.Core.ViewModels;
 
 public partial class SelectServerViewModel(ISettings settings,
-										   [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService) : ObservableObject
+										   [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
+										   IContentDialogService contentDialogService) : ObservableObject
 {
 
 	[ObservableProperty]
@@ -40,7 +42,7 @@ public partial class SelectServerViewModel(ISettings settings,
 
 		if (info is null)
 		{
-			// show message
+			await contentDialogService.ShowMessage("Server not found", $"Unable to find a jellyfin server at {url}");
 			return;
 		}
 
@@ -77,7 +79,7 @@ public partial class SelectServerViewModel(ISettings settings,
 			});
 		}
 
-		navigationService.NavigateTo(typeof(LoginViewModel).FullName!, server);
+		navigationService.NavigateTo<LoginViewModel>(server);
 	}
 
 	private void ServerDiscovered(DiscoveryInfo info)

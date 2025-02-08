@@ -116,6 +116,7 @@
         <ListView
             Grid.RowSpan="2"
             Grid.Column="1"
+            MaxWidth="400"
             ItemsSource="{x:Bind ViewModel.Playlist.Items, Mode=OneWay}"
             SelectedItem="{x:Bind ViewModel.Playlist.SelectedItem, Mode=TwoWay}"
             Visibility="{x:Bind c:Converters.VisibleIfMoreThanOne(ViewModel.Playlist.Items), Mode=OneWay}">

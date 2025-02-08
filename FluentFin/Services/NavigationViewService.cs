@@ -1,4 +1,5 @@
 ﻿using FluentFin.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.UI.Core;
 using Microsoft.UI.Xaml.Controls;
@@ -63,7 +64,7 @@ public class NavigationViewService(INavigationService navigationService,
 	{
 		if (args.IsSettingsInvoked)
 		{
-			navigationService.NavigateTo(typeof(SettingsViewModel).FullName!);
+			navigationService.NavigateTo<SettingsViewModel>();
 		}
 		else
 		{

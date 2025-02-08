@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,7 +70,7 @@ namespace FluentFin.Dialogs.ViewModels
 				await jellyfinClient.UpdatePolicy(user, policy);
 			}
 
-			navigationService.NavigateTo(typeof(UserEditorViewModel).FullName!, new UserEditorViewModelNavigationParameter(user, UserEditorSection.Profile));
+			navigationService.NavigateTo<UserEditorViewModel>(new UserEditorViewModelNavigationParameter(user, UserEditorSection.Profile));
 		}
 	}
 }

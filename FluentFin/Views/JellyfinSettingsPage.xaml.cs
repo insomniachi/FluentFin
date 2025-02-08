@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
+using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -63,7 +64,7 @@ public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAw
 
 	public Task OnNavigatedTo(object parameter)
 	{
-		_navigationService.NavigateTo(typeof(DashboardViewModel).FullName!, new());
+		_navigationService.NavigateTo<DashboardViewModel>(new());
 		return Task.CompletedTask;
 	}
 }

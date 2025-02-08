@@ -1,6 +1,7 @@
 ﻿using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
@@ -39,16 +40,16 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 
 			if (result)
 			{
-				_navigationService.NavigateTo(typeof(ShellViewModel).FullName!);
+				_navigationService.NavigateTo<ShellViewModel>();
 			}
 			else
 			{
-				_navigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
+				_navigationService.NavigateTo<SelectServerViewModel>();
 			}
 		}
 		else
 		{
-			_navigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
+			_navigationService.NavigateTo<SelectServerViewModel>();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using Jellyfin.Sdk.Generated.Models;
 using System.Collections.ObjectModel;
 
@@ -24,6 +24,6 @@ public partial class LibrariesLandingPageViewModel(IJellyfinClient jellyfinClien
 
 	public void NavigateToLibrary(BaseItemDto library)
 	{
-		navigationService.NavigateTo(typeof(LibraryViewModel).FullName!, library);
+		navigationService.NavigateTo<LibraryViewModel>(library);
 	}
 }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Core.WebSockets;
 using FluentFin.Services;
@@ -73,7 +74,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.Stop }:
 						MediaPlayer.Stop();
 						await jellyfinClient.Stop();
-						navigationService.NavigateTo(typeof(HomeViewModel).FullName!, new());
+						navigationService.NavigateTo<HomeViewModel>(new());
 						break;
 				}
 			});

@@ -2,6 +2,7 @@
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
@@ -78,7 +79,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 			{
 				titleBarViewModel.User = auth.User;
 				await jellyfinClient.Initialize(url, auth);
-				setupNavigationService.NavigateTo(typeof(ShellViewModel).FullName!);
+				setupNavigationService.NavigateTo<ShellViewModel>();
 			}
 
 			return auth is not null;
@@ -125,7 +126,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 				}
 			}
 
-			setupNavigationService.NavigateTo(typeof(ShellViewModel).FullName!);
+			setupNavigationService.NavigateTo<ShellViewModel>();
 		}
 
 		return success;

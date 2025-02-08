@@ -1,4 +1,5 @@
 using FluentFin.Core;
+using FluentFin.Core.Services;
 using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -29,6 +30,6 @@ public sealed partial class PlaybackReportingDashboardPage : Page
 
 	protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
-		ViewModel.NavigationService.NavigateTo(typeof(UsersReportViewModel).FullName!);
+		ViewModel.NavigationService.NavigateTo<UsersReportViewModel>();
 	}
 }

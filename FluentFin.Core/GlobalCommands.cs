@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 
@@ -33,11 +33,11 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 		switch (dto.Type)
 		{
 			case BaseItemDto_Type.Movie:
-				navigationService.NavigateTo(typeof(MovieViewModel).FullName!, dto); break;
+				navigationService.NavigateTo<MovieViewModel>(dto); break;
 			case BaseItemDto_Type.Series:
-				navigationService.NavigateTo(typeof(SeriesViewModel).FullName!, dto); break;
+				navigationService.NavigateTo<SeriesViewModel>(dto); break;
 			case BaseItemDto_Type.Season:
-				navigationService.NavigateTo(typeof(SeasonViewModel).FullName!, dto); break;
+				navigationService.NavigateTo<SeasonViewModel>(dto); break;
 			default:
 				break;
 		}

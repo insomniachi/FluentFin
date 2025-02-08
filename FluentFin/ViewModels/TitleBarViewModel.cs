@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Views;
@@ -65,7 +66,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	public async Task Logout()
 	{
 		User = null;
-		_setupNavigationService.NavigateTo(typeof(SelectServerViewModel).FullName!);
+		_setupNavigationService.NavigateTo<SelectServerViewModel>();
 		await _jellyfinClient.Logout();
 	}
 
@@ -73,7 +74,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	public async Task SwitchUser()
 	{
 		User = null;
-		_setupNavigationService.NavigateTo(typeof(LoginViewModel).FullName!, CurrentServer);
+		_setupNavigationService.NavigateTo<LoginViewModel>(CurrentServer);
 		await _jellyfinClient.Logout();
 	}
 

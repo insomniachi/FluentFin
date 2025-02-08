@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
+using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -33,7 +34,7 @@ public partial class ShellViewModel : ObservableObject, INavigationAware
 
 	public Task OnNavigatedTo(object parameter)
 	{
-		NavigationService.NavigateTo(typeof(HomeViewModel).FullName!, parameter);
+		NavigationService.NavigateTo<HomeViewModel>(parameter);
 		return Task.CompletedTask;
 	}
 

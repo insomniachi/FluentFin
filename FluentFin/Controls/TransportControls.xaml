@@ -103,7 +103,9 @@
                             BlurRadius="10"
                             CastTo="{x:Bind ShadowTarget}"
                             CornerRadius="0"
-                            Offset="0" />
+                            Opacity="1"
+                            Offset="2"
+                            Color="Black" />
                     </ui:Effects.Shadow>
                 </TextBlock>
             </Grid>

@@ -53,57 +53,6 @@ public static class Converters
 		return new BitmapImage(uri);
 	}
 
-	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> subtitles)
-	{
-		if (subtitles is null || player is null)
-		{
-			return null;
-		}
-
-		if (subtitles.Count < 1)
-		{
-			return null;
-		}
-
-		const string groupName = "Subtitles";
-		var command = new RelayCommand<SubtitlesStream>(stream =>
-		{
-			player.Config.Subtitles.Enabled = true;
-			player.Open(stream);
-		});
-		var disableSubtitles = new RelayCommand(() =>
-		{
-			player.Config.Subtitles.Enabled = false;
-
-		});
-
-		var flyout = new MenuBarItemFlyout();
-		flyout.Items.Add(new RadioMenuFlyoutItem
-		{
-			Text = "None",
-			GroupName = groupName,
-			Command = disableSubtitles,
-			IsChecked = !subtitles.Any(x => x.Enabled)
-		});
-
-
-		foreach (var item in subtitles)
-		{
-			var flyoutItem = new RadioMenuFlyoutItem
-			{
-				Text = $"{item.Title}",
-				GroupName = groupName,
-				IsChecked = item.Enabled,
-				Command = command,
-				CommandParameter = item
-			};
-
-			flyout.Items.Add(flyoutItem);
-		}
-
-		return flyout;
-	}
-
 	public static FlyoutBase? GetAudiosFlyout(Player player, IList<AudioStream> audios)
 	{
 		if (audios is null || player is null)

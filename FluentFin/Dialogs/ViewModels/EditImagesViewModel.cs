@@ -1,34 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
 
-public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBaseItemDialogViewModel
+public partial class EditImagesViewModel(IJellyfinClient jellyfinClient) : ObservableObject, IHandleClose, IBaseItemDialogViewModel
 {
-	private readonly IJellyfinClient _jellyfinClient;
-
-	public EditImagesViewModel(IJellyfinClient jellyfinClient)
-	{
-		_jellyfinClient = jellyfinClient;
-
-		this.WhenAnyValue(x => x.SelectedProvider)
-			.Subscribe(provider => SelectedImageType = provider?.SupportedImages?.FirstOrDefault(x => x == SelectedImageType));
-
-		this.WhenAnyValue(x => x.SelectedProvider, x => x.SelectedImageType, x => x.IncludeAllLanguages)
-			.Where(x => x is { Item1: not null, Item2: not null })
-			.Where(_ => State == EditImagesViewModelState.Search)
-			.Subscribe(async _ => await SearchImages());
-
-		this.WhenAnyValue(x => x.State)
-			.Subscribe(state => BackButtonText = state == EditImagesViewModelState.Search ? "Back" : "");
-	}
-
 	[ObservableProperty]
-	public partial List<ImageInfoEx> Images { get; set; } = [];
+	public partial ObservableCollection<ImageInfoEx> Images { get; set; } = [];
 
 	[ObservableProperty]
 	public partial BaseItemDto? Item { get; set; }
@@ -54,6 +38,8 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 	[ObservableProperty]
 	public partial string BackButtonText { get; set; } = "";
 
+	public ObservableCollection<ImageType?> ImageTypes { get; } = [];
+
 	public bool CanClose { get; set; }
 
 	public async Task Initialize(BaseItemDto item)
@@ -66,7 +52,8 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 		State = EditImagesViewModelState.Display;
 
 		Item = item;
-		Images = (await _jellyfinClient.GetImages(item)).Select(info => new ImageInfoEx
+
+		var images = (await jellyfinClient.GetImages(item)).Select(info => new ImageInfoEx
 		{
 			ImageIndex = info.ImageIndex,
 			ImageTag = info.ImageTag,
@@ -74,15 +61,47 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 			ImageType = info.ImageType,
 			Height = info.Height,
 			Width = info.Width,
-			Uri = _jellyfinClient.GetImage(item, info)
-		}).ToList();
+			Uri = jellyfinClient.GetImage(item, info)
+		});
+
+		Images = [ ..images];
 
 
-		var providers = await _jellyfinClient.GetImageProviders(item);
+		var providers = await jellyfinClient.GetImageProviders(item);
 		var supportedImages = GetAllSupportedImages(providers);
 		ImageProviders = [new() { Name = "All", SupportedImages = supportedImages }, .. providers];
 		SelectedProvider = ImageProviders.FirstOrDefault();
 		SelectedImageType = supportedImages.FirstOrDefault();
+
+		this.WhenAnyValue(x => x.SelectedProvider)
+			.Where(x => x is { SupportedImages.Count: > 0 })
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(provider =>
+			{
+				var newTypes = provider!.SupportedImages!.Except(ImageTypes).ToList();
+				var removeTypes = ImageTypes.Except(provider.SupportedImages!).ToList();
+				var selectedImageType = SelectedImageType;
+
+				foreach (var type in removeTypes)
+				{
+					ImageTypes.Remove(type);
+				}
+
+				ImageTypes.AddRange(newTypes);
+
+				if(ImageTypes.Contains(selectedImageType) == false)
+				{
+					SelectedImageType = ImageTypes.FirstOrDefault();
+				}
+			});
+
+		this.WhenAnyValue(x => x.SelectedProvider, x => x.SelectedImageType, x => x.IncludeAllLanguages)
+			.Where(x => x is { Item1: not null, Item2: not null })
+			.Where(_ => State == EditImagesViewModelState.Search)
+			.Subscribe(async _ => await SearchImages());
+
+		this.WhenAnyValue(x => x.State)
+			.Subscribe(state => BackButtonText = state == EditImagesViewModelState.Search ? "Back" : "");
 	}
 
 	private async Task SearchImages()
@@ -95,9 +114,7 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 		State = EditImagesViewModelState.Loading;
 
 		var providerName = SelectedProvider.Name == "All" ? null : SelectedProvider.Name;
-		var result = await _jellyfinClient.SearchImages(Item, SelectedImageType.Value, providerName, IncludeAllLanguages);
-
-		State = EditImagesViewModelState.Search;
+		var result = await jellyfinClient.SearchImages(Item, SelectedImageType.Value, providerName, IncludeAllLanguages);
 
 		if (result is null or { Images: null })
 		{
@@ -105,6 +122,8 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 		}
 
 		SearchResults = result.Images;
+
+		State = EditImagesViewModelState.Search;
 	}
 
 	[RelayCommand]
@@ -132,8 +151,20 @@ public partial class EditImagesViewModel : ObservableObject, IHandleClose, IBase
 		{
 			return;
 		}
-		await _jellyfinClient.UpdateImage(Item, info);
+		await jellyfinClient.UpdateImage(Item, info);
 		await Initialize(Item);
+	}
+
+	[RelayCommand]
+	private async Task DeleteImage(ImageInfoEx info)
+	{
+		if (Item is null || info is null)
+		{
+			return;
+		}
+
+		await jellyfinClient.DeleteImage(Item, info);
+		Images.Remove(info);
 	}
 
 	private static List<ImageType?> GetAllSupportedImages(IEnumerable<ImageProviderInfo> providers)

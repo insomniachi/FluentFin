@@ -94,6 +94,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<List<ImageInfo>> GetImages(BaseItemDto dto);
 
+		Task DeleteImage(BaseItemDto dto, ImageInfo info);
+
 		Task<List<ImageProviderInfo>> GetImageProviders(BaseItemDto dto);
 
 		Task<RemoteImageResult?> SearchImages(BaseItemDto dto, ImageType type, string? providerName = null, bool includeAllLanguages = false);

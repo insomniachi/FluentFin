@@ -11,6 +11,7 @@
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Dialogs.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Dialogs.ViewModels"
     x:Name="Page"
     Title="Edit Images"
@@ -76,12 +77,14 @@
                                             Margin="{StaticResource XSmallTopMargin}"
                                             Orientation="Horizontal"
                                             Spacing="5">
-                                            <Button Command="{Binding ElementName=Page, Path=ViewModel.SearchCommand}" CommandParameter="{x:Bind}">
-                                                <SymbolIcon Symbol="Find" />
-                                            </Button>
-                                            <Button>
-                                                <SymbolIcon Symbol="Delete" />
-                                            </Button>
+                                            <Button
+                                                Command="{Binding ElementName=Page, Path=ViewModel.SearchCommand}"
+                                                CommandParameter="{x:Bind}"
+                                                Content="{ui:SymbolIcon Symbol=Find}" />
+                                            <Button
+                                                Command="{Binding ElementName=Page, Path=ViewModel.DeleteImageCommand}"
+                                                CommandParameter="{x:Bind}"
+                                                Content="{ui:SymbolIcon Symbol=Delete}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
@@ -114,11 +117,10 @@
                         DisplayMemberPath="Name"
                         ItemsSource="{x:Bind ViewModel.ImageProviders, Mode=OneWay}"
                         PlaceholderText="Source"
-                        SelectedIndex="0"
                         SelectedItem="{x:Bind ViewModel.SelectedProvider, Mode=TwoWay}" />
 
                     <ComboBox
-                        ItemsSource="{x:Bind ViewModel.SelectedProvider.SupportedImages, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.ImageTypes, Mode=OneWay}"
                         PlaceholderText="Type"
                         SelectedItem="{x:Bind ViewModel.SelectedImageType, Mode=TwoWay}" />
 
@@ -161,9 +163,8 @@
                                             Margin="{StaticResource XSmallTopMargin}"
                                             HorizontalAlignment="Center"
                                             Command="{Binding ElementName=Page, Path=ViewModel.UpdateImageCommand}"
-                                            CommandParameter="{x:Bind}">
-                                            <SymbolIcon Symbol="Download" />
-                                        </Button>
+                                            CommandParameter="{x:Bind}"
+                                            Content="{ui:SymbolIcon Symbol=Download}" />
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

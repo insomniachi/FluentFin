@@ -298,6 +298,23 @@ public partial class JellyfinClient
 		}
 	}
 
+	public async Task DeleteImage(BaseItemDto dto, ImageInfo info)
+	{
+		if (dto.Id is not { } id || info.ImageType is not { } type || info.ImageIndex is not { } index)
+		{
+			return;
+		}
+
+		try
+		{
+			await _jellyfinApiClient.Items[id].Images[type.ToString()][index].DeleteAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+		}
+	}
+
 	public async Task<RemoteImageResult?> SearchImages(BaseItemDto dto, ImageType type, string? providerName = null, bool includeAllLanguages = false)
 	{
 		if (dto.Id is not { } id)

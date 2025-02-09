@@ -36,7 +36,7 @@
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="jm:BaseItemDto">
-                                <lc:PlayableMediaItem
+                                <lc:BaseItemDtoCard
                                     Width="390"
                                     Height="240"
                                     ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Thumb, 192)}"
@@ -64,7 +64,7 @@
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="jm:BaseItemDto">
-                                <lc:PlayableMediaItem
+                                <lc:BaseItemDtoCard
                                     Width="390"
                                     Height="240"
                                     ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Thumb, 192)}"

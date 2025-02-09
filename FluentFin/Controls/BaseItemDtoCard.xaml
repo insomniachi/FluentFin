@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="FluentFin.Controls.BaseItemDtoCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:c="using:FluentFin.Converters"
+    xmlns:cb="using:CommunityToolkit.WinUI.Behaviors"
+    xmlns:cc="using:CommunityToolkit.WinUI.Converters"
+    xmlns:cl="using:FluentFin.Controls.Lights"
+    xmlns:controls="using:FluentFin.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:FluentFin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
+    xmlns:root="using:FluentFin"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <SolidColorBrush
+            x:Key="Black65O"
+            Opacity="0.65"
+            Color="Black" />
+        <cc:DoubleToVisibilityConverter x:Key="MoreThanZeroToVisibilityConverter" GreaterThan="0" />
+        <cc:EmptyStringToObjectConverter
+            x:Key="EmptyStringVisibilityConverter"
+            EmptyValue="Collapsed"
+            NotEmptyValue="Visible" />
+        <c:JellyfinTitleConverter x:Key="NameConverter" />
+        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
+        <c:JellyfinFlyoutConverter x:Key="FlyoutConverter" />
+        <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleToValueOrDefaultConverter" />
+        <c:NullableIntToValueOrDefaultConverter x:Key="NullableIntToValueOrDefaultConverter" />
+        <c:NullableBoolToValueOrDefaultConverter x:Key="NullableBoolToValueOrDefaultConverter" />
+    </UserControl.Resources>
+
+    <Grid
+        x:Name="RootGrid"
+        ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5"
+        ui:VisualExtensions.Scale="0.9"
+        ContextFlyout="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource FlyoutConverter}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <animations:Explicit.Animations>
+            <animations:AnimationSet x:Name="Select" IsSequential="False">
+                <animations:ScaleAnimation
+                    EasingMode="EaseOut"
+                    EasingType="Linear"
+                    To="1"
+                    Duration="0:0:0.1" />
+                <animations:StartAnimationActivity Animation="{Binding ElementName=BlurAnimation}" />
+            </animations:AnimationSet>
+            <animations:AnimationSet x:Name="UnSelect" IsSequential="False">
+                <animations:ScaleAnimation
+                    EasingMode="EaseOut"
+                    EasingType="Linear"
+                    To="0.9"
+                    Duration="0:0:0.1" />
+                <animations:StartAnimationActivity Animation="{Binding ElementName=UnBlurAnimation}" />
+            </animations:AnimationSet>
+        </animations:Explicit.Animations>
+
+        <Grid
+            x:Name="ImageCanvas"
+            CornerRadius="10 10 0 0"
+            Tapped="ImageCanvas_Tapped">
+            <i:Interaction.Behaviors>
+                <i:EventTriggerBehavior EventName="PointerEntered">
+                    <i:ChangePropertyAction
+                        PropertyName="Visibility"
+                        TargetObject="{Binding ElementName=PlayButton}"
+                        Value="Visible" />
+                    <i:ChangePropertyAction
+                        PropertyName="Visibility"
+                        TargetObject="{Binding ElementName=ActionButtons}"
+                        Value="Visible" />
+                    <cb:StartAnimationAction Animation="{Binding ElementName=Select}" />
+                </i:EventTriggerBehavior>
+                <i:EventTriggerBehavior EventName="PointerExited">
+                    <i:ChangePropertyAction
+                        PropertyName="Visibility"
+                        TargetObject="{Binding ElementName=PlayButton}"
+                        Value="Collapsed" />
+                    <i:ChangePropertyAction
+                        PropertyName="Visibility"
+                        TargetObject="{Binding ElementName=ActionButtons}"
+                        Value="Collapsed" />
+                    <cb:StartAnimationAction Animation="{Binding ElementName=UnSelect}" />
+                </i:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
+
+            <Grid>
+                <controls:LoadingImage
+                    Glyph="{x:Bind Glyph}"
+                    Source="{x:Bind ImageSource, Mode=OneWay}"
+                    Stretch="UniformToFill" />
+
+                <media:UIElementExtensions.VisualFactory>
+                    <media:PipelineVisualFactory>
+                        <media:BlurEffect x:Name="ImageBlurEffect" IsAnimatable="True" />
+                        <media:TintEffect x:Name="ImageColorEffect" IsAnimatable="True" />
+                    </media:PipelineVisualFactory>
+                </media:UIElementExtensions.VisualFactory>
+
+                <animations:Explicit.Animations>
+                    <animations:AnimationSet x:Name="BlurAnimation" IsSequential="True">
+                        <animations:BlurEffectAnimation
+                            EasingMode="EaseOut"
+                            EasingType="Linear"
+                            Target="{Binding ElementName=ImageBlurEffect}"
+                            From="0"
+                            To="3"
+                            Duration="0:0:0.2" />
+                        <animations:ColorEffectAnimation
+                            EasingMode="EaseOut"
+                            EasingType="Linear"
+                            Target="{Binding ElementName=ImageColorEffect}"
+                            From="Transparent"
+                            To="Gray"
+                            Duration="0:0:0.2" />
+                    </animations:AnimationSet>
+
+                    <animations:AnimationSet x:Name="UnBlurAnimation" IsSequential="True">
+                        <animations:BlurEffectAnimation
+                            EasingMode="EaseOut"
+                            EasingType="Linear"
+                            Target="{Binding ElementName=ImageBlurEffect}"
+                            From="3"
+                            To="0"
+                            Duration="0:0:0.2" />
+                        <animations:ColorEffectAnimation
+                            EasingMode="EaseOut"
+                            EasingType="Linear"
+                            Target="{Binding ElementName=ImageColorEffect}"
+                            From="Gray"
+                            To="Transparent"
+                            Duration="0:0:0.2" />
+                    </animations:AnimationSet>
+                </animations:Explicit.Animations>
+            </Grid>
+
+            <Grid x:Name="ContentOverlay">
+                <Button
+                    x:Name="PlayButton"
+                    Width="50"
+                    Height="50"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ui:VisualExtensions.NormalizedCenterPoint="0.5,0.5"
+                    ui:VisualExtensions.Scale="0.8"
+                    Background="{StaticResource Black65O}"
+                    BorderThickness="0"
+                    Command="{x:Bind root:App.Commands.PlayDtoCommand}"
+                    CommandParameter="{x:Bind Model}"
+                    CornerRadius="25"
+                    Style="{ThemeResource BareButtonStyle}"
+                    Visibility="Collapsed">
+
+                    <animations:Implicit.ShowAnimations>
+                        <animations:OpacityAnimation
+                            From="0"
+                            To="1.0"
+                            Duration="0:0:1" />
+                    </animations:Implicit.ShowAnimations>
+                    <animations:Explicit.Animations>
+                        <animations:AnimationSet x:Name="ZoomAnimation">
+                            <animations:ScaleAnimation To="1" Duration="0:0:0.3" />
+                            <animations:StartAnimationActivity Animation="{Binding ElementName=OnEnter}" />
+                        </animations:AnimationSet>
+                        <animations:AnimationSet x:Name="ZoomOutAnimation">
+                            <animations:ScaleAnimation To="0.8" Duration="0:0:0.3" />
+                            <animations:StartAnimationActivity Animation="{Binding ElementName=OnExit}" />
+                        </animations:AnimationSet>
+                    </animations:Explicit.Animations>
+                    <i:Interaction.Behaviors>
+                        <i:EventTriggerBehavior EventName="PointerEntered">
+                            <cb:StartAnimationAction Animation="{Binding ElementName=ZoomAnimation}" />
+                        </i:EventTriggerBehavior>
+                        <i:EventTriggerBehavior EventName="PointerExited">
+                            <cb:StartAnimationAction Animation="{Binding ElementName=ZoomOutAnimation}" />
+                        </i:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
+
+                    <FontIcon Glyph="&#xF5B0;">
+                        <animations:Explicit.Animations>
+                            <animations:AnimationSet x:Name="OnEnter">
+                                <animations:ColorAnimation
+                                    Layer="Xaml"
+                                    Target="(FontIcon.Foreground).(SolidColorBrush.Color)"
+                                    To="{ThemeResource SystemAccentColor}"
+                                    Duration="0:0:0.3" />
+                            </animations:AnimationSet>
+                            <animations:AnimationSet x:Name="OnExit">
+                                <animations:ColorAnimation
+                                    Layer="Xaml"
+                                    Target="(FontIcon.Foreground).(SolidColorBrush.Color)"
+                                    To="White"
+                                    Duration="0:0:0.3" />
+                            </animations:AnimationSet>
+                        </animations:Explicit.Animations>
+                    </FontIcon>
+                </Button>
+
+                <InfoBadge
+                    Margin="10"
+                    Padding="5,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    FontWeight="ExtraBold"
+                    Visibility="{x:Bind Model.UserData.UnplayedItemCount, Converter={StaticResource MoreThanZeroToVisibilityConverter}}"
+                    Value="{x:Bind Model.UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}" />
+
+                <ProgressBar
+                    Margin="5,0,5,10"
+                    VerticalAlignment="Bottom"
+                    Maximum="100"
+                    Minimum="0"
+                    Visibility="{x:Bind Model.UserData.PlayedPercentage, Converter={StaticResource MoreThanZeroToVisibilityConverter}, Mode=OneWay}"
+                    Value="{x:Bind Model.UserData.PlayedPercentage, Converter={StaticResource NullableDoubleToValueOrDefaultConverter}, Mode=OneWay}" />
+
+                <StackPanel
+                    x:Name="ActionButtons"
+                    Margin="10"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal"
+                    Spacing="1"
+                    Visibility="Collapsed">
+
+                    <ToggleButton
+                        x:Name="MarkWatchedButton"
+                        Width="40"
+                        Height="40"
+                        Click="MarkWatchedButton_Clicked"
+                        Content="{ui:FontIcon Glyph=&#xE73E;,
+                                              FontSize=15}"
+                        CornerRadius="20"
+                        IsChecked="{x:Bind Model.UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
+                        Style="{ThemeResource IconToggleButtonStyle}"
+                        ToolTipService.ToolTip="Mark watched" />
+
+                    <ToggleButton
+                        x:Name="AddToFavoriteButton"
+                        Width="40"
+                        Height="40"
+                        Click="AddToFavoriteButton_Clicked"
+                        Content="{ui:FontIcon Glyph=&#xEB52;,
+                                              FontSize=15}"
+                        CornerRadius="20"
+                        IsChecked="{x:Bind Model.UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
+                        Style="{ThemeResource IconToggleButtonStyle}"
+                        ToolTipService.ToolTip="Add to favorites" />
+
+                    <Button
+                        Width="40"
+                        Height="40"
+                        Content="{ui:FontIcon Glyph=&#xE712;,
+                                              FontSize=15}"
+                        CornerRadius="20"
+                        Flyout="{x:Bind Model, Converter={StaticResource FlyoutConverter}}"
+                        Style="{ThemeResource IconButtonStyle}"
+                        ToolTipService.ToolTip="More" />
+
+                </StackPanel>
+
+            </Grid>
+
+        </Grid>
+        <StackPanel
+            Grid.Row="1"
+            Padding="5"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+            Spacing="3">
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="{x:Bind Model, Converter={StaticResource NameConverter}}"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap" />
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{x:Bind Model, Converter={StaticResource SubtitleConverter}}"
+                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text, Converter={StaticResource EmptyStringVisibilityConverter}}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

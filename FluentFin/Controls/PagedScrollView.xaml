@@ -63,7 +63,7 @@
                 <ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="jm:BaseItemDto">
-                            <local:PlayableMediaItem
+                            <local:BaseItemDtoCard
                                 Width="225"
                                 Height="385"
                                 ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"

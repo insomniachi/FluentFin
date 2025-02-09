@@ -89,11 +89,11 @@
 
 	<ItemGroup>
 	  <None Remove="Assets\github.png" />
-	  <None Remove="Controls\ScotPlot.xaml" />
+	  <None Remove="Controls\BaseItemDtoCard.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Controls\ScotPlot.xaml">
+	  <Page Update="Controls\BaseItemDtoCard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

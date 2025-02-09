@@ -34,6 +34,7 @@ public class PageService : IPageService
 		Configure<SettingsViewModel, SettingsPage>();
 		Configure<MediaSegmentsEditorViewModel, MediaSegmentsEditorPage>();
 		Configure<LibrariesLandingPageViewModel, LibrariesLandingPage>();
+		Configure<EpisodeViewModel, EpisodePage>();
 
 		// Dashboard Pages
 		Configure<DashboardViewModel, DashboardPage>();

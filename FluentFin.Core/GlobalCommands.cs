@@ -38,6 +38,8 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 				navigationService.NavigateTo<SeriesViewModel>(dto); break;
 			case BaseItemDto_Type.Season:
 				navigationService.NavigateTo<SeasonViewModel>(dto); break;
+			case BaseItemDto_Type.Episode:
+				navigationService.NavigateTo<EpisodeViewModel>(dto); break;
 			default:
 				break;
 		}

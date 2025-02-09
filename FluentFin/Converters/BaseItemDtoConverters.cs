@@ -105,7 +105,7 @@ public static class BaseItemDtoConverters
 			tag = $"{parentBackdropTag}";
 		}
 
-		if (imageType == ImageType.Backdrop && dto.Type is BaseItemDto_Type.Season && dto.ParentId is { } pid)
+		if (imageType == ImageType.Backdrop && dto.Type is BaseItemDto_Type.Season or BaseItemDto_Type.Episode && dto.SeriesId is { } pid)
 		{
 			id = pid;
 		}

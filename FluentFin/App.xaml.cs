@@ -119,6 +119,7 @@ public partial class App : Application
 			services.AddTransient<LibraryViewModel>();
 			services.AddTransient<VideoPlayerViewModel>();
 			services.AddTransient<MovieViewModel>();
+			services.AddTransient<EpisodeViewModel>();
 			services.AddTransient<SeriesViewModel>();
 			services.AddTransient<SeasonViewModel>();
 			services.AddTransient<JellyfinSettingsViewModel>();

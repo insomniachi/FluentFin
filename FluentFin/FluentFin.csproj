@@ -142,6 +142,9 @@
 	  <Page Update="Views\JellyfinSettings\ActivitiesPage.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>
+	  <Page Update="Views\EpisodePage.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Views\SelectServerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

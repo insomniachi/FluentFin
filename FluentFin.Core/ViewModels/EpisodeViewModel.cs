@@ -5,13 +5,10 @@ using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.ViewModels;
 
-public partial class MovieViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
 {
 	[ObservableProperty]
 	public partial BaseItemDto Dto { get; set; }
-
-	[ObservableProperty]
-	public partial List<BaseItemDto> Similar { get; set; }
 
 	[ObservableProperty]
 	public partial IList<MediaStream> AudioStreams { get; set; }
@@ -26,10 +23,16 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 	public partial MediaStream? SelectedSubtitle { get; set; }
 
 	[ObservableProperty]
-	public partial bool HasSubtitles { get; set; }
+	public partial IEnumerable<BaseItemPerson> GuestStars { get; set; }
+
+	[ObservableProperty]
+	public partial IEnumerable<BaseItemPerson> CastAndCrew { get; set; }
 
 	[ObservableProperty]
 	public partial string VideoTitle { get; set; }
+
+	[ObservableProperty]
+	public partial bool HasSubtitles { get; set; }
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 
@@ -45,21 +48,25 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 			return;
 		}
 
-		await UpdateMovie(id);
-		await UpdateSimilar(dto);
+		await UpdateEpisode(id);
 	}
 
-	private async Task UpdateMovie(Guid id)
+	private async Task UpdateEpisode(Guid id)
 	{
 		var movie = await jellyfinClient.GetItem(id);
 		if (movie is null)
 		{
 			return;
 		}
-
 		Dto = movie;
 
-		if (Dto.MediaStreams is { Count : > 0 } streams)
+		if(Dto.People is { Count: > 0 } people)
+		{
+			CastAndCrew = people.Where(x => x.Type != BaseItemPerson_Type.GuestStar);
+			GuestStars = people.Where(x => x.Type == BaseItemPerson_Type.GuestStar);
+		}
+
+		if (Dto.MediaStreams is { Count: > 0 } streams)
 		{
 			VideoTitle = streams.FirstOrDefault(x => x.Type == MediaStream_Type.Video)?.DisplayTitle ?? string.Empty;
 
@@ -69,21 +76,9 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 			var defaultItem = new MediaStream();
 			typeof(MediaStream).GetProperty(nameof(MediaStream.DisplayTitle))!.SetValue(defaultItem, "None");
 
-			SubtitleStreams = [defaultItem, ..streams.Where(x => x.Type == MediaStream_Type.Subtitle).ToList()];
+			SubtitleStreams = [defaultItem, .. streams.Where(x => x.Type == MediaStream_Type.Subtitle).ToList()];
 			SelectedSubtitle = SubtitleStreams.FirstOrDefault(x => x.IsDefault == true) ?? SubtitleStreams.FirstOrDefault();
 			HasSubtitles = SubtitleStreams.Count > 1;
 		}
-	}
-
-	private async Task UpdateSimilar(BaseItemDto dto)
-	{
-		var response = await jellyfinClient.GetSimilarItems(dto);
-
-		if (response is null or { Items: null })
-		{
-			return;
-		}
-
-		Similar = response.Items;
 	}
 }

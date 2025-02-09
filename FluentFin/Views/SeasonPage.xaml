@@ -269,6 +269,15 @@
                                         Width="50"
                                         Height="50"
                                         Background="Transparent"
+                                        Command="{x:Bind root:App.Commands.DisplayDtoCommand}"
+                                        CommandParameter="{x:Bind}"
+                                        Content="{ui:FontIcon Glyph=&#xE946;}"
+                                        CornerRadius="25"
+                                        Style="{StaticResource IconButtonStyle}" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Background="Transparent"
                                         Command="{x:Bind root:App.Commands.PlayDtoCommand}"
                                         CommandParameter="{x:Bind}"
                                         Content="{ui:SymbolIcon Symbol=Play}"

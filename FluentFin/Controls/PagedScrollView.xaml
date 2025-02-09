@@ -9,6 +9,7 @@
     xmlns:local="using:FluentFin.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    x:Name="Page"
     mc:Ignorable="d">
 
     <Grid RowSpacing="16">
@@ -67,6 +68,7 @@
                                 Width="225"
                                 Height="385"
                                 ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
+                                JellyfinClient="{Binding ElementName=Page, Path=JellyfinClient}"
                                 Model="{x:Bind}" />
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>

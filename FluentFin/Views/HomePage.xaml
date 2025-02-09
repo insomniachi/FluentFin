@@ -12,6 +12,7 @@
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:FluentFin.Core.Contracts.Services"
+    x:Name="Page"
     Margin="{StaticResource MediumLeftRightMargin}"
     mc:Ignorable="d">
 
@@ -40,6 +41,7 @@
                                     Width="390"
                                     Height="240"
                                     ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Thumb, 192)}"
+                                    JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                     Model="{x:Bind}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -68,6 +70,7 @@
                                     Width="390"
                                     Height="240"
                                     ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Thumb, 192)}"
+                                    JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                     Model="{x:Bind}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
@@ -84,7 +87,8 @@
                         <lc:PagedScrollView
                             Margin="{StaticResource SmallLeftRightMargin}"
                             Header="{x:Bind Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
-                            Items="{x:Bind Items, Mode=OneWay}" />
+                            Items="{x:Bind Items, Mode=OneWay}"
+                            JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}" />
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
                 <ItemsRepeater.Layout>

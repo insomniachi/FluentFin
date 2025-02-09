@@ -13,7 +13,7 @@ namespace FluentFin.Core.ViewModels
 	public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 									   IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
 	{
-		private readonly CompositeDisposable _disposable = new();
+		private readonly CompositeDisposable _disposable = [];
 
 
 		[ObservableProperty]
@@ -30,7 +30,7 @@ namespace FluentFin.Core.ViewModels
 
 		public ObservableCollection<NamedDtoQueryResult> RecentItems { get; } = [];
 
-		public string BaseUrl { get; } = jellyfinClient.BaseUrl;
+		public IJellyfinClient JellyfinClient { get; } = jellyfinClient;
 
 		public Task OnNavigatedFrom()
 		{
@@ -71,7 +71,7 @@ namespace FluentFin.Core.ViewModels
 
 		private async Task UpdateContinueItems()
 		{
-			var response = await jellyfinClient.GetContinueWatching();
+			var response = await JellyfinClient.GetContinueWatching();
 
 			if (response is null or { Items: null } or { Items.Count: 0 })
 			{
@@ -83,7 +83,7 @@ namespace FluentFin.Core.ViewModels
 
 		private async Task UpdateNextUpItems()
 		{
-			var response = await jellyfinClient.GetNextUp();
+			var response = await JellyfinClient.GetNextUp();
 
 			if (response is null or { Items: null } or { Items.Count: 0 })
 			{
@@ -95,7 +95,7 @@ namespace FluentFin.Core.ViewModels
 
 		private async Task UpdateRecentItems()
 		{
-			await foreach (var list in jellyfinClient.GetRecentItemsFromUserLibraries())
+			await foreach (var list in JellyfinClient.GetRecentItemsFromUserLibraries())
 			{
 				RecentItems.Add(new(list.Name, list.Items));
 			}

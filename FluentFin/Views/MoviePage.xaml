@@ -217,13 +217,26 @@
                         Grid.Column="0"
                         Style="{StaticResource InputLabelStyle}"
                         Text="Audio" />
-                    <ComboBox
+                    <ctk:SwitchPresenter />
+                    <ctk:SwitchPresenter
                         Grid.Row="1"
                         Grid.Column="1"
-                        MinWidth="800"
-                        HorizontalAlignment="Left"
-                        ItemsSource="{x:Bind local:MoviePage.GetAudioStreams(ViewModel.Dto), Mode=OneWay}"
-                        SelectedIndex="0" />
+                        TargetType="x:Int32"
+                        Value="{x:Bind ViewModel.AudioStreams.Count, Mode=OneWay}">
+                        <ctk:Case Value="0" />
+                        <ctk:Case Value="1">
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind ViewModel.SelectedAudio.DisplayTitle, Mode=OneWay}" />
+                        </ctk:Case>
+                        <ctk:Case IsDefault="True">
+                            <ComboBox
+                                MinWidth="800"
+                                HorizontalAlignment="Left"
+                                DisplayMemberPath="DisplayTitle"
+                                ItemsSource="{x:Bind ViewModel.AudioStreams, Mode=OneWay}"
+                                SelectedItem="{x:Bind ViewModel.SelectedAudio, Mode=TwoWay}" />
+                        </ctk:Case>
+                    </ctk:SwitchPresenter>
+
 
                     <TextBlock
                         Grid.Row="2"
@@ -234,8 +247,11 @@
                         Grid.Row="2"
                         Grid.Column="1"
                         MinWidth="800"
-                        ItemsSource="{x:Bind local:MoviePage.GetSubtitleStreams(ViewModel.Dto), Mode=OneWay}"
-                        SelectedIndex="0" />
+                        HorizontalAlignment="Left"
+                        DisplayMemberPath="DisplayTitle"
+                        ItemsSource="{x:Bind ViewModel.SubtitleStreams, Mode=OneWay, TargetNullValue='None'}"
+                        SelectedItem="{x:Bind ViewModel.SelectedSubtitle, Mode=TwoWay}"
+                        SelectedValuePath="DisplayTitle" />
                 </Grid>
                 <TextBlock Text="{x:Bind ViewModel.Dto.Overview, Mode=OneWay}" />
 

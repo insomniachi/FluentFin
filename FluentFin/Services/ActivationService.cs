@@ -11,6 +11,7 @@ public class ActivationService : IActivationService
 {
 	private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
 	private readonly IEnumerable<IActivationHandler> _activationHandlers;
+	private readonly Guid _placementGuid = Guid.Parse("245b5fc3-a858-4106-8dc9-27de8e60e279");
 	private UIElement? _shell = null;
 
 	public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers)
@@ -35,8 +36,8 @@ public class ActivationService : IActivationService
 		await HandleActivationAsync(activationArgs);
 
 		// Activate the MainWindow.
+		App.MainWindow.AppWindow.EnablePlacementPersistence(_placementGuid, true, App.MainWindow.AppWindow.Id, Microsoft.UI.Windowing.PlacementPersistenceBehaviorFlags.OpenOverLastOpenedWindow | Microsoft.UI.Windowing.PlacementPersistenceBehaviorFlags.AllowLaunchIntoMaximized);
 		App.MainWindow.Activate();
-		App.MainWindow.Maximize();
 
 		// Execute tasks after activation.
 		await StartupAsync();

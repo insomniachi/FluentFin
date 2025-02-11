@@ -1,5 +1,4 @@
 using FluentFin.Core.ViewModels;
-using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 
 
@@ -13,7 +12,4 @@ public sealed partial class MoviePage : Page
 	{
 		InitializeComponent();
 	}
-
-	public static IEnumerable<BaseItemPerson> GetDirectors(List<BaseItemPerson>? people) => people?.Where(x => x.Type == BaseItemPerson_Type.Director) ?? [];
-	public static IEnumerable<BaseItemPerson> GetWriters(List<BaseItemPerson>? people) => people?.Where(x => x.Type == BaseItemPerson_Type.Writer) ?? [];
 }

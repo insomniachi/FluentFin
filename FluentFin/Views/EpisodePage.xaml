@@ -29,7 +29,7 @@
             x:Key="BackgroundOnImageBrush"
             Opacity="0.3"
             Color="Black" />
-        <x:Double x:Key="ButtonStripHeight">60</x:Double>
+        <x:Double x:Key="ButtonStripHeight">120</x:Double>
         <x:Double x:Key="InputLabelWidth">125</x:Double>
         <x:Double x:Key="InputControlWidth">200</x:Double>
         <Style
@@ -77,7 +77,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*" />
+            <RowDefinition Height="2*" />
             <RowDefinition Height="0.5*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="2.75*" />
@@ -138,34 +138,37 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             Height="{StaticResource ButtonStripHeight}"
+            Padding="0,10"
             VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{x:Bind ViewModel.Dto.SeriesName, Mode=OneWay}" />
+                <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}">
+                    <Run Text="{x:Bind ViewModel.Dto.SeasonName, Mode=OneWay}" />
+                    <Run Text="-" />
+                    <Run Text="{x:Bind ViewModel.Dto.IndexNumber, Mode=OneWay}" />
+                    <Run Text="." />
+                    <Run Text="{x:Bind ViewModel.Dto.Name, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
             <StackPanel
+                Grid.Row="1"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="20">
-                <TextBlock Text="{x:Bind ViewModel.Dto.ProductionYear, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}" />
-                <TextBlock Text="{x:Bind ViewModel.Dto.OfficialRating, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}" />
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="5"
-                    Visibility="{x:Bind ViewModel.Dto.CommunityRating, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
-                    <SymbolIcon Symbol="OutlineStar" />
-                    <TextBlock Text="{x:Bind ViewModel.Dto.CommunityRating, Mode=OneWay}" />
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="5"
-                    Visibility="{x:Bind ViewModel.Dto.CriticRating, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
-                    <SymbolIcon Symbol="SolidStar" />
-                    <TextBlock Text="{x:Bind ViewModel.Dto.CriticRating, Mode=OneWay}" />
-                </StackPanel>
+                <TextBlock Text="{x:Bind c:Converters.DateTimeOffsetToString(ViewModel.Dto.PremiereDate), Mode=OneWay}" />
+                <TextBlock Text="{x:Bind c:Converters.TicksToTime2(ViewModel.Dto.RunTimeTicks), Mode=OneWay}" />
             </StackPanel>
             <StackPanel
+                Grid.RowSpan="2"
                 Margin="{StaticResource SmallRightMargin}"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"
-                Spacing="20">
+                Spacing="4">
                 <Button
                     Width="50"
                     Height="50"
@@ -333,7 +336,7 @@
                     <ItemsRepeater
                         Grid.Row="1"
                         Grid.Column="1"
-                        ItemsSource="{x:Bind local:MoviePage.GetDirectors(ViewModel.Dto.People), Mode=OneWay}">
+                        ItemsSource="{x:Bind c:Converters.GetDirectors(ViewModel.Dto.People), Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="jm:BaseItemPerson">
                                 <HyperlinkButton Content="{x:Bind Name}" Style="{StaticResource TextBlockButtonStyle}" />
@@ -352,7 +355,7 @@
                     <ItemsRepeater
                         Grid.Row="2"
                         Grid.Column="1"
-                        ItemsSource="{x:Bind local:MoviePage.GetWriters(ViewModel.Dto.People), Mode=OneWay}">
+                        ItemsSource="{x:Bind c:Converters.GetWriters(ViewModel.Dto.People), Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="jm:BaseItemPerson">
                                 <HyperlinkButton Content="{x:Bind Name}" Style="{StaticResource TextBlockButtonStyle}" />

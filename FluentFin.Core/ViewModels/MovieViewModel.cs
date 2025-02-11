@@ -73,8 +73,19 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 			typeof(MediaStream).GetProperty(nameof(MediaStream.DisplayTitle))!.SetValue(defaultItem, "None");
 
 			SubtitleStreams = [defaultItem, ..streams.Where(x => x.Type == MediaStream_Type.Subtitle).ToList()];
-			SelectedSubtitle = SubtitleStreams.FirstOrDefault(x => x.IsDefault == true) ?? SubtitleStreams.FirstOrDefault();
 			HasSubtitles = SubtitleStreams.Count > 1;
+		}
+
+		if (Dto.MediaSources is { Count: 1 } sources)
+		{
+			if (sources[0].DefaultSubtitleStreamIndex > 0)
+			{
+				SelectedSubtitle = SubtitleStreams.FirstOrDefault(x => x.Index == sources[0].DefaultSubtitleStreamIndex);
+			}
+			else
+			{
+				SelectedSubtitle = SubtitleStreams.FirstOrDefault();
+			}
 		}
 	}
 

@@ -17,7 +17,7 @@ public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : Observab
 	public partial MediaStream? SelectedAudio { get; set; }
 
 	[ObservableProperty]
-	public partial IList<MediaStream> SubtitleStreams { get; set; }
+	public partial IList<MediaStream> SubtitleStreams { get; set; } = [];
 
 	[ObservableProperty]
 	public partial MediaStream? SelectedSubtitle { get; set; }
@@ -53,12 +53,12 @@ public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : Observab
 
 	private async Task UpdateEpisode(Guid id)
 	{
-		var movie = await jellyfinClient.GetItem(id);
-		if (movie is null)
+		var episode = await jellyfinClient.GetItem(id);
+		if (episode is null)
 		{
 			return;
 		}
-		Dto = movie;
+		Dto = episode;
 
 		if(Dto.People is { Count: > 0 } people)
 		{
@@ -77,8 +77,19 @@ public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : Observab
 			typeof(MediaStream).GetProperty(nameof(MediaStream.DisplayTitle))!.SetValue(defaultItem, "None");
 
 			SubtitleStreams = [defaultItem, .. streams.Where(x => x.Type == MediaStream_Type.Subtitle).ToList()];
-			SelectedSubtitle = SubtitleStreams.FirstOrDefault(x => x.IsDefault == true) ?? SubtitleStreams.FirstOrDefault();
 			HasSubtitles = SubtitleStreams.Count > 1;
+		}
+
+		if (Dto.MediaSources is { Count: 1 } sources)
+		{
+			if (sources[0].DefaultSubtitleStreamIndex > 0)
+			{
+				SelectedSubtitle = SubtitleStreams.FirstOrDefault(x => x.Index == sources[0].DefaultSubtitleStreamIndex);
+			}
+			else
+			{
+				SelectedSubtitle = SubtitleStreams.FirstOrDefault();
+			}
 		}
 	}
 }

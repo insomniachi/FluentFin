@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Reflection;
 using System.Web;
 using Windows.Foundation;
@@ -29,6 +30,17 @@ public static class Converters
 	public static double TicksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+
+	public static string DateTimeOffsetToString(DateTimeOffset? offset)
+	{
+		if(offset is null)
+		{
+			return "";
+		}
+
+		return offset.Value.Date.ToLocalTime().ToShortDateString();
+	}
+
 	public static string TicksToTime2(long? value)
 	{
 		if(value is null)
@@ -110,6 +122,7 @@ public static class Converters
 	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> internalSubtitles, MediaResponse response)
 	{
 		var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+		var defaultSubtitleIndex = response?.MediaSourceInfo.DefaultSubtitleStreamIndex;
 
 		if (subtitles.Count == 0)
 		{
@@ -150,7 +163,7 @@ public static class Converters
 			Text = "None",
 			GroupName = groupName,
 			Command = disableSubtitles,
-			IsChecked = !subtitles.Any(x => x.IsDefault ?? false)
+			IsChecked = response?.MediaSourceInfo.DefaultSubtitleStreamIndex is null
 		});
 
 		foreach (var item in subtitles)
@@ -160,7 +173,7 @@ public static class Converters
 			{
 				Text = $"{item.DisplayTitle}",
 				GroupName = groupName,
-				IsChecked = item.IsDefault ?? false,
+				IsChecked = item.Index == defaultSubtitleIndex,
 				Command = command,
 				CommandParameter = item
 			};

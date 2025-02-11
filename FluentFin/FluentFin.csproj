@@ -67,6 +67,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Assets\fresh.svg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	  <Content Update="Assets\GitHub.dark.svg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
@@ -79,6 +82,9 @@
 	  <Content Update="Assets\jellyfin.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	  <Content Update="Assets\rotten.svg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -88,8 +94,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\fresh.svg" />
 	  <None Remove="Assets\github.png" />
+	  <None Remove="Assets\rotten.svg" />
 	  <None Remove="Controls\BaseItemDtoCard.xaml" />
+	  <None Remove="Controls\TomatoMeter.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Controls\TomatoMeter.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

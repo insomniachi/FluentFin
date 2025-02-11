@@ -29,6 +29,23 @@ public static class Converters
 	public static double TicksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static string TicksToTime2(long? value)
+	{
+		if(value is null)
+		{
+			return "";
+		}
+
+		var ts = new TimeSpan(value.Value);
+		if(ts.Hours > 0)
+		{
+			return string.Format($"{ts.Hours}h {ts.Minutes}m");
+		}
+		else
+		{
+			return string.Format($"{ts.Minutes}m");
+		}
+	}
 	public static string TicksToSecondsString(long value) => TimeSpanToString(new TimeSpan(value));
 	public static Visibility VisibleIfMoreThanOne(ObservableCollection<PlaylistItem> items) => VisibleIfMoreThanOne<PlaylistItem>(items);
 	public static Visibility VisibleIfMoreThanOne<T>(IList<T> values) => values.Count > 1 ? Visibility.Visible : Visibility.Collapsed;

@@ -30,7 +30,7 @@
             x:Key="BackgroundOnImageBrush"
             Opacity="0.3"
             Color="Black" />
-        <x:Double x:Key="ButtonStripHeight">60</x:Double>
+        <x:Double x:Key="ButtonStripHeight">75</x:Double>
         <x:Double x:Key="InputLabelWidth">125</x:Double>
         <x:Double x:Key="InputControlWidth">200</x:Double>
         <Style
@@ -107,34 +107,45 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             Height="{StaticResource ButtonStripHeight}"
-            VerticalAlignment="Bottom">
+            VerticalAlignment="Bottom"
+            RowSpacing="4">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{x:Bind ViewModel.Dto.Name, Mode=OneWay}" />
             <StackPanel
+                Grid.Row="1"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
-                Spacing="20">
+                Spacing="16">
                 <TextBlock Text="{x:Bind ViewModel.Dto.ProductionYear, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}" />
-                <TextBlock Text="{x:Bind ViewModel.Dto.OfficialRating, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}" />
+                <TextBlock Text="{x:Bind c:Converters.TicksToTime2(ViewModel.Dto.RunTimeTicks), Mode=OneWay}" />
+                <Border Padding="8,0" Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}">
+                    <TextBlock Text="{x:Bind ViewModel.Dto.OfficialRating, Mode=OneWay}" Visibility="{x:Bind ViewModel.Dto.ProductionYear, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}" />
+                </Border>
                 <StackPanel
+                    x:Name="CommunityRatingBlock"
                     Orientation="Horizontal"
-                    Spacing="5"
+                    Spacing="8"
                     Visibility="{x:Bind ViewModel.Dto.CommunityRating, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
-                    <SymbolIcon Symbol="OutlineStar" />
-                    <TextBlock Text="{x:Bind ViewModel.Dto.CommunityRating, Mode=OneWay}" />
+                    <FontIcon
+                        FontSize="16"
+                        Foreground="Yellow"
+                        Glyph="&#xE735;" />
+                    <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.Dto.CommunityRating, Mode=OneWay}" />
                 </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="5"
-                    Visibility="{x:Bind ViewModel.Dto.CriticRating, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
-                    <SymbolIcon Symbol="SolidStar" />
-                    <TextBlock Text="{x:Bind ViewModel.Dto.CriticRating, Mode=OneWay}" />
-                </StackPanel>
+                <controls:TomatoMeter Rating="{x:Bind ViewModel.Dto.CriticRating, Mode=OneWay}" />
             </StackPanel>
             <StackPanel
+                Grid.Row="0"
+                Grid.RowSpan="2"
                 Margin="{StaticResource SmallRightMargin}"
                 HorizontalAlignment="Right"
+                VerticalAlignment="Center"
                 Orientation="Horizontal"
-                Spacing="20">
+                Spacing="4">
                 <Button
                     Width="50"
                     Height="50"
@@ -161,7 +172,11 @@
                     Content="{ui:FontIcon Glyph=&#xEB52;}"
                     CornerRadius="25"
                     IsChecked="{x:Bind ViewModel.Dto.UserData.IsFavorite, Mode=OneWay}"
-                    Style="{StaticResource IconToggleButtonStyle}" />
+                    Style="{StaticResource IconToggleButtonStyle}">
+                    <ToggleButton.Resources>
+                        <SolidColorBrush x:Key="SystemAccentColor" Color="Red" />
+                    </ToggleButton.Resources>
+                </ToggleButton>
                 <Button
                     Width="50"
                     Height="50"

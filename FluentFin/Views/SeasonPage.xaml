@@ -144,7 +144,11 @@
                     Content="{ui:FontIcon Glyph=&#xEB52;}"
                     CornerRadius="25"
                     IsChecked="{x:Bind ViewModel.Dto.UserData.IsFavorite, Mode=OneWay}"
-                    Style="{StaticResource IconToggleButtonStyle}" />
+                    Style="{StaticResource IconToggleButtonStyle}">
+                    <ToggleButton.Resources>
+                        <SolidColorBrush x:Key="SystemAccentColor" Color="Red" />
+                    </ToggleButton.Resources>
+                </ToggleButton>
                 <Button
                     Width="50"
                     Height="50"

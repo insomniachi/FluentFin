@@ -1,11 +1,9 @@
 using CommunityToolkit.WinUI;
 using FluentFin.Core.Contracts.Services;
-using Jellyfin.Sdk.Generated.Models;
+using FluentFin.Core.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using Windows.UI.Text;
 
 
 namespace FluentFin.Controls;
@@ -16,7 +14,7 @@ public sealed partial class BaseItemDtoCard : UserControl
 	public partial ImageSource? ImageSource { get; set; }
 
 	[GeneratedDependencyProperty]
-	public partial BaseItemDto? Model { get; set; }
+	public partial BaseItemViewModel? Model { get; set; }
 
 	[GeneratedDependencyProperty(DefaultValue = "\uE8B9")]
 	public partial string Glyph { get; set; }
@@ -41,7 +39,7 @@ public sealed partial class BaseItemDtoCard : UserControl
 			return;
 		}
 
-		App.Commands.DisplayDto(Model);
+		App.Commands.DisplayDto(Model.Dto);
 
 		e.Handled = true;
 	}
@@ -53,7 +51,7 @@ public sealed partial class BaseItemDtoCard : UserControl
 			return;
 		}
 
-		await JellyfinClient.SetPlayed(Model, !(Model.UserData?.Played ?? false));
+		await JellyfinClient.SetPlayed(Model.Dto, !(Model.UserData?.Played ?? false));
 	}
 
 	private async void AddToFavoriteButton_Clicked(object sender, RoutedEventArgs e)
@@ -63,6 +61,6 @@ public sealed partial class BaseItemDtoCard : UserControl
 			return;
 		}
 
-		await JellyfinClient.SetIsFavorite(Model, !(Model.UserData?.IsFavorite ?? false));
+		await JellyfinClient.SetIsFavorite(Model.Dto, !(Model.UserData?.IsFavorite ?? false));
 	}
 }

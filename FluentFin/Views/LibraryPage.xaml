@@ -13,6 +13,8 @@
     xmlns:lc="using:FluentFin.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
+    x:Name="Page"
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
 
@@ -129,9 +131,12 @@
         <ScrollView Grid.Row="1">
             <ItemsRepeater ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                 <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="jm:BaseItemDto">
+                    <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
                         <ItemContainer CornerRadius="{StaticResource ControlCornerRadius}" Style="{StaticResource BareItemContainerStyle}">
-                            <lc:PlayableMediaItem ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 352)}" Model="{x:Bind}" />
+                            <lc:BaseItemDtoCard
+                                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 352)}"
+                                JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
+                                Model="{x:Bind}" />
                         </ItemContainer>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>

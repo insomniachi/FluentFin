@@ -13,14 +13,13 @@ namespace FluentFin.Core.ViewModels;
 
 public partial class LibraryViewModel : ObservableObject, INavigationAware
 {
-	private readonly IJellyfinClient _jellyfinClient;
-	private readonly SourceCache<BaseItemDto, Guid> _itemsCache = new(x => x.Id ?? Guid.Empty);
-	private readonly ReadOnlyObservableCollection<BaseItemDto> _items;
+	private readonly SourceCache<BaseItemViewModel, Guid> _itemsCache = new(x => x.Id ?? Guid.Empty);
+	private readonly ReadOnlyObservableCollection<BaseItemViewModel> _items;
 
 
 	public LibraryViewModel(IJellyfinClient jellyfinClient)
 	{
-		_jellyfinClient = jellyfinClient;
+		JellyfinClient = jellyfinClient;
 
 		var pageRequest = this.WhenAnyValue(x => x.SelectedPage).Select(page => new PageRequest(page + 1, 100));
 		var comparer = this.WhenAnyValue(x => x.SortBy, x => x.Order)
@@ -30,7 +29,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 			.WhereNotNull()
 			.SelectMany(x => x.WhenAnyPropertyChanged())
 			.Where(x => x is not null)
-			.Select(x => (Func<BaseItemDto, bool>)x!.IsVisible);
+			.Select(x => (Func<BaseItemViewModel, bool>)x!.IsVisible);
 
 		Filter.WhenAnyPropertyChanged()
 			.Subscribe(x =>
@@ -48,33 +47,33 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 			.Subscribe();
 	}
 
-	private IComparer<BaseItemDto> GetComparer((ItemSortBy, SortOrder) sortDescription)
+	private IComparer<BaseItemViewModel> GetComparer((ItemSortBy, SortOrder) sortDescription)
 	{
 		return sortDescription switch
 		{
-			(ItemSortBy.Name, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.Name ?? ""),
-			(ItemSortBy.CommunityRating, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.CommunityRating ?? 0),
-			(ItemSortBy.CriticRating, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.CriticRating ?? 0),
-			(ItemSortBy.DateCreated, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.DateCreated ?? new DateTimeOffset()),
-			(ItemSortBy.DatePlayed, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.UserData?.LastPlayedDate ?? new DateTimeOffset()),
-			(ItemSortBy.PlayCount, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.UserData?.PlayCount ?? 0),
-			(ItemSortBy.PremiereDate, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.PremiereDate ?? new DateTimeOffset()),
-			(ItemSortBy.Runtime, SortOrder.Ascending) => SortExpressionComparer<BaseItemDto>.Ascending(x => x.RunTimeTicks ?? 0),
+			(ItemSortBy.Name, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.Name ?? ""),
+			(ItemSortBy.CommunityRating, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.CommunityRating ?? 0),
+			(ItemSortBy.CriticRating, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.CriticRating ?? 0),
+			(ItemSortBy.DateCreated, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.DateCreated ?? new DateTimeOffset()),
+			(ItemSortBy.DatePlayed, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.UserData?.LastPlayedDate ?? new DateTimeOffset()),
+			(ItemSortBy.PlayCount, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.UserData?.PlayCount ?? 0),
+			(ItemSortBy.PremiereDate, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.PremiereDate ?? new DateTimeOffset()),
+			(ItemSortBy.Runtime, SortOrder.Ascending) => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.RunTimeTicks ?? 0),
 
-			(ItemSortBy.Name, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.Name ?? ""),
-			(ItemSortBy.CommunityRating, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.CommunityRating ?? 0),
-			(ItemSortBy.CriticRating, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.CriticRating ?? 0),
-			(ItemSortBy.DateCreated, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.DateCreated ?? new DateTimeOffset()),
-			(ItemSortBy.DatePlayed, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.UserData?.LastPlayedDate ?? new DateTimeOffset()),
-			(ItemSortBy.PlayCount, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.UserData?.PlayCount ?? 0),
-			(ItemSortBy.PremiereDate, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.PremiereDate ?? new DateTimeOffset()),
-			(ItemSortBy.Runtime, SortOrder.Descending) => SortExpressionComparer<BaseItemDto>.Descending(x => x.RunTimeTicks ?? 0),
+			(ItemSortBy.Name, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.Name ?? ""),
+			(ItemSortBy.CommunityRating, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.CommunityRating ?? 0),
+			(ItemSortBy.CriticRating, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.CriticRating ?? 0),
+			(ItemSortBy.DateCreated, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.DateCreated ?? new DateTimeOffset()),
+			(ItemSortBy.DatePlayed, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.UserData?.LastPlayedDate ?? new DateTimeOffset()),
+			(ItemSortBy.PlayCount, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.UserData?.PlayCount ?? 0),
+			(ItemSortBy.PremiereDate, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.PremiereDate ?? new DateTimeOffset()),
+			(ItemSortBy.Runtime, SortOrder.Descending) => SortExpressionComparer<BaseItemViewModel>.Descending(x => x.RunTimeTicks ?? 0),
 
-			_ => SortExpressionComparer<BaseItemDto>.Ascending(x => x.Name ?? ""),
+			_ => SortExpressionComparer<BaseItemViewModel>.Ascending(x => x.Name ?? ""),
 		};
 	}
 
-	public ReadOnlyObservableCollection<BaseItemDto> Items => _items;
+	public ReadOnlyObservableCollection<BaseItemViewModel> Items => _items;
 
 	[ObservableProperty]
 	public partial int NumberOfPages { get; set; }
@@ -100,6 +99,8 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial List<string> YearsSource { get; set; } = new();
 
+	public IJellyfinClient JellyfinClient { get; }
+
 	public LibraryFilter Filter { get; set; } = new();
 
 	[RelayCommand]
@@ -118,17 +119,17 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		var result = await _jellyfinClient.GetItems(libraryDto);
+		var result = await JellyfinClient.GetItems(libraryDto);
 
 		if (result is null or { Items: null })
 		{
 			return;
 		}
 
-		_itemsCache.AddOrUpdate(result.Items);
+		_itemsCache.AddOrUpdate(result.Items.Select(BaseItemViewModel.FromDto));
 		UpdateNumberOfPages();
 
-		var filters = await _jellyfinClient.GetFilters(libraryDto);
+		var filters = await JellyfinClient.GetFilters(libraryDto);
 
 		if (filters is null)
 		{
@@ -172,7 +173,7 @@ public partial class LibraryFilter : ObservableObject
 
 	public bool IsEmptyFilter() => this is { Tags.Count: 0, Genres.Count: 0, OfficialRatings.Count: 0, Years.Count: 0 };
 
-	public bool IsVisible(BaseItemDto dto)
+	public bool IsVisible(BaseItemViewModel dto)
 	{
 		bool hasMatchingTags = true;
 		bool hasMatchingGenres = true;

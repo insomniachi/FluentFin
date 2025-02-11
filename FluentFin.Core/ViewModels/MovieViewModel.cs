@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
@@ -11,7 +12,7 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 	public partial BaseItemDto Dto { get; set; }
 
 	[ObservableProperty]
-	public partial List<BaseItemDto> Similar { get; set; }
+	public partial ObservableCollection<BaseItemViewModel> Similar { get; set; }
 
 	[ObservableProperty]
 	public partial IList<MediaStream> AudioStreams { get; set; }
@@ -30,6 +31,8 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 
 	[ObservableProperty]
 	public partial string VideoTitle { get; set; }
+
+	public IJellyfinClient JellyfinClient { get; } = jellyfinClient;
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 
@@ -51,7 +54,7 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 
 	private async Task UpdateMovie(Guid id)
 	{
-		var movie = await jellyfinClient.GetItem(id);
+		var movie = await JellyfinClient.GetItem(id);
 		if (movie is null)
 		{
 			return;
@@ -77,13 +80,13 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 
 	private async Task UpdateSimilar(BaseItemDto dto)
 	{
-		var response = await jellyfinClient.GetSimilarItems(dto);
+		var response = await JellyfinClient.GetSimilarItems(dto);
 
 		if (response is null or { Items: null })
 		{
 			return;
 		}
 
-		Similar = response.Items;
+		Similar = [ ..response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Jellyfin.Sdk.Generated.Items.Item.Refresh;
+﻿using FluentFin.Core.ViewModels;
+using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
 using System.Collections.ObjectModel;

@@ -37,17 +37,19 @@ public partial class SeriesViewModel(IJellyfinClient jellyfinClient) : Observabl
 	public partial BaseItemDto Dto { get; set; }
 
 	[ObservableProperty]
-	public partial List<BaseItemDto> Similar { get; set; }
+	public partial List<BaseItemViewModel> Similar { get; set; }
 
 	[ObservableProperty]
-	public partial List<BaseItemDto> Seasons { get; set; }
+	public partial List<BaseItemViewModel> Seasons { get; set; }
 
 	[ObservableProperty]
-	public partial BaseItemDto NextUp { get; set; }
+	public partial BaseItemViewModel NextUp { get; set; }
+
+	public IJellyfinClient JellyfinClient { get; } = jellyfinClient;
 
 	private async Task UpdateSeries(Guid id)
 	{
-		var series = await jellyfinClient.GetItem(id);
+		var series = await JellyfinClient.GetItem(id);
 		if (series is null)
 		{
 			return;
@@ -59,37 +61,37 @@ public partial class SeriesViewModel(IJellyfinClient jellyfinClient) : Observabl
 
 	private async Task UpdateNextUp(BaseItemDto dto)
 	{
-		var response = await jellyfinClient.GetNextUp(dto);
+		var response = await JellyfinClient.GetNextUp(dto);
 
 		if (response is null or { Items: null } or { Items.Count: 0 })
 		{
 			return;
 		}
 
-		NextUp = response.Items[0];
+		NextUp = BaseItemViewModel.FromDto(response.Items[0]);
 	}
 
 	private async Task UpdateSimilar(BaseItemDto dto)
 	{
-		var response = await jellyfinClient.GetSimilarItems(dto);
+		var response = await JellyfinClient.GetSimilarItems(dto);
 
 		if (response is null or { Items: null })
 		{
 			return;
 		}
 
-		Similar = response.Items;
+		Similar = [ ..response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 
 	private async Task UpdateSeasons(BaseItemDto dto)
 	{
-		var response = await jellyfinClient.GetItems(dto);
+		var response = await JellyfinClient.GetItems(dto);
 
 		if (response is null or { Items: null })
 		{
 			return;
 		}
 
-		Seasons = response.Items;
+		Seasons = [ ..response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 }

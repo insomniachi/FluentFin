@@ -9,6 +9,7 @@
     xmlns:local="using:FluentFin.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     mc:Ignorable="d">
 
@@ -63,11 +64,11 @@
             <Grid x:Name="ContentGrid">
                 <ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}">
                     <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="jm:BaseItemDto">
+                        <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
                             <local:BaseItemDtoCard
                                 Width="225"
                                 Height="385"
-                                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 302)}"
+                                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 302)}"
                                 JellyfinClient="{Binding ElementName=Page, Path=JellyfinClient}"
                                 Model="{x:Bind}" />
                         </DataTemplate>

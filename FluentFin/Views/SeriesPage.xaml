@@ -14,6 +14,8 @@
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:root="using:FluentFin"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
+    x:Name="Page"
     mc:Ignorable="d">
     <Page.Resources>
         <c:JellyfinFlyoutConverter x:Key="FlyoutConverter" />
@@ -287,10 +289,11 @@
                     Spacing="10"
                     Visibility="{x:Bind ViewModel.NextUp, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Next Up" />
-                    <controls:PlayableMediaItem
+                    <controls:BaseItemDtoCard
                         Width="390"
                         Height="240"
-                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.NextUp, jm:ImageType.Thumb, 300), Mode=OneWay}"
+                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.NextUp.Dto, jm:ImageType.Thumb, 300), Mode=OneWay}"
+                        JellyfinClient="{x:Bind ViewModel.JellyfinClient}"
                         Model="{x:Bind ViewModel.NextUp, Mode=OneWay}" />
                 </StackPanel>
 
@@ -304,10 +307,11 @@
                         VerticalScrollMode="Disabled">
                         <ItemsRepeater Margin="0,0,15,0" ItemsSource="{x:Bind ViewModel.Seasons, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="jm:BaseItemDto">
-                                    <controls:PlayableMediaItem
+                                <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <controls:BaseItemDtoCard
                                         Width="200"
-                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 300)}"
+                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 300)}"
+                                        JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                         Model="{x:Bind}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
@@ -375,10 +379,11 @@
                         VerticalScrollMode="Disabled">
                         <ItemsRepeater Margin="0,0,15,0" ItemsSource="{x:Bind ViewModel.Similar, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="jm:BaseItemDto">
-                                    <controls:PlayableMediaItem
+                                <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <controls:BaseItemDtoCard
                                         Width="200"
-                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 300)}"
+                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 300)}"
+                                        JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                         Model="{x:Bind}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>

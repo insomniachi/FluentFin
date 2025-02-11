@@ -16,6 +16,7 @@
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:root="using:FluentFin"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -256,6 +257,7 @@
                         SelectedValuePath="DisplayTitle"
                         Visibility="{x:Bind ViewModel.HasSubtitles, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
                 </Grid>
+
                 <TextBlock Text="{x:Bind ViewModel.Dto.Overview, Mode=OneWay}" />
 
                 <StackPanel Spacing="10">
@@ -425,10 +427,11 @@
                         VerticalScrollMode="Disabled">
                         <ItemsRepeater Margin="0,0,15,0" ItemsSource="{x:Bind ViewModel.Similar, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="jm:BaseItemDto">
-                                    <controls:PlayableMediaItem
+                                <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <controls:BaseItemDtoCard
                                         Width="200"
-                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 300)}"
+                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 300)}"
+                                        JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                         Model="{x:Bind}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.WinUI;
 using FluentFin.Core.Contracts.Services;
-using Jellyfin.Sdk.Generated.Models;
+using FluentFin.Core.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -15,7 +15,7 @@ public sealed partial class PagedScrollView : UserControl
 	public partial string Header { get; set; }
 
 	[GeneratedDependencyProperty(DefaultValueCallback = nameof(Empty))]
-	public partial ObservableCollection<BaseItemDto> Items { get; set; }
+	public partial ObservableCollection<BaseItemViewModel> Items { get; set; }
 
 	[GeneratedDependencyProperty]
 	public partial IJellyfinClient? JellyfinClient { get; set; }
@@ -79,5 +79,5 @@ public sealed partial class PagedScrollView : UserControl
 		}
 	}
 
-	private static ObservableCollection<BaseItemDto> Empty() => [];
+	private static ObservableCollection<BaseItemViewModel> Empty() => [];
 }

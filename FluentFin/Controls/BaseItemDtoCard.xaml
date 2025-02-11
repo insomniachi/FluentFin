@@ -39,7 +39,7 @@
         x:Name="RootGrid"
         ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5"
         ui:VisualExtensions.Scale="0.9"
-        ContextFlyout="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource FlyoutConverter}}">
+        ContextFlyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -155,7 +155,7 @@
                     Background="{StaticResource Black65O}"
                     BorderThickness="0"
                     Command="{x:Bind root:App.Commands.PlayDtoCommand}"
-                    CommandParameter="{x:Bind Model}"
+                    CommandParameter="{x:Bind Model.Dto}"
                     CornerRadius="25"
                     Style="{ThemeResource BareButtonStyle}"
                     Visibility="Collapsed">
@@ -239,7 +239,7 @@
                         Content="{ui:FontIcon Glyph=&#xE73E;,
                                               FontSize=15}"
                         CornerRadius="20"
-                        IsChecked="{x:Bind Model.UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
+                        IsChecked="{x:Bind Model.UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneWay}"
                         Style="{ThemeResource IconToggleButtonStyle}"
                         ToolTipService.ToolTip="Mark watched" />
 
@@ -251,9 +251,13 @@
                         Content="{ui:FontIcon Glyph=&#xEB52;,
                                               FontSize=15}"
                         CornerRadius="20"
-                        IsChecked="{x:Bind Model.UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
+                        IsChecked="{x:Bind Model.UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneWay}"
                         Style="{ThemeResource IconToggleButtonStyle}"
-                        ToolTipService.ToolTip="Add to favorites" />
+                        ToolTipService.ToolTip="Add to favorites">
+                        <ToggleButton.Resources>
+                            <SolidColorBrush x:Key="SystemAccentColor" Color="Red" />
+                        </ToggleButton.Resources>
+                    </ToggleButton>
 
                     <Button
                         Width="40"
@@ -261,7 +265,7 @@
                         Content="{ui:FontIcon Glyph=&#xE712;,
                                               FontSize=15}"
                         CornerRadius="20"
-                        Flyout="{x:Bind Model, Converter={StaticResource FlyoutConverter}}"
+                        Flyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}}"
                         Style="{ThemeResource IconButtonStyle}"
                         ToolTipService.ToolTip="More" />
 
@@ -279,14 +283,14 @@
             <TextBlock
                 HorizontalAlignment="Center"
                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                Text="{x:Bind Model, Converter={StaticResource NameConverter}}"
+                Text="{x:Bind Model.Dto, Converter={StaticResource NameConverter}}"
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap" />
 
             <TextBlock
                 HorizontalAlignment="Center"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Bind Model, Converter={StaticResource SubtitleConverter}}"
+                Text="{x:Bind Model.Dto, Converter={StaticResource SubtitleConverter}}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text, Converter={StaticResource EmptyStringVisibilityConverter}}" />
         </StackPanel>
     </Grid>

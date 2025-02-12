@@ -346,6 +346,10 @@
 	  </Page>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="LoadingViews\" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>

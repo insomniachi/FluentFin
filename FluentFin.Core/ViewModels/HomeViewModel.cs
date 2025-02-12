@@ -1,12 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
-using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -28,6 +27,9 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 	[ObservableProperty]
 	public partial bool HasContinueItems { get; set; }
 
+	[ObservableProperty]
+	public partial bool IsLoading { get; set; }
+
 	public ObservableCollection<NamedQueryResult> RecentItems { get; } = [];
 
 	public IJellyfinClient JellyfinClient { get; } = jellyfinClient;
@@ -40,6 +42,8 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 
 	public async Task OnNavigatedTo(object parameter)
 	{
+		IsLoading = true;
+
 		await Task.WhenAll(UpdateContinueItems(), UpdateNextUpItems(), UpdateRecentItems());
 
 		HasContinueItems = ContinueItems.Count > 0;
@@ -51,7 +55,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			.Select(x => x as UserDataChangeMessage)
 			.WhereNotNull()
 			.ObserveOn(RxApp.MainThreadScheduler)
-			.Subscribe(msg =>
+			.Subscribe(async msg =>
 			{
 				foreach (var item in msg.Data?.UserDataList ?? [])
 				{
@@ -61,12 +65,13 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 					}
 
 					ProcessContinueWatchingItemChanged(item, guid);
-					ProcessNextUpItemChanged(item, guid);
+					await ProcessNextUpItemChanged(item, guid);
 					ProcessRecentItemChanged(item, guid);
 				}
 			})
 			.DisposeWith(_disposable);
 
+		IsLoading = false;
 	}
 
 	private async Task UpdateContinueItems()
@@ -124,13 +129,18 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		if (userData.PlaybackPositionTicks is null or 0)
+		if (userData.PlaybackPositionTicks is null or 0 ||
+			userData.Played == true)
 		{
 			ContinueItems.Remove(item);
 		}
+		else
+		{
+			item.UserData!.PlayedPercentage = userData.PlayedPercentage;
+		}
 	}
 
-	private void ProcessNextUpItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private async Task ProcessNextUpItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
 	{
 		if (NextUpItems.FirstOrDefault(x => x.Id == guid) is not { } item)
 		{
@@ -139,7 +149,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 
 		if (userData.Played == true)
 		{
-			NextUpItems.Remove(item);
+			await UpdateNextUpItems();
 		}
 	}
 }

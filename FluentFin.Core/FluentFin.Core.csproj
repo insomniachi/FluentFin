@@ -5,6 +5,7 @@
 		<Platforms>x86;x64;arm64;AnyCPU</Platforms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

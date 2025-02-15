@@ -313,7 +313,7 @@
                                         Background="Transparent"
                                         Content="{ui:SymbolIcon Symbol=More}"
                                         CornerRadius="25"
-                                        Flyout="{x:Bind Converter={StaticResource FlyoutConverter}, Mode=OneWay}"
+                                        Flyout="{x:Bind Converter={StaticResource FlyoutConverter}}"
                                         Style="{StaticResource IconButtonStyle}" />
                                 </StackPanel>
 

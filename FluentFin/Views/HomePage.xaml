@@ -91,8 +91,8 @@
                             <DataTemplate x:DataType="viewmodels:NamedQueryResult">
                                 <lc:PagedScrollView
                                     Margin="{StaticResource SmallLeftRightMargin}"
-                                    Header="{x:Bind Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
-                                    Items="{x:Bind Items, Mode=OneWay}"
+                                    Header="{x:Bind Name, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
+                                    Items="{x:Bind Items}"
                                     JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>

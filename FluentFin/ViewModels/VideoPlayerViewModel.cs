@@ -56,6 +56,11 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.Where(status => status is Status.Stopped or Status.Failed)
 			.Subscribe(async _ => await jellyfinClient.Stop());
 
+		MediaPlayer.WhenAnyValue(x => x.Status)
+			.Where(status => status is Status.Ended)
+			.Where(_ => Playlist.CanSelectNext)
+			.Subscribe(_ => Playlist.SelectNext());
+
 		webSocketMessages
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(async message =>

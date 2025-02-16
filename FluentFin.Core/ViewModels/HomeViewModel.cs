@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
+using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 
 namespace FluentFin.Core.ViewModels;
@@ -95,14 +96,14 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		NextUpItems = new(response.Items.Select(BaseItemViewModel.FromDto));
+		NextUpItems = [.. response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 
 	private async Task UpdateRecentItems()
 	{
 		await foreach (var list in JellyfinClient.GetRecentItemsFromUserLibraries())
 		{
-			RecentItems.Add(new(list.Name, new(list.Items.Select(BaseItemViewModel.FromDto))));
+			RecentItems.Add(new(list.Library, [.. list.Items.Select(BaseItemViewModel.FromDto)]));
 		}
 	}
 
@@ -154,4 +155,4 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 	}
 }
 
-public record NamedQueryResult(string Name, ObservableCollection<BaseItemViewModel> Items);
+public record NamedQueryResult(BaseItemDto Library, ObservableCollection<BaseItemViewModel> Items);

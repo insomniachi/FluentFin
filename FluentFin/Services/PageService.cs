@@ -9,14 +9,18 @@ using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
 using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
 
 namespace FluentFin.Services;
 
 public class PageService : IPageService
 {
 	private readonly Dictionary<string, Type> _pages = new();
+	private readonly Dictionary<Type, Type> _viewModels = new();
+	private readonly Dictionary<Type, Type> _parents = new();
+	private readonly Lock _lock = new();
 
-	public PageService()
+    public PageService()
 	{
 		// Setup Section
 		Configure<ShellViewModel, ShellPage>();
@@ -61,9 +65,13 @@ public class PageService : IPageService
 		Configure<BreakdownReportViewModel, BreakdownReportPage>();
 		Configure<UsageReportViewModel, UsageReportPage>();
 		Configure<SessionDurationReportViewModel, SessionDurationReportPage>();
-	}
 
-	public Type GetPageType(string key)
+
+		// Setup Parent/Child Relationships
+		ConfigureParent<LibraryViewModel, LibrariesLandingPageViewModel>();
+    }
+
+    public Type GetPageType(string key)
 	{
 		Type? pageType;
 		lock (_pages)
@@ -75,6 +83,30 @@ public class PageService : IPageService
 		}
 
 		return pageType;
+	}
+
+	public Type GetViewModelType(Type type)
+	{
+        Type? vmType;
+        lock (_pages)
+        {
+            if (!_viewModels.TryGetValue(type, out vmType))
+            {
+                throw new ArgumentException($"VM not found: {type.FullName}. Did you forget to call PageService.Configure?");
+            }
+        }
+
+        return vmType;
+    }
+
+	public Type? GetParent(Type typeKey)
+	{
+		if(_parents.TryGetValue(typeKey, out var parent))
+		{
+			return parent;
+		}
+
+		return null;
 	}
 
 	private void Configure<VM, V>()
@@ -96,6 +128,23 @@ public class PageService : IPageService
 			}
 
 			_pages.Add(key, type);
+			_viewModels.Add(type, typeof(VM));
 		}
 	}
+
+    private void ConfigureParent<TChild, TParent>()
+    where TChild : INotifyPropertyChanged
+    where TParent : INotifyPropertyChanged
+    {
+        lock (_lock)
+        {
+			var key = typeof(TChild);
+            if(_parents.ContainsKey(key))
+            {
+                throw new ArgumentException($"The key {key} is already configured in PageService");
+            }
+
+			_parents.Add(key, typeof(TParent));
+        }
+    }
 }

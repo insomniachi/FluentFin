@@ -6,6 +6,7 @@
     xmlns:b="using:FluentFin.Behaviors"
     xmlns:c="using:FluentFin.Converters"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:ctkl="using:CommunityToolkit.Labs.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dw="using:DevWinUI"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -18,151 +19,187 @@
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <ctk:SwitchPresenter TargetType="x:Boolean" Value="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
+        <ctk:Case Value="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-        <StackPanel
-            Grid.Row="0"
-            Margin="{StaticResource MediumBottomMargin}"
-            HorizontalAlignment="Center"
-            Orientation="Horizontal"
-            Spacing="5">
-            <lc:MenuFlyoutButton Content="Sort" Icon="{ui:SymbolIcon Symbol=Sort}">
-                <lc:MenuFlyoutButton.Flyout>
-                    <MenuBarItemFlyout>
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.Name}"
-                            GroupName="Library_SortItem"
-                            IsChecked="True"
-                            Text="Name" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.CommunityRating}"
-                            GroupName="Library_SortItem"
-                            Text="Community Rating" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.CriticRating}"
-                            GroupName="Library_SortItem"
-                            Text="Critic Rating" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.DateCreated}"
-                            GroupName="Library_SortItem"
-                            Text="Date Added" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.DatePlayed}"
-                            GroupName="Library_SortItem"
-                            Text="Date Played" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.PlayCount}"
-                            GroupName="Library_SortItem"
-                            Text="Play Count" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.PremiereDate}"
-                            GroupName="Library_SortItem"
-                            Text="Release Date" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortByCommand}"
-                            CommandParameter="{x:Bind jm:ItemSortBy.Runtime}"
-                            GroupName="Library_SortItem"
-                            Text="Runtime" />
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="{StaticResource MediumBottomMargin}"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="5">
+                    <lc:MenuFlyoutButton Content="Sort" Icon="{ui:SymbolIcon Symbol=Sort}">
+                        <lc:MenuFlyoutButton.Flyout>
+                            <MenuBarItemFlyout>
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.Name}"
+                                    GroupName="Library_SortItem"
+                                    IsChecked="True"
+                                    Text="Name" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.CommunityRating}"
+                                    GroupName="Library_SortItem"
+                                    Text="Community Rating" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.CriticRating}"
+                                    GroupName="Library_SortItem"
+                                    Text="Critic Rating" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.DateCreated}"
+                                    GroupName="Library_SortItem"
+                                    Text="Date Added" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.DatePlayed}"
+                                    GroupName="Library_SortItem"
+                                    Text="Date Played" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.PlayCount}"
+                                    GroupName="Library_SortItem"
+                                    Text="Play Count" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.PremiereDate}"
+                                    GroupName="Library_SortItem"
+                                    Text="Release Date" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortByCommand}"
+                                    CommandParameter="{x:Bind jm:ItemSortBy.Runtime}"
+                                    GroupName="Library_SortItem"
+                                    Text="Runtime" />
 
-                        <MenuFlyoutSeparator />
+                                <MenuFlyoutSeparator />
 
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
-                            CommandParameter="{x:Bind jm:SortOrder.Ascending}"
-                            GroupName="Library_SortOrder"
-                            IsChecked="True"
-                            Text="Ascending" />
-                        <RadioMenuFlyoutItem
-                            Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
-                            CommandParameter="{x:Bind jm:SortOrder.Descending}"
-                            GroupName="Library_SortOrder"
-                            Text="Descending" />
-                    </MenuBarItemFlyout>
-                </lc:MenuFlyoutButton.Flyout>
-            </lc:MenuFlyoutButton>
-            <lc:MenuFlyoutButton Content="Filter" Icon="{ui:SymbolIcon Symbol=Filter}">
-                <lc:MenuFlyoutButton.Flyout>
-                    <Flyout>
-                        <StackPanel Spacing="10">
-                            <StackPanel.Resources>
-                                <Style TargetType="ctk:TokenizingTextBox">
-                                    <Setter Property="Width" Value="400" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.Genres, Mode=OneWay}" PlaceholderText="Genres">
-                                <i:Interaction.Behaviors>
-                                    <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.GenresSource, Mode=OneWay}" />
-                                </i:Interaction.Behaviors>
-                            </ctk:TokenizingTextBox>
-                            <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.Tags, Mode=OneWay}" PlaceholderText="Tags">
-                                <i:Interaction.Behaviors>
-                                    <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.TagsSource, Mode=OneWay}" />
-                                </i:Interaction.Behaviors>
-                            </ctk:TokenizingTextBox>
-                            <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.Years, Mode=OneWay}" PlaceholderText="Years">
-                                <i:Interaction.Behaviors>
-                                    <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.YearsSource, Mode=OneWay}" />
-                                </i:Interaction.Behaviors>
-                            </ctk:TokenizingTextBox>
-                            <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.OfficialRatings, Mode=OneWay}" PlaceholderText="Official Ratings">
-                                <i:Interaction.Behaviors>
-                                    <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.OfficialRatingsSource, Mode=OneWay}" />
-                                </i:Interaction.Behaviors>
-                            </ctk:TokenizingTextBox>
-                        </StackPanel>
-                    </Flyout>
-                </lc:MenuFlyoutButton.Flyout>
-            </lc:MenuFlyoutButton>
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
+                                    CommandParameter="{x:Bind jm:SortOrder.Ascending}"
+                                    GroupName="Library_SortOrder"
+                                    IsChecked="True"
+                                    Text="Ascending" />
+                                <RadioMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.UpdateSortOrderCommand}"
+                                    CommandParameter="{x:Bind jm:SortOrder.Descending}"
+                                    GroupName="Library_SortOrder"
+                                    Text="Descending" />
+                            </MenuBarItemFlyout>
+                        </lc:MenuFlyoutButton.Flyout>
+                    </lc:MenuFlyoutButton>
+                    <lc:MenuFlyoutButton Content="Filter" Icon="{ui:SymbolIcon Symbol=Filter}">
+                        <lc:MenuFlyoutButton.Flyout>
+                            <Flyout>
+                                <StackPanel Spacing="10">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="ctk:TokenizingTextBox">
+                                            <Setter Property="Width" Value="400" />
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.Genres, Mode=OneWay}" PlaceholderText="Genres">
+                                        <i:Interaction.Behaviors>
+                                            <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.GenresSource, Mode=OneWay}" />
+                                        </i:Interaction.Behaviors>
+                                    </ctk:TokenizingTextBox>
+                                    <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.Tags, Mode=OneWay}" PlaceholderText="Tags">
+                                        <i:Interaction.Behaviors>
+                                            <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.TagsSource, Mode=OneWay}" />
+                                        </i:Interaction.Behaviors>
+                                    </ctk:TokenizingTextBox>
+                                    <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.Years, Mode=OneWay}" PlaceholderText="Years">
+                                        <i:Interaction.Behaviors>
+                                            <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.YearsSource, Mode=OneWay}" />
+                                        </i:Interaction.Behaviors>
+                                    </ctk:TokenizingTextBox>
+                                    <ctk:TokenizingTextBox ItemsSource="{x:Bind ViewModel.Filter.OfficialRatings, Mode=OneWay}" PlaceholderText="Official Ratings">
+                                        <i:Interaction.Behaviors>
+                                            <b:TokenizingTextBoxBehavior Suggestions="{x:Bind ViewModel.OfficialRatingsSource, Mode=OneWay}" />
+                                        </i:Interaction.Behaviors>
+                                    </ctk:TokenizingTextBox>
+                                </StackPanel>
+                            </Flyout>
+                        </lc:MenuFlyoutButton.Flyout>
+                    </lc:MenuFlyoutButton>
 
-        </StackPanel>
+                </StackPanel>
 
-        <ScrollView Grid.Row="1">
-            <ItemsRepeater ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
-                        <ItemContainer CornerRadius="{StaticResource ControlCornerRadius}" Style="{StaticResource BareItemContainerStyle}">
-                            <lc:BaseItemDtoCard
-                                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 352)}"
-                                JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
-                                Model="{x:Bind}" />
-                        </ItemContainer>
+                <ScrollView Grid.Row="1">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                <ItemContainer CornerRadius="{StaticResource ControlCornerRadius}" Style="{StaticResource BareItemContainerStyle}">
+                                    <lc:BaseItemDtoCard
+                                        ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 352)}"
+                                        JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
+                                        Model="{x:Bind}" />
+                                </ItemContainer>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout
+                                ItemsJustification="Start"
+                                ItemsStretch="Fill"
+                                MinColumnSpacing="8"
+                                MinItemHeight="390"
+                                MinItemWidth="220"
+                                MinRowSpacing="8"
+                                Orientation="Horizontal" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTransitionProvider>
+                            <LinedFlowLayoutItemCollectionTransitionProvider />
+                        </ItemsRepeater.ItemTransitionProvider>
+                    </ItemsRepeater>
+                </ScrollView>
+
+
+                <dw:PagerControl
+                    Grid.Row="2"
+                    Margin="{StaticResource MediumTopMargin}"
+                    DisplayMode="ButtonPanel"
+                    NumberOfPages="{x:Bind ViewModel.NumberOfPages, Mode=OneWay}"
+                    SelectedPageIndex="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}" />
+
+            </Grid>
+        </ctk:Case>
+        <ctk:Case IsDefault="True" Value="True">
+            <StackPanel Spacing="16">
+
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <ctkl:Shimmer Width="150" Height="40" />
+                    <ctkl:Shimmer Width="150" Height="40" />
+                </StackPanel>
+
+                <ItemsRepeater ItemsSource="{x:Bind c:Converters.GetDummyItemSource(25)}">
+                    <DataTemplate>
+                        <ctkl:Shimmer
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5"
+                            ui:VisualExtensions.Scale="0.9" />
                     </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-                <ItemsRepeater.Layout>
-                    <UniformGridLayout
-                        ItemsJustification="Start"
-                        ItemsStretch="Fill"
-                        MinColumnSpacing="8"
-                        MinItemHeight="390"
-                        MinItemWidth="220"
-                        MinRowSpacing="8"
-                        Orientation="Horizontal" />
-                </ItemsRepeater.Layout>
-                <ItemsRepeater.ItemTransitionProvider>
-                    <LinedFlowLayoutItemCollectionTransitionProvider />
-                </ItemsRepeater.ItemTransitionProvider>
-            </ItemsRepeater>
-        </ScrollView>
-
-
-        <dw:PagerControl
-            Grid.Row="2"
-            Margin="{StaticResource MediumTopMargin}"
-            DisplayMode="ButtonPanel"
-            NumberOfPages="{x:Bind ViewModel.NumberOfPages, Mode=OneWay}"
-            SelectedPageIndex="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}" />
-
-    </Grid>
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            ItemsJustification="Start"
+                            ItemsStretch="Fill"
+                            MinColumnSpacing="8"
+                            MinItemHeight="390"
+                            MinItemWidth="220"
+                            MinRowSpacing="8"
+                            Orientation="Horizontal" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </StackPanel>
+        </ctk:Case>
+    </ctk:SwitchPresenter>
 </Page>

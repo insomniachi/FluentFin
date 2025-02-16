@@ -25,7 +25,13 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="{x:Bind Header, Mode=OneWay}" />
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="{x:Bind Header, Mode=OneWay}"
+                PointerEntered="TextBlock_PointerEntered"
+                PointerExited="TextBlock_PointerExited"
+                PointerReleased="TextBlock_PointerReleased"
+                HorizontalAlignment="Left"/>
 
             <StackPanel
                 Grid.Column="1"

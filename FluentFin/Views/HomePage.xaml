@@ -14,7 +14,7 @@
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:FluentFin.Core.Contracts.Services"
-    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     Margin="{StaticResource MediumLeftRightMargin}"
     mc:Ignorable="d">
@@ -41,7 +41,7 @@
                             VerticalScrollMode="Disabled">
                             <ItemsRepeater ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
                                 <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <DataTemplate x:DataType="vm:BaseItemViewModel">
                                         <lc:BaseItemDtoCard
                                             Width="390"
                                             Height="240"
@@ -70,7 +70,7 @@
                             VerticalScrollMode="Disabled">
                             <ItemsRepeater ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
                                 <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <DataTemplate x:DataType="vm:BaseItemViewModel">
                                         <lc:BaseItemDtoCard
                                             Width="390"
                                             Height="240"
@@ -88,11 +88,12 @@
 
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.RecentItems, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="viewmodels:NamedQueryResult">
+                            <DataTemplate x:DataType="vm:NamedQueryResult">
                                 <lc:PagedScrollView
                                     Margin="{StaticResource SmallLeftRightMargin}"
-                                    Header="{x:Bind Name, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
+                                    Header="{x:Bind Library.Name, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
                                     Items="{x:Bind Items}"
+                                    Tag="{x:Bind Library}"
                                     JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>

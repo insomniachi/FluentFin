@@ -54,7 +54,7 @@ public partial class JellyfinClient
 		}
 	}
 
-	public async IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries()
+	public async IAsyncEnumerable<RecentItemDtoQueryResult> GetRecentItemsFromUserLibraries()
 	{
 		BaseItemDtoQueryResult? views = null;
 		try
@@ -103,7 +103,7 @@ public partial class JellyfinClient
 
 			if (info is not null and { Count: > 0 })
 			{
-				yield return new(library.Name ?? "", new(info));
+                yield return new(library, [.. info]);
 			}
 		}
 	}

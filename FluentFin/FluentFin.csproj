@@ -94,6 +94,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="LoadingViews\**" />
+	  <EmbeddedResource Remove="LoadingViews\**" />
+	  <None Remove="LoadingViews\**" />
+	  <Page Remove="LoadingViews\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Assets\fresh.svg" />
 	  <None Remove="Assets\github.png" />
 	  <None Remove="Assets\rotten.svg" />
@@ -346,11 +353,11 @@
 	  </Page>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="LoadingViews\" />
-	</ItemGroup>
-
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PRIResource Remove="LoadingViews\**" />
+	</ItemGroup>
 </Project>

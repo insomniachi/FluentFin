@@ -99,7 +99,10 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial List<string> YearsSource { get; set; } = new();
 
-	public IJellyfinClient JellyfinClient { get; }
+	[ObservableProperty]
+	public partial bool IsLoading { get; set; }
+
+    public IJellyfinClient JellyfinClient { get; }
 
 	public LibraryFilter Filter { get; set; } = new();
 
@@ -118,6 +121,8 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		{
 			return;
 		}
+
+		IsLoading = true;
 
 		var result = await JellyfinClient.GetItems(libraryDto);
 
@@ -140,6 +145,8 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		GenresSource = filters.Genres?.ToList() ?? [];
 		OfficialRatingsSource = filters.OfficialRatings?.ToList() ?? [];
 		YearsSource = filters.Years?.Where(x => x.HasValue).Select(x => x!.Value.ToString()).ToList() ?? [];
+
+		IsLoading = false;
 	}
 
 	private void UpdateNumberOfPages()

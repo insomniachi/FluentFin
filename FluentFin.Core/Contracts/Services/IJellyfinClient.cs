@@ -45,7 +45,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDto?> GetItem(Guid id);
 
-		IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries();
+		IAsyncEnumerable<RecentItemDtoQueryResult> GetRecentItemsFromUserLibraries();
 
 		IAsyncEnumerable<BaseItemDto> GetUserLibraries();
 
@@ -172,7 +172,7 @@ namespace FluentFin.Core.Contracts.Services
 		Task RunScheduledTask(string id);
 	}
 
-	public record NamedDtoQueryResult(string Name, ObservableCollection<BaseItemDto> Items);
+	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);
 
 	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
 

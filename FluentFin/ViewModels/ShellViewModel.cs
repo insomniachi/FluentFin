@@ -5,6 +5,7 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
 using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
+using FluentFin.Views;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace FluentFin.ViewModels;
@@ -28,9 +29,9 @@ public partial class ShellViewModel : ObservableObject, INavigationAware
 	private void OnNavigated(object sender, NavigationEventArgs e)
 	{
 		IsBackEnabled = NavigationService.CanGoBack;
-		var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-		Selected = selectedItem;
-	}
+        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+        Selected = selectedItem;
+    }
 
 	public Task OnNavigatedTo(object parameter)
 	{

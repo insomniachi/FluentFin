@@ -57,7 +57,7 @@
 		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="WinUIEx" Version="2.5.1" />
-		<PackageReference Include="DevWinUI.Controls" Version="8.0.0-Preview3" />
+		<PackageReference Include="DevWinUI.Controls" Version="8.0.0-Preview8" />
 	</ItemGroup>
 
 	<ItemGroup>

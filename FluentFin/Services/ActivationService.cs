@@ -36,7 +36,8 @@ public class ActivationService : IActivationService
 		await HandleActivationAsync(activationArgs);
 
 		// Activate the MainWindow.
-		App.MainWindow.AppWindow.EnablePlacementPersistence(_placementGuid, true, App.MainWindow.AppWindow.Id, Microsoft.UI.Windowing.PlacementPersistenceBehaviorFlags.OpenOverLastOpenedWindow | Microsoft.UI.Windowing.PlacementPersistenceBehaviorFlags.AllowLaunchIntoMaximized);
+		App.MainWindow.Maximize();
+		//App.MainWindow.AppWindow.EnablePlacementPersistence(_placementGuid, true, App.MainWindow.AppWindow.Id, Microsoft.UI.Windowing.PlacementPersistenceBehaviorFlags.OpenOverLastOpenedWindow | Microsoft.UI.Windowing.PlacementPersistenceBehaviorFlags.AllowLaunchIntoMaximized);
 		App.MainWindow.Activate();
 
 		// Execute tasks after activation.

@@ -10,6 +10,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactivity"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dwui="using:DevWinUI"
     xmlns:fmp="using:FlyleafLib.MediaPlayer"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
@@ -85,30 +86,20 @@
             </Button>
 
             <!--  Subtitles  -->
-            <Grid>
-                <Border x:Name="ShadowTarget" />
-                <TextBlock
-                    Margin="0,0,0,50"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    FontSize="50"
-                    FontWeight="SemiBold"
-                    Foreground="White"
-                    Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap"
-                    Visibility="{x:Bind Player.Subtitles.SubsText, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}">
-                    <ui:Effects.Shadow>
-                        <ui:AttachedDropShadow
-                            BlurRadius="10"
-                            CastTo="{x:Bind ShadowTarget}"
-                            CornerRadius="0"
-                            Opacity="1"
-                            Offset="2"
-                            Color="Black" />
-                    </ui:Effects.Shadow>
-                </TextBlock>
-            </Grid>
+            <dwui:OutlineTextControl
+                Height="300"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Bottom"
+                DashStyle="Solid"
+                FontColor="White"
+                FontSize="60"
+                FontWeight="ExtraBold"
+                OutlineColor="Black"
+                ShowNonOutlineText="True"
+                StrokeWidth="2"
+                Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}" />
 
             <!--  Logo  -->
             <Grid

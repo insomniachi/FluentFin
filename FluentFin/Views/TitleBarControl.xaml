@@ -37,15 +37,15 @@
         x:Name="TitleBar"
         Title="FluentFin"
         BackRequested="TitleBar_BackRequested"
+        IsBackButtonEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
         IsBackButtonVisible="{x:Bind ViewModel.User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
-        IsBackEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
         IsPaneToggleButtonVisible="False"
         Subtitle="{x:Bind ViewModel.Version}"
         Visibility="{x:Bind ViewModel.IsVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
         <TitleBar.IconSource>
             <ImageIconSource ImageSource="/Assets/icons8-jellyfin-color-hand-drawn-70.png" />
         </TitleBar.IconSource>
-        <TitleBar.Content>
+        <TitleBar.CenterContent>
             <AutoSuggestBox
                 Width="600"
                 Margin="{StaticResource XSmallTopBottomMargin}"
@@ -81,8 +81,8 @@
                     </ItemsPanelTemplate>
                 </AutoSuggestBox.ItemsPanel>
             </AutoSuggestBox>
-        </TitleBar.Content>
-        <TitleBar.Footer>
+        </TitleBar.CenterContent>
+        <TitleBar.RightContent>
             <Button
                 Width="32"
                 Height="32"
@@ -160,7 +160,7 @@
                     </Flyout>
                 </Button.Flyout>
             </Button>
-        </TitleBar.Footer>
+        </TitleBar.RightContent>
     </TitleBar>
 
 </UserControl>

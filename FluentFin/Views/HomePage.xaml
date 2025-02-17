@@ -8,6 +8,7 @@
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:ctkl="using:CommunityToolkit.Labs.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dwui="using:DevWinUI"
     xmlns:generic="using:System.Collections.Generic"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:lc="using:FluentFin.Controls"
@@ -29,6 +30,7 @@
             <ScrollViewer Margin="0,36" VerticalScrollBarVisibility="Hidden">
                 <StackPanel Spacing="20">
                     <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.HasContinueItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+
                         <TextBlock
                             Margin="{StaticResource SmallTopBottomMargin}"
                             Style="{StaticResource TitleTextBlockStyle}"
@@ -93,8 +95,8 @@
                                     Margin="{StaticResource SmallLeftRightMargin}"
                                     Header="{x:Bind Library.Name, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
                                     Items="{x:Bind Items}"
-                                    Tag="{x:Bind Library}"
-                                    JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}" />
+                                    JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
+                                    Tag="{x:Bind Library}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>

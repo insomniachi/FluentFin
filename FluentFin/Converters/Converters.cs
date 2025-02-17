@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Reflection;
 using System.Web;
 using Windows.Foundation;

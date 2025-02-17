@@ -52,14 +52,13 @@ public sealed partial class TransportControls : UserControl
 	public static readonly DependencyProperty PlayerProperty =
 		DependencyProperty.Register("Player", typeof(Player), typeof(TransportControls), new PropertyMetadata(null));
 
-	public IObservable<Unit> OnDynamicSkip { get; }
+    public IObservable<Unit> OnDynamicSkip { get; }
 
 	public TransportControls()
 	{
 		InitializeComponent();
 
 		OnDynamicSkip = DynamicSkipIntroButton.Events().Click.Select(_ => Unit.Default);
-
 
 		TimeSlider
 			.Events()
@@ -68,7 +67,6 @@ public sealed partial class TransportControls : UserControl
 			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
 
 		_onPointerMoved
-			.Throttle(TimeSpan.FromMilliseconds(200))
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(e =>
 			{

@@ -7,6 +7,7 @@ using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Core.WebSockets;
 using FluentFin.Services;
+using Flurl;
 using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Reflection;
 using System.Web;
 
 namespace FluentFin.ViewModels;
@@ -117,7 +119,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		await _jellyfinClient.Stop();
 		TrickplayViewModel.SetItem(full);
 
-		selectedItem.Media = mediaResponse;
+        var defaultSubtitleIndex = mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
+        selectedItem.Media = mediaResponse;
 
 		var args = MediaPlayer.Open(HttpUtility.UrlDecode(mediaResponse.Uri.ToString()));
 		if (!args.Success)
@@ -131,7 +134,42 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		{
 			MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
 		}
-	}
+
+		if(mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Index == defaultSubtitleIndex) is { } subtitleStream)
+		{
+			OpenSubtitles(mediaResponse, subtitleStream);
+        }
+
+    }
+
+	private void OpenSubtitles(MediaResponse response, MediaStream stream)
+	{
+        if (stream is null)
+        {
+            return;
+        }
+
+        var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+
+		try
+		{
+			if (stream.IsExternal == true)
+			{
+				MediaPlayer.Config.Subtitles.Enabled = true;
+				var url = HttpUtility.UrlDecode(_jellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+
+				MethodInfo? dynMethod = MediaPlayer.GetType().GetMethod("OpenSubtitles", BindingFlags.NonPublic | BindingFlags.Instance);
+				dynMethod?.Invoke(MediaPlayer, [url]);
+			}
+			else
+			{
+				var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
+				var index = internalSubtitleInfo.IndexOf(stream);
+				MediaPlayer.Open(MediaPlayer.Subtitles.Streams[index]);
+			}
+		}
+		catch { }
+    }
 
 	public TrickplayViewModel TrickplayViewModel { get; }
 

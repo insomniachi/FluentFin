@@ -86,12 +86,35 @@
             </Button>
 
             <!--  Subtitles  -->
+            <!--<Grid>
+                <Border x:Name="ShadowTarget" />
+                <TextBlock
+                    Margin="0,0,0,50"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    FontSize="50"
+                    FontWeight="SemiBold"
+                    Foreground="White"
+                    Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    Visibility="{x:Bind Player.Subtitles.SubsText, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}">
+                    <ui:Effects.Shadow>
+                        <ui:AttachedDropShadow
+                            BlurRadius="10"
+                            CastTo="{x:Bind ShadowTarget}"
+                            CornerRadius="0"
+                            Opacity="1"
+                            Offset="2"
+                            Color="Black" />
+                    </ui:Effects.Shadow>
+                </TextBlock>
+            </Grid>-->
+
             <dwui:OutlineTextControl
+                x:Name="Subtitles"
                 Height="300"
-                HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Bottom"
                 DashStyle="Solid"
                 FontColor="White"
                 FontSize="60"
@@ -99,7 +122,8 @@
                 OutlineColor="Black"
                 ShowNonOutlineText="True"
                 StrokeWidth="2"
-                Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}" />
+                Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}"
+                Visibility="{x:Bind Player.Subtitles.SubsText, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}" />
 
             <!--  Logo  -->
             <Grid

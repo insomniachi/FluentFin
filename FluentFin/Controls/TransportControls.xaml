@@ -269,52 +269,37 @@
                         Click="SkipForwardButton_Click"
                         Icon="{ui:FontIcon Glyph=&#xED3D;}"
                         IsTapEnabled="False"
-                        Label="Seek forward">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Right" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Seek forward" />
+
                     <AppBarButton
                         x:Name="NextTrackButton"
                         Command="{x:Bind Playlist.SelectNextCommand, Mode=OneWay}"
                         Icon="Next"
                         IsTabStop="False"
-                        Label="Next Episode">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Right" Modifiers="Control" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Next Episode" />
+
                     <AppBarButton
                         x:Name="PlayPauseButton"
                         Command="{x:Bind Player.Commands.TogglePlayPause, Mode=OneWay}"
                         Icon="{x:Bind Player.Status, Converter={StaticResource PlayPauseIconConveter}, Mode=OneWay}"
                         IsEnabled="{x:Bind Player.CanPlay, Mode=OneWay}"
                         IsTabStop="False"
-                        Label="Play/Pause">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Space" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Play/Pause" />
+
                     <AppBarButton
                         x:Name="PreviousTrackButton"
                         Command="{x:Bind Playlist.SelectPrevCommand, Mode=OneWay}"
                         Icon="Previous"
                         IsTabStop="False"
-                        Label="Previous Episode">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Left" Modifiers="Control" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Previous Episode" />
+
                     <AppBarButton
                         x:Name="SkipBackwardButton"
                         Click="SkipBackwardButton_Click"
                         Icon="{ui:FontIcon Glyph=&#xED3C;}"
                         IsTapEnabled="False"
-                        Label="Seek backward">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Left" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Seek backward" />
+
 
                 </CommandBar>
 

@@ -251,7 +251,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
 			.Subscribe(_ => Position = new TimeSpan(MediaPlayer.CurTime))
 			.DisposeWith(_disposables);
-	}
+    }
 
 	[RelayCommand]
 	private void Skip(long currentTime)

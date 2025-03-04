@@ -14,11 +14,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="DeviceId.Windows" Version="6.8.0" />
-		<PackageReference Include="DynamicData" Version="9.1.1" />
+		<PackageReference Include="DynamicData" Version="9.1.2" />
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
 		<PackageReference Include="Humanizer" Version="2.14.1" />
 		<PackageReference Include="Jellyfin.Sdk" Version="2024.10.28" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="ReactiveUI" Version="20.1.63" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />

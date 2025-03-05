@@ -100,13 +100,6 @@
 	  <Page Remove="LoadingViews\**" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="Assets\fresh.svg" />
-	  <None Remove="Assets\github.png" />
-	  <None Remove="Assets\rotten.svg" />
-	  <None Remove="Controls\BaseItemDtoCard.xaml" />
-	  <None Remove="Controls\TomatoMeter.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <Page Update="Controls\TomatoMeter.xaml">
@@ -179,12 +172,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\TrickplayTestPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Update="Views\JellyfinSettings\GeneralSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
@@ -359,5 +346,11 @@
 
 	<ItemGroup>
 	  <PRIResource Remove="LoadingViews\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\JellyfinSettings\ServerConfigurationPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 </Project>

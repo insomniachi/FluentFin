@@ -10,23 +10,10 @@ public partial class LibrariesNfoSettingsViewModel(IJellyfinClient jellyfinClien
 {
 	private XbmcMetadata? _options;
 
-	[ObservableProperty]
-	public partial List<UserDto> Users { get; set; }
+	public List<UserDto> Users { get; set; } = [];
 
 	[ObservableProperty]
-	public partial string? ReleaseDateFormat { get; set; }
-
-	[ObservableProperty]
-	public partial bool SaveImagePathsInNfo { get; set; }
-
-	[ObservableProperty]
-	public partial bool EnablePathSubstitution { get; set; }
-
-	[ObservableProperty]
-	public partial bool EnableExtraThumbsDuplication { get; set; }
-
-	[ObservableProperty]
-	public partial UserDto? SelectedUser { get; set; }
+	public partial List<JellyfinConfigItemViewModel> Items { get; set; } = [];
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 
@@ -41,11 +28,37 @@ public partial class LibrariesNfoSettingsViewModel(IJellyfinClient jellyfinClien
 			return;
 		}
 
-		ReleaseDateFormat = _options.ReleaseDateFormat;
-		EnablePathSubstitution = _options.EnablePathSubstitution;
-		SaveImagePathsInNfo = _options.SaveImagePathsInNfo;
-		EnableExtraThumbsDuplication = _options.EnableExtraThumbsDuplication;
-		SelectedUser = Users.FirstOrDefault(x => x.Id == _options.UserId);
+		Items =
+		[
+			new JellyfinSelectableConfigItemViewModel(() => Users.FirstOrDefault(x => x.Id == _options.UserId),
+													  value => _options.UserId = (value as UserDto)?.Id,
+													  Users, nameof(UserDto.Name))
+			{
+				DisplayName = "Save User watch data to NFO files for",
+                Description = "Save watch data to NFO files for other applications to use.",
+            },
+			new JellyfinConfigItemViewModel<string>(() => _options.ReleaseDateFormat ?? "", value => _options.ReleaseDateFormat = value)
+			{
+				DisplayName = "Release date format",
+				Description = "All dates within NFO files will be parsed using this format."
+            },
+			new JellyfinConfigItemViewModel<bool>(() => _options.SaveImagePathsInNfo, value => _options.SaveImagePathsInNfo = value)
+			{
+				DisplayName = "Save image paths within NFO files",
+				Description = "This is recommended if you have image file names that don't conform to Kodi guidelines.Enable path substitution of image paths using the server's path substitution settings." +
+							  "Enable path substitution of image paths using the server's path substitution settings.Enable path substitution of image paths using the server's path substitution settings."
+            },
+            new JellyfinConfigItemViewModel<bool>(() => _options.EnablePathSubstitution, value => _options.EnablePathSubstitution = value)
+			{
+				DisplayName = "Enable path substitution",
+				Description = "Enable path substitution of image paths using the server's path substitution settings."
+            },
+            new JellyfinConfigItemViewModel<bool>(() => _options.EnableExtraThumbsDuplication, value => _options.EnableExtraThumbsDuplication = value)
+			{
+				DisplayName = "Copy extrafanart to extrathumbs field",
+                Description = "When downloading images they can be saved into both extrafanart and extrathumbs for maximum Kodi skin compatibility."
+            }
+        ];
 	}
 
 	[RelayCommand]
@@ -56,15 +69,20 @@ public partial class LibrariesNfoSettingsViewModel(IJellyfinClient jellyfinClien
 			return;
 		}
 
-		_options.ReleaseDateFormat = ReleaseDateFormat;
-		_options.EnablePathSubstitution = EnablePathSubstitution;
-		_options.SaveImagePathsInNfo = SaveImagePathsInNfo;
-		_options.EnableExtraThumbsDuplication = EnableExtraThumbsDuplication;
-		_options.UserId = SelectedUser?.Id;
+		foreach (var item in Items)
+		{
+			item.Save();
+		}
 
 		await jellyfinClient.SaveXbmcMetadata(_options);
 	}
 
 	[RelayCommand]
-	private async Task Reset() => await OnNavigatedTo(new());
+	private void Reset()
+	{
+		foreach (var item in Items)
+		{
+			item.Reset();
+		}
+	}
 }

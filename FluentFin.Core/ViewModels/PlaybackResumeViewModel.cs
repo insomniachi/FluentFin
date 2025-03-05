@@ -1,61 +1,35 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using FluentFin.Contracts.ViewModels;
-using FluentFin.Core.Contracts.Services;
+﻿using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 
-namespace FluentFin.Core.ViewModels
+namespace FluentFin.Core.ViewModels;
+
+public partial class PlaybackResumeViewModel(IJellyfinClient jellyfinClient) : ServerConfigurationViewModel(jellyfinClient)
 {
-	public partial class PlaybackResumeViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
-	{
-		private ServerConfiguration? _serverConfiguration;
-
-		[ObservableProperty]
-		public partial double MinimumResumePercentage { get; set; }
-
-		[ObservableProperty]
-		public partial double MaximumResumePercentage { get; set; }
-
-		[ObservableProperty]
-		public partial double MinimumResumeDuration { get; set; }
-
-		[ObservableProperty]
-		public partial double InternetStreamingBitRateLimit { get; set; }
-
-		public Task OnNavigatedFrom() => Task.CompletedTask;
-
-		public async Task OnNavigatedTo(object parameter)
-		{
-			_serverConfiguration = await jellyfinClient.GetConfiguration();
-
-			if (_serverConfiguration is null)
-			{
-				return;
-			}
-
-			MinimumResumePercentage = _serverConfiguration.MinResumePct ?? 0;
-			MaximumResumePercentage = _serverConfiguration.MaxResumePct ?? 0;
-			MinimumResumeDuration = _serverConfiguration.MinResumeDurationSeconds ?? 0;
-			InternetStreamingBitRateLimit = _serverConfiguration.RemoteClientBitrateLimit ?? 0;
-		}
-
-		[RelayCommand]
-		private async Task Save()
-		{
-			if (_serverConfiguration is null)
-			{
-				return;
-			}
-
-			_serverConfiguration.MinResumePct = (int?)MinimumResumePercentage;
-			_serverConfiguration.MaxResumePct = (int?)MaximumResumePercentage;
-			_serverConfiguration.MinResumeDurationSeconds = (int?)MinimumResumeDuration;
-			_serverConfiguration.RemoteClientBitrateLimit = (int?)InternetStreamingBitRateLimit;
-
-			await jellyfinClient.SaveConfiguration(_serverConfiguration);
-		}
-
-		[RelayCommand]
-		private async Task Reset() => await OnNavigatedTo(new());
-	}
+    protected override List<JellyfinConfigItemViewModel> CreateItems(ServerConfiguration config)
+    {
+        return 
+        [
+            new JellyfinConfigItemViewModel<double>(() => config.MinResumePct ?? 0, value => config.MinResumePct = (int?)value)
+            {
+                DisplayName = "Minimum resume percentage",
+                Description = "Titles are assumed unplayed if stopped before this time.",
+            },
+			new JellyfinConfigItemViewModel<double>(() => config.MaxResumePct ?? 0, value => config.MaxResumePct = (int?)value)
+            {
+                DisplayName = "Maximum resume percentage",
+                Description = "Titles are assumed fully played if stopped after this time.",
+            },
+			new JellyfinConfigItemViewModel<double>(() => config.MinResumeDurationSeconds ?? 0, value => config.MinResumeDurationSeconds = (int?)value)
+            {
+                DisplayName = "Minimum resume duration",
+                Description = "The shortest video length in seconds that will save playback location and let you resume.",
+            },
+            new JellyfinConfigItemViewModel <double>(() => config   .RemoteClientBitrateLimit ?? 0, value => config.RemoteClientBitrateLimit = (int?)value)
+            {
+                DisplayName = "Internet streaming bitrate limit (Mbps)",
+                Description = "An optional per-stream bitrate limit for all out of network devices. This is useful to prevent devices from requesting a higher bitrate than your internet connection can handle. " +
+                              "This may result in increased CPU load on your server in order to transcode videos on the fly to a lower bitrate.",
+            }
+        ];
+    }
 }

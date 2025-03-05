@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="FluentFin.Views.JellyfinSettings.ServerConfigurationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fb="using:FluentFin.Behaviors"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:FluentFin.Views.JellyfinSettings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Margin="36">
+        <ScrollViewer>
+            <Grid Width="1000" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="{x:Bind SectionName}" />
+
+                <StackPanel
+                    Padding="16"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <Button Command="{x:Bind SaveCommand, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <SymbolIcon Symbol="Save" />
+                            <TextBlock Text="Save" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{x:Bind ResetCommand, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <SymbolIcon Symbol="Refresh" />
+                            <TextBlock Text="Reset" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Spacing="5">
+                    <i:Interaction.Behaviors>
+                        <fb:JellyfinConfigSectionBehavior Items="{x:Bind Items, Mode=OneWay}" />
+                    </i:Interaction.Behaviors>
+                </StackPanel>
+
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

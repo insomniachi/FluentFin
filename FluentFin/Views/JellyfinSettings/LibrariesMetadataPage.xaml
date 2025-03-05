@@ -3,88 +3,16 @@
     x:Class="FluentFin.Views.JellyfinSettings.LibrariesMetadataPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c="using:FluentFin.Converters"
-    xmlns:controls="using:FluentFin.Controls"
-    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:root="using:FluentFin"
-    xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <c:JellyfinVirtualFolderImageConverter x:Key="ImageConverter" />
-        <c:HumanizeConverter x:Key="HumanizeConverter" />
-    </Page.Resources>
-
-    <Grid Width="1000">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Margin="0,40,0,0">
-            <TextBlock
-                HorizontalAlignment="Left"
-                Style="{ThemeResource SubheaderTextBlockStyle}"
-                Text="Metadata" />
-            <StackPanel
-                Padding="16"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Orientation="Horizontal"
-                Spacing="16">
-                <Button Command="{x:Bind ViewModel.SaveCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <SymbolIcon Symbol="Save" />
-                        <TextBlock Text="Save" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{x:Bind ViewModel.ResetCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <SymbolIcon Symbol="Refresh" />
-                        <TextBlock Text="Reset" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
-
-        <StackPanel Grid.Row="1" Spacing="5">
-            <ctk:SettingsExpander
-                Description="These are your defaults and can be customized on a per-library basis."
-                Header="Preferred Metadata Language"
-                IsExpanded="True">
-                <ctk:SettingsExpander.Items>
-                    <ctk:SettingsCard Header="Language">
-                        <ComboBox
-                            DisplayMemberPath="Name"
-                            ItemsSource="{x:Bind ViewModel.Cultures, Mode=OneWay}"
-                            SelectedItem="{x:Bind ViewModel.SelectedCulture, Mode=TwoWay}" />
-                    </ctk:SettingsCard>
-                    <ctk:SettingsCard Header="Country/Region">
-                        <ComboBox
-                            DisplayMemberPath="DisplayName"
-                            ItemsSource="{x:Bind ViewModel.Countries, Mode=OneWay}"
-                            SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}" />
-                    </ctk:SettingsCard>
-                </ctk:SettingsExpander.Items>
-            </ctk:SettingsExpander>
-            <ctk:SettingsExpander Header="Chapter Images" IsExpanded="True">
-                <ctk:SettingsExpander.Items>
-                    <ctk:SettingsCard Header="Interval">
-                        <NumberBox Value="{x:Bind ViewModel.Interval, Mode=TwoWay}" />
-                    </ctk:SettingsCard>
-                    <ctk:SettingsCard Header="Resolution">
-                        <ComboBox ItemsSource="{ui:EnumValues Type=jm:ServerConfiguration_ChapterImageResolution}" SelectedItem="{x:Bind ViewModel.Resolution, Mode=TwoWay}" />
-                    </ctk:SettingsCard>
-                </ctk:SettingsExpander.Items>
-            </ctk:SettingsExpander>
-        </StackPanel>
-
-    </Grid>
+    <local:ServerConfigurationPage
+        Items="{x:Bind ViewModel.Items, Mode=OneWay}"
+        ResetCommand="{x:Bind ViewModel.ResetCommand}"
+        SaveCommand="{x:Bind ViewModel.SaveCommand}"
+        SectionName="Metadata" />
 
 </Page>

@@ -157,6 +157,11 @@ public sealed partial class TransportControls : UserControl
 	{
 		TrickplayTip.IsOpen = false;
 	}
+
+    private void Grid_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+		TrickplayTip.IsOpen = false;
+    }
 }
 
 #nullable restore

@@ -85,6 +85,9 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 						break;
 				}
 			});
+
+		MediaPlayer.Config.Player.KeyBindings.Remove(KeyBindingAction.ToggleSeekAccurate);
+		MediaPlayer.Config.Player.KeyBindings.AddCustom(System.Windows.Input.Key.S, true, () => Skip(MediaPlayer.CurTime), "Skip media section");
 	}
 
 	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -57,7 +57,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid PointerMoved="Grid_PointerMoved">
             <!--  Skip  -->
             <Button
                 x:Name="DynamicSkipIntroButton"
@@ -84,32 +84,6 @@
                     <TextBlock VerticalAlignment="Center" Text="Skip" />
                 </StackPanel>
             </Button>
-
-            <!--  Subtitles  -->
-            <!--<Grid>
-                <Border x:Name="ShadowTarget" />
-                <TextBlock
-                    Margin="0,0,0,50"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    FontSize="50"
-                    FontWeight="SemiBold"
-                    Foreground="White"
-                    Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap"
-                    Visibility="{x:Bind Player.Subtitles.SubsText, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}">
-                    <ui:Effects.Shadow>
-                        <ui:AttachedDropShadow
-                            BlurRadius="10"
-                            CastTo="{x:Bind ShadowTarget}"
-                            CornerRadius="0"
-                            Opacity="1"
-                            Offset="2"
-                            Color="Black" />
-                    </ui:Effects.Shadow>
-                </TextBlock>
-            </Grid>-->
 
             <dwui:OutlineTextControl
                 x:Name="Subtitles"
@@ -149,10 +123,11 @@
             <!--  Trickplay  -->
             <TeachingTip
                 x:Name="TrickplayTip"
+                PointerExited="TimeSlider_PointerExited"
                 PreferredPlacement="BottomLeft"
                 Style="{ThemeResource NoHeaderClose}">
                 <TeachingTip.Content>
-                    <Grid>
+                    <Grid PointerExited="TimeSlider_PointerExited">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

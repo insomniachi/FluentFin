@@ -1,4 +1,4 @@
-﻿using FluentFin.Core.ViewModels;
+﻿using FluentFin.Core.Services;
 using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
@@ -163,7 +163,11 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task SaveConfiguration(ServerConfiguration configuration);
 
-		Task<LibraryOptionsResultDto?> GetAvailableInfo(Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType libraryContentType, bool isNewLibrary);
+		Task<TranscodingSettings?> GetTranscodeOptions();
+
+        Task SaveTranscodeOptions(TranscodingSettings options);
+
+        Task<LibraryOptionsResultDto?> GetAvailableInfo(Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType libraryContentType, bool isNewLibrary);
 
 		Task SaveLibraryOptions(Guid folderId, LibraryOptions options);
 

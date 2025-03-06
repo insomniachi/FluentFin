@@ -68,6 +68,7 @@
                 Icon="{ui:FontIcon Glyph=&#xEC58;}"
                 SelectsOnInvoked="False">
                 <NavigationViewItem.MenuItems>
+                    <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.PlaybackTranscodingViewModel" Content="Transcoding" />
                     <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.PlaybackResumeViewModel" Content="Resume &amp; Streaming" />
                     <NavigationViewItem helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.PlaybackTrickplayViewModel" Content="Trickplay" />
                 </NavigationViewItem.MenuItems>

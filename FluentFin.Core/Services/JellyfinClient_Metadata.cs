@@ -454,7 +454,35 @@ public partial class JellyfinClient
 		}
 	}
 
-	private async Task GetPlugins()
+	public async Task<TranscodingSettings?> GetTranscodeOptions()
+	{
+		try
+		{
+            var builder = _jellyfinApiClient.System.Configuration["encoding"].ToGetRequestInformation();
+			return await AddApiKey(builder.URI).GetJsonAsync<TranscodingSettings>();
+        }
+		catch (Exception ex)
+		{
+            logger.LogError(ex, @"Unhandled exception");
+            return null;
+		}
+	}
+
+    public async Task SaveTranscodeOptions(TranscodingSettings options)
+    {
+        try
+        {
+            var builder = _jellyfinApiClient.System.Configuration["encoding"].ToGetRequestInformation();
+			await AddApiKey(builder.URI).PostJsonAsync(options);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, @"Unhandled exception");
+            return;
+        }
+    }
+
+    private async Task GetPlugins()
 	{
 		try
 		{

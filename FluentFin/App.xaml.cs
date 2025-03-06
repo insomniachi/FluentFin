@@ -143,6 +143,7 @@ public partial class App : Application
 			services.AddTransient<LibrariesDisplayViewModel>();
 			services.AddTransient<PlaybackResumeViewModel>();
 			services.AddTransient<PlaybackTrickplayViewModel>();
+			services.AddTransient<PlaybackTranscodingViewModel>();
 			services.AddTransient<ActivitiesViewModel>();
 			services.AddTransient<LibrariesLandingPageViewModel>();
 			services.AddTransient<ScheduledTasksViewModel>();

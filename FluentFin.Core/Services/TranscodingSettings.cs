@@ -7,7 +7,7 @@ public class TranscodingSettings
     public string? FallbackFontPath { get; set; }
     public bool EnableFallbackFont { get; set; }
     public bool EnableAudioVbr { get; set; }
-    public int DownMixAudioBoost { get; set; }
+    public double DownMixAudioBoost { get; set; }
     public string? DownMixStereoAlgorithm { get; set; }
     public int MaxMuxingQueueSize { get; set; }
     public bool EnableThrottling { get; set; }
@@ -24,11 +24,11 @@ public class TranscodingSettings
     public string? TonemappingAlgorithm { get; set; }
     public string? TonemappingMode { get; set; }
     public string? TonemappingRange { get; set; }
-    public int TonemappingDesat { get; set; }
-    public int TonemappingPeak { get; set; }
-    public int TonemappingParam { get; set; }
-    public int VppTonemappingBrightness { get; set; }
-    public int VppTonemappingContrast { get; set; }
+    public double TonemappingDesat { get; set; }
+    public double TonemappingPeak { get; set; }
+    public double TonemappingParam { get; set; }
+    public double VppTonemappingBrightness { get; set; }
+    public double VppTonemappingContrast { get; set; }
     public int H264Crf { get; set; }
     public int H265Crf { get; set; }
     public string? EncoderPreset { get; set; }

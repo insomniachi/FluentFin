@@ -7,10 +7,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:flyleaf="using:FlyleafLib.Controls.WinUI"
     xmlns:local="using:FluentFin.Views"
+    xmlns:lvs="using:LibVLCSharp.Platforms.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <flyleaf:FlyleafHost
+    <!--<flyleaf:FlyleafHost
         x:Name="flyleafHost"
         DoubleTapped="OnPlayerDoubleTapped"
         IsDoubleTapEnabled="True"
@@ -23,5 +24,18 @@
             Playlist="{x:Bind ViewModel.Playlist, Mode=OneWay}"
             SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}"
             Trickplay="{x:Bind ViewModel.TrickplayViewModel}" />
-    </flyleaf:FlyleafHost>
+    </flyleaf:FlyleafHost>-->
+    <Grid>
+        <lvs:VideoView x:Name="VideoView" Initialized="VideoView_Initialized" />
+        <controls:TransportControls
+            x:Name="TransportControls"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            IsSkipButtonVisible="{x:Bind ViewModel.IsSkipButtonVisible, Mode=OneWay}"
+            Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
+            Playlist="{x:Bind ViewModel.Playlist, Mode=OneWay}"
+            SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}"
+            Trickplay="{x:Bind ViewModel.TrickplayViewModel}" />
+    </Grid>
+
 </Page>

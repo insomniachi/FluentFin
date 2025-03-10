@@ -10,6 +10,7 @@ using FluentFin.Services;
 using Flurl;
 using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
+using LibVLCSharp.Shared;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using System.Reactive.Disposables;
@@ -17,6 +18,7 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Reflection;
 using System.Web;
+using ReactiveMarbles.ObservableEvents;
 
 namespace FluentFin.ViewModels;
 
@@ -26,6 +28,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	private readonly IJellyfinClient _jellyfinClient;
 	private readonly PlaybackProgressInfo _playbackProgressInfo = new();
 	private readonly ILogger<VideoPlayerViewModel> _logger;
+	private LibVLC _libVlc;
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 								TrickplayViewModel trickplayViewModel,
@@ -40,33 +43,38 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		TrickplayViewModel = trickplayViewModel;
 
 		this.WhenAnyValue(x => x.Position)
-			.Where(_ => MediaPlayer.Status == Status.Playing)
+			.Where(_ => MediaPlayer?.State == VLCState.Playing)
 			.Select(x => x.Ticks)
 			.Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))
 			.DistinctUntilChanged()
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
 
-		MediaPlayer.WhenAnyValue(x => x.Status)
-			.Do(status =>
-			{
-				if(status == Status.Playing && _disposables?.IsDisposed == true)
-				{
-					MediaPlayer.Stop();
-				}
-			})
-			.Where(status => status is Status.Stopped or Status.Failed)
-			.Subscribe(async _ => await jellyfinClient.Stop());
+		//MediaPlayer.WhenAnyValue(x => x.Status)
+		//	.Do(status =>
+		//	{
+		//		if(status == Status.Playing && _disposables?.IsDisposed == true)
+		//		{
+		//			MediaPlayer.Stop();
+		//		}
+		//	})
+		//	.Where(status => status is Status.Stopped or Status.Failed)
+		//	.Subscribe(async _ => await jellyfinClient.Stop());
 
-		MediaPlayer.WhenAnyValue(x => x.Status)
-			.Where(status => status is Status.Ended)
-			.Where(_ => Playlist.CanSelectNext)
-			.Subscribe(_ => Playlist.SelectNext());
+		//MediaPlayer.WhenAnyValue(x => x.Status)
+		//	.Where(status => status is Status.Ended)
+		//	.Where(_ => Playlist.CanSelectNext)
+		//	.Subscribe(_ => Playlist.SelectNext());
 
 		webSocketMessages
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(async message =>
 			{
+				if(MediaPlayer is null)
+				{
+					return;
+				}	
+
 				switch (message)
 				{
 					case GeneralCommandMessage { Data.Name: GeneralCommandType.DisplayMessage } gcm:
@@ -75,7 +83,14 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 															   TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
 						break;
 					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.PlayPause }:
-						MediaPlayer.TogglePlayPause();
+						if(MediaPlayer.State == VLCState.Playing)
+						{
+							MediaPlayer.Pause();
+						}
+						else if(MediaPlayer.State == VLCState.Stopped)
+						{
+							MediaPlayer.Play();
+						}
 						await UpdateStatus();
 						break;
 					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.Stop }:
@@ -86,9 +101,15 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 				}
 			});
 
-		MediaPlayer.Config.Player.KeyBindings.Remove(KeyBindingAction.ToggleSeekAccurate);
-		MediaPlayer.Config.Player.KeyBindings.AddCustom(System.Windows.Input.Key.S, true, () => Skip(MediaPlayer.CurTime), "Skip media section");
+		//MediaPlayer.Config.Player.KeyBindings.Remove(KeyBindingAction.ToggleSeekAccurate);
+		//MediaPlayer.Config.Player.KeyBindings.AddCustom(System.Windows.Input.Key.S, true, () => Skip(MediaPlayer.CurTime), "Skip media section");
 	}
+
+	public void SetMediaPlayer(string[] options)
+	{
+        _libVlc = new LibVLC(enableDebugLogs: true, options);
+        MediaPlayer = new MediaPlayer(_libVlc);
+    }
 
 	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
@@ -125,8 +146,10 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
         var defaultSubtitleIndex = mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
         selectedItem.Media = mediaResponse;
 
-		var args = MediaPlayer.Open(HttpUtility.UrlDecode(mediaResponse.Uri.ToString()));
-		if (!args.Success)
+		var url = HttpUtility.UrlDecode(mediaResponse.Uri.ToString());
+		var media = new Media(_libVlc, mediaResponse.Uri);
+        var success = MediaPlayer.Play(media);
+		if (!success)
 		{
 			_logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
 		}
@@ -135,12 +158,12 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		if (selectedItem.Dto?.UserData?.PlaybackPositionTicks is { } ticks)
 		{
-			MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(ticks).TotalMilliseconds);
+			MediaPlayer.SeekTo(TimeSpan.FromTicks(ticks));
 		}
 
 		if(mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Index == defaultSubtitleIndex) is { } subtitleStream)
 		{
-			OpenSubtitles(mediaResponse, subtitleStream);
+			//OpenSubtitles(mediaResponse, subtitleStream);
         }
 
     }
@@ -158,7 +181,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		{
 			if (stream.IsExternal == true)
 			{
-				MediaPlayer.Config.Subtitles.Enabled = true;
+				//MediaPlayer.Config.Subtitles.Enabled = true;
 				var url = HttpUtility.UrlDecode(_jellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
 
 				MethodInfo? dynMethod = MediaPlayer.GetType().GetMethod("OpenSubtitles", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -168,7 +191,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			{
 				var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
 				var index = internalSubtitleInfo.IndexOf(stream);
-				MediaPlayer.Open(MediaPlayer.Subtitles.Streams[index]);
+				//MediaPlayer.Open(MediaPlayer.Subtitles.Streams[index]);
 			}
 		}
 		catch { }
@@ -176,7 +199,9 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	public TrickplayViewModel TrickplayViewModel { get; }
 
-	public Player MediaPlayer { get; private set; } = new();
+
+	[ObservableProperty]
+    public partial MediaPlayer MediaPlayer { get; set; }
 
 	[ObservableProperty]
 	public partial BaseItemDto? Dto { get; set; }
@@ -252,7 +277,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.DisposeWith(_disposables);
 
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-			.Subscribe(_ => Position = new TimeSpan(MediaPlayer.CurTime))
+			.Where(_ => MediaPlayer.Time > 0)
+			.Subscribe(_ => Position = TimeSpan.FromMilliseconds(MediaPlayer.Time))
 			.DisposeWith(_disposables);
     }
 
@@ -266,7 +292,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		MediaPlayer.SeekAccurate((int)TimeSpan.FromTicks(segment.EndTicks.Value).TotalMilliseconds);
+		MediaPlayer.SeekTo(TimeSpan.FromTicks(segment.EndTicks.Value));
 	}
 
 	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
@@ -298,7 +324,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		if (MediaPlayer.Status is Status.Failed or Status.Ended or Status.Opening)
+		if (MediaPlayer.State is VLCState.Error or VLCState.Ended or VLCState.Opening)
 		{
 			return;
 		}
@@ -307,10 +333,10 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		_playbackProgressInfo.PositionTicks = Position.Ticks;
 		_playbackProgressInfo.IsPaused = !MediaPlayer.IsPlaying;
 		_playbackProgressInfo.MediaSourceId = Dto.Id?.ToString("N");
-		_playbackProgressInfo.IsMuted = MediaPlayer.Audio.Mute;
+		_playbackProgressInfo.IsMuted = MediaPlayer.Mute;
 		_playbackProgressInfo.PlayMethod = PlayMethod;
-		_playbackProgressInfo.AudioStreamIndex = MediaPlayer.Audio.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
-		_playbackProgressInfo.SubtitleStreamIndex = MediaPlayer.Subtitles.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
+		//_playbackProgressInfo.AudioStreamIndex = MediaPlayer.Audio.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
+		//_playbackProgressInfo.SubtitleStreamIndex = MediaPlayer.Subtitles.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
 		_playbackProgressInfo.PlaybackStartTimeTicks = TimeProvider.System.GetTimestamp();
 		_playbackProgressInfo.SessionId = media.PlaybackSessionId;
 		_playbackProgressInfo.MediaSourceId = media.MediaSourceId;

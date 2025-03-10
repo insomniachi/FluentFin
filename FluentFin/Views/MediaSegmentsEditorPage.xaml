@@ -29,7 +29,7 @@
             x:Name="flyleafHost"
             Margin="100,0,100,36"
             Player="{x:Bind ViewModel.MediaPlayer}">
-            <controls:TransportControls Player="{x:Bind ViewModel.MediaPlayer}" Playlist="{x:Bind ViewModel.Playlist}" />
+            <!--<controls:TransportControls Player="{x:Bind ViewModel.MediaPlayer}" Playlist="{x:Bind ViewModel.Playlist}" />-->
         </flyleaf:FlyleafHost>
 
         <ScrollView Grid.Row="1">

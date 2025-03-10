@@ -2,6 +2,7 @@ using CommunityToolkit.WinUI;
 using FluentFin.ViewModels;
 using FlyleafLib.MediaFramework.MediaStream;
 using FlyleafLib.MediaPlayer;
+using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
@@ -33,13 +34,13 @@ public sealed partial class TransportControls : UserControl
 	[GeneratedDependencyProperty]
 	public partial TrickplayViewModel Trickplay { get; set; }
 
-	public Player Player
+	public MediaPlayer Player
 	{
 		get
 		{
 			try
 			{
-				return (Player)GetValue(PlayerProperty);
+				return (MediaPlayer)GetValue(PlayerProperty);
 			}
 			catch
 			{
@@ -50,7 +51,7 @@ public sealed partial class TransportControls : UserControl
 	}
 
 	public static readonly DependencyProperty PlayerProperty =
-		DependencyProperty.Register("Player", typeof(Player), typeof(TransportControls), new PropertyMetadata(null));
+		DependencyProperty.Register("Player", typeof(MediaPlayer), typeof(TransportControls), new PropertyMetadata(null));
 
     public IObservable<Unit> OnDynamicSkip { get; }
 
@@ -63,8 +64,8 @@ public sealed partial class TransportControls : UserControl
 		TimeSlider
 			.Events()
 			.ValueChanged
-			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TicksToSeconds(Player.CurTime)) > 1)
-			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
+			.Where(x => Math.Abs(x.NewValue - Player.Time) > 1000)
+			.Subscribe(x => Player.SeekTo(TimeSpan.FromSeconds(x.NewValue)));
 
 		_onPointerMoved
 			.ObserveOn(RxApp.MainThreadScheduler)
@@ -91,51 +92,51 @@ public sealed partial class TransportControls : UserControl
 	public string TimeRemaining(long currentTime, long duration)
 	{
 		var remaining = duration - currentTime;
-		return new TimeSpan(remaining).ToString("hh\\:mm\\:ss");
+		return TimeSpan.FromMilliseconds(remaining).ToString("hh\\:mm\\:ss");
 	}
 
 	private void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = new TimeSpan(Player.CurTime) - TimeSpan.FromSeconds(10);
-		Player.SeekAccurate((int)ts.TotalMilliseconds);
+		var ts = TimeSpan.FromMilliseconds(Player.Time) - TimeSpan.FromSeconds(10);
+		Player.SeekTo(ts);
 	}
 
 	private void SkipForwardButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = new TimeSpan(Player.CurTime) + TimeSpan.FromSeconds(30);
-		Player.SeekAccurate((int)ts.TotalMilliseconds);
+		var ts = TimeSpan.FromMilliseconds(Player.Time) + TimeSpan.FromSeconds(30);
+		Player.SeekTo(ts);
 	}
 
 
 	public void UpdateSubtitleFlyout(ObservableCollection<SubtitlesStream> streams)
 	{
-		var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		flyout.Items.Clear();
-		for (int i = 0; i < streams.Count; i++)
-		{
-			var item = new RadioMenuFlyoutItem
-			{
-				Text = streams[i].Title,
-				IsChecked = i == 0,
-			};
-			item.Click += Item_Click;
+		//var flyout = CCSelectionButton.Flyout as MenuFlyout;
+		//flyout.Items.Clear();
+		//for (int i = 0; i < streams.Count; i++)
+		//{
+		//	var item = new RadioMenuFlyoutItem
+		//	{
+		//		Text = streams[i].Title,
+		//		IsChecked = i == 0,
+		//	};
+		//	item.Click += Item_Click;
 
-			flyout.Items.Add(item);
-		}
+		//	flyout.Items.Add(item);
+		//}
 	}
 
 	private void Item_Click(object sender, RoutedEventArgs e)
 	{
-		var title = ((RadioMenuFlyoutItem)sender).Text;
-		var stream = Player.Subtitles.Streams.FirstOrDefault(x => x.Title == title);
+		//var title = ((RadioMenuFlyoutItem)sender).Text;
+		//var stream = Player.Subtitles.Streams.FirstOrDefault(x => x.Title == title);
 
-		if (stream is null)
-		{
-			return;
-		}
+		//if (stream is null)
+		//{
+		//	return;
+		//}
 
-		var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		Player.OpenAsync(stream);
+		//var flyout = CCSelectionButton.Flyout as MenuFlyout;
+		//Player.OpenAsync(stream);
 	}
 
 	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)

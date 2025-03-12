@@ -134,7 +134,6 @@ public static class Converters
             if (stream.IsExternal == true)
             {
                 var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
-				var index = subtitles.IndexOf(stream);
 				mp.AddSlave(MediaSlaveType.Subtitle, url, true);
             }
             else

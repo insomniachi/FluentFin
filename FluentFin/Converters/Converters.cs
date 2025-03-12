@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Web;
@@ -30,8 +31,9 @@ public static class Converters
 	public static double TicksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static string MsToTime(long ms) => TimeSpan.FromMilliseconds(ms).ToString("hh\\:mm\\:ss");
 
-	public static string DateTimeOffsetToString(DateTimeOffset? offset)
+    public static string DateTimeOffsetToString(DateTimeOffset? offset)
 	{
 		if(offset is null)
 		{

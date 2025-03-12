@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using FluentFin.Converters;
 using FluentFin.ViewModels;
 using FlyleafLib.MediaFramework.MediaStream;
 using FlyleafLib.MediaPlayer;
@@ -20,8 +21,10 @@ namespace FluentFin.Controls;
 public sealed partial class TransportControls : UserControl
 {
 	private readonly Subject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _onPointerMoved = new();
+	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
+	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
-	[GeneratedDependencyProperty]
+    [GeneratedDependencyProperty]
 	public partial bool IsSkipButtonVisible { get; set; }
 
 	[GeneratedDependencyProperty]
@@ -51,7 +54,27 @@ public sealed partial class TransportControls : UserControl
 	}
 
 	public static readonly DependencyProperty PlayerProperty =
-		DependencyProperty.Register("Player", typeof(MediaPlayer), typeof(TransportControls), new PropertyMetadata(null));
+        DependencyProperty.Register("Player", typeof(MediaPlayer), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
+
+    private static void OnPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+		var tc = (TransportControls)d;
+		if(e.NewValue is not MediaPlayer p)
+		{
+			return;
+		}
+
+		p.Volume = 100;
+		p.Events().LengthChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.TimeSlider.Maximum = e.Length);
+		p.Events().TimeChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+			tc.TimeSlider.Value = e.Time;
+			tc.TxtCurrentTime.Text = Converters.Converters.MsToTime(e.Time);
+            tc.TxtRemainingTime.Text = tc.TimeRemaining(e.Time, p.Length);
+        });
+		p.Events().Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
+		p.Events().Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
+    }
 
     public IObservable<Unit> OnDynamicSkip { get; }
 
@@ -65,7 +88,7 @@ public sealed partial class TransportControls : UserControl
 			.Events()
 			.ValueChanged
 			.Where(x => Math.Abs(x.NewValue - Player.Time) > 1000)
-			.Subscribe(x => Player.SeekTo(TimeSpan.FromSeconds(x.NewValue)));
+			.Subscribe(x => Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue)));
 
 		_onPointerMoved
 			.ObserveOn(RxApp.MainThreadScheduler)
@@ -81,7 +104,7 @@ public sealed partial class TransportControls : UserControl
 
 				var point = e.GetCurrentPoint(TimeSlider);
 				var globalPoint = e.GetCurrentPoint(this);
-				Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
+				Trickplay.Position = TimeSpan.FromMilliseconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
 
 				var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
 				var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
@@ -162,6 +185,18 @@ public sealed partial class TransportControls : UserControl
     private void Grid_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
 		TrickplayTip.IsOpen = false;
+    }
+
+    private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+    {
+		if(Player?.State is VLCState.Playing)
+		{
+			Player.Pause();
+        }
+		else if(Player?.State is VLCState.Paused)
+		{
+			Player.Play();
+        }
     }
 }
 

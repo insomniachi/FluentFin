@@ -21,19 +21,19 @@ public sealed partial class VideoPlayerPage : Page
 	{
 		InitializeComponent();
 
-		//_pointerMoved
-		//	.Throttle(TimeSpan.FromSeconds(3))
-		//	.Subscribe(_ =>
-		//	{
-		//		TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
-		//		{
-		//			TransportControls.Bar.Visibility = Visibility.Collapsed;
-		//			TransportControls.TitleSection.Visibility = Visibility.Collapsed;
-		//			ProtectedCursor.Dispose();
-		//		});
-		//	});
+		_pointerMoved
+			.Throttle(TimeSpan.FromSeconds(3))
+			.Subscribe(_ =>
+			{
+				TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
+				{
+					TransportControls.Bar.Visibility = Visibility.Collapsed;
+					TransportControls.TitleSection.Visibility = Visibility.Collapsed;
+					ProtectedCursor.Dispose();
+				});
+			});
 
-		//TransportControls!.FullWindowButton.Click += (sender, e) => OnPlayerDoubleTapped(sender, null!);
+		TransportControls!.FullWindowButton.Click += (sender, e) => OnPlayerDoubleTapped(sender, null!);
 	}
 
 	private void FSC_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -43,13 +43,13 @@ public sealed partial class VideoPlayerPage : Page
 
 	private void ShowTransportControls()
 	{
-		//TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
-		//{
-		//	TransportControls.Bar.Visibility = Visibility.Visible;
-		//	TransportControls.TitleSection.Visibility = Visibility.Visible;
-		//	TransportControls.TxtTitleTime.Text = DateTime.Now.ToString("hh:mm tt");
-		//	ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
-		//});
+		TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
+		{
+			TransportControls.Bar.Visibility = Visibility.Visible;
+			TransportControls.TitleSection.Visibility = Visibility.Visible;
+			TransportControls.TxtTitleTime.Text = DateTime.Now.ToString("hh:mm tt");
+			ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+		});
 
 		_pointerMoved.OnNext(Unit.Default);
 	}
@@ -59,7 +59,7 @@ public sealed partial class VideoPlayerPage : Page
 		var current = App.MainWindow.AppWindow.Presenter.Kind;
 		var presenterKind = current == AppWindowPresenterKind.Overlapped ? AppWindowPresenterKind.FullScreen : AppWindowPresenterKind.Overlapped;
 
-		//TransportControls.FullWindowSymbol.Symbol = presenterKind == AppWindowPresenterKind.FullScreen ? Symbol.BackToWindow : Symbol.FullScreen;
+		TransportControls.FullWindowSymbol.Symbol = presenterKind == AppWindowPresenterKind.FullScreen ? Symbol.BackToWindow : Symbol.FullScreen;
 
 		if (App.GetService<ITitleBarViewModel>() is { } vm)
 		{

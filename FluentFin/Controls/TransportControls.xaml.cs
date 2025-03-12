@@ -68,12 +68,32 @@ public sealed partial class TransportControls : UserControl
 		p.Events().LengthChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.TimeSlider.Maximum = e.Length);
 		p.Events().TimeChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
 		{
-			tc.TimeSlider.Value = e.Time;
-			tc.TxtCurrentTime.Text = Converters.Converters.MsToTime(e.Time);
-            tc.TxtRemainingTime.Text = tc.TimeRemaining(e.Time, p.Length);
+			try
+			{
+				tc.TimeSlider.Value = e.Time;
+				tc.TxtCurrentTime.Text = Converters.Converters.MsToTime(e.Time);
+				tc.TxtRemainingTime.Text = tc.TimeRemaining(e.Time, p.Length);
+			}
+			catch { }
         });
 		p.Events().Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
 		p.Events().Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
+		p.Events().MediaChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+            e.Media.ParsedChanged += tc.Media_ParsedChanged;
+		});
+
+    }
+
+    private void Media_ParsedChanged(object sender, MediaParsedChangedEventArgs e)
+    {
+		if(e.ParsedStatus == MediaParsedStatus.Done)
+		{
+			AudioSelectionButton.DispatcherQueue.TryEnqueue(() =>
+			{
+                AudioSelectionButton.Flyout = Converters.Converters.GetAudiosFlyout(Player, Playlist.SelectedItem.Media);
+            });
+        }
     }
 
     public IObservable<Unit> OnDynamicSkip { get; }
@@ -83,6 +103,7 @@ public sealed partial class TransportControls : UserControl
 		InitializeComponent();
 
 		OnDynamicSkip = DynamicSkipIntroButton.Events().Click.Select(_ => Unit.Default);
+
 
 		TimeSlider
 			.Events()
@@ -128,38 +149,6 @@ public sealed partial class TransportControls : UserControl
 	{
 		var ts = TimeSpan.FromMilliseconds(Player.Time) + TimeSpan.FromSeconds(30);
 		Player.SeekTo(ts);
-	}
-
-
-	public void UpdateSubtitleFlyout(ObservableCollection<SubtitlesStream> streams)
-	{
-		//var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		//flyout.Items.Clear();
-		//for (int i = 0; i < streams.Count; i++)
-		//{
-		//	var item = new RadioMenuFlyoutItem
-		//	{
-		//		Text = streams[i].Title,
-		//		IsChecked = i == 0,
-		//	};
-		//	item.Click += Item_Click;
-
-		//	flyout.Items.Add(item);
-		//}
-	}
-
-	private void Item_Click(object sender, RoutedEventArgs e)
-	{
-		//var title = ((RadioMenuFlyoutItem)sender).Text;
-		//var stream = Player.Subtitles.Streams.FirstOrDefault(x => x.Title == title);
-
-		//if (stream is null)
-		//{
-		//	return;
-		//}
-
-		//var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		//Player.OpenAsync(stream);
 	}
 
 	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)

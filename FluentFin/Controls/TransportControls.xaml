@@ -341,9 +341,9 @@
 
                     <AppBarSeparator />
 
-                    <!--<AppBarButton
+                    <AppBarButton
                         x:Name="CCSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Player.Subtitles.Streams, Playlist.SelectedItem.Media), Mode=OneWay}"
+                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Playlist.SelectedItem.Media), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1E;}"
                         IsTabStop="False"
                         Label="Subtitles"
@@ -351,11 +351,10 @@
 
                     <AppBarButton
                         x:Name="AudioSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetAudiosFlyout(Player, Player.Audio.Streams), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1F;}"
                         IsTabStop="False"
                         Label="Audio"
-                        Visibility="{x:Bind AudioSelectionButton.Flyout, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />-->
+                        Visibility="{x:Bind AudioSelectionButton.Flyout, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
 
                 </CommandBar>
             </Grid>

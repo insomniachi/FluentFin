@@ -68,7 +68,6 @@
                 VerticalAlignment="Top"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind SkipCommand, Mode=OneWay}"
-                CommandParameter="{x:Bind Player.Time, Mode=OneWay}"
                 FontSize="20"
                 FontWeight="Bold"
                 Foreground="White"
@@ -332,7 +331,7 @@
                                     Width="100"
                                     IsTabStop="False"
                                     Maximum="100"
-                                    Minimum="0"/>
+                                    Minimum="0" />
                             </Flyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
@@ -349,6 +348,7 @@
 
                     <AppBarButton
                         x:Name="AudioSelectionButton"
+                        x:FieldModifier="Public"
                         Icon="{ui:FontIcon Glyph=&#xED1F;}"
                         IsTabStop="False"
                         Label="Audio"

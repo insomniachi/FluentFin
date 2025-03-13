@@ -76,7 +76,6 @@ public sealed partial class VideoPlayerPage : Page
 
     private void VideoView_Initialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
     {
-		ViewModel.SetMediaPlayer(e.SwapChainOptions);
-		VideoView.MediaPlayer = ViewModel.MediaPlayer;
+		ViewModel.SetMediaPlayer(VideoView, e.SwapChainOptions, TransportControls.AudioSelectionButton);
     }
 }

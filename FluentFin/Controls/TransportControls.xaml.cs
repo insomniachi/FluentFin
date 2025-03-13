@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using FluentFin.MediaPlayers;
 using FluentFin.ViewModels;
 using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml;
@@ -33,13 +34,13 @@ public sealed partial class TransportControls : UserControl
 	[GeneratedDependencyProperty]
 	public partial TrickplayViewModel Trickplay { get; set; }
 
-	public MediaPlayer Player
+	public IMediaPlayerController Player
 	{
 		get
 		{
 			try
 			{
-				return (MediaPlayer)GetValue(PlayerProperty);
+				return (IMediaPlayerController)GetValue(PlayerProperty);
 			}
 			catch
 			{
@@ -50,42 +51,35 @@ public sealed partial class TransportControls : UserControl
 	}
 
 	public static readonly DependencyProperty PlayerProperty =
-        DependencyProperty.Register("Player", typeof(MediaPlayer), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
+        DependencyProperty.Register("Player", typeof(IMediaPlayerController), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
 
     private static void OnPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
 		var tc = (TransportControls)d;
-		if(e.NewValue is not MediaPlayer p)
+		if(e.NewValue is not IMediaPlayerController controller)
 		{
 			return;
 		}
 
-		p.Events().LengthChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.TimeSlider.Maximum = e.Length);
-		p.Events().TimeChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		TimeSpan duration = TimeSpan.Zero;
+		controller.DurationChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+			tc.TimeSlider.Maximum = e.TotalMilliseconds;
+			duration = e;
+		});
+		controller.PositionChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
 		{
 			try
 			{
-				tc.TimeSlider.Value = e.Time;
-				tc.TxtCurrentTime.Text = Converters.Converters.MsToTime(e.Time);
-				tc.TxtRemainingTime.Text = TimeRemaining(e.Time, p.Length);
+				tc.TimeSlider.Value = e.TotalMilliseconds;
+				tc.TxtCurrentTime.Text = Converters.Converters.TimeSpanToString(e);
+				tc.TxtRemainingTime.Text = TimeRemaining(e, duration);
 			}
 			catch { }
         });
-		p.Events().Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
-		p.Events().Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
-		p.Events().MediaChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => e.Media.ParsedChanged += tc.Media_ParsedChanged);
-		p.Events().VolumeChanged.Where(e => e.Volume >= 0).ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e.Volume * 100));
-    }
-
-    private void Media_ParsedChanged(object sender, MediaParsedChangedEventArgs e)
-    {
-		if(e.ParsedStatus == MediaParsedStatus.Done)
-		{
-			AudioSelectionButton.DispatcherQueue.TryEnqueue(() =>
-			{
-                AudioSelectionButton.Flyout = Converters.Converters.GetAudiosFlyout(Player, Playlist.SelectedItem.Media);
-            });
-        }
+        controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
+		controller.Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
+        controller.VolumeChanged.Where(e => e >= 0).ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
     }
 
     public IObservable<Unit> OnDynamicSkip { get; }
@@ -100,7 +94,7 @@ public sealed partial class TransportControls : UserControl
 		TimeSlider
 			.Events()
 			.ValueChanged
-			.Where(x => Math.Abs(x.NewValue - Player.Time) > 1000)
+			.Where(x => Math.Abs(x.NewValue - Player.Position.TotalMilliseconds) > 1000)
 			.Subscribe(x => Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue)));
 
 		_onPointerMoved
@@ -130,21 +124,20 @@ public sealed partial class TransportControls : UserControl
 			.Subscribe(x => Player.Volume = (int)x.NewValue);
 	}
 
-	private static string TimeRemaining(long currentTime, long duration)
+	private static string TimeRemaining(TimeSpan currentTime, TimeSpan duration)
 	{
-		var remaining = duration - currentTime;
-		return TimeSpan.FromMilliseconds(remaining).ToString("hh\\:mm\\:ss");
+		return (duration - currentTime).ToString("hh\\:mm\\:ss");
 	}
 
 	private void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = TimeSpan.FromMilliseconds(Player.Time) - TimeSpan.FromSeconds(10);
+		var ts = Player.Position - TimeSpan.FromSeconds(10);
 		Player.SeekTo(ts);
 	}
 
 	private void SkipForwardButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = TimeSpan.FromMilliseconds(Player.Time) + TimeSpan.FromSeconds(30);
+		var ts = Player.Position + TimeSpan.FromSeconds(30);
 		Player.SeekTo(ts);
 	}
 
@@ -175,11 +168,11 @@ public sealed partial class TransportControls : UserControl
 
     private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
     {
-		if(Player?.State is VLCState.Playing)
+		if(Player?.State is MediaPlayerState.Playing)
 		{
 			Player.Pause();
         }
-		else if(Player?.State is VLCState.Paused)
+		else if(Player?.State is MediaPlayerState.Paused)
 		{
 			Player.Play();
         }

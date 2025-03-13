@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.MediaPlayers;
 using FluentFin.ViewModels;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
-using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -81,19 +81,11 @@ public static class Converters
 		return new BitmapImage(uri);
 	}
 
-	public static FlyoutBase? GetAudiosFlyout(MediaPlayer player, MediaResponse response)
+	public static FlyoutBase? GetAudiosFlyout(IMediaPlayerController player, int defaultIndex)
 	{
-		if(player.Media is not { } media)
-		{
-			return null;
-		}
-		var defaultIndex = response?.MediaSourceInfo.DefaultAudioStreamIndex ?? 0;
-
-		var tracks = media.Tracks.ToList();
-        var audios = tracks.Where(x => x.TrackType == TrackType.Audio).ToList();
-
+        var audios = player.GetAudioTracks();
         const string groupName = "Audios";
-		var command = new RelayCommand<MediaTrack>(track => player.SetAudioTrack(track.Id));
+		var command = new RelayCommand<AudioTrack>(track => player.OpenAudioTrack(track.Id));
 
 		var flyout = new MenuBarItemFlyout();
 
@@ -101,7 +93,7 @@ public static class Converters
 		{
 			var flyoutItem = new RadioMenuFlyoutItem
 			{
-				Text = $"{item.Language} ({item.Description})",
+				Text = $"{item.Language} ({item.Name})",
 				GroupName = groupName,
 				IsChecked = item.Id == defaultIndex,
 				Command = command,
@@ -114,7 +106,7 @@ public static class Converters
 		return flyout;
 	}
 
-	public static FlyoutBase? GetSubtitlesFlyout(MediaPlayer mp, MediaResponse response)
+	public static FlyoutBase? GetSubtitlesFlyout(IMediaPlayerController mp, MediaResponse response)
 	{
         var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
         var defaultSubtitleIndex = response?.MediaSourceInfo.DefaultSubtitleStreamIndex;
@@ -134,18 +126,18 @@ public static class Converters
             if (stream.IsExternal == true)
             {
                 var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
-				mp.AddSlave(MediaSlaveType.Subtitle, url, true);
+				mp.OpenExternalSubtitleTrack(url);
             }
             else
             {
                 var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
                 var index = internalSubtitleInfo.IndexOf(stream);
-                mp.SetSpu(index);
+				mp.OpenInternalSubtitleTrack(index);
             }
         });
         var disableSubtitles = new RelayCommand(() =>
         {
-			mp.SetSpu(-1);
+			mp.OpenInternalSubtitleTrack(-1);
         });
 
         const string groupName = "Subtitles";

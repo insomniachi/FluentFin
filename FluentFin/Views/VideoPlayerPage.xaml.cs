@@ -72,8 +72,6 @@ public sealed partial class VideoPlayerPage : Page
 		}
 
 		App.MainWindow.AppWindow.SetPresenter(presenterKind);
-
-		//flyleafHost.KFC?.Focus(FocusState.Keyboard);
 	}
 
     private void VideoView_Initialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)

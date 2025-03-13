@@ -64,7 +64,6 @@ public sealed partial class TransportControls : UserControl
 			return;
 		}
 
-		p.Volume = 100;
 		p.Events().LengthChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.TimeSlider.Maximum = e.Length);
 		p.Events().TimeChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
 		{
@@ -72,17 +71,14 @@ public sealed partial class TransportControls : UserControl
 			{
 				tc.TimeSlider.Value = e.Time;
 				tc.TxtCurrentTime.Text = Converters.Converters.MsToTime(e.Time);
-				tc.TxtRemainingTime.Text = tc.TimeRemaining(e.Time, p.Length);
+				tc.TxtRemainingTime.Text = TimeRemaining(e.Time, p.Length);
 			}
 			catch { }
         });
 		p.Events().Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
 		p.Events().Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
-		p.Events().MediaChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
-		{
-            e.Media.ParsedChanged += tc.Media_ParsedChanged;
-		});
-
+		p.Events().MediaChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => e.Media.ParsedChanged += tc.Media_ParsedChanged);
+		p.Events().VolumeChanged.Where(e => e.Volume >= 0).ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e.Volume * 100));
     }
 
     private void Media_ParsedChanged(object sender, MediaParsedChangedEventArgs e)
@@ -131,9 +127,14 @@ public sealed partial class TransportControls : UserControl
 				var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
 				TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 			});
+
+		VolumeSlider.Events()
+			.ValueChanged
+			.Where(_ => Player is not null)
+			.Subscribe(x => Player.Volume = (int)x.NewValue);
 	}
 
-	public string TimeRemaining(long currentTime, long duration)
+	private static string TimeRemaining(long currentTime, long duration)
 	{
 		var remaining = duration - currentTime;
 		return TimeSpan.FromMilliseconds(remaining).ToString("hh\\:mm\\:ss");

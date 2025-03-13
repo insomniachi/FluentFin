@@ -324,7 +324,7 @@
 
                     <AppBarSeparator />
 
-                    <!--<AppBarButton Icon="Volume" Label="Volume">
+                    <AppBarButton Icon="Volume" Label="Volume">
                         <AppBarButton.Flyout>
                             <Flyout>
                                 <Slider
@@ -332,12 +332,10 @@
                                     Width="100"
                                     IsTabStop="False"
                                     Maximum="100"
-                                    Minimum="0"
-                                    SnapsTo="Ticks"
-                                    StepFrequency="1" />
+                                    Minimum="0"/>
                             </Flyout>
                         </AppBarButton.Flyout>
-                    </AppBarButton>-->
+                    </AppBarButton>
 
                     <AppBarSeparator />
 

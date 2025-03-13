@@ -1,14 +1,10 @@
 using CommunityToolkit.WinUI;
-using FluentFin.Converters;
 using FluentFin.ViewModels;
-using FlyleafLib.MediaFramework.MediaStream;
-using FlyleafLib.MediaPlayer;
 using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
-using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;

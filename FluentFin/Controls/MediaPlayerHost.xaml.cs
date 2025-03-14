@@ -75,6 +75,7 @@ public sealed partial class MediaPlayerHost : UserControl
                 {
                     Controls.MediaPlayerType.Vlc => CreateVLC(),
                     Controls.MediaPlayerType.Flyleaf => CreateFlyleaf(),
+                    Controls.MediaPlayerType.WindowsMediaPlayer => CreateWindowsMediaPlayer(),
                     _ => throw new NotImplementedException()
                 };
 
@@ -94,6 +95,13 @@ public sealed partial class MediaPlayerHost : UserControl
             });
 
         TransportControls!.FullWindowButton.Click += (sender, e) => OnPlayerDoubleTapped(sender, null!);
+    }
+
+    private MediaPlayerElement CreateWindowsMediaPlayer()
+    {
+        var element = new MediaPlayerElement();
+        element.Loaded += Element_Loaded;
+        return element;
     }
 
     private FlyleafHost CreateFlyleaf()
@@ -137,6 +145,20 @@ public sealed partial class MediaPlayerHost : UserControl
         });
     }
 
+    private void Element_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MediaPlayerElement element)
+        {
+            return;
+        }
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            Player = new WindowsMediaPlayerController(element);
+        });
+    }
+
+
     private void FSC_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
         ShowTransportControls();
@@ -179,5 +201,6 @@ public sealed partial class MediaPlayerHost : UserControl
 public enum MediaPlayerType
 {
     Vlc,
-    Flyleaf
+    Flyleaf,
+    WindowsMediaPlayer
 }

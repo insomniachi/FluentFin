@@ -3,9 +3,12 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.MediaPlayers;
 using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
+using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using System.Web;
 
 namespace FluentFin.ViewModels;
@@ -15,14 +18,17 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 	[ObservableProperty]
 	public partial PlaylistViewModel Playlist { get; set; } = new();
+
+	[ObservableProperty]
+	public partial IMediaPlayerController? MediaPlayer { get; set; }
+	
 	public ObservableCollection<MediaSegmentViewModel> Segments { get; } = [];
-	public Player MediaPlayer { get; } = new();
 	public long CurrentTimeTicks { get; set; }
 	public MediaSegmentViewModel? PlayingSegment { get; set; }
 
 	public Task OnNavigatedFrom()
 	{
-		MediaPlayer.Stop();
+		MediaPlayer?.Stop();
 		return Task.CompletedTask;
 	}
 
@@ -32,9 +38,6 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 		{
 			return;
 		}
-
-		MediaPlayer.PropertyChanged += MediaPlayer_PropertyChanged;
-
 
 		Playlist = dto.Type switch
 		{
@@ -52,14 +55,34 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
 
-		if (dto.Type == BaseItemDto_Type.Episode)
-		{
-			Playlist.SelectedItem = Playlist.Items.FirstOrDefault(x => x.Dto.IndexNumber == dto.IndexNumber && x.Dto.ParentIndexNumber == dto.ParentIndexNumber);
-		}
-		else
-		{
-			Playlist.SelectedItem = Playlist.Items.FirstOrDefault();
-		}
+		this.WhenAnyValue(x => x.MediaPlayer)
+			.WhereNotNull()
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(mp =>
+			{
+				mp.PositionChanged
+				  .Subscribe(time =>
+				  {
+					  CurrentTimeTicks = time.Ticks;
+
+                      if (PlayingSegment is { } segment && CurrentTimeTicks > segment.EndTicks)
+                      {
+                          mp.Pause();
+                          PlayingSegment = null;
+                      }
+                  });
+
+                if (dto.Type == BaseItemDto_Type.Episode)
+                {
+                    Playlist.SelectedItem = Playlist.Items.FirstOrDefault(x => x.Dto.IndexNumber == dto.IndexNumber && x.Dto.ParentIndexNumber == dto.ParentIndexNumber);
+                }
+                else
+                {
+                    Playlist.SelectedItem = Playlist.Items.FirstOrDefault();
+                }
+            });
+
+
 	}
 
 	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -70,6 +93,11 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 		}
 
 		if (Playlist.SelectedItem is not { } selectedItem)
+		{
+			return;
+		}
+
+		if(MediaPlayer is null)
 		{
 			return;
 		}
@@ -92,8 +120,8 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 		selectedItem.Media = mediaResponse;
 
-		var args = MediaPlayer.Open(HttpUtility.UrlDecode(mediaResponse.Uri.ToString()));
-		if (!args.Success)
+		var success = MediaPlayer.Play(mediaResponse.Uri);
+		if (!success)
 		{
 			return;
 		}
@@ -104,20 +132,6 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 		{
 			Segments.Clear();
 			Segments.AddRange(segmentsResults.Items.Select(MediaSegmentViewModel.FromDto));
-		}
-	}
-
-	private void MediaPlayer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-	{
-		if (e.PropertyName == nameof(MediaPlayer.CurTime))
-		{
-			CurrentTimeTicks = MediaPlayer.CurTime;
-
-			if (PlayingSegment is { } segment && CurrentTimeTicks > segment.EndTicks)
-			{
-				MediaPlayer.Pause();
-				PlayingSegment = null;
-			}
 		}
 	}
 
@@ -153,8 +167,8 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 	private void PlaySegment(MediaSegmentViewModel vm)
 	{
 		PlayingSegment = vm;
-		MediaPlayer.Play();
-		MediaPlayer.CurTime = (long)vm.StartTicks;
+		MediaPlayer?.Play();
+		MediaPlayer?.SeekTo(new TimeSpan(vm.StartTicks));
 	}
 }
 

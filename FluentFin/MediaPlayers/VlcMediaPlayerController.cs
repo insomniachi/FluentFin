@@ -1,10 +1,11 @@
-﻿using LibVLCSharp.Shared;
+﻿using FluentFin.Core.Contracts.Services;
+using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using System.Reactive;
 using System.Reactive.Linq;
 
-namespace FluentFin.MediaPlayers.Vlc
+namespace FluentFin.MediaPlayers
 {
     internal sealed partial class VlcMediaPlayerController : IMediaPlayerController
     {
@@ -45,7 +46,7 @@ namespace FluentFin.MediaPlayers.Vlc
         public void Stop() => _mp.Stop();
         public void SeekTo(TimeSpan time) => _mp.SeekTo(time);
         public void Dispose() => _mp.Dispose();
-        public IEnumerable<AudioTrack> GetAudioTracks() => _mp.Media?.Tracks.Where(x => x.TrackType == TrackType.Audio).Select(x => new AudioTrack(x.Id, x.Language, x.Description)) ?? [];
+        public IEnumerable<Core.Contracts.Services.AudioTrack> GetAudioTracks() => _mp.Media?.Tracks.Where(x => x.TrackType == TrackType.Audio).Select(x => new Core.Contracts.Services.AudioTrack(x.Id, x.Language, x.Description)) ?? [];
 
         public MediaPlayerState State => ConvertState(_mp.State);
         public TimeSpan Position { get; private set; }
@@ -69,7 +70,6 @@ namespace FluentFin.MediaPlayers.Vlc
         public IObservable<Unit> MediaLoaded => _mp.Events().MediaChanged.Select(_ => Unit.Default);
         public IObservable<double> VolumeChanged => _mp.Events().VolumeChanged.Select(e => e.Volume * 100d);
         public IObservable<string> SubtitleText { get; } = Observable.Empty<string>();
-
 
         private void MediaParsed(object? sender, MediaParsedChangedEventArgs e)
         {

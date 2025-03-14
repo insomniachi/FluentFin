@@ -1,17 +1,17 @@
 ﻿using DynamicData;
+using FluentFin.Core.Contracts.Services;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using System.Reactive;
 using System.Reactive.Linq;
 using Windows.Media.Core;
-using Windows.Media.Playback;
 
 namespace FluentFin.MediaPlayers
 {
     public sealed partial class WindowsMediaPlayerController : IMediaPlayerController
     {
-        private readonly MediaPlayer _mp = new();
-        private MediaPlaybackItem? _mediaItem;
+        private readonly Windows.Media.Playback.MediaPlayer _mp = new();
+        private Windows.Media.Playback.MediaPlaybackItem? _mediaItem;
 
         public WindowsMediaPlayerController(MediaPlayerElement element)
         {
@@ -44,14 +44,14 @@ namespace FluentFin.MediaPlayers
 
         public void Dispose() => _mp.Dispose();
 
-        public IEnumerable<AudioTrack> GetAudioTracks()
+        public IEnumerable<Core.Contracts.Services.AudioTrack> GetAudioTracks()
         {
             if(_mediaItem is null)
             {
                 return [];
             }
 
-            return _mediaItem.AudioTracks.Select(x => new AudioTrack(_mediaItem.AudioTracks.IndexOf(x), x.Language, x.Label));
+            return _mediaItem.AudioTracks.Select(x => new Core.Contracts.Services.AudioTrack(_mediaItem.AudioTracks.IndexOf(x), x.Language, x.Label));
         }
 
         public void OpenAudioTrack(int index)
@@ -88,10 +88,10 @@ namespace FluentFin.MediaPlayers
             {
                 foreach (var track in timedMetadataTracks.Index())
                 {
-                    _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)track.Index, TimedMetadataTrackPresentationMode.Disabled);
+                    _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)track.Index, Windows.Media.Playback.TimedMetadataTrackPresentationMode.Disabled);
                 }
 
-                _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)index, TimedMetadataTrackPresentationMode.PlatformPresented);
+                _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)index, Windows.Media.Playback.TimedMetadataTrackPresentationMode.PlatformPresented);
             }
         }
 
@@ -106,7 +106,7 @@ namespace FluentFin.MediaPlayers
         public bool Play(Uri uri, int defaultAudioIndex = 0)
         {
             var source = MediaSource.CreateFromUri(uri);
-            _mediaItem = new MediaPlaybackItem(source);
+            _mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
             _mp.Source = _mediaItem;
             _mp.Play();
             return true;
@@ -130,7 +130,7 @@ namespace FluentFin.MediaPlayers
         private void Track_Resolved(TimedTextSource sender, TimedTextSourceResolveResultEventArgs args)
         {
             var index = args.Tracks[0].PlaybackItem.TimedMetadataTracks.IndexOf(args.Tracks[0]);
-            args.Tracks[0].PlaybackItem.TimedMetadataTracks.SetPresentationMode((uint)index, TimedMetadataTrackPresentationMode.PlatformPresented);
+            args.Tracks[0].PlaybackItem.TimedMetadataTracks.SetPresentationMode((uint)index, Windows.Media.Playback.TimedMetadataTrackPresentationMode.PlatformPresented);
             sender.Resolved -= Track_Resolved;
         }
     }

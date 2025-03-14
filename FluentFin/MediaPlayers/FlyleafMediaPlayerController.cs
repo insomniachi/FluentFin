@@ -1,4 +1,5 @@
-﻿using FlyleafLib.Controls.WinUI;
+﻿using FluentFin.Core.Contracts.Services;
+using FlyleafLib.Controls.WinUI;
 using FlyleafLib.MediaPlayer;
 using ReactiveUI;
 using System.Reactive;
@@ -6,7 +7,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using System.Web;
 
-namespace FluentFin.MediaPlayers.Flyleaf;
+namespace FluentFin.MediaPlayers;
 
 public sealed partial class FlyleafMediaPlayerController : IMediaPlayerController
 {

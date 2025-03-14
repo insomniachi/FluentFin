@@ -3,13 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.MediaPlayers;
-using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
-using System.Web;
 
 namespace FluentFin.ViewModels;
 

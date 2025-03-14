@@ -1,7 +1,6 @@
 using CommunityToolkit.WinUI;
-using FluentFin.MediaPlayers;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
-using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
@@ -173,14 +172,7 @@ public sealed partial class TransportControls : UserControl
 
     private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
     {
-		if(Player?.State is MediaPlayerState.Playing)
-		{
-			Player.Pause();
-        }
-		else if(Player?.State is MediaPlayerState.Paused)
-		{
-			Player.Play();
-        }
+		Player.TogglePlayPlause();
     }
 }
 

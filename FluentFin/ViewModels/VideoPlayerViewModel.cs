@@ -6,7 +6,6 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Core.WebSockets;
-using FluentFin.MediaPlayers;
 using FluentFin.Services;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
@@ -55,14 +54,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 															   TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
 						break;
 					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.PlayPause }:
-						if(MediaPlayer.State == MediaPlayerState.Playing)
-						{
-							MediaPlayer.Pause();
-						}
-						else if(MediaPlayer.State == MediaPlayerState.Stopped)
-						{
-							MediaPlayer.Play();
-						}
+						MediaPlayer.TogglePlayPlause();
 						await UpdateStatus();
 						break;
 					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.Stop }:

@@ -252,6 +252,7 @@
                     <AppBarButton
                         x:Name="PlayPauseButton"
                         Click="PlayPauseButton_Click"
+                        Content="{ui:SymbolIcon Symbol=Play}"
                         IsTabStop="False"
                         Label="Play/Pause" />
 

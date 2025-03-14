@@ -1,8 +1,7 @@
 using CommunityToolkit.WinUI;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.MediaPlayers;
-using FluentFin.MediaPlayers.Flyleaf;
-using FluentFin.MediaPlayers.Vlc;
 using FluentFin.ViewModels;
 using FlyleafLib.Controls.WinUI;
 using LibVLCSharp.Platforms.Windows;
@@ -73,9 +72,9 @@ public sealed partial class MediaPlayerHost : UserControl
 
                 UIElement host = type switch
                 {
-                    Controls.MediaPlayerType.Vlc => CreateVLC(),
-                    Controls.MediaPlayerType.Flyleaf => CreateFlyleaf(),
-                    Controls.MediaPlayerType.WindowsMediaPlayer => CreateWindowsMediaPlayer(),
+                    Core.Contracts.Services.MediaPlayerType.Vlc => CreateVLC(),
+                    Core.Contracts.Services.MediaPlayerType.Flyleaf => CreateFlyleaf(),
+                    Core.Contracts.Services.MediaPlayerType.WindowsMediaPlayer => CreateWindowsMediaPlayer(),
                     _ => throw new NotImplementedException()
                 };
 
@@ -196,11 +195,4 @@ public sealed partial class MediaPlayerHost : UserControl
 
         App.MainWindow.AppWindow.SetPresenter(presenterKind);
     }
-}
-
-public enum MediaPlayerType
-{
-    Vlc,
-    Flyleaf,
-    WindowsMediaPlayer
 }

@@ -83,7 +83,13 @@ public static class Converters
 
 	public static FlyoutBase? GetAudiosFlyout(IMediaPlayerController player, int defaultIndex)
 	{
-        var audios = player.GetAudioTracks();
+        var audios = player.GetAudioTracks().ToList();
+
+		if(audios.Count < 2)
+		{
+			return null;
+		}
+
         const string groupName = "Audios";
 		var command = new RelayCommand<AudioTrack>(track => player.OpenAudioTrack(track.Id));
 

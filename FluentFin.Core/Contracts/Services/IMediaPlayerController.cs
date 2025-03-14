@@ -1,7 +1,6 @@
-﻿using FluentFin.Core.Contracts.Services;
-using System.Reactive;
+﻿using System.Reactive;
 
-namespace FluentFin.MediaPlayers;
+namespace FluentFin.Core.Contracts.Services;
 
 public interface IMediaPlayerController : IDisposable
 {
@@ -44,4 +43,31 @@ public enum MediaPlayerState
     Error
 }
 
+public enum MediaPlayerType
+{
+    Vlc,
+    Flyleaf,
+    WindowsMediaPlayer
+}
+
 public record struct AudioTrack(int Id, string? Language, string? Name);
+
+public static class MediaPlayerControllerExtensions
+{
+    public static void TogglePlayPlause(this IMediaPlayerController controller)
+    {
+        if(controller is null)
+        {
+            return;
+        }
+
+        if(controller.State is MediaPlayerState.Playing)
+        {
+            controller.Pause();
+        }
+        else if(controller.State is MediaPlayerState.Paused)
+        {
+            controller.Play();
+        }
+    }
+}

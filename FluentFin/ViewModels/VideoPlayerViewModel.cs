@@ -4,6 +4,7 @@ using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
+using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Core.WebSockets;
 using FluentFin.Services;
@@ -24,6 +25,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	private readonly IJellyfinClient _jellyfinClient;
 	private readonly PlaybackProgressInfo _playbackProgressInfo = new();
 	private readonly ILogger<VideoPlayerViewModel> _logger;
+	private readonly ISettings _settings;
 	private KeyboardMediaPlayerController? _keyboardController;
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
@@ -31,10 +33,12 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 								ILogger<VideoPlayerViewModel> logger,
 								IObservable<IInboundSocketMessage> webSocketMessages,
 								IContentDialogService contentDialogService,
-								INavigationService navigationService)
+								INavigationService navigationService,
+								ISettings settings)
 	{
 		_jellyfinClient = jellyfinClient;
 		_logger = logger;
+		_settings = settings;
 
 		TrickplayViewModel = trickplayViewModel;
 
@@ -191,6 +195,9 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial PlaylistViewModel Playlist { get; set; } = new PlaylistViewModel();
 
+	[ObservableProperty]
+	public partial MediaPlayerType MediaPlayerType { get; set; }
+
 	public PlaybackProgressInfo_PlayMethod PlayMethod { get; private set; }
 
 	public Action? ToggleFullScreen { get; set; }
@@ -226,6 +233,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		{
 			return;
 		}
+
+		MediaPlayerType = _settings.MediaPlayer;
 
 		Dto = await _jellyfinClient.GetItem(id);
 

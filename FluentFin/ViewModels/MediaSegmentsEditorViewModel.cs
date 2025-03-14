@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Settings;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -10,7 +11,7 @@ using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
 
-public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient, ISettings settings) : ObservableObject, INavigationAware
 {
 
 	[ObservableProperty]
@@ -18,6 +19,9 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 	[ObservableProperty]
 	public partial IMediaPlayerController? MediaPlayer { get; set; }
+
+	[ObservableProperty]
+	public partial MediaPlayerType MediaPlayerType { get; set; }
 	
 	public ObservableCollection<MediaSegmentViewModel> Segments { get; } = [];
 	public long CurrentTimeTicks { get; set; }
@@ -35,6 +39,8 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 		{
 			return;
 		}
+
+		MediaPlayerType = settings.MediaPlayer;
 
 		Playlist = dto.Type switch
 		{

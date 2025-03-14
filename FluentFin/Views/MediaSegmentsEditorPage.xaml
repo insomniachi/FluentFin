@@ -27,7 +27,7 @@
 
         <controls:MediaPlayerHost
             Margin="100,0,100,36"
-            MediaPlayerType="Vlc"
+            MediaPlayerType="{x:Bind ViewModel.MediaPlayerType, Mode=OneWay}"
             Player="{x:Bind ViewModel.MediaPlayer, Mode=TwoWay}"
             Playlist="{x:Bind ViewModel.Playlist}" />
 

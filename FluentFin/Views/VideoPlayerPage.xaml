@@ -11,21 +11,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!--<Grid
-        DoubleTapped="OnPlayerDoubleTapped"
-        IsDoubleTapEnabled="True"
-        PointerMoved="FSC_PointerMoved">
-        <lvs:VideoView x:Name="VideoView" Initialized="VideoView_Initialized" />
-        <controls:TransportControls
-            x:Name="TransportControls"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            IsSkipButtonVisible="{x:Bind ViewModel.IsSkipButtonVisible, Mode=OneWay}"
-            Player="{x:Bind ViewModel.MediaPlayer, Mode=OneWay}"
-            Playlist="{x:Bind ViewModel.Playlist, Mode=OneWay}"
-            SkipCommand="{x:Bind ViewModel.SkipCommand, Mode=OneWay}"
-            Trickplay="{x:Bind ViewModel.TrickplayViewModel}" />
-    </Grid>-->
     <controls:MediaPlayerHost
         IsSkipButtonVisible="{x:Bind ViewModel.IsSkipButtonVisible, Mode=OneWay}"
         MediaPlayerType="Vlc"

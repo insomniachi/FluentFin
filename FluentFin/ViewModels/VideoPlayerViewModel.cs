@@ -7,13 +7,10 @@ using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Core.WebSockets;
 using FluentFin.MediaPlayers;
-using FluentFin.MediaPlayers.Vlc;
 using FluentFin.Services;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
-using LibVLCSharp.Shared;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -259,9 +256,13 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 		await TrickplayViewModel.Initialize();
 
-		Playlist.AutoSelect();
-
-		await _jellyfinClient.Playing(dto);
+        this.WhenAnyValue(x => x.MediaPlayer)
+			.WhereNotNull()
+			.Subscribe(async mp =>
+			{
+                Playlist.AutoSelect();
+                await _jellyfinClient.Playing(dto);
+            });
 
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(20))
 			.SelectMany(_ => UpdateStatus().ToObservable())

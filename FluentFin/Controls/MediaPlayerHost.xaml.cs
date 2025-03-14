@@ -1,8 +1,10 @@
 using CommunityToolkit.WinUI;
 using FluentFin.Core.ViewModels;
 using FluentFin.MediaPlayers;
+using FluentFin.MediaPlayers.Flyleaf;
 using FluentFin.MediaPlayers.Vlc;
 using FluentFin.ViewModels;
+using FlyleafLib.Controls.WinUI;
 using LibVLCSharp.Platforms.Windows;
 using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
@@ -69,22 +71,44 @@ public sealed partial class MediaPlayerHost : UserControl
                     RootGrid.Children.RemoveAt(0);
                 }
 
-                switch(type)
+                UIElement host = type switch
                 {
-                    case Controls.MediaPlayerType.Vlc:
-                        InitializeVLC();
-                        break;
-                    case Controls.MediaPlayerType.Flyleaf:
-                        break;
-                }
+                    Controls.MediaPlayerType.Vlc => CreateVLC(),
+                    Controls.MediaPlayerType.Flyleaf => CreateFlyleaf(),
+                    _ => throw new NotImplementedException()
+                };
+
+                RootGrid.Children.Insert(0, host);
             });
+
+        _pointerMoved
+            .Throttle(TimeSpan.FromSeconds(3))
+            .Subscribe(_ =>
+            {
+                TransportControls.Bar.DispatcherQueue.TryEnqueue(() =>
+                {
+                    TransportControls.Bar.Visibility = Visibility.Collapsed;
+                    TransportControls.TitleSection.Visibility = Visibility.Collapsed;
+                    ProtectedCursor.Dispose();
+                });
+            });
+
+        TransportControls!.FullWindowButton.Click += (sender, e) => OnPlayerDoubleTapped(sender, null!);
     }
 
-    private void InitializeVLC()
+    private FlyleafHost CreateFlyleaf()
+    {
+        var host = new FlyleafHost();
+        host.Loaded += Host_Loaded;
+        Player = new FlyleafMediaPlayerController(host);
+        return host;
+    }
+
+    private VideoView CreateVLC()
     {
         var view = new VideoView();
-        RootGrid.Children.Insert(0, view);
         view.Initialized += VLCInitialized;
+        return view;
     }
 
     private void VLCInitialized(object? sender, InitializedEventArgs e)
@@ -97,6 +121,19 @@ public sealed partial class MediaPlayerHost : UserControl
         DispatcherQueue.TryEnqueue(() =>
         {
             Player = new VlcMediaPlayerController(view, e.SwapChainOptions, TransportControls.AudioSelectionButton);
+        });
+    }
+
+    private void Host_Loaded(object sender, RoutedEventArgs e)
+    {
+        if(sender is not FlyleafHost host)
+        {
+            return;
+        }
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            Player = new FlyleafMediaPlayerController(host);
         });
     }
 

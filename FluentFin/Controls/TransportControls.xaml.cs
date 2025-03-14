@@ -84,6 +84,7 @@ public sealed partial class TransportControls : UserControl
 			.Throttle(TimeSpan.FromSeconds(200))
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
+		controller.SubtitleText.ObserveOn(RxApp.MainThreadScheduler).Subscribe(text => tc.Subtitles.Text = text);
     }
 
     public IObservable<Unit> OnDynamicSkip { get; }

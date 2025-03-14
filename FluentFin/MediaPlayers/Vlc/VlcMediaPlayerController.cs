@@ -68,6 +68,7 @@ namespace FluentFin.MediaPlayers.Vlc
         public IObservable<Unit> Stopped => _mp.Events().Stopped.Select(_ => Unit.Default);
         public IObservable<Unit> MediaLoaded => _mp.Events().MediaChanged.Select(_ => Unit.Default);
         public IObservable<double> VolumeChanged => _mp.Events().VolumeChanged.Select(e => e.Volume * 100d);
+        public IObservable<string> SubtitleText { get; } = Observable.Empty<string>();
 
 
         private void MediaParsed(object? sender, MediaParsedChangedEventArgs e)

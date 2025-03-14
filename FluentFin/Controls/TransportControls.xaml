@@ -84,6 +84,20 @@
                 </StackPanel>
             </Button>
 
+            <dwui:OutlineTextControl
+                x:Name="Subtitles"
+                Height="300"
+                VerticalAlignment="Bottom"
+                DashStyle="Solid"
+                FontColor="White"
+                FontSize="60"
+                FontWeight="ExtraBold"
+                OutlineColor="Black"
+                ShowNonOutlineText="True"
+                StrokeWidth="2"
+                Visibility="{x:Bind Subtitles.Text, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}" />
+
+
             <!--  Logo  -->
             <Grid
                 x:Name="TitleSection"

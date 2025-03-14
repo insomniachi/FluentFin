@@ -12,6 +12,7 @@
     mc:Ignorable="d">
 
     <controls:MediaPlayerHost
+        x:Name="MediaPlayerHost"
         IsSkipButtonVisible="{x:Bind ViewModel.IsSkipButtonVisible, Mode=OneWay}"
         MediaPlayerType="Vlc"
         Player="{x:Bind ViewModel.MediaPlayer, Mode=TwoWay}"

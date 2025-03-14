@@ -70,4 +70,14 @@ public static class MediaPlayerControllerExtensions
             controller.Play();
         }
     }
+
+    public static void SeekForward(this IMediaPlayerController controller, TimeSpan ts)
+    {
+        controller.SeekTo(controller.Position + ts);
+    }
+
+    public static void SeekBackward(this IMediaPlayerController controller, TimeSpan ts)
+    {
+        controller.SeekTo(controller.Position - ts);
+    }
 }

@@ -24,6 +24,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 	private readonly IJellyfinClient _jellyfinClient;
 	private readonly PlaybackProgressInfo _playbackProgressInfo = new();
 	private readonly ILogger<VideoPlayerViewModel> _logger;
+	private KeyboardMediaPlayerController? _keyboardController;
 
 	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 								TrickplayViewModel trickplayViewModel,
@@ -65,8 +66,6 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 				}
 			});
 
-		//MediaPlayer.Config.Player.KeyBindings.Remove(KeyBindingAction.ToggleSeekAccurate);
-		//MediaPlayer.Config.Player.KeyBindings.AddCustom(System.Windows.Input.Key.S, true, () => Skip(MediaPlayer.CurTime), "Skip media section");
 	}
 
 	public void SubscribeEvents(IMediaPlayerController mp)
@@ -194,6 +193,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
 	public PlaybackProgressInfo_PlayMethod PlayMethod { get; private set; }
 
+	public Action? ToggleFullScreen { get; set; }
+
 	public async Task OnNavigatedFrom()
 	{
 		_disposables.Dispose();
@@ -252,6 +253,9 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			.WhereNotNull()
 			.Subscribe(async mp =>
 			{
+                _keyboardController?.UnsubscribeEvents();
+				_keyboardController = new KeyboardMediaPlayerController(mp, Skip, ToggleFullScreen);
+
                 Playlist.AutoSelect();
                 await _jellyfinClient.Playing(dto);
             });

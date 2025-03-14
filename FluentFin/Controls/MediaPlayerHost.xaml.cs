@@ -176,7 +176,7 @@ public sealed partial class MediaPlayerHost : UserControl
         _pointerMoved.OnNext(Unit.Default);
     }
 
-    private void OnPlayerDoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+    public void OnPlayerDoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
     {
         var current = App.MainWindow.AppWindow.Presenter.Kind;
         var presenterKind = current == AppWindowPresenterKind.Overlapped ? AppWindowPresenterKind.FullScreen : AppWindowPresenterKind.Overlapped;

@@ -15,6 +15,7 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 
     public FlyleafMediaPlayerController(FlyleafHost host)
     {
+        _mp.Config.Player.KeyBindings.RemoveAll();
         host.Player = _mp;
     }
 

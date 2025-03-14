@@ -80,21 +80,20 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		//MediaPlayer.Config.Player.KeyBindings.AddCustom(System.Windows.Input.Key.S, true, () => Skip(MediaPlayer.CurTime), "Skip media section");
 	}
 
-	public void SetMediaPlayer(IVideoView view, string[] options, Button audioSelectionButton)
+	public void SubscribeEvents(IMediaPlayerController mp)
 	{
-		MediaPlayer = new VlcMediaPlayerController(view, options, audioSelectionButton);
-        MediaPlayer.Playing.Where(_ => _disposables.IsDisposed).Subscribe(_ => MediaPlayer.Stop());
-		MediaPlayer.Ended.Where(_ => Playlist.CanSelectNext).Subscribe(_ => Playlist.SelectNext());
-		MediaPlayer.Stopped.Subscribe(async _ => await _jellyfinClient.Stop());
-		MediaPlayer.Errored.Subscribe(async _ =>
+        mp.Playing.Where(_ => _disposables.IsDisposed).Subscribe(_ => mp.Stop());
+        mp.Ended.Where(_ => Playlist.CanSelectNext).Subscribe(_ => Playlist.SelectNext());
+        mp.Stopped.Subscribe(async _ => await _jellyfinClient.Stop());
+        mp.Errored.Subscribe(async _ =>
 		{
 			_logger.LogError("An error occurred while playing media");
 			await _jellyfinClient.Stop();
         });
-		MediaPlayer.PositionChanged
+        mp.PositionChanged
             .Where(_ => MediaPlayer?.State == MediaPlayerState.Playing)
             .Select(x => x.Ticks)
-            .Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))
+            .Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))	
             .DistinctUntilChanged()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(isVisible => IsSkipButtonVisible = isVisible);
@@ -253,6 +252,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		{
 			return;
 		}
+
+		this.WhenAnyValue(x => x.MediaPlayer).WhereNotNull().Subscribe(SubscribeEvents);
 
 		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
 

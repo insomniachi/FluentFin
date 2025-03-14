@@ -79,7 +79,11 @@ public sealed partial class TransportControls : UserControl
         });
         controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
 		controller.Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
-        controller.VolumeChanged.Where(e => e >= 0).ObserveOn(RxApp.MainThreadScheduler).Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
+        controller.VolumeChanged
+			.Where(e => e >= 0)
+			.Throttle(TimeSpan.FromSeconds(200))
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
     }
 
     public IObservable<Unit> OnDynamicSkip { get; }

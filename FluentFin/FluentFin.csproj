@@ -354,6 +354,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Controls\MediaPlayerHost.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Page Update="Views\JellyfinSettings\ServerConfigurationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

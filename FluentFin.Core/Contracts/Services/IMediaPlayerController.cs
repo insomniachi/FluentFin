@@ -9,7 +9,8 @@ public interface IMediaPlayerController : IDisposable
     void Pause();
     void Stop();
     void OpenExternalSubtitleTrack(string url);
-    void OpenInternalSubtitleTrack(int index);
+    void OpenInternalSubtitleTrack(int trackIndex, int subtitleIndex);
+    void DisableSubtitles();
     void OpenAudioTrack(int index);
     void SeekTo(TimeSpan timeSpan);
     IEnumerable<AudioTrack> GetAudioTracks();

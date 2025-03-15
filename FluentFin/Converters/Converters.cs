@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.MediaPlayers;
 using FluentFin.ViewModels;
@@ -109,67 +110,71 @@ public static class Converters
 			flyout.Items.Add(flyoutItem);
 		}
 
-		return flyout;
+        return flyout;
 	}
 
 	public static FlyoutBase? GetSubtitlesFlyout(IMediaPlayerController mp, MediaResponse response)
 	{
-        var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
-        var defaultSubtitleIndex = response?.MediaSourceInfo.DefaultSubtitleStreamIndex;
+		var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+		var defaultSubtitleIndex = response?.MediaSourceInfo.DefaultSubtitleStreamIndex;
 
-        if (subtitles.Count == 0)
-        {
-            return null;
-        }
+		if (subtitles.Count == 0)
+		{
+			return null;
+		}
 
-        var command = new RelayCommand<MediaStream>(stream =>
-        {
-            if (stream is null)
-            {
-                return;
-            }
+		var command = new RelayCommand<MediaStream>(stream =>
+		{
+			if (stream is null)
+			{
+				return;
+			}
 
-            if (stream.IsExternal == true)
-            {
-                var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+			if (stream.IsExternal == true)
+			{
+				var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
 				mp.OpenExternalSubtitleTrack(url);
-            }
-            else
-            {
-                var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
-                var index = internalSubtitleInfo.IndexOf(stream);
-				mp.OpenInternalSubtitleTrack(index);
-            }
-        });
-        var disableSubtitles = new RelayCommand(() =>
-        {
-			mp.OpenInternalSubtitleTrack(-1);
-        });
+			}
+			else
+			{
+				var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
+				if (stream.Index is not { } trackIndex)
+				{
+					return;
+				}
 
-        const string groupName = "Subtitles";
-        var flyout = new MenuBarItemFlyout();
-        flyout.Items.Add(new RadioMenuFlyoutItem
-        {
-            Text = "None",
-            GroupName = groupName,
-            Command = disableSubtitles,
-            IsChecked = response?.MediaSourceInfo.DefaultSubtitleStreamIndex is null
-        });
+				mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
+			}
+		});
+		var disableSubtitles = new RelayCommand(() =>
+		{
+			mp.DisableSubtitles();
+		});
 
-        foreach (var item in subtitles)
-        {
+		const string groupName = "Subtitles";
+		var flyout = new MenuBarItemFlyout();
+		flyout.Items.Add(new RadioMenuFlyoutItem
+		{
+			Text = "None",
+			GroupName = groupName,
+			Command = disableSubtitles,
+			IsChecked = response?.MediaSourceInfo.DefaultSubtitleStreamIndex is null
+		});
 
-            var flyoutItem = new RadioMenuFlyoutItem
-            {
-                Text = $"{item.DisplayTitle}",
-                GroupName = groupName,
-                IsChecked = item.Index == defaultSubtitleIndex,
-                Command = command,
-                CommandParameter = item
-            };
+		foreach (var item in subtitles)
+		{
 
-            flyout.Items.Add(flyoutItem);
-        }
+			var flyoutItem = new RadioMenuFlyoutItem
+			{
+				Text = $"{item.DisplayTitle}",
+				GroupName = groupName,
+				IsChecked = item.Index == defaultSubtitleIndex,
+				Command = command,
+				CommandParameter = item
+			};
+
+			flyout.Items.Add(flyoutItem);
+		}
 
         return flyout;
     }

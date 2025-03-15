@@ -26,7 +26,8 @@ namespace FluentFin.MediaPlayers
         }
 
         public void OpenExternalSubtitleTrack(string url) => _mp.AddSlave(MediaSlaveType.Subtitle, url, true);
-        public void OpenInternalSubtitleTrack(int index) => _mp.SetSpu(index);
+        public void OpenInternalSubtitleTrack(int trackIndex, int subtitleIndex) => _mp.SetSpu(trackIndex);
+        public void DisableSubtitles() => _mp.SetSpu(-1);
         public void OpenAudioTrack(int index) => _mp.SetAudioTrack(index);
         public void Pause() => _mp.Pause();
         public bool Play() => _mp.Play();

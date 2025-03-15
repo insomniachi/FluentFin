@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using FluentFin.Converters;
 using FluentFin.Core.Contracts.Services;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
@@ -12,9 +13,11 @@ namespace FluentFin.MediaPlayers
     {
         private readonly Windows.Media.Playback.MediaPlayer _mp = new();
         private Windows.Media.Playback.MediaPlaybackItem? _mediaItem;
+        private readonly Button _audioTracksButton;
 
-        public WindowsMediaPlayerController(MediaPlayerElement element)
+        public WindowsMediaPlayerController(MediaPlayerElement element, Button audioTracksButton)
         {
+            _audioTracksButton = audioTracksButton;
             element.AreTransportControlsEnabled = false;
             element.SetMediaPlayer(_mp);
         }
@@ -76,7 +79,7 @@ namespace FluentFin.MediaPlayers
             track.Resolved += Track_Resolved;
         }
 
-        public void OpenInternalSubtitleTrack(int index)
+        public void OpenInternalSubtitleTrack(int trackIndex, int subtitleIndex)
         {
             if(_mediaItem is null or { TimedMetadataTracks: null })
             {
@@ -84,14 +87,28 @@ namespace FluentFin.MediaPlayers
             }
 
             var timedMetadataTracks = _mediaItem.TimedMetadataTracks;
-            if (index >= 0 && index < timedMetadataTracks.Count)
+            if (subtitleIndex >= 0 && subtitleIndex < timedMetadataTracks.Count)
             {
                 foreach (var track in timedMetadataTracks.Index())
                 {
                     _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)track.Index, Windows.Media.Playback.TimedMetadataTrackPresentationMode.Disabled);
                 }
 
-                _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)index, Windows.Media.Playback.TimedMetadataTrackPresentationMode.PlatformPresented);
+                _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)subtitleIndex, Windows.Media.Playback.TimedMetadataTrackPresentationMode.PlatformPresented);
+            }
+        }
+
+        public void DisableSubtitles()
+        {
+            if (_mediaItem is null or { TimedMetadataTracks: null })
+            {
+                return;
+            }
+
+            var timedMetadataTracks = _mediaItem.TimedMetadataTracks;
+            foreach (var track in timedMetadataTracks.Index())
+            {
+                _mediaItem.TimedMetadataTracks.SetPresentationMode((uint)track.Index, Windows.Media.Playback.TimedMetadataTrackPresentationMode.Disabled);
             }
         }
 
@@ -107,6 +124,7 @@ namespace FluentFin.MediaPlayers
         {
             var source = MediaSource.CreateFromUri(uri);
             _mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
+            _mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() => _audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, defaultAudioIndex));
             _mp.Source = _mediaItem;
             _mp.Play();
             return true;

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
@@ -169,10 +170,14 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
             }
 			else
 			{
-				var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
-				var index = internalSubtitleInfo.IndexOf(stream);
-				mp.OpenInternalSubtitleTrack(index);
-			}
+                var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
+                if (stream.Index is not { } trackIndex)
+                {
+                    return;
+                }
+
+                mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
+            }
 		}
 		catch { }
     }

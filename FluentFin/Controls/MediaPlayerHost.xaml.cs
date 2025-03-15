@@ -107,7 +107,6 @@ public sealed partial class MediaPlayerHost : UserControl
     {
         var host = new FlyleafHost();
         host.Loaded += Host_Loaded;
-        Player = new FlyleafMediaPlayerController(host);
         return host;
     }
 
@@ -140,7 +139,7 @@ public sealed partial class MediaPlayerHost : UserControl
 
         DispatcherQueue.TryEnqueue(() =>
         {
-            Player = new FlyleafMediaPlayerController(host);
+            Player = new FlyleafMediaPlayerController(host, TransportControls.AudioSelectionButton);
         });
     }
 
@@ -153,7 +152,7 @@ public sealed partial class MediaPlayerHost : UserControl
 
         DispatcherQueue.TryEnqueue(() =>
         {
-            Player = new WindowsMediaPlayerController(element);
+            Player = new WindowsMediaPlayerController(element, TransportControls.AudioSelectionButton);
         });
     }
 

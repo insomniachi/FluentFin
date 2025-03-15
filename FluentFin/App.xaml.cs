@@ -235,12 +235,11 @@ public partial class App : Application
 		{
 			FFmpegDevices = false,    // Prevents loading avdevice/avfilter dll files. Enable it only if you plan to use dshow/gdigrab etc.
 			FFmpegPath = location ?? "FFmpeg",
-			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Trace,
-			LogLevel = FlyleafLib.LogLevel.Trace,
+			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Quiet,
+			LogLevel = FlyleafLib.LogLevel.Quiet,
 			UIRefresh = true,    // Required for Activity, BufferedDuration, Stats in combination with Config.Player.Stats = true
 			UIRefreshInterval = 250,      // How often (in ms) to notify the UI
 			UICurTimePerSecond = true,  // Whether to notify UI for CurTime only when it's second changed or by UIRefreshInterval
-			LogOutput = "Test.txt"
 		});
 	}
 }

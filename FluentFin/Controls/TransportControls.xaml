@@ -68,7 +68,6 @@
                 VerticalAlignment="Top"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind SkipCommand, Mode=OneWay}"
-                CommandParameter="{x:Bind Player.CurTime, Mode=OneWay}"
                 FontSize="20"
                 FontWeight="Bold"
                 Foreground="White"
@@ -96,8 +95,8 @@
                 OutlineColor="Black"
                 ShowNonOutlineText="True"
                 StrokeWidth="2"
-                Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}"
-                Visibility="{x:Bind Player.Subtitles.SubsText, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}" />
+                Visibility="{x:Bind Subtitles.Text, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}" />
+
 
             <!--  Logo  -->
             <Grid
@@ -190,10 +189,10 @@
 
                 <!--  Current Time | Slider | Remaining Time  -->
                 <TextBlock
+                    x:Name="TxtCurrentTime"
                     Grid.Column="0"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind c:Converters.TicksToTime(Player.CurTime), Mode=OneWay}" />
+                    VerticalAlignment="Center" />
 
                 <ctk:SwitchPresenter
                     Grid.Column="1"
@@ -212,19 +211,16 @@
                             Margin="10,0,10,0"
                             VerticalAlignment="Center"
                             IsTabStop="False"
-                            Maximum="{x:Bind c:Converters.TicksToSeconds(Player.Duration), Mode=OneWay}"
                             PointerExited="TimeSlider_PointerExited"
-                            PointerMoved="TimeSlider_PointerEntered"
-                            Value="{x:Bind c:Converters.TicksToSeconds(Player.CurTime), Mode=OneWay}" />
+                            PointerMoved="TimeSlider_PointerEntered" />
                     </ctk:Case>
                 </ctk:SwitchPresenter>
 
                 <TextBlock
-                    x:Name="TxtCurrentTime"
+                    x:Name="TxtRemainingTime"
                     Grid.Column="2"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind TimeRemaining(Player.CurTime, Player.Duration), Mode=OneWay}" />
+                    VerticalAlignment="Center" />
             </Grid>
 
             <Grid Grid.Row="1" Margin="8">
@@ -255,9 +251,8 @@
 
                     <AppBarButton
                         x:Name="PlayPauseButton"
-                        Command="{x:Bind Player.Commands.TogglePlayPause, Mode=OneWay}"
-                        Icon="{x:Bind Player.Status, Converter={StaticResource PlayPauseIconConveter}, Mode=OneWay}"
-                        IsEnabled="{x:Bind Player.CanPlay, Mode=OneWay}"
+                        Click="PlayPauseButton_Click"
+                        Content="{ui:SymbolIcon Symbol=Play}"
                         IsTabStop="False"
                         Label="Play/Pause" />
 
@@ -331,7 +326,6 @@
                     <AppBarButton
                         x:Name="FullWindowButton"
                         x:FieldModifier="Public"
-                        Command="{x:Bind Player.Commands.ToggleFullScreen, Mode=OneWay}"
                         IsTabStop="False"
                         Label="Toggle Fullscreen">
                         <AppBarButton.Icon>
@@ -348,10 +342,11 @@
                         <AppBarButton.Flyout>
                             <Flyout>
                                 <Slider
+                                    x:Name="VolumeSlider"
                                     Width="100"
                                     IsTabStop="False"
-                                    Maximum="{x:Bind Player.Config.Player.VolumeMax, Mode=OneWay}"
-                                    Value="{x:Bind Player.Audio.Volume, Mode=TwoWay}" />
+                                    Maximum="100"
+                                    Minimum="0" />
                             </Flyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
@@ -360,7 +355,7 @@
 
                     <AppBarButton
                         x:Name="CCSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Player.Subtitles.Streams, Playlist.SelectedItem.Media), Mode=OneWay}"
+                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Playlist.SelectedItem.Media), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1E;}"
                         IsTabStop="False"
                         Label="Subtitles"
@@ -368,7 +363,7 @@
 
                     <AppBarButton
                         x:Name="AudioSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetAudiosFlyout(Player, Player.Audio.Streams), Mode=OneWay}"
+                        x:FieldModifier="Public"
                         Icon="{ui:FontIcon Glyph=&#xED1F;}"
                         IsTabStop="False"
                         Label="Audio"

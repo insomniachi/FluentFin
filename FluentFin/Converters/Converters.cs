@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.MediaPlayers;
 using FluentFin.ViewModels;
 using Flurl;
-using FlyleafLib.MediaFramework.MediaStream;
-using FlyleafLib.MediaPlayer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Web;
 using Windows.Foundation;
 
@@ -30,8 +29,9 @@ public static class Converters
 	public static double TicksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static string MsToTime(long ms) => TimeSpan.FromMilliseconds(ms).ToString("hh\\:mm\\:ss");
 
-	public static string DateTimeOffsetToString(DateTimeOffset? offset)
+    public static string DateTimeOffsetToString(DateTimeOffset? offset)
 	{
 		if(offset is null)
 		{
@@ -82,23 +82,17 @@ public static class Converters
 		return new BitmapImage(uri);
 	}
 
-	public static FlyoutBase? GetAudiosFlyout(Player player, IList<AudioStream> audios)
+	public static FlyoutBase? GetAudiosFlyout(IMediaPlayerController player, int defaultIndex)
 	{
-		if (audios is null || player is null)
+        var audios = player.GetAudioTracks().ToList();
+
+		if(audios.Count < 2)
 		{
 			return null;
 		}
 
-		if (audios.Count < 2)
-		{
-			return null;
-		}
-
-		const string groupName = "Audios";
-		var command = new RelayCommand<AudioStream>(stream =>
-		{
-			player.Open(stream);
-		});
+        const string groupName = "Audios";
+		var command = new RelayCommand<AudioTrack>(track => player.OpenAudioTrack(track.Id));
 
 		var flyout = new MenuBarItemFlyout();
 
@@ -106,9 +100,9 @@ public static class Converters
 		{
 			var flyoutItem = new RadioMenuFlyoutItem
 			{
-				Text = $"{item.Language} ({item.Codec})",
+				Text = $"{item.Language} ({item.Name})",
 				GroupName = groupName,
-				IsChecked = item.Enabled,
+				IsChecked = item.Id == defaultIndex,
 				Command = command,
 				CommandParameter = item
 			};
@@ -116,10 +110,10 @@ public static class Converters
 			flyout.Items.Add(flyoutItem);
 		}
 
-		return flyout;
+        return flyout;
 	}
 
-	public static FlyoutBase? GetSubtitlesFlyout(Player player, IList<SubtitlesStream> internalSubtitles, MediaResponse response)
+	public static FlyoutBase? GetSubtitlesFlyout(IMediaPlayerController mp, MediaResponse response)
 	{
 		var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
 		var defaultSubtitleIndex = response?.MediaSourceInfo.DefaultSubtitleStreamIndex;
@@ -129,7 +123,6 @@ public static class Converters
 			return null;
 		}
 
-		const string groupName = "Subtitles";
 		var command = new RelayCommand<MediaStream>(stream =>
 		{
 			if (stream is null)
@@ -139,24 +132,26 @@ public static class Converters
 
 			if (stream.IsExternal == true)
 			{
-				player.Config.Subtitles.Enabled = true;
 				var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
-
-				MethodInfo? dynMethod = player.GetType().GetMethod("OpenSubtitles", BindingFlags.NonPublic | BindingFlags.Instance);
-				dynMethod?.Invoke(player, [url]);
+				mp.OpenExternalSubtitleTrack(url);
 			}
 			else
 			{
-				var internalSubtitleInfo = subtitles.Where(x => x.IsExternal is false or null).ToList();
-				var index = internalSubtitleInfo.IndexOf(stream);
-				player.Open(internalSubtitles[index]);
+				var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
+				if (stream.Index is not { } trackIndex)
+				{
+					return;
+				}
+
+				mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
 			}
 		});
 		var disableSubtitles = new RelayCommand(() =>
 		{
-			player.Config.Subtitles.Enabled = false;
+			mp.DisableSubtitles();
 		});
 
+		const string groupName = "Subtitles";
 		var flyout = new MenuBarItemFlyout();
 		flyout.Items.Add(new RadioMenuFlyoutItem
 		{
@@ -181,8 +176,8 @@ public static class Converters
 			flyout.Items.Add(flyoutItem);
 		}
 
-		return flyout;
-	}
+        return flyout;
+    }
 
 	public static string AccessScheduleToString(AccessSchedule schedule)
 	{

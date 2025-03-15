@@ -1,12 +1,10 @@
 using CommunityToolkit.WinUI;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
-using FlyleafLib.MediaFramework.MediaStream;
-using FlyleafLib.MediaPlayer;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
-using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -19,8 +17,10 @@ namespace FluentFin.Controls;
 public sealed partial class TransportControls : UserControl
 {
 	private readonly Subject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _onPointerMoved = new();
+	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
+	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
-	[GeneratedDependencyProperty]
+    [GeneratedDependencyProperty]
 	public partial bool IsSkipButtonVisible { get; set; }
 
 	[GeneratedDependencyProperty]
@@ -33,13 +33,13 @@ public sealed partial class TransportControls : UserControl
 	[GeneratedDependencyProperty]
 	public partial TrickplayViewModel Trickplay { get; set; }
 
-	public Player Player
+	public IMediaPlayerController Player
 	{
 		get
 		{
 			try
 			{
-				return (Player)GetValue(PlayerProperty);
+				return (IMediaPlayerController)GetValue(PlayerProperty);
 			}
 			catch
 			{
@@ -50,7 +50,41 @@ public sealed partial class TransportControls : UserControl
 	}
 
 	public static readonly DependencyProperty PlayerProperty =
-		DependencyProperty.Register("Player", typeof(Player), typeof(TransportControls), new PropertyMetadata(null));
+        DependencyProperty.Register("Player", typeof(IMediaPlayerController), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
+
+    private static void OnPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+		var tc = (TransportControls)d;
+		if(e.NewValue is not IMediaPlayerController controller)
+		{
+			return;
+		}
+
+		TimeSpan duration = TimeSpan.Zero;
+		controller.DurationChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+			tc.TimeSlider.Maximum = e.TotalMilliseconds;
+			duration = e;
+		});
+		controller.PositionChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+			try
+			{
+				tc.TimeSlider.Value = e.TotalMilliseconds;
+				tc.TxtCurrentTime.Text = Converters.Converters.TimeSpanToString(e);
+				tc.TxtRemainingTime.Text = TimeRemaining(e, duration);
+			}
+			catch { }
+        });
+        controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
+		controller.Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
+        controller.VolumeChanged
+			.Where(e => e >= 0)
+			.Throttle(TimeSpan.FromSeconds(200))
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
+		controller.SubtitleText.ObserveOn(RxApp.MainThreadScheduler).Subscribe(text => tc.Subtitles.Text = text);
+    }
 
     public IObservable<Unit> OnDynamicSkip { get; }
 
@@ -60,11 +94,12 @@ public sealed partial class TransportControls : UserControl
 
 		OnDynamicSkip = DynamicSkipIntroButton.Events().Click.Select(_ => Unit.Default);
 
+
 		TimeSlider
 			.Events()
 			.ValueChanged
-			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TicksToSeconds(Player.CurTime)) > 1)
-			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
+			.Where(x => Math.Abs(x.NewValue - Player.Position.TotalMilliseconds) > 1000)
+			.Subscribe(x => Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue)));
 
 		_onPointerMoved
 			.ObserveOn(RxApp.MainThreadScheduler)
@@ -80,62 +115,34 @@ public sealed partial class TransportControls : UserControl
 
 				var point = e.GetCurrentPoint(TimeSlider);
 				var globalPoint = e.GetCurrentPoint(this);
-				Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
+				Trickplay.Position = TimeSpan.FromMilliseconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
 
 				var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
 				var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
 				TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 			});
+
+		VolumeSlider.Events()
+			.ValueChanged
+			.Where(_ => Player is not null)
+			.Subscribe(x => Player.Volume = (int)x.NewValue);
 	}
 
-	public string TimeRemaining(long currentTime, long duration)
+	private static string TimeRemaining(TimeSpan currentTime, TimeSpan duration)
 	{
-		var remaining = duration - currentTime;
-		return new TimeSpan(remaining).ToString("hh\\:mm\\:ss");
+		return (duration - currentTime).ToString("hh\\:mm\\:ss");
 	}
 
 	private void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = new TimeSpan(Player.CurTime) - TimeSpan.FromSeconds(10);
-		Player.SeekAccurate((int)ts.TotalMilliseconds);
+		var ts = Player.Position - TimeSpan.FromSeconds(10);
+		Player.SeekTo(ts);
 	}
 
 	private void SkipForwardButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = new TimeSpan(Player.CurTime) + TimeSpan.FromSeconds(30);
-		Player.SeekAccurate((int)ts.TotalMilliseconds);
-	}
-
-
-	public void UpdateSubtitleFlyout(ObservableCollection<SubtitlesStream> streams)
-	{
-		var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		flyout.Items.Clear();
-		for (int i = 0; i < streams.Count; i++)
-		{
-			var item = new RadioMenuFlyoutItem
-			{
-				Text = streams[i].Title,
-				IsChecked = i == 0,
-			};
-			item.Click += Item_Click;
-
-			flyout.Items.Add(item);
-		}
-	}
-
-	private void Item_Click(object sender, RoutedEventArgs e)
-	{
-		var title = ((RadioMenuFlyoutItem)sender).Text;
-		var stream = Player.Subtitles.Streams.FirstOrDefault(x => x.Title == title);
-
-		if (stream is null)
-		{
-			return;
-		}
-
-		var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		Player.OpenAsync(stream);
+		var ts = Player.Position + TimeSpan.FromSeconds(30);
+		Player.SeekTo(ts);
 	}
 
 	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -161,6 +168,11 @@ public sealed partial class TransportControls : UserControl
     private void Grid_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
 		TrickplayTip.IsOpen = false;
+    }
+
+    private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+    {
+		Player.TogglePlayPlause();
     }
 }
 

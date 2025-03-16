@@ -63,7 +63,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri GetSplashScreen();
 
-		Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
+		Task<List<SessionInfoDto>> GetControllableSessions();
+
+        Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
 
 		Task Playing(BaseItemDto dto);
 
@@ -174,7 +176,10 @@ namespace FluentFin.Core.Contracts.Services
 		Task<List<TaskInfo>> GetScheduledTasks();
 
 		Task RunScheduledTask(string id);
-	}
+
+		Task PlayOnSession(string sessionId, params IEnumerable<Guid?> itemIds);
+
+    }
 
 	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);
 

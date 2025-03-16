@@ -1,10 +1,11 @@
 ﻿using DynamicData;
-using FluentFin.Converters;
+using FluentFin.Controls;
 using FluentFin.Core.Contracts.Services;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using System.Reactive;
 using System.Reactive.Linq;
+using Windows.Media.Casting;
 using Windows.Media.Core;
 
 namespace FluentFin.MediaPlayers

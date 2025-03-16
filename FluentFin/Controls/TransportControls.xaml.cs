@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml;
@@ -9,6 +10,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+using Windows.Media.Casting;
 
 
 namespace FluentFin.Controls;
@@ -173,6 +175,18 @@ public sealed partial class TransportControls : UserControl
     private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
     {
 		Player.TogglePlayPlause();
+    }
+
+    private async void CastButton_Click(object sender, RoutedEventArgs e)
+    {
+		var jellyfinClient = App.GetService<IJellyfinClient>();
+		var sessions = await jellyfinClient.GetControllableSessions();
+
+		if(sessions.FirstOrDefault(x => x.Id == SessionInfo.SessionId) is { } session && session.NowPlayingItem is { } dto)
+		{
+			Player.Stop();
+			App.Dialogs.PlayOnSessionCommand.Execute(dto);
+		}
     }
 }
 

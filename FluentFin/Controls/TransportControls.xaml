@@ -354,6 +354,13 @@
                     <AppBarSeparator />
 
                     <AppBarButton
+                        x:Name="CastButton"
+                        Click="CastButton_Click"
+                        Icon="{ui:FontIcon Glyph=&#xEC16;}"
+                        IsTabStop="False"
+                        Label="Cast" />
+
+                    <AppBarButton
                         x:Name="CCSelectionButton"
                         Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Playlist.SelectedItem.Media), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1E;}"

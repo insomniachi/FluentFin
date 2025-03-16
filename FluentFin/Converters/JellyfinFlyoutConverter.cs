@@ -126,7 +126,15 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Command = App.Commands.PlayDtoCommand,
 				CommandParameter = dto
 			};
-		}
+
+            yield return new MenuFlyoutItem
+            {
+                Text = "Play On",
+                Icon = new FontIcon { Glyph = "\uE8AF" },
+                Command = App.Dialogs.PlayOnSessionCommand,
+                CommandParameter = dto
+            };
+        }
 
 		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{

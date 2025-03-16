@@ -166,7 +166,29 @@ public partial class JellyfinClient
 		}
 	}
 
-	public Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution)
+	public async Task<List<SessionInfoDto>> GetControllableSessions()
+	{
+		try
+		{
+			return await _jellyfinApiClient.Sessions.GetAsync(x => x.QueryParameters.ControllableByUserId = UserId) ?? [];
+		}
+		catch (Exception ex)
+        {
+            logger.LogError(ex, @"Unhandled exception");
+            return [];
+        }
+	}
+
+    public async Task PlayOnSession(string sessionId, params IEnumerable<Guid?> items)
+    {
+        await _jellyfinApiClient.Sessions[sessionId].Playing.PostAsync(x =>
+        {
+            x.QueryParameters.ItemIds = [.. items];
+            x.QueryParameters.PlayCommand = Jellyfin.Sdk.Generated.Sessions.Item.Playing.PlayCommand.PlayNow;
+        });
+    }
+
+    public Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution)
 	{
 		return new Uri(HttpUtility.HtmlDecode(BaseUrl.AppendPathSegment($"/Videos/{dto?.Id}/Trickplay/{resolution}/{index}.jpg").AppendQueryParam("api_key", _token).ToString()));
 	}

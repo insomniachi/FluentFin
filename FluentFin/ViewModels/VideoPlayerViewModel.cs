@@ -8,6 +8,7 @@ using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Core.WebSockets;
+using FluentFin.Helpers;
 using FluentFin.Services;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
@@ -71,7 +72,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 				}
 			});
 
-	}
+        NativeMethods.PreventSleep();
+    }
 
 	public void SubscribeEvents(IMediaPlayerController mp)
 	{
@@ -216,7 +218,9 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		await _jellyfinClient.Stop();
+        NativeMethods.AllowSleep();
+
+        await _jellyfinClient.Stop();
 
 		if(MediaPlayer is null)
 		{

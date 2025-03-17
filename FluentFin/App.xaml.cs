@@ -187,9 +187,16 @@ public partial class App : Application
 		Build();
 
 		UnhandledException += App_UnhandledException;
-	}
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+    }
 
-	private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+    {
+        NativeMethods.AllowSleep();
+        GetService<ILogger<App>>().LogError($"{e.ExceptionObject}");
+    }
+
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
 		GetService<ILogger<App>>().LogError(e.Exception, "Unhandled exception");
 		e.Handled = true;

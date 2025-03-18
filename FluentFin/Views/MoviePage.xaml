@@ -444,6 +444,7 @@
                                 <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
                                     <controls:BaseItemDtoCard
                                         Width="200"
+                                        BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Primary, 300)}"
                                         ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 300)}"
                                         JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                         Model="{x:Bind}" />

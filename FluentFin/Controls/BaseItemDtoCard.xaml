@@ -94,10 +94,10 @@
             </i:Interaction.Behaviors>
 
             <Grid>
-                <controls:LoadingImage
-                    Glyph="{x:Bind Glyph}"
-                    Source="{x:Bind ImageSource, Mode=OneWay}"
-                    Stretch="UniformToFill" />
+                <controls:LazyLoadedImage
+                    BlurHashImageSource="{x:Bind BlurHashImageSource}"
+                    EnableBlurHash="True"
+                    ImageSource="{x:Bind ImageSource}" />
 
                 <media:UIElementExtensions.VisualFactory>
                     <media:PipelineVisualFactory>

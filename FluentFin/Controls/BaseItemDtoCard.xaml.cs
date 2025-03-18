@@ -4,6 +4,7 @@ using FluentFin.Core.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 
 namespace FluentFin.Controls;
@@ -16,7 +17,10 @@ public sealed partial class BaseItemDtoCard : UserControl
 	[GeneratedDependencyProperty]
 	public partial BaseItemViewModel? Model { get; set; }
 
-	[GeneratedDependencyProperty(DefaultValue = "\uE8B9")]
+    [GeneratedDependencyProperty]
+    public partial WriteableBitmap? BlurHashImageSource { get; set; }
+
+    [GeneratedDependencyProperty(DefaultValue = "\uE8B9")]
 	public partial string Glyph { get; set; }
 
 	[GeneratedDependencyProperty]

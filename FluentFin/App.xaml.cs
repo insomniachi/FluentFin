@@ -24,7 +24,6 @@ using Serilog;
 using System.Reactive.Subjects;
 using System.Reflection;
 using Windows.ApplicationModel;
-using Windows.Storage;
 
 namespace FluentFin;
 

@@ -26,12 +26,12 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind Header, Mode=OneWay}"
+                HorizontalAlignment="Left"
                 PointerEntered="TextBlock_PointerEntered"
                 PointerExited="TextBlock_PointerExited"
                 PointerReleased="TextBlock_PointerReleased"
-                HorizontalAlignment="Left"/>
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="{x:Bind Header, Mode=OneWay}" />
 
             <StackPanel
                 Grid.Column="1"
@@ -74,6 +74,7 @@
                             <local:BaseItemDtoCard
                                 Width="225"
                                 Height="385"
+                                BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Thumb, 302)}"
                                 ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 302)}"
                                 JellyfinClient="{Binding ElementName=Page, Path=JellyfinClient}"
                                 Model="{x:Bind}" />

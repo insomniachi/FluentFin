@@ -2,6 +2,7 @@
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
+using FluentFin.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core;
@@ -10,9 +11,16 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 									IJellyfinClient jellyfinClient)
 {
 	[RelayCommand]
-	public void PlayDto(BaseItemDto dto)
+	public async Task PlayDto(BaseItemDto dto)
 	{
-		navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
+        if (string.IsNullOrEmpty(SessionInfo.RemoteSessionId) || SessionInfo.SessionId == SessionInfo.RemoteSessionId)
+        {
+            navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
+        }
+		else
+		{
+			await jellyfinClient.PlayOnSession(SessionInfo.RemoteSessionId, await GetItemIds(dto));
+		}
 	}
 
 	[RelayCommand]
@@ -56,4 +64,27 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	{
 		await jellyfinClient.DeleteItem(dto);
 	}
+
+    private async Task<List<Guid?>> GetItemIds(BaseItemDto dto)
+    {
+        var playlist = dto.Type switch
+        {
+            BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(dto),
+            BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(jellyfinClient, dto),
+            BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(jellyfinClient, dto),
+            BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(jellyfinClient, dto),
+            _ => new PlaylistViewModel()
+        };
+
+        playlist.AutoSelect();
+
+        if (playlist.SelectedItem is null)
+        {
+            return [];
+        }
+
+        var index = playlist.Items.IndexOf(playlist.SelectedItem);
+        return [.. playlist.Items.Skip(index).Select(x => x.Dto.Id)];
+    }
+
 }

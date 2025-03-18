@@ -83,83 +83,94 @@
             </AutoSuggestBox>
         </TitleBar.CenterContent>
         <TitleBar.RightContent>
-            <Button
-                Width="32"
-                Height="32"
-                Padding="0"
+            <StackPanel
                 HorizontalAlignment="Right"
-                BorderBrush="{ThemeResource CircleElevationBorderBrush}"
-                CornerRadius="16"
-                ToolTipService.ToolTip="{x:Bind ViewModel.User.Name}"
-                Visibility="{x:Bind ViewModel.User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
-                <PersonPicture
+                Orientation="Horizontal"
+                Spacing="10">
+                <Button
                     Width="32"
                     Height="32"
-                    DisplayName="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
-                <Button.Flyout>
-                    <Flyout
-                        x:Name="FooterFlyout"
-                        AreOpenCloseAnimationsEnabled="True"
-                        LightDismissOverlayMode="On"
-                        Placement="BottomEdgeAlignedRight">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+                    Padding="0"
+                    HorizontalAlignment="Right"
+                    BorderBrush="{ThemeResource CircleElevationBorderBrush}"
+                    CornerRadius="16"
+                    ToolTipService.ToolTip="{x:Bind ViewModel.User.Name}"
+                    Visibility="{x:Bind ViewModel.User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                    <PersonPicture
+                        Width="32"
+                        Height="32"
+                        DisplayName="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
+                    <Button.Flyout>
+                        <Flyout
+                            x:Name="FooterFlyout"
+                            AreOpenCloseAnimationsEnabled="True"
+                            LightDismissOverlayMode="On"
+                            Placement="BottomEdgeAlignedRight">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
 
-                            <Grid ColumnSpacing="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <PersonPicture
-                                    Width="48"
-                                    Height="48"
-                                    DisplayName="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
+                                <Grid ColumnSpacing="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <PersonPicture
+                                        Width="48"
+                                        Height="48"
+                                        DisplayName="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                        Text="{x:Bind ViewModel.User.Name, Mode=OneWay}" />
+                                </Grid>
+
+                                <MenuFlyoutSeparator Grid.Row="1" Margin="{StaticResource XSmallTopBottomMargin}" />
+
+                                <StackPanel Grid.Row="2">
+                                    <lc:MenuFlyoutButton
+                                        HorizontalAlignment="Stretch"
+                                        AllowFocusOnInteraction="False"
+                                        Click="CloseTitleBarFooterFlyout"
+                                        Command="{x:Bind ViewModel.GoToDashboardCommand}"
+                                        Content="Dashboard"
+                                        Icon="{ui:FontIcon Glyph=&#xE713;}"
+                                        Visibility="{x:Bind ViewModel.User.Policy.IsAdministrator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <lc:MenuFlyoutButton
+                                        HorizontalAlignment="Stretch"
+                                        Click="CloseTitleBarFooterFlyout"
+                                        Command="{x:Bind root:App.Dialogs.ChangeDefaultSessionCommand}"
+                                        Content="Play On"
+                                        Icon="{ui:SymbolIcon Symbol=Remote}" />
+                                    <lc:MenuFlyoutButton
+                                        HorizontalAlignment="Stretch"
+                                        Click="CloseTitleBarFooterFlyout"
+                                        Command="{x:Bind ViewModel.LogoutCommand}"
+                                        Content="Logout"
+                                        Icon="{ui:FontIcon Glyph=&#xF3B1;}" />
+                                    <lc:MenuFlyoutButton
+                                        HorizontalAlignment="Stretch"
+                                        Click="CloseTitleBarFooterFlyout"
+                                        Command="{x:Bind ViewModel.SwitchUserCommand}"
+                                        Content="Switch user"
+                                        Icon="{ui:FontIcon Glyph=&#xE748;}" />
+                                    <lc:MenuFlyoutButton
+                                        HorizontalAlignment="Stretch"
+                                        Click="CloseTitleBarFooterFlyout"
+                                        Command="{x:Bind root:App.Dialogs.QuickConnectAuthCommand}"
+                                        Content="Quick Connect"
+                                        Icon="{ui:FontIcon Glyph=&#xE703;}" />
+                                </StackPanel>
+
                             </Grid>
-
-                            <MenuFlyoutSeparator Grid.Row="1" Margin="{StaticResource XSmallTopBottomMargin}" />
-
-                            <StackPanel Grid.Row="2">
-                                <lc:MenuFlyoutButton
-                                    HorizontalAlignment="Stretch"
-                                    AllowFocusOnInteraction="False"
-                                    Click="CloseTitleBarFooterFlyout"
-                                    Command="{x:Bind ViewModel.GoToDashboardCommand}"
-                                    Content="Dashboard"
-                                    Icon="{ui:FontIcon Glyph=&#xE713;}"
-                                    Visibility="{x:Bind ViewModel.User.Policy.IsAdministrator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <lc:MenuFlyoutButton
-                                    HorizontalAlignment="Stretch"
-                                    Click="CloseTitleBarFooterFlyout"
-                                    Command="{x:Bind ViewModel.LogoutCommand}"
-                                    Content="Logout"
-                                    Icon="{ui:FontIcon Glyph=&#xF3B1;}" />
-                                <lc:MenuFlyoutButton
-                                    HorizontalAlignment="Stretch"
-                                    Click="CloseTitleBarFooterFlyout"
-                                    Command="{x:Bind ViewModel.SwitchUserCommand}"
-                                    Content="Switch user"
-                                    Icon="{ui:FontIcon Glyph=&#xE748;}" />
-                                <lc:MenuFlyoutButton
-                                    HorizontalAlignment="Stretch"
-                                    Click="CloseTitleBarFooterFlyout"
-                                    Command="{x:Bind root:App.Dialogs.QuickConnectAuthCommand}"
-                                    Content="Quick Connect"
-                                    Icon="{ui:FontIcon Glyph=&#xE703;}" />
-                            </StackPanel>
-
-                        </Grid>
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
         </TitleBar.RightContent>
     </TitleBar>
 

@@ -130,8 +130,16 @@ public partial class DialogCommands(IContentDialogService dialogService,
         await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
     }
 
+    [RelayCommand]
+    private async Task ChangeDefaultSession()
+    {
+        var vm = App.GetService<SessionPickerViewModel>();
+        await vm.Initialize();
+        await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+    }
 
-	public static async Task<bool> DeleteLibraryDialog(string name)
+
+    public static async Task<bool> DeleteLibraryDialog(string name)
 	{
 		var dialog = new ContentDialog
 		{

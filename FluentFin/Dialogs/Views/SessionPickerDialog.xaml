@@ -17,24 +17,25 @@
     DefaultButton="Primary"
     PrimaryButtonCommand="{x:Bind ViewModel.PlayOnSessionCommand}"
     PrimaryButtonCommandParameter="{x:Bind ItemsView.SelectedItem, Mode=OneWay}"
-    PrimaryButtonText="Play"
+    PrimaryButtonText="Select"
     Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
     mc:Ignorable="d">
 
-    <ItemsView
+    <ListView
         x:Name="ItemsView"
         ItemsSource="{x:Bind ViewModel.Sessions, Mode=OneWay}"
+        SelectedItem="{x:Bind ViewModel.SelectedSesion, Mode=TwoWay}"
         SelectionMode="Single">
-        <ItemsView.ItemTemplate>
+        <ListView.ItemTemplate>
             <DataTemplate x:DataType="jm:SessionInfoDto">
-                <ItemContainer Margin="0,5" Background="{ThemeResource ContentDialogSmokeFill}">
+                <Border Margin="0,5" Background="{ThemeResource ContentDialogSmokeFill}">
                     <StackPanel Padding="10" Spacing="5">
                         <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="{x:Bind Client}" />
                         <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind UserName}" />
                     </StackPanel>
-                </ItemContainer>
+                </Border>
             </DataTemplate>
-        </ItemsView.ItemTemplate>
-    </ItemsView>
+        </ListView.ItemTemplate>
+    </ListView>
 
 </ContentDialog>

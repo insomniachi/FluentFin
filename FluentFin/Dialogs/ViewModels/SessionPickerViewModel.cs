@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
@@ -13,12 +14,21 @@ public partial class SessionPickerViewModel(IJellyfinClient jellyfinClient) : Ob
     [ObservableProperty]
     public partial List<SessionInfoDto> Sessions { get; set; } = [];
 
+    [ObservableProperty]
+    public partial SessionInfoDto? SelectedSesion { get; set; }
+
     public bool CanClose { get; set; }
 
     public async Task Initialize(BaseItemDto dto)
     {
         Sessions = await jellyfinClient.GetControllableSessions();
         _itemIds = await GetItemIds(dto);
+    }
+
+    public async Task Initialize()
+    {
+        Sessions = await jellyfinClient.GetControllableSessions();
+        SelectedSesion = Sessions.FirstOrDefault(x => x.Id == SessionInfo.RemoteSessionId);
     }
 
     [RelayCommand]
@@ -29,7 +39,14 @@ public partial class SessionPickerViewModel(IJellyfinClient jellyfinClient) : Ob
             return;
         }
 
-        await jellyfinClient.PlayOnSession(session.Id, _itemIds);
+        if(_itemIds.Any())
+        {
+            await jellyfinClient.PlayOnSession(session.Id, _itemIds);
+        }
+        else
+        {
+            SessionInfo.RemoteSessionId = session.Id;
+        }
     }
 
     private async Task<List<Guid?>> GetItemIds(BaseItemDto dto)

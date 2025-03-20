@@ -37,7 +37,7 @@
                     HorizontalAlignment="Center"
                     Style="{ThemeResource BodyStrongTextBlockStyle}"
                     Text="Start Time" />
-                <dw:Clock SelectedTime="{x:Bind ViewModel.StartTime, Mode=TwoWay}" />
+                <dw:Clock SelectedTime="{x:Bind ViewModel.StartTime, Mode=TwoWay}" TimeFormat="HH:mm" />
             </StackPanel>
 
             <StackPanel Grid.Column="1">
@@ -45,7 +45,7 @@
                     HorizontalAlignment="Center"
                     Style="{ThemeResource BodyStrongTextBlockStyle}"
                     Text="End Time" />
-                <dw:Clock SelectedTime="{x:Bind ViewModel.EndTime, Mode=TwoWay}" />
+                <dw:Clock SelectedTime="{x:Bind ViewModel.EndTime, Mode=TwoWay}" TimeFormat="HH:mm" />
             </StackPanel>
         </Grid>
     </StackPanel>

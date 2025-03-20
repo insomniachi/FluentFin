@@ -38,9 +38,9 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 
 		Ratings = [null, .. await jellyfinClient.GetParentalRatings()];
 		MaximumAllowedRating = Ratings.FirstOrDefault(x => x?.Value == policy.MaxParentalRating);
-		AllowedTags = new ObservableCollection<string>(policy.AllowedTags ?? []);
-		BlockedTags = new ObservableCollection<string>(policy.BlockedTags ?? []);
-		AccessSchedules = new ObservableCollection<AccessSchedule>(policy.AccessSchedules ?? []);
+		AllowedTags = [.. policy.AllowedTags ?? []];
+		BlockedTags = [.. policy.BlockedTags ?? []];
+		AccessSchedules = [.. policy.AccessSchedules ?? []];
 
 		BlockUnratedItems.Clear();
 		foreach (var value in Enum.GetValues<UnratedItem>())

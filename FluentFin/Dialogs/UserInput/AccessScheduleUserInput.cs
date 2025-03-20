@@ -19,9 +19,9 @@ public partial class AccessScheduleUserInput(IContentDialogService dialogService
 			return new AccessSchedule
 			{
 				DayOfWeek = vm.DayOfWeek,
-				StartHour = vm.StartTime?.TotalHours,
-				EndHour = vm.EndTime?.TotalHours
-			};
+				StartHour = vm.StartTime.TimeOfDay.TotalHours,
+				EndHour = vm.EndTime.TimeOfDay.TotalHours
+            };
 		}
 
 		return null;

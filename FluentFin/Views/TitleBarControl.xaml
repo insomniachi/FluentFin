@@ -45,7 +45,7 @@
         <TitleBar.IconSource>
             <ImageIconSource ImageSource="/Assets/icons8-jellyfin-color-hand-drawn-70.png" />
         </TitleBar.IconSource>
-        <TitleBar.CenterContent>
+        <TitleBar.Content>
             <AutoSuggestBox
                 Width="600"
                 Margin="{StaticResource XSmallTopBottomMargin}"
@@ -81,8 +81,8 @@
                     </ItemsPanelTemplate>
                 </AutoSuggestBox.ItemsPanel>
             </AutoSuggestBox>
-        </TitleBar.CenterContent>
-        <TitleBar.RightContent>
+        </TitleBar.Content>
+        <TitleBar.RightHeader>
             <StackPanel
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"
@@ -171,7 +171,7 @@
                     </Button.Flyout>
                 </Button>
             </StackPanel>
-        </TitleBar.RightContent>
+        </TitleBar.RightHeader>
     </TitleBar>
 
 </UserControl>

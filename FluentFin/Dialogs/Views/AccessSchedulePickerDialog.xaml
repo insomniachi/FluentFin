@@ -7,6 +7,7 @@
     xmlns:controls="using:FluentFin.Controls"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dw="using:DevWinUI"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Dialogs.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -20,17 +21,33 @@
     mc:Ignorable="d">
 
     <StackPanel Spacing="20">
-        <ComboBox ItemsSource="{ui:EnumValues Type=jm:AccessSchedule_DayOfWeek}" SelectedItem="{x:Bind ViewModel.DayOfWeek, Mode=TwoWay}" />
-        <TimePicker
-            ClockIdentifier="12HourClock"
-            Header="Start Time"
-            MinuteIncrement="30"
-            SelectedTime="{x:Bind ViewModel.StartTime, Mode=TwoWay}" />
-        <TimePicker
-            ClockIdentifier="12HourClock"
-            Header="End Time"
-            MinuteIncrement="30"
-            SelectedTime="{x:Bind ViewModel.EndTime, Mode=TwoWay}" />
+        <ComboBox
+            Margin="{StaticResource LargeLeftRightMargin}"
+            HorizontalAlignment="Stretch"
+            ItemsSource="{ui:EnumValues Type=jm:AccessSchedule_DayOfWeek}"
+            SelectedItem="{x:Bind ViewModel.DayOfWeek, Mode=TwoWay}" />
+        <Grid ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="Start Time" />
+                <dw:Clock SelectedTime="{x:Bind ViewModel.StartTime, Mode=TwoWay}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="End Time" />
+                <dw:Clock SelectedTime="{x:Bind ViewModel.EndTime, Mode=TwoWay}" />
+            </StackPanel>
+        </Grid>
     </StackPanel>
 
 </ContentDialog>

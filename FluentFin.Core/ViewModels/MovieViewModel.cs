@@ -84,7 +84,7 @@ public partial class MovieViewModel(IJellyfinClient jellyfinClient) : Observable
 			}
 			else
 			{
-				SelectedSubtitle = SubtitleStreams.FirstOrDefault();
+				SelectedSubtitle = SubtitleStreams?.FirstOrDefault();
 			}
 		}
 	}

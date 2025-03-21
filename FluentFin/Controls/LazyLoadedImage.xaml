@@ -11,6 +11,7 @@
 
     <Grid>
         <Image
+            x:Name="Blur"
             Source="{x:Bind BlurHashImageSource, Mode=OneWay}"
             Stretch="{x:Bind Stretch, Mode=OneWay}"
             Visibility="{x:Bind EnableBlurHash, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />

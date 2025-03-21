@@ -195,7 +195,13 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             CornerRadius="15">
-            <Image Source="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}" Stretch="Uniform" />
+            <controls:LazyLoadedImage
+                Width="450"
+                Height="675"
+                BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}"
+                EnableBlurHash="True"
+                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}"
+                Stretch="UniformToFill" />
         </Grid>
 
         <ScrollViewer

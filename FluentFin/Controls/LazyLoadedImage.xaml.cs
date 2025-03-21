@@ -34,7 +34,10 @@ public sealed partial class LazyLoadedImage : UserControl
     [GeneratedDependencyProperty(DefaultValue = Stretch.UniformToFill)]
     public partial Stretch Stretch { get; set; }
 
-    private void ImageOpened(object sender, RoutedEventArgs e) => ImageFadeIn.Begin();
+    private void ImageOpened(object sender, RoutedEventArgs e)
+    {
+       ImageFadeIn.Begin();
+    }
 }
 
 #nullable restore

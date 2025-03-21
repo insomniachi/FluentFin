@@ -5,11 +5,28 @@ using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Windows.Foundation;
 using Windows.Media.Casting;
 using Windows.Media.Core;
+using Windows.Media.Streaming.Adaptive;
 
 namespace FluentFin.MediaPlayers
 {
+    public static class MPExtensions
+    {
+        public static T SafeGetValue<T>(this Windows.Media.Playback.MediaPlayer mp, Func<Windows.Media.Playback.MediaPlayer, T> getter, T defaultValue)
+        {
+            try
+            {
+                return getter(mp);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+    }
+
     public sealed partial class WindowsMediaPlayerController : IMediaPlayerController
     {
         private readonly Windows.Media.Playback.MediaPlayer _mp = new();
@@ -23,21 +40,38 @@ namespace FluentFin.MediaPlayers
             element.SetMediaPlayer(_mp);
         }
 
-        public MediaPlayerState State => ConvertState(_mp.CurrentState);
-        public TimeSpan Position => _mp.Position;
-        public bool IsPlaying => _mp.CurrentState is Windows.Media.Playback.MediaPlayerState.Playing;
-        public bool IsMuted => _mp.IsMuted;
+        public MediaPlayerState State => ConvertState(_mp.SafeGetValue(mp => mp.CurrentState, Windows.Media.Playback.MediaPlayerState.Closed));
+        public TimeSpan Position => _mp.SafeGetValue(mp => mp.Position, TimeSpan.Zero);
+        public bool IsPlaying => _mp.SafeGetValue(mp => mp.CurrentState, Windows.Media.Playback.MediaPlayerState.Closed) is Windows.Media.Playback.MediaPlayerState.Playing;
+        public bool IsMuted => _mp.SafeGetValue(mp => mp.IsMuted, false);
         public int? SubtitleTrackIndex => null;
         public int? AudioTrackIndex => null;
         public double Volume 
         {
-            get => _mp.Volume;
-            set => _mp.Volume = value;
+            get
+            {
+                try
+                {
+                    return _mp.Volume;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+            set
+            {
+                try
+                {
+                    _mp.Volume = value;
+                }
+                catch { }
+            }
         }
 
 
-        public IObservable<TimeSpan> DurationChanged => _mp.PlaybackSession.Events().NaturalDurationChanged.Select(_ => _mp.NaturalDuration);
-        public IObservable<TimeSpan> PositionChanged => _mp.PlaybackSession.Events().PositionChanged.Select(_ => _mp.Position);
+        public IObservable<TimeSpan> DurationChanged => _mp.SafeGetValue(mp => mp.PlaybackSession, null)?.Events().NaturalDurationChanged.Select(_ => _mp.SafeGetValue(mp => mp.NaturalDuration, TimeSpan.Zero)) ?? Observable.Empty<TimeSpan>();
+        public IObservable<TimeSpan> PositionChanged => _mp.SafeGetValue(mp => mp.PlaybackSession, null)?.Events().PositionChanged.Select(_ => _mp.SafeGetValue(mp => mp.Position, TimeSpan.Zero)) ?? Observable.Empty<TimeSpan>();
         public IObservable<Unit> Playing => _mp.PlaybackSession.Events().PlaybackStateChanged.Where(_ => _mp.CurrentState is Windows.Media.Playback.MediaPlayerState.Playing).Select(_ => Unit.Default);
         public IObservable<Unit> Paused => _mp.PlaybackSession.Events().PlaybackStateChanged.Where(_ => _mp.CurrentState is Windows.Media.Playback.MediaPlayerState.Paused).Select(_ => Unit.Default);
         public IObservable<Unit> Ended => _mp.Events().MediaEnded.Select(_ => Unit.Default);
@@ -124,10 +158,10 @@ namespace FluentFin.MediaPlayers
         public bool Play(Uri uri, int defaultAudioIndex = 0)
         {
             var source = MediaSource.CreateFromUri(uri);
-            _mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
-            _mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() => _audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, defaultAudioIndex));
-            _mp.Source = _mediaItem;
-            _mp.Play();
+                        _mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
+                        _mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() => _audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, defaultAudioIndex));
+                        _mp.Source = _mediaItem;
+                        _mp.Play();
             return true;
         }
 

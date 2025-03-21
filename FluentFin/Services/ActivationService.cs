@@ -41,6 +41,7 @@ public class ActivationService : IActivationService
 		App.MainWindow.Activate();
 
 		// Execute tasks after activation.
+		await DeviceProfileFactory.Initialize();
 		await StartupAsync();
 	}
 

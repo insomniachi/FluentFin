@@ -9,7 +9,8 @@ using System.Reflection;
 namespace FluentFin.Core.Services;
 
 public partial class JellyfinClient(ILogger<JellyfinClient> logger,
-									IObserver<IInboundSocketMessage> socketMessageSender) : IJellyfinClient
+									IObserver<IInboundSocketMessage> socketMessageSender,
+									IDeviceProfileFactory deviceProfileFactory) : IJellyfinClient
 {
 	private Jellyfin.Sdk.JellyfinApiClient _jellyfinApiClient = null!;
 	private string _token = "";

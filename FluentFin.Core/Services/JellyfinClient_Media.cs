@@ -29,7 +29,7 @@ public partial class JellyfinClient
 			{
 				UserId = UserId,
 				AutoOpenLiveStream = true,
-				DeviceProfile = DeviceProfiles.Flyleaf,
+				DeviceProfile = deviceProfileFactory.GetDeviceProfile(),
 				MaxStreamingBitrate = bitRate,
 				StartTimeTicks = startTime,
 			});

@@ -88,6 +88,7 @@ public partial class App : Application
 			services.AddSingleton<INavigationService, NavigationService>();
 			services.AddSingleton((Func<IServiceProvider, INavigationServiceCore>)(sp => sp.GetRequiredService<INavigationService>()));
 			services.AddTransient<IContentDialogService, ContentDialogService>();
+			services.AddSingleton<IDeviceProfileFactory, DeviceProfileFactory>();
 
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
 			services.AddFrameNavigation(NavigationRegions.UserEditor);

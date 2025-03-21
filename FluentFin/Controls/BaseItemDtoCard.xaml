@@ -211,8 +211,9 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     FontWeight="ExtraBold"
-                    Visibility="{x:Bind Model.UserData.UnplayedItemCount, Converter={StaticResource MoreThanZeroToVisibilityConverter}}"
-                    Value="{x:Bind Model.UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}" />
+                    IconSource="{x:Bind c:BaseItemDtoConverters.CardBadgeSource(Model), Mode=OneWay}"
+                    Visibility="{x:Bind c:BaseItemDtoConverters.IsCardBadgeVisible(Model), Mode=OneWay}"
+                    Value="{x:Bind c:BaseItemDtoConverters.GetCardBadgeValue(Model), Mode=OneWay}" />
 
                 <ProgressBar
                     Margin="5,0,5,10"

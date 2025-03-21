@@ -1,8 +1,11 @@
 ﻿using Blurhash;
 using FluentFin.Core;
+using FluentFin.Core.ViewModels;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Kiota.Abstractions.Serialization;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
 
@@ -243,4 +246,58 @@ public static class BaseItemDtoConverters
 
 		return new BitmapImage(uri.ToUri());
 	}
+
+    public static int GetCardBadgeValue(BaseItemViewModel vm)
+    {
+        if (vm is null)
+        {
+            return -1;
+        }
+
+        var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+
+        return unwatchedCount == 0 ? -1 : unwatchedCount;
+    }
+
+    public static IconSource? CardBadgeSource(BaseItemViewModel vm)
+    {
+        if (vm is null)
+        {
+            return null;
+        }
+
+        var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+		var played = vm.UserData?.Played ?? false;
+
+        if (played && unwatchedCount == 0)
+        {
+            return new FontIconSource { Glyph = "\uF78C" };
+        }
+
+        return null;
+    }
+
+    public static Visibility IsCardBadgeVisible(BaseItemViewModel vm)
+    {
+        if (vm is null)
+        {
+            return Visibility.Collapsed;
+        }
+
+        var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+        var played = vm.UserData?.Played ?? false;
+
+        if (played && unwatchedCount == 0)
+        {
+            return Visibility.Visible;
+        }
+
+        if (unwatchedCount > 0)
+        {
+            return Visibility.Visible;
+        }
+
+
+        return Visibility.Collapsed;
+    }
 }

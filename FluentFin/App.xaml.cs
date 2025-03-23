@@ -182,8 +182,9 @@ public partial class App : Application
 			if(!IsPackaged())
 			{
 				services.AddHostedService<WindowsUpdateService>();
-			}
-		}).
+            }
+            services.AddHostedService<WebSocketMessageHandler>();
+        }).
 		Build();
 
 		UnhandledException += App_UnhandledException;

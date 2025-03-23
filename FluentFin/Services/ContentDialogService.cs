@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using DevWinUI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using ReactiveUI;
@@ -13,6 +14,7 @@ public interface IContentDialogService
 	Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure, Action<TViewModel> configureVm) where TViewModel : class;
 	Task<ContentDialogResult> ShowDialog<TView, TViewModel>(TViewModel viewModel, Action<ContentDialog> configure) where TView : ContentDialog, IViewFor, new();
 	Task ShowMessage(string title, string message, TimeSpan? timeout = null);
+    void Growl(string title, string message, TimeSpan waitTime);
 	Task<bool> QuestionYesNo(string title, string message);
 }
 
@@ -25,7 +27,17 @@ public class ContentDialogService : IContentDialogService
 		return await ShowDialog(vm, configure);
 	}
 
-	public async Task<bool> QuestionYesNo(string title, string message)
+	public void Growl(string title, string message, TimeSpan waitTime)
+    {
+		DevWinUI.Growl.InfoGlobal(new GrowlInfo
+		{
+			Message = message,
+			WaitTime = waitTime,
+			Title = title
+		});
+    }
+
+    public async Task<bool> QuestionYesNo(string title, string message)
 	{
 		var dialog = new ContentDialog
 		{

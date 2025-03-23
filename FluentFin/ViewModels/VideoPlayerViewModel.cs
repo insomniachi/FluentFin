@@ -18,176 +18,26 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Web;
+using System.Windows.Navigation;
 
 namespace FluentFin.ViewModels;
 
-public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
+public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
+                            TrickplayViewModel trickplayViewModel,
+                            ILogger<VideoPlayerViewModel> logger,
+                            IObservable<IInboundSocketMessage> webSocketMessages,
+                            INavigationService navigationService,
+                            ISettings settings) : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposables = new();
-	private readonly IJellyfinClient _jellyfinClient;
-	private readonly PlaybackProgressInfo _playbackProgressInfo = new();
-	private readonly ILogger<VideoPlayerViewModel> _logger;
-	private readonly ISettings _settings;
-	private KeyboardMediaPlayerController? _keyboardController;
-
-	public VideoPlayerViewModel(IJellyfinClient jellyfinClient,
-								TrickplayViewModel trickplayViewModel,
-								ILogger<VideoPlayerViewModel> logger,
-								IObservable<IInboundSocketMessage> webSocketMessages,
-								IContentDialogService contentDialogService,
-								INavigationService navigationService,
-								ISettings settings)
-	{
-		_jellyfinClient = jellyfinClient;
-		_logger = logger;
-		_settings = settings;
-
-		TrickplayViewModel = trickplayViewModel;
-
-		webSocketMessages
-			.ObserveOn(RxApp.MainThreadScheduler)
-			.Subscribe(async message =>
-			{
-				if(MediaPlayer is null)
-				{
-					return;
-				}	
-
-				switch (message)
-				{
-					case GeneralCommandMessage { Data.Name: GeneralCommandType.DisplayMessage } gcm:
-						await contentDialogService.ShowMessage(gcm.Data.Arguments["Header"],
-															   gcm.Data.Arguments["Text"],
-															   TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
-						break;
-					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.PlayPause }:
-						MediaPlayer.TogglePlayPlause();
-						await UpdateStatus();
-						break;
-					case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.Stop }:
-						MediaPlayer.Stop();
-						await jellyfinClient.Stop();
-						navigationService.NavigateTo<HomeViewModel>(new());
-						break;
-				}
-			});
-
-        NativeMethods.PreventSleep();
-    }
-
-	public void SubscribeEvents(IMediaPlayerController mp)
-	{
-        mp.Playing.Where(_ => _disposables.IsDisposed).Subscribe(_ => mp.Stop());
-        mp.Ended.Where(_ => Playlist.CanSelectNext).Subscribe(_ => Playlist.SelectNext());
-        mp.Stopped.Subscribe(async _ => await _jellyfinClient.Stop());
-        mp.Errored.Subscribe(async _ =>
-		{
-			_logger.LogError("An error occurred while playing media");
-			await _jellyfinClient.Stop();
-        });
-        mp.PositionChanged
-            .Where(_ => MediaPlayer?.State == MediaPlayerState.Playing)
-            .Select(x => x.Ticks)
-            .Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))	
-            .DistinctUntilChanged()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(isVisible => IsSkipButtonVisible = isVisible);
-    }
-
-	private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-	{
-		if(MediaPlayer is null)
-		{
-			return;
-		}
-
-		if (e.PropertyName != nameof(Playlist.SelectedItem))
-		{
-			return;
-		}
-
-		if (Playlist.SelectedItem is not { } selectedItem)
-		{
-			return;
-		}
-
-		MediaPlayer.Stop();
-
-		var full = await _jellyfinClient.GetItem(selectedItem.Dto.Id ?? Guid.Empty);
-
-		if (full is null)
-		{
-			return;
-		}
-
-		var mediaResponse = await GetMediaUrl(full);
-
-		if (mediaResponse is null)
-		{
-			return;
-		}
+    private readonly PlaybackProgressInfo _playbackProgressInfo = new();
+    private KeyboardMediaPlayerController? _keyboardController;
 
 
-		await _jellyfinClient.Stop();
-		TrickplayViewModel.SetItem(full);
-
-        var defaultSubtitleIndex = mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
-        selectedItem.Media = mediaResponse;
-
-        var success = MediaPlayer.Play(mediaResponse.Uri, mediaResponse.MediaSourceInfo.DefaultAudioStreamIndex ?? 0);
-		if (!success)
-		{
-			_logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
-		}
-
-		PlayMethod = mediaResponse.PlayMethod;
-
-		if (selectedItem.Dto?.UserData?.PlaybackPositionTicks is { } ticks)
-		{
-			MediaPlayer.SeekTo(TimeSpan.FromTicks(ticks));
-		}
-
-		if(mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Index == defaultSubtitleIndex) is { } subtitleStream)
-		{
-			OpenSubtitles(MediaPlayer, mediaResponse, subtitleStream);
-		}
-
-    }
-
-	private void OpenSubtitles(IMediaPlayerController mp, MediaResponse response, MediaStream stream)
-	{
-        if (stream is null)
-        {
-            return;
-        }
-
-        var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
-
-		try
-		{
-			if (stream.IsExternal == true)
-			{
-				var url = HttpUtility.UrlDecode(_jellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
-				mp.OpenExternalSubtitleTrack(url);
-            }
-			else
-			{
-                var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
-                if (stream.Index is not { } trackIndex)
-                {
-                    return;
-                }
-
-                mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
-            }
-		}
-		catch { }
-    }
-
-	public TrickplayViewModel TrickplayViewModel { get; }
+    public TrickplayViewModel TrickplayViewModel { get; } = trickplayViewModel;
 
 
-	[ObservableProperty]
+    [ObservableProperty]
     public partial IMediaPlayerController? MediaPlayer { get; set; }
 
 	[ObservableProperty]
@@ -220,7 +70,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 
         NativeMethods.AllowSleep();
 
-        await _jellyfinClient.Stop();
+        await jellyfinClient.Stop();
 
 		if(MediaPlayer is null)
 		{
@@ -243,16 +93,16 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 			return;
 		}
 
-		MediaPlayerType = _settings.MediaPlayer;
+		MediaPlayerType = settings.MediaPlayer;
 
-		Dto = await _jellyfinClient.GetItem(id);
+		Dto = await jellyfinClient.GetItem(id);
 
 		Playlist = dto.Type switch
 		{
 			BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(dto),
-			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(_jellyfinClient, dto),
-			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(_jellyfinClient, dto),
-			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(_jellyfinClient, dto),
+			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(jellyfinClient, dto),
+			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(jellyfinClient, dto),
+			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(jellyfinClient, dto),
 			_ => new PlaylistViewModel()
 		};
 
@@ -262,6 +112,8 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		}
 
 		this.WhenAnyValue(x => x.MediaPlayer).WhereNotNull().Subscribe(SubscribeEvents);
+        SubscribeWebsocketMessage();
+        NativeMethods.PreventSleep();
 
 		Playlist.PropertyChanged += OnPlaylistPropertyChanged;
 
@@ -275,7 +127,7 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 				_keyboardController = new KeyboardMediaPlayerController(mp, Skip, ToggleFullScreen);
 
                 Playlist.AutoSelect();
-                await _jellyfinClient.Playing(dto);
+                await jellyfinClient.Playing(dto);
             });
 
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(20))
@@ -303,16 +155,107 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		MediaPlayer.SeekTo(TimeSpan.FromTicks(segment.EndTicks.Value));
 	}
 
-	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
+    private async void OnPlaylistPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (MediaPlayer is null)
+        {
+            return;
+        }
+
+        if (e.PropertyName != nameof(Playlist.SelectedItem))
+        {
+            return;
+        }
+
+        if (Playlist.SelectedItem is not { } selectedItem)
+        {
+            return;
+        }
+
+        MediaPlayer.Stop();
+
+        var full = await jellyfinClient.GetItem(selectedItem.Dto.Id ?? Guid.Empty);
+
+        if (full is null)
+        {
+            return;
+        }
+
+        var mediaResponse = await GetMediaUrl(full);
+
+        if (mediaResponse is null)
+        {
+            return;
+        }
+
+
+        await jellyfinClient.Stop();
+        TrickplayViewModel.SetItem(full);
+
+        var defaultSubtitleIndex = mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
+        selectedItem.Media = mediaResponse;
+
+        var success = MediaPlayer.Play(mediaResponse.Uri, mediaResponse.MediaSourceInfo.DefaultAudioStreamIndex ?? 0);
+        if (!success)
+        {
+            logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
+        }
+
+        PlayMethod = mediaResponse.PlayMethod;
+
+        if (selectedItem.Dto?.UserData?.PlaybackPositionTicks is { } ticks)
+        {
+            MediaPlayer.SeekTo(TimeSpan.FromTicks(ticks));
+        }
+
+        if (mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Index == defaultSubtitleIndex) is { } subtitleStream)
+        {
+            OpenSubtitles(MediaPlayer, mediaResponse, subtitleStream);
+        }
+
+    }
+
+    private void OpenSubtitles(IMediaPlayerController mp, MediaResponse response, MediaStream stream)
+    {
+        if (stream is null)
+        {
+            return;
+        }
+
+        var subtitles = response?.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+
+        try
+        {
+            if (stream.IsExternal == true)
+            {
+                var url = HttpUtility.UrlDecode(jellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+                mp.OpenExternalSubtitleTrack(url);
+            }
+            else
+            {
+                var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
+                if (stream.Index is not { } trackIndex)
+                {
+                    return;
+                }
+
+                mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
+            }
+        }
+        catch { }
+    }
+
+
+    private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
 	{
-		var segments = await _jellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
+		var segments = await jellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
 
 		if (segments is { Items: not null })
 		{
 			Segments = segments.Items;
 		}
 
-		return await _jellyfinClient.GetMediaUrl(dto);
+		return await jellyfinClient.GetMediaUrl(dto);
 	}
 
 	private async Task UpdateStatus()
@@ -354,8 +297,52 @@ public partial class VideoPlayerViewModel : ObservableObject, INavigationAware
 		_playbackProgressInfo.SessionId = media.PlaybackSessionId;
 		_playbackProgressInfo.MediaSourceId = media.MediaSourceId;
 
-		await _jellyfinClient.Progress(_playbackProgressInfo);
+		await jellyfinClient.Progress(_playbackProgressInfo);
 	}
 
+    private void SubscribeEvents(IMediaPlayerController mp)
+    {
+        mp.Playing.Where(_ => _disposables.IsDisposed).Subscribe(_ => mp.Stop());
+        mp.Ended.Where(_ => Playlist.CanSelectNext).Subscribe(_ => Playlist.SelectNext());
+        mp.Stopped.Subscribe(async _ => await jellyfinClient.Stop());
+        mp.Errored.Subscribe(async _ =>
+        {
+            logger.LogError("An error occurred while playing media");
+            await jellyfinClient.Stop();
+        });
+        mp.PositionChanged
+            .Where(_ => MediaPlayer?.State == MediaPlayerState.Playing)
+            .Select(x => x.Ticks)
+            .Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))
+            .DistinctUntilChanged()
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(isVisible => IsSkipButtonVisible = isVisible);
+    }
+
+    private void SubscribeWebsocketMessage()
+    {
+        webSocketMessages
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(async message =>
+            {
+                if (MediaPlayer is null)
+                {
+                    return;
+                }
+
+                switch (message)
+                {
+                    case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.PlayPause }:
+                        MediaPlayer.TogglePlayPlause();
+                        await UpdateStatus();
+                        break;
+                    case PlayStateMessage { Data.Command: Core.WebSockets.Messages.PlaystateCommand.Stop }:
+                        MediaPlayer.Stop();
+                        await jellyfinClient.Stop();
+                        navigationService.NavigateTo<HomeViewModel>(new());
+                        break;
+                }
+            }); 
+    }
 }
 

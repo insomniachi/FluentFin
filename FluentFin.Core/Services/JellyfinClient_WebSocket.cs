@@ -1,4 +1,5 @@
 ﻿using FluentFin.Core.WebSockets;
+using FluentFin.Core.WebSockets.Messages;
 using Flurl;
 using Microsoft.Extensions.Logging;
 using System.Net.WebSockets;
@@ -79,17 +80,28 @@ public partial class JellyfinClient
 			return;
 		}
 
-		if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
+		if(messageType is SessionMessageType.SyncPlayGroupUpdate)
+		{
+			var data = document.RootElement.GetProperty("Data");
+			var grupUpdateType = data.GetProperty("Type").GetString();
+			if(!Enum.TryParse<GroupUpdateType>(grupUpdateType, out var updateType))
+			{
+				return;
+			}
+
+            if (updateType.Parse(socketMessage) is IInboundSocketMessage message)
+            {
+				socketMessageSender.OnNext(message);
+            }
+
+        }
+		else if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
 		{
 			socketMessageSender.OnNext(message);
 		}
-		else
-		{
-			// for debugging when adding new events
-			;
-		}
 
 		inputStream.Dispose();
+
 	}
 }
 
@@ -105,12 +117,30 @@ internal static class MessageConverter
 				SessionMessageType.GeneralCommand => JsonSerializer.Deserialize<GeneralCommandMessage>(json),
 				SessionMessageType.Playstate => JsonSerializer.Deserialize<PlayStateMessage>(json),
 				SessionMessageType.UserDataChanged => JsonSerializer.Deserialize<UserDataChangeMessage>(json),
+				SessionMessageType.SyncPlayCommand => JsonSerializer.Deserialize<SyncPlayCommandMessage>(json),
 				_ => null
 			};
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
 			return null;
 		}
 	}
+
+    internal static WebSocketMessage? Parse(this GroupUpdateType messageType, string json)
+    {
+        try
+        {
+            return messageType switch
+            {
+				GroupUpdateType.PlayQueue => JsonSerializer.Deserialize<PlayQueueUpdateMessage>(json),
+                _ => null
+            };
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
 }

@@ -169,6 +169,7 @@ public partial class App : Application
 			services.AddDialog<StringPickerViewModel, StringPickerDialog>();
 			services.AddDialog<QuickConnectViewModel, QuickConnectDialog>();
 			services.AddDialog<SessionPickerViewModel, SessionPickerDialog>();
+			services.AddDialog<SyncPlayGroupPickerViewModel, SyncPlayGroupPickerDialog>();
 
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();

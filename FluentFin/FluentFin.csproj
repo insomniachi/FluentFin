@@ -121,6 +121,9 @@
 	  <Page Update="Controls\PagedScrollView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Dialogs\Views\SyncPlayGroupPickerDialog.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Dialogs\Views\SessionPickerDialog.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>

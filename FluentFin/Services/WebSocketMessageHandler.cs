@@ -1,4 +1,7 @@
-﻿using FluentFin.Core.WebSockets;
+﻿using FluentFin.Contracts.Services;
+using FluentFin.Core.Services;
+using FluentFin.Core.WebSockets;
+using FluentFin.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Hosting;
 using ReactiveUI;
@@ -8,7 +11,8 @@ using System.Reactive.Linq;
 namespace FluentFin.Services;
 
 public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocketMessages,
-                                     IContentDialogService contentDialogService) : IHostedService
+                                     IContentDialogService contentDialogService,
+                                     INavigationService navigationService) : IHostedService
 {
     private readonly CompositeDisposable _disposables = [];
 
@@ -24,6 +28,9 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
                      contentDialogService.Growl(gcm.Data.Arguments["Header"],
                                                 gcm.Data.Arguments["Text"],
                                                 TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
+                     break;
+                 case PlayQueueUpdateMessage { Data: not null } playMessage:
+                     navigationService.NavigateTo<VideoPlayerViewModel>(playMessage.Data.Data);
                      break;
              }
          })

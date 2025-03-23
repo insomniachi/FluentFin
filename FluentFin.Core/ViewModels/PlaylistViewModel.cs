@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.WebSockets.Messages;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -112,6 +113,23 @@ public partial class PlaylistViewModel : ObservableObject
 
 		return playlist;
 	}
+
+	public static PlaylistViewModel FromSyncPlay(IReadOnlyList<SyncPlayQueueItem> items)
+	{
+        var playlist = new PlaylistViewModel();
+        foreach (var item in items)
+        {
+            playlist.Items.Add(new PlaylistItem
+            {
+                Title = item.ItemId.ToString(),
+                Dto = new BaseItemDto
+                {
+                    Id = item.ItemId
+                }
+            });
+        }
+        return playlist;
+    }
 
 	public static async Task<PlaylistViewModel> FromEpisode(IJellyfinClient jellyfinClient, BaseItemDto episode)
 	{

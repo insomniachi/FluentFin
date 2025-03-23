@@ -77,6 +77,7 @@ namespace FluentFin.MediaPlayers
         public IObservable<Unit> Ended => _mp.Events().MediaEnded.Select(_ => Unit.Default);
         public IObservable<Unit> Errored => _mp.Events().MediaFailed.Select(_ => Unit.Default); 
         public IObservable<Unit> Stopped => _mp.PlaybackSession.Events().PlaybackStateChanged.Where(_ => _mp.CurrentState is Windows.Media.Playback.MediaPlayerState.Stopped).Select(_ => Unit.Default);
+        public IObservable<Unit> MediaLoaded => _mp.Events().MediaOpened.Select(_ => Unit.Default);
         public IObservable<double> VolumeChanged => _mp.Events().VolumeChanged.Select(_ => _mp.Volume);
         public IObservable<string> SubtitleText { get; } = Observable.Empty<string>();
 

@@ -149,6 +149,12 @@
                                     <lc:MenuFlyoutButton
                                         HorizontalAlignment="Stretch"
                                         Click="CloseTitleBarFooterFlyout"
+                                        Command="{x:Bind root:App.Dialogs.SelectSyncPlayGroupCommand}"
+                                        Content="Sync Play"
+                                        Icon="{ui:FontIcon Glyph=&#xE895;}" />
+                                    <lc:MenuFlyoutButton
+                                        HorizontalAlignment="Stretch"
+                                        Click="CloseTitleBarFooterFlyout"
                                         Command="{x:Bind ViewModel.LogoutCommand}"
                                         Content="Logout"
                                         Icon="{ui:FontIcon Glyph=&#xF3B1;}" />

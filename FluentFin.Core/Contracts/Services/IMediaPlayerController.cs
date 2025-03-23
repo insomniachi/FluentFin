@@ -30,6 +30,7 @@ public interface IMediaPlayerController : IDisposable
     IObservable<Unit> Ended { get; }
     IObservable<Unit> Errored { get; }
     IObservable<Unit> Stopped { get; }
+    IObservable<Unit> MediaLoaded { get; }
     IObservable<double> VolumeChanged { get; }
     IObservable<string> SubtitleText { get; }
 }

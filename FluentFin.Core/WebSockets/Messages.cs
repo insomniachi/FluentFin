@@ -17,3 +17,13 @@ public class UserDataChangeMessage : InboundSocketMessage<UserDataChangeInfo>
 {
 	public override SessionMessageType MessageType => SessionMessageType.UserDataChanged;
 }
+
+public class SyncPlayCommandMessage : InboundSocketMessage<SyncPlaySendCommand>
+{
+    public override SessionMessageType MessageType => SessionMessageType.SyncPlayCommand;
+}
+
+public class PlayQueueUpdateMessage : InboundSocketMessage<GroupUpdate<PlayQueueUpdate>>
+{
+    public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+}

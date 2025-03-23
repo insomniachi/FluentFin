@@ -11,6 +11,7 @@ namespace FluentFin.Core
 		public static string AccessToken { get; set; }
 		public static string SessionId { get; set; }
 		public static string RemoteSessionId { get; set; }
+		public static Guid? GroupId { get; set; }
 
 		public static bool CanEditMediaSegments() => CurrentUser?.Policy?.IsAdministrator == true &&
 													 Plugins.FirstOrDefault(x => x.Name == "MediaSegments API") is { } &&

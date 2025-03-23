@@ -56,6 +56,7 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
     public IObservable<Unit> Stopped => _mp.WhenAnyValue(x => x.Status).Where(x => x is Status.Stopped).Select(_ => Unit.Default);
     public IObservable<double> VolumeChanged => _mp.WhenAnyValue(x => x.Audio.Volume).Select(x => x * 1d);
     public IObservable<string> SubtitleText => _mp.WhenAnyValue(x => x.Subtitles.SubsText);
+    public IObservable<Unit> MediaLoaded { get; } = Observable.Empty<Unit>();
 
     public void Dispose() => _mp.Dispose();
     public IEnumerable<AudioTrack> GetAudioTracks() => _mp.Audio.Streams.Select(x => new AudioTrack(x.StreamIndex, x.Language.TopEnglishName, x.Title));

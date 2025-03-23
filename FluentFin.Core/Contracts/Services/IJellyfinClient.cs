@@ -179,6 +179,21 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task PlayOnSession(string sessionId, params IEnumerable<Guid?> itemIds);
 
+		// SyncPlay
+		Task<List<GroupInfoDto>> GetSyncPlayGroups();
+
+		Task CreateSyncPlayGroup();
+
+		Task JoinSyncPlayGroup(Guid groupId);
+
+		Task LeaveSyncPlayGroup();
+
+		Task SignalReadyForSyncPlay(ReadyRequestDto request);
+
+		Task SignalPauseForSyncPlay();
+
+		Task SignalUnpauseForSyncPlay();
+
     }
 
 	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);

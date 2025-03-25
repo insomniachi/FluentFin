@@ -47,11 +47,15 @@
         </TitleBar.IconSource>
         <TitleBar.Content>
             <AutoSuggestBox
+                x:Name="SearchBox"
                 Width="600"
                 Margin="{StaticResource XSmallTopBottomMargin}"
                 PlaceholderText="Search movies, series, actors and more"
                 QueryIcon="Find"
                 Visibility="{x:Bind ViewModel.User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="KeyboardAccelerator_Invoked"/>
+                </AutoSuggestBox.KeyboardAccelerators>
                 <i:Interaction.Behaviors>
                     <b:GlobalSearchBoxBehavior />
                 </i:Interaction.Behaviors>

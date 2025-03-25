@@ -444,7 +444,7 @@ public partial class JellyfinClient
 		{
 			await BaseUrl
 				.AppendPathSegment($"/MediaSegmentsApi/{segmentId:N}")
-				.SetQueryParam("api_key", _token)
+				.SetQueryParam("ApiKey", _token)
 				.DeleteAsync();
 		}
 		catch (Exception ex)

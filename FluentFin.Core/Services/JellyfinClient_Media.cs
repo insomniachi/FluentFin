@@ -190,6 +190,6 @@ public partial class JellyfinClient
 
     public Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution)
 	{
-		return new Uri(HttpUtility.HtmlDecode(BaseUrl.AppendPathSegment($"/Videos/{dto?.Id}/Trickplay/{resolution}/{index}.jpg").AppendQueryParam("api_key", _token).ToString()));
+		return new Uri(HttpUtility.HtmlDecode(BaseUrl.AppendPathSegment($"/Videos/{dto?.Id}/Trickplay/{resolution}/{index}.jpg").AppendQueryParam("ApiKey", _token).ToString()));
 	}
 }

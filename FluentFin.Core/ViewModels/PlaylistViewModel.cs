@@ -35,7 +35,7 @@ public partial class PlaylistViewModel : ObservableObject
 					return false;
 				}
 
-				return Items.Any(pi => pi.Dto.IndexNumber > selectedItem.Dto.IndexNumber);
+				return Items.IndexOf(selectedItem) < Items.Count - 1;
 			})
 			.Subscribe(value => CanSelectNext = value);
 
@@ -47,8 +47,8 @@ public partial class PlaylistViewModel : ObservableObject
 					return false;
 				}
 
-				return Items.Any(pi => pi.Dto.IndexNumber < selectedItem.Dto.IndexNumber);
-			})
+				return Items.IndexOf(selectedItem) > 0;
+            })
 			.Subscribe(value => CanSelectPrev = value);
 	}
 
@@ -71,14 +71,30 @@ public partial class PlaylistViewModel : ObservableObject
 	[RelayCommand(CanExecute = nameof(CanSelectNext))]
 	public void SelectNext()
 	{
-		RxApp.MainThreadScheduler.Schedule(() => SelectedItem = Items.First(x => x.Dto.IndexNumber > SelectedItem?.Dto.IndexNumber));
+		if(SelectedItem is null)
+		{
+			return;
+		}
+
+		RxApp.MainThreadScheduler.Schedule(() =>
+		{
+			SelectedItem = Items[Items.IndexOf(SelectedItem) + 1];
+		});
 	}
 
 	[RelayCommand(CanExecute = nameof(CanSelectPrev))]
 	public void SelectPrev()
 	{
-		RxApp.MainThreadScheduler.Schedule(() => SelectedItem = Items.First(x => x.Dto.IndexNumber < SelectedItem?.Dto.IndexNumber));
-	}
+        if (SelectedItem is null)
+        {
+            return;
+        }
+
+        RxApp.MainThreadScheduler.Schedule(() =>
+        {
+            SelectedItem = Items[Items.IndexOf(SelectedItem) - 1];
+        });
+    }
 
 	public static PlaylistViewModel FromMovie(BaseItemDto dto)
 	{

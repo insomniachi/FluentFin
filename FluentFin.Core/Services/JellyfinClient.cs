@@ -4,6 +4,7 @@ using FluentFin.Core.WebSockets;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace FluentFin.Core.Services;
@@ -91,41 +92,41 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 
 	public async Task<int> BitrateTest()
 	{
-		try
-		{
-			List<int> sizes = [500_000, 1_000_000, 3_000_000];
-			List<int> bitRates = new(sizes.Count);
+		const int bitrateTestSize = 1024 * 1024 * 3;
+        const int chunkSize = 64 * 1024;
+		const double safetyRatio = 0.8; 
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
-			foreach (var size in sizes)
+        int totalBytesRead = 0;
+        long startTime = TimeProvider.System.GetTimestamp();
+        try
+        {
+            var stream = await _jellyfinApiClient.Playback.BitrateTest.GetAsync(x => x.QueryParameters.Size = bitrateTestSize, cts.Token);
+
+			if(stream is null)
 			{
-				var start = TimeProvider.System.GetTimestamp();
-				var result = await _jellyfinApiClient.Playback.BitrateTest.GetAsync(x => x.QueryParameters.Size = size);
-				var stream = new MemoryStream();
-				if (result is null)
-				{
-					continue;
-				}
-
-				await result.CopyToAsync(stream);
-				var elapsed = TimeProvider.System.GetElapsedTime(start);
-
-				if (elapsed.TotalSeconds > 10)
-				{
-					break;
-				}
-
-				var length = stream.Length;
-
-				bitRates.Add((int)((length * 8) / elapsed.TotalSeconds));
+				return 0;
 			}
 
-			return (int)bitRates.Average();
-		}
-		catch (Exception)
-		{
+            var buffer = new byte[chunkSize];
+                
+			while (true)
+            {
+                int bytesRead = await stream.ReadAsync(buffer, cts.Token);
+                if (bytesRead == 0)
+                {
+                    break;
+                }
 
-			throw;
-		}
+                totalBytesRead += bytesRead;
+            }
+        }
+        catch (OperationCanceledException) { }
+
+		double responseTimeSeconds = TimeProvider.System.GetElapsedTime(startTime).TotalSeconds;
+        double bytesPerSecond = totalBytesRead / responseTimeSeconds;
+        int bitrate = (int)Math.Round(bytesPerSecond * 8 * safetyRatio);
+		return bitrate;
 	}
 
 	public async Task<SystemInfo?> GetSystemInfo()

@@ -51,7 +51,8 @@ public partial class JellyfinClient
 			{
 				if (!string.IsNullOrEmpty(mediaSource.TranscodingUrl) && mediaSource.SupportsTranscoding == true)
 				{
-					return new(BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl).ToUri(), PlaybackProgressInfo_PlayMethod.Transcode, sessionId, mediaSource.Id ?? "", mediaSource);
+					var uri = new Uri(HttpUtility.UrlDecode(BaseUrl.AppendPathSegment(mediaSource.TranscodingUrl)));
+                    return new(AddApiKey(uri), PlaybackProgressInfo_PlayMethod.Transcode, sessionId, mediaSource.Id ?? "", mediaSource);
 				}
 				else if (mediaSource?.SupportsDirectPlay == true)
 				{

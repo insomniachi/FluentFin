@@ -54,7 +54,10 @@
                 QueryIcon="Find"
                 Visibility="{x:Bind ViewModel.User, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
                 <AutoSuggestBox.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="KeyboardAccelerator_Invoked"/>
+                    <KeyboardAccelerator
+                        Key="F"
+                        Invoked="KeyboardAccelerator_Invoked"
+                        Modifiers="Control" />
                 </AutoSuggestBox.KeyboardAccelerators>
                 <i:Interaction.Behaviors>
                     <b:GlobalSearchBoxBehavior />

@@ -148,11 +148,22 @@ namespace FluentFin.MediaPlayers
             }
         }
 
-        public void Pause() => _mp.Pause();
+        public void Pause()
+        {
+            try
+            {
+                _mp.Pause();
+            }
+            catch { }
+        }
         
         public bool Play()
         {
-            _mp.Play();
+            try
+            {
+                _mp.Play();
+            }
+            catch { }
             return true;
         }
 

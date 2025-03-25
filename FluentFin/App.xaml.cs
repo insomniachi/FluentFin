@@ -102,6 +102,7 @@ public partial class App : Application
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton(knownFolders);
+			services.AddSingleton<ITaskBarProgress, TaskBarProgress>();
 			services.AddSingleton<Subject<IInboundSocketMessage>>();
 			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
 			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());

@@ -102,9 +102,13 @@ public sealed partial class TransportControls : UserControl
 			.Where(x => Math.Abs(x.NewValue - Player.Position.TotalMilliseconds) > 1000)
 			.Subscribe(x =>
 			{
-				Player.Pause();
-				Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue));
-				Player.Play();
+				try
+				{
+					Player.Pause();
+					Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue));
+					Player.Play();
+				}
+				catch { }
             });
 
 		_onPointerMoved

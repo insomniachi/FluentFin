@@ -27,12 +27,14 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
                             ILogger<VideoPlayerViewModel> logger,
                             IObservable<IInboundSocketMessage> webSocketMessages,
                             INavigationService navigationService,
-                            ISettings settings) : ObservableObject, INavigationAware
+                            ISettings settings,
+                            ITaskBarProgress taskBarProgress) : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposables = [];
     private readonly PlaybackProgressInfo _playbackProgressInfo = new();
     private KeyboardMediaPlayerController? _keyboardController;
     private PlayQueueUpdate? _playQueueUpdate;
+    private TimeSpan _duration;
 
 
     public TrickplayViewModel TrickplayViewModel { get; } = trickplayViewModel;
@@ -60,6 +62,8 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 	public Action? ToggleFullScreen { get; set; }
 
+    public Action<int>? SetProgress { get; set; }
+
 	public async Task OnNavigatedFrom()
 	{
 		_disposables.Dispose();
@@ -71,6 +75,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
         NativeMethods.AllowSleep();
 
+        taskBarProgress.Clear();
         await jellyfinClient.Stop();
 
 		if(MediaPlayer is null)
@@ -327,13 +332,19 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		_playbackProgressInfo.SessionId = media.PlaybackSessionId;
 		_playbackProgressInfo.MediaSourceId = media.MediaSourceId;
 
-		await jellyfinClient.Progress(_playbackProgressInfo);
+        taskBarProgress.SetProgressPercent((int)((MediaPlayer.Position.TotalSeconds / _duration.TotalSeconds) * 100));
+
+        await jellyfinClient.Progress(_playbackProgressInfo);
 	}
 
     private void SubscribeEvents(IMediaPlayerController mp)
     {
         mp.Playing.Where(_ => _disposables.IsDisposed).Subscribe(_ => mp.Stop());
-        mp.Ended.Where(_ => Playlist.CanSelectNext).Subscribe(_ => Playlist.SelectNext());
+        mp.Ended.Where(_ => Playlist.CanSelectNext).Subscribe(_ =>
+        {
+            taskBarProgress.Clear();
+            Playlist.SelectNext();
+        });
         mp.Stopped.Subscribe(async _ => await jellyfinClient.Stop());
         mp.Errored.Subscribe(async _ =>
         {
@@ -347,6 +358,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
             .DistinctUntilChanged()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(isVisible => IsSkipButtonVisible = isVisible);
+        mp.DurationChanged.Subscribe(d => _duration = d);
 
         if(_playQueueUpdate is not null)
         {

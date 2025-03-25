@@ -8,10 +8,10 @@ public sealed partial class VideoPlayerPage : Page
 {
 	public VideoPlayerViewModel ViewModel { get; } = App.GetService<VideoPlayerViewModel>();
 
-	public VideoPlayerPage()
+    public VideoPlayerPage()
 	{
 		InitializeComponent();
-	}
+    }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {

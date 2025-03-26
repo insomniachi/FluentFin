@@ -447,6 +447,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
         var currentTime = await jellyfinClient.SyncTime();
         var commandTime = command.When;
 
+        mp.SeekTo(new TimeSpan(command.PositionTicks));
         if (commandTime > currentTime)
         {
             await Task.Delay(commandTime - currentTime);
@@ -456,8 +457,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
         {
             mp.Pause();
         }
-
-        mp.SeekTo(new TimeSpan(command.PositionTicks));
     }
 
     private async Task SchedulePlay(SyncPlaySendCommand command, IMediaPlayerController mp)

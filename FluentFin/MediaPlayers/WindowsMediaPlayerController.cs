@@ -29,7 +29,7 @@ namespace FluentFin.MediaPlayers
 
     public sealed partial class WindowsMediaPlayerController : IMediaPlayerController
     {
-        private readonly Windows.Media.Playback.MediaPlayer _mp = new();
+        private readonly Windows.Media.Playback.MediaPlayer _mp = new() { AutoPlay = false };
         private Windows.Media.Playback.MediaPlaybackItem? _mediaItem;
         private readonly Button _audioTracksButton;
 

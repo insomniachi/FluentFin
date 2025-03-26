@@ -18,7 +18,7 @@ public partial class JellyfinClient
 			return null;
 		}
 
-		if(dto.Type is not BaseItemDto_Type.Episode or BaseItemDto_Type.Movie)
+		if(dto.Type is not (BaseItemDto_Type.Episode or BaseItemDto_Type.Movie))
 		{
 			return null;
 		}

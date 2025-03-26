@@ -99,15 +99,24 @@ public sealed partial class TransportControls : UserControl
 		TimeSlider
 			.Events()
 			.ValueChanged
-			.Where(x => Math.Abs(x.NewValue - Player.Position.TotalMilliseconds) > 1000)
+			.Where(x => Math.Abs(x.NewValue - Player.Position.TotalMilliseconds) > 5000)
 			.Subscribe(x =>
 			{
 				try
 				{
-					Player.Pause();
+					var currentState = Player.State;
+					if(currentState is MediaPlayerState.Playing)
+					{
+                        Player.Pause();
+                    }
+
 					Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue));
-					Player.Play();
-				}
+
+					if(currentState is MediaPlayerState.Playing)
+					{
+                        Player.Play();
+                    }
+                }
 				catch { }
             });
 

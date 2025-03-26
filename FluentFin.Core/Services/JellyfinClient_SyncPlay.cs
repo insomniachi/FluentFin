@@ -101,5 +101,46 @@ namespace FluentFin.Core.Services
                 return;
             }
         }
+
+        public async Task SignalSeekForSyncPlay(TimeSpan position)
+        {
+            try
+            {
+                await _jellyfinApiClient.SyncPlay.Seek.PostAsync(new SeekRequestDto
+                {
+                    PositionTicks = position.Ticks,
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Unhandled Exception");
+                return;
+            }
+        }
+
+        public async Task<DateTimeOffset> SyncTime()
+        {
+            var localTime = TimeProvider.System.GetUtcNow();
+            try
+            {
+                var response = await _jellyfinApiClient.GetUtcTime.GetAsync();
+                if(response is null || response.RequestReceptionTime is null)
+                {
+                    return localTime;
+                }
+
+                var pingStart = TimeProvider.System.GetTimestamp();
+                var  result = await _jellyfinApiClient.System.Ping.GetAsync();
+                var ping = TimeProvider.System.GetElapsedTime(pingStart);
+                var diff = (response.RequestReceptionTime.Value - (ping/2)) - localTime;
+
+                return localTime + diff;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Unhandled Exception");
+                return localTime;
+            }
+        }
     }
 }

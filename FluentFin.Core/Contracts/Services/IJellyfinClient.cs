@@ -194,6 +194,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task SignalUnpauseForSyncPlay();
 
+		Task SignalSeekForSyncPlay(TimeSpan position);
+
+		Task<DateTimeOffset> SyncTime();
+
     }
 
 	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);

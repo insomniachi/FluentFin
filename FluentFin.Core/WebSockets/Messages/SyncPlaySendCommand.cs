@@ -12,7 +12,7 @@ namespace FluentFin.Core.WebSockets.Messages
 
         public DateTime When { get; set; }
 
-        public long? PositionTicks { get; set; }
+        public long PositionTicks { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter<SendCommandType>))]
         public SendCommandType Command { get; set; }

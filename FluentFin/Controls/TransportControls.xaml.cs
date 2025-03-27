@@ -152,16 +152,18 @@ public sealed partial class TransportControls : UserControl
 		return (duration - currentTime).ToString("hh\\:mm\\:ss");
 	}
 
-	private void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
+	private async void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
 	{
 		var ts = Player.Position - TimeSpan.FromSeconds(10);
 		Player.SeekTo(ts);
-	}
+        await App.GetService<IJellyfinClient>().SignalSeekForSyncPlay(ts);
+    }
 
-	private void SkipForwardButton_Click(object sender, RoutedEventArgs e)
+	private async void SkipForwardButton_Click(object sender, RoutedEventArgs e)
 	{
 		var ts = Player.Position + TimeSpan.FromSeconds(30);
 		Player.SeekTo(ts);
+		await App.GetService<IJellyfinClient>().SignalSeekForSyncPlay(ts);
 	}
 
 	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -189,9 +191,19 @@ public sealed partial class TransportControls : UserControl
 		TrickplayTip.IsOpen = false;
     }
 
-    private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+    private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
     {
 		Player.TogglePlayPlause();
+
+		var client = App.GetService<IJellyfinClient>();
+		if (Player.State == MediaPlayerState.Playing)
+		{
+			await client.SignalUnpauseForSyncPlay();
+		}
+		else
+		{
+			await client.SignalPauseForSyncPlay();
+		}
     }
 
     private async void CastButton_Click(object sender, RoutedEventArgs e)

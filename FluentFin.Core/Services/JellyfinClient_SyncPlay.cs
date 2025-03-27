@@ -65,6 +65,11 @@ namespace FluentFin.Core.Services
 
         public async Task SignalReadyForSyncPlay(ReadyRequestDto request)
         {
+            if (SessionInfo.GroupId is null)
+            {
+                return;
+            }
+
             try
             {
                 await _jellyfinApiClient.SyncPlay.Ready.PostAsync(request);
@@ -78,6 +83,11 @@ namespace FluentFin.Core.Services
 
         public async Task SignalPauseForSyncPlay()
         {
+            if (SessionInfo.GroupId is null)
+            {
+                return;
+            }
+
             try
             {
                 await _jellyfinApiClient.SyncPlay.Pause.PostAsync();
@@ -91,6 +101,11 @@ namespace FluentFin.Core.Services
 
         public async Task SignalUnpauseForSyncPlay()
         {
+            if (SessionInfo.GroupId is null)
+            {
+                return;
+            }
+
             try
             {
                 await _jellyfinApiClient.SyncPlay.Unpause.PostAsync();
@@ -104,6 +119,11 @@ namespace FluentFin.Core.Services
 
         public async Task SignalSeekForSyncPlay(TimeSpan position)
         {
+            if(SessionInfo.GroupId is null)
+            {
+                return;
+            }
+
             try
             {
                 await _jellyfinApiClient.SyncPlay.Seek.PostAsync(new SeekRequestDto

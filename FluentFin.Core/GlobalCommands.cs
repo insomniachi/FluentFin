@@ -13,14 +13,27 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	[RelayCommand]
 	public async Task PlayDto(BaseItemDto dto)
 	{
-        if (string.IsNullOrEmpty(SessionInfo.RemoteSessionId) || SessionInfo.SessionId == SessionInfo.RemoteSessionId)
-        {
-            navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
+		if(SessionInfo.GroupId is not null)
+		{
+			var ids = await GetItemIds(dto);
+			var info = await jellyfinClient.GetItem(ids[0]!.Value);
+
+            var request = new PlayRequestDto
+            {
+				PlayingItemPosition = 0,
+				PlayingQueue = ids,
+				StartPositionTicks = info?.UserData?.PlaybackPositionTicks ?? 0,
+            };
+            await jellyfinClient.SignalNewPlaylist(request);
+		}
+		else if(!string.IsNullOrEmpty(SessionInfo.RemoteSessionId) && SessionInfo.SessionId != SessionInfo.RemoteSessionId)
+		{
+            await jellyfinClient.PlayOnSession(SessionInfo.RemoteSessionId, await GetItemIds(dto));
         }
 		else
 		{
-			await jellyfinClient.PlayOnSession(SessionInfo.RemoteSessionId, await GetItemIds(dto));
-		}
+            navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
+        }
 	}
 
 	[RelayCommand]

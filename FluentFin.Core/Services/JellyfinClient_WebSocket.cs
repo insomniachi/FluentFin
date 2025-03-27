@@ -134,6 +134,9 @@ internal static class MessageConverter
             return messageType switch
             {
 				GroupUpdateType.PlayQueue => JsonSerializer.Deserialize<PlayQueueUpdateMessage>(json),
+				GroupUpdateType.UserJoined => JsonSerializer.Deserialize<UserJoinedUpdateMessage>(json),
+				GroupUpdateType.UserLeft => JsonSerializer.Deserialize<UserLeftUpdateMessage>(json),
+                GroupUpdateType.GroupJoined => JsonSerializer.Deserialize<GroupJoinedUpdateMessage>(json),
                 _ => null
             };
         }

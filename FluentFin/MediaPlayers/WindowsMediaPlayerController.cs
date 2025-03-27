@@ -1,14 +1,10 @@
 ﻿using DynamicData;
-using FluentFin.Controls;
 using FluentFin.Core.Contracts.Services;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Windows.Foundation;
-using Windows.Media.Casting;
 using Windows.Media.Core;
-using Windows.Media.Streaming.Adaptive;
 
 namespace FluentFin.MediaPlayers
 {
@@ -177,8 +173,15 @@ namespace FluentFin.MediaPlayers
             return true;
         }
 
-        public void SeekTo(TimeSpan timeSpan) => _mp.Position = timeSpan;
-        public void Stop() => _mp.Pause();
+        public void SeekTo(TimeSpan timeSpan)
+        {
+            try
+            {
+                _mp.Position = timeSpan;
+            }
+            catch { }
+        }
+        public void Stop() => Pause();
 
         private static MediaPlayerState ConvertState(Windows.Media.Playback.MediaPlayerState state)
         {

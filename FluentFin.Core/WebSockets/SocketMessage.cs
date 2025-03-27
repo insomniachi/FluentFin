@@ -11,7 +11,7 @@ public abstract class WebSocketMessage
 	public string? ServerId { get; set; }
 }
 
-public abstract class InboundSocketMessage<T> : WebSocketMessage, IInboundSocketMessage
+public abstract class SocketMessage<T> : WebSocketMessage, IInboundSocketMessage
 {
 	[JsonConverter(typeof(JsonNullableGuidConverter))]
 	public Guid? MessageId { get; set; }

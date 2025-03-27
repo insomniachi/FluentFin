@@ -1,4 +1,5 @@
 ﻿using FluentFin.Contracts.Services;
+using FluentFin.Core;
 using FluentFin.Core.Services;
 using FluentFin.Core.WebSockets;
 using FluentFin.ViewModels;
@@ -31,6 +32,20 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
                      break;
                  case PlayQueueUpdateMessage { Data: not null } playMessage:
                      navigationService.NavigateTo<VideoPlayerViewModel>(playMessage.Data.Data);
+                     break;
+                 case GroupJoinedUpdateMessage groupJoined:
+                     contentDialogService.Growl("", $"SyncPlay Enabled", TimeSpan.FromSeconds(5));
+                     SessionInfo.GroupId = groupJoined.Data?.Data.GroupId;
+                     break;
+                 case GroupLeftUpdateMessage:
+                     contentDialogService.Growl("", $"SyncPlay Disabled", TimeSpan.FromSeconds(5));
+                     SessionInfo.GroupId = null;
+                     break;
+                 case UserJoinedUpdateMessage userJoined:
+                     contentDialogService.Growl("", $"{userJoined.Data?.Data} joined", TimeSpan.FromSeconds(5));
+                     break;
+                 case UserLeftUpdateMessage userJoined:
+                     contentDialogService.Growl("", $"{userJoined.Data?.Data} left", TimeSpan.FromSeconds(5));
                      break;
              }
          })

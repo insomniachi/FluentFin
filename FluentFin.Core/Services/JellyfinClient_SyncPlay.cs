@@ -142,5 +142,18 @@ namespace FluentFin.Core.Services
                 return localTime;
             }
         }
+
+        public async Task SignalNewPlaylist(PlayRequestDto request)
+        {
+            try
+            {
+                await _jellyfinApiClient.SyncPlay.SetNewQueue.PostAsync(request);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Unhandled Exception");
+                throw;
+            }
+        }
     }
 }

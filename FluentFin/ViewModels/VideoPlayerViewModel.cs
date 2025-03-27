@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
@@ -35,7 +36,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
     private KeyboardMediaPlayerController? _keyboardController;
     private PlayQueueUpdate? _playQueueUpdate;
     private TimeSpan _duration;
-    private SyncPlaySendCommand _previousCommand;
+    private SyncPlaySendCommand? _previousCommand;
 
 
     public TrickplayViewModel TrickplayViewModel { get; } = trickplayViewModel;

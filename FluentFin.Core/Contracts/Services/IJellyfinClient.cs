@@ -196,6 +196,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task SignalSeekForSyncPlay(TimeSpan position);
 
+		Task SignalNewPlaylist(PlayRequestDto request);
+
 		Task<DateTimeOffset> SyncTime();
 
     }

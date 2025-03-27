@@ -18,6 +18,9 @@ public partial class SyncPlayGroupPickerViewModel(IJellyfinClient jellyfinClient
     [ObservableProperty]
     public partial bool HasActiveGroups { get; set; }
 
+    [ObservableProperty]
+    public partial string SecondaryButtonText { get; set; }
+
     public bool CanClose { get; set; }
 
 
@@ -26,6 +29,7 @@ public partial class SyncPlayGroupPickerViewModel(IJellyfinClient jellyfinClient
         Groups = await jellyfinClient.GetSyncPlayGroups();
         SelectedGroup = Groups.FirstOrDefault(x => x.GroupId == SessionInfo.GroupId);
         HasActiveGroups = Groups is { Count: > 0 };
+        SecondaryButtonText = SelectedGroup is not null ? "Exit Group" : "Create Group";
     }
 
     [RelayCommand]
@@ -37,14 +41,21 @@ public partial class SyncPlayGroupPickerViewModel(IJellyfinClient jellyfinClient
         }
 
         await  jellyfinClient.JoinSyncPlayGroup(id);
-        SessionInfo.GroupId = group.GroupId;
         CanClose = true;
     }
 
     [RelayCommand]
-    private async Task CreateGroup()
+    private async Task CreateOrExitGroup()
     {
-        await jellyfinClient.CreateSyncPlayGroup();
+        if(SelectedGroup is null)
+        {
+            await jellyfinClient.CreateSyncPlayGroup();
+        }
+        else
+        {
+            await jellyfinClient.LeaveSyncPlayGroup();
+        }
+
     }
 
 }

@@ -18,8 +18,8 @@
     PrimaryButtonCommand="{x:Bind ViewModel.JoinGroupCommand}"
     PrimaryButtonCommandParameter="{x:Bind ItemsView.SelectedItem, Mode=OneWay}"
     PrimaryButtonText="Select"
-    SecondaryButtonCommand="{x:Bind ViewModel.CreateGroupCommand}"
-    SecondaryButtonText="Create New"
+    SecondaryButtonCommand="{x:Bind ViewModel.CreateOrExitGroupCommand}"
+    SecondaryButtonText="{x:Bind ViewModel.SecondaryButtonText, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
     mc:Ignorable="d">
 

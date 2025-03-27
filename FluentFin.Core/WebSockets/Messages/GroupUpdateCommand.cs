@@ -33,6 +33,16 @@ public class PlayQueueUpdate
     public GroupRepeatMode RepeatMode { get; set; }
 }
 
+public class GroupJoinedUpdate
+{
+    [JsonConverter(typeof(JsonGuidConverter))]
+    public Guid GroupId { get; set; }
+    public string GroupName { get; set; } = "";
+    public string State { get; set; } = "";
+    public string[] Participants { get; set; } = [];
+    public DateTime LastUpdatedAt { get; set; }
+}
+
 public class SyncPlayQueueItem
 {
     [JsonConverter(typeof(JsonGuidConverter))]

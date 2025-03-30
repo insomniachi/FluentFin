@@ -37,6 +37,9 @@ public sealed partial class MediaPlayerHost : UserControl
     [GeneratedDependencyProperty]
     public partial MediaPlayerType? MediaPlayerType { get; set; }
 
+    [GeneratedDependencyProperty]
+    public partial IJellyfinClient? JellyfinClient { get; set; }
+
     public IMediaPlayerController? Player
     {
         get

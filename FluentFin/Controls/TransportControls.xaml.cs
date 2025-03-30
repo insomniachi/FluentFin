@@ -34,6 +34,9 @@ public sealed partial class TransportControls : UserControl
 	[GeneratedDependencyProperty]
 	public partial TrickplayViewModel Trickplay { get; set; }
 
+	[GeneratedDependencyProperty]
+	public partial IJellyfinClient JellyfinClient { get; set; }
+
 	public IMediaPlayerController Player
 	{
 		get
@@ -156,14 +159,26 @@ public sealed partial class TransportControls : UserControl
 	{
 		var ts = Player.Position - TimeSpan.FromSeconds(10);
 		Player.SeekTo(ts);
-        await App.GetService<IJellyfinClient>().SignalSeekForSyncPlay(ts);
+
+        if (JellyfinClient is null)
+        {
+            return;
+        }
+
+        await JellyfinClient.SignalSeekForSyncPlay(ts);
     }
 
 	private async void SkipForwardButton_Click(object sender, RoutedEventArgs e)
 	{
 		var ts = Player.Position + TimeSpan.FromSeconds(30);
 		Player.SeekTo(ts);
-		await App.GetService<IJellyfinClient>().SignalSeekForSyncPlay(ts);
+
+		if(JellyfinClient is null)
+        {
+			return;
+        }
+
+        await JellyfinClient.SignalSeekForSyncPlay(ts);
 	}
 
 	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -195,21 +210,30 @@ public sealed partial class TransportControls : UserControl
     {
 		Player.TogglePlayPlause();
 
-		var client = App.GetService<IJellyfinClient>();
+		if(JellyfinClient is null)
+		{
+			return;
+		}
+
+
 		if (Player.State == MediaPlayerState.Playing)
 		{
-			await client.SignalUnpauseForSyncPlay();
+			await JellyfinClient.SignalUnpauseForSyncPlay();
 		}
 		else
 		{
-			await client.SignalPauseForSyncPlay();
+			await JellyfinClient.SignalPauseForSyncPlay();
 		}
     }
 
     private async void CastButton_Click(object sender, RoutedEventArgs e)
     {
-		var jellyfinClient = App.GetService<IJellyfinClient>();
-		var sessions = await jellyfinClient.GetControllableSessions();
+		if(JellyfinClient is null)
+		{
+			return;
+		}
+
+		var sessions = await JellyfinClient.GetControllableSessions();
 
 		if(sessions.FirstOrDefault(x => x.Id == SessionInfo.SessionId) is { } session && session.NowPlayingItem is { } dto)
 		{

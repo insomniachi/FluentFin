@@ -30,7 +30,7 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
                                                 gcm.Data.Arguments["Text"],
                                                 TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
                      break;
-                 case PlayQueueUpdateMessage { Data: not null } playMessage:
+                 case PlayQueueUpdateMessage { Data.Data.PlayingItemIndex: >= 0 } playMessage:
                      navigationService.NavigateTo<VideoPlayerViewModel>(playMessage.Data.Data);
                      break;
                  case GroupJoinedUpdateMessage groupJoined:

@@ -18,6 +18,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             IsSkipButtonVisible="{x:Bind IsSkipButtonVisible, Mode=OneWay}"
+            JellyfinClient="{x:Bind JellyfinClient, Mode=OneWay}"
             Player="{x:Bind Player, Mode=TwoWay}"
             Playlist="{x:Bind Playlist, Mode=OneWay}"
             SkipCommand="{x:Bind SkipCommand, Mode=OneWay}"

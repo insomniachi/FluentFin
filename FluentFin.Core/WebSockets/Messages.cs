@@ -20,30 +20,30 @@ public class UserDataChangeMessage : SocketMessage<UserDataChangeInfo>
 
 public class SyncPlayCommandMessage : SocketMessage<SyncPlaySendCommand>
 {
-    public override SessionMessageType MessageType => SessionMessageType.SyncPlayCommand;
+	public override SessionMessageType MessageType => SessionMessageType.SyncPlayCommand;
 }
 
 public class PlayQueueUpdateMessage : SocketMessage<GroupUpdate<PlayQueueUpdate>>
 {
-    public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
 public class UserJoinedUpdateMessage : SocketMessage<GroupUpdate<string>>
 {
-    public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
 public class UserLeftUpdateMessage : SocketMessage<GroupUpdate<string>>
 {
-    public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
 public class GroupJoinedUpdateMessage : SocketMessage<GroupUpdate<GroupJoinedUpdate>>
 {
-    public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
 public class GroupLeftUpdateMessage : SocketMessage<GroupUpdate<string>>
 {
-    public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }

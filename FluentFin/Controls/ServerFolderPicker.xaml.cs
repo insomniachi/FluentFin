@@ -1,10 +1,10 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.WinUI;
 using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Collections.ObjectModel;
 
 namespace FluentFin.Controls;
 
@@ -33,7 +33,7 @@ public sealed partial class ServerFolderPicker : UserControl
 
 	private async void ItemsView_ItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs args)
 	{
-		if(args.InvokedItem is not FileSystemEntryInfo { Path: not null } info)
+		if (args.InvokedItem is not FileSystemEntryInfo { Path: not null } info)
 		{
 			return;
 		}
@@ -53,7 +53,7 @@ public sealed partial class ServerFolderPicker : UserControl
 	{
 		var parts = CurrentFolder.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-		if(parts.Length == 0)
+		if (parts.Length == 0)
 		{
 			return;
 		}

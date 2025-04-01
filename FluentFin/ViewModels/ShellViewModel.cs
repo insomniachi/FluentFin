@@ -28,9 +28,9 @@ public partial class ShellViewModel : ObservableObject, INavigationAware
 	private void OnNavigated(object sender, NavigationEventArgs e)
 	{
 		IsBackEnabled = NavigationService.CanGoBack;
-        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-        Selected = selectedItem;
-    }
+		var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+		Selected = selectedItem;
+	}
 
 	public Task OnNavigatedTo(object parameter)
 	{

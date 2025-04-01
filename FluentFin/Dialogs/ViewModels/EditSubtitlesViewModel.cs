@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
-using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace FluentFin.Dialogs.ViewModels;
 
@@ -22,7 +22,7 @@ public partial class EditSubtitlesViewModel(IJellyfinClient jellyfinClient) : Ob
 	public partial List<RemoteSubtitleInfo> RemoteSubtitles { get; set; } = [];
 
 	public ObservableCollection<MediaStream> Subtitles { get; } = [];
-	
+
 	public List<CultureInfo> Cultures { get; } = [.. CultureInfo.GetCultures(CultureTypes.NeutralCultures)];
 
 	public async Task Initialize(BaseItemDto item)

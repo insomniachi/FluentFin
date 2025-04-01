@@ -1,4 +1,6 @@
-﻿using FluentFin.Activation;
+﻿using System.Reactive.Subjects;
+using System.Reflection;
+using FluentFin.Activation;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
@@ -21,8 +23,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Serilog;
-using System.Reactive.Subjects;
-using System.Reflection;
 using Windows.ApplicationModel;
 
 namespace FluentFin;
@@ -181,25 +181,25 @@ public partial class App : Application
 
 			// Configuration
 
-			if(!IsPackaged())
+			if (!IsPackaged())
 			{
 				services.AddHostedService<WindowsUpdateService>();
-            }
-            services.AddHostedService<WebSocketMessageHandler>();
-        }).
+			}
+			services.AddHostedService<WebSocketMessageHandler>();
+		}).
 		Build();
 
 		UnhandledException += App_UnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-    }
+		AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+	}
 
-    private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
-    {
-        NativeMethods.AllowSleep();
-        GetService<ILogger<App>>().LogError($"{e.ExceptionObject}");
-    }
+	private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+	{
+		NativeMethods.AllowSleep();
+		GetService<ILogger<App>>().LogError($"{e.ExceptionObject}");
+	}
 
-    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+	private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
 		GetService<ILogger<App>>().LogError(e.Exception, "Unhandled exception");
 		e.Handled = true;
@@ -214,7 +214,7 @@ public partial class App : Application
 		base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
-		
+
 		StartFlyleaf();
 
 		await GetService<IActivationService>().ActivateAsync(args);

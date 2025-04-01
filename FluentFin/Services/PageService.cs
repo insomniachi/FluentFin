@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs.ViewModels;
@@ -9,18 +9,17 @@ using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
 using Microsoft.UI.Xaml.Controls;
-using System.ComponentModel;
 
 namespace FluentFin.Services;
 
 public class PageService : IPageService
 {
-	private readonly Dictionary<string, Type> _pages = new();
-	private readonly Dictionary<Type, Type> _viewModels = new();
-	private readonly Dictionary<Type, Type> _parents = new();
+	private readonly Dictionary<string, Type> _pages = [];
+	private readonly Dictionary<Type, Type> _viewModels = [];
+	private readonly Dictionary<Type, Type> _parents = [];
 	private readonly Lock _lock = new();
 
-    public PageService()
+	public PageService()
 	{
 		// Setup Section
 		Configure<ShellViewModel, ShellPage>();
@@ -70,9 +69,9 @@ public class PageService : IPageService
 
 		// Setup Parent/Child Relationships
 		ConfigureParent<LibraryViewModel, LibrariesLandingPageViewModel>();
-    }
+	}
 
-    public Type GetPageType(string key)
+	public Type GetPageType(string key)
 	{
 		Type? pageType;
 		lock (_pages)
@@ -88,21 +87,21 @@ public class PageService : IPageService
 
 	public Type GetViewModelType(Type type)
 	{
-        Type? vmType;
-        lock (_pages)
-        {
-            if (!_viewModels.TryGetValue(type, out vmType))
-            {
-                throw new ArgumentException($"VM not found: {type.FullName}. Did you forget to call PageService.Configure?");
-            }
-        }
+		Type? vmType;
+		lock (_pages)
+		{
+			if (!_viewModels.TryGetValue(type, out vmType))
+			{
+				throw new ArgumentException($"VM not found: {type.FullName}. Did you forget to call PageService.Configure?");
+			}
+		}
 
-        return vmType;
-    }
+		return vmType;
+	}
 
 	public Type? GetParent(Type typeKey)
 	{
-		if(_parents.TryGetValue(typeKey, out var parent))
+		if (_parents.TryGetValue(typeKey, out var parent))
 		{
 			return parent;
 		}
@@ -133,19 +132,19 @@ public class PageService : IPageService
 		}
 	}
 
-    private void ConfigureParent<TChild, TParent>()
-    where TChild : INotifyPropertyChanged
-    where TParent : INotifyPropertyChanged
-    {
-        lock (_lock)
-        {
+	private void ConfigureParent<TChild, TParent>()
+	where TChild : INotifyPropertyChanged
+	where TParent : INotifyPropertyChanged
+	{
+		lock (_lock)
+		{
 			var key = typeof(TChild);
-            if(_parents.ContainsKey(key))
-            {
-                throw new ArgumentException($"The key {key} is already configured in PageService");
-            }
+			if (_parents.ContainsKey(key))
+			{
+				throw new ArgumentException($"The key {key} is already configured in PageService");
+			}
 
 			_parents.Add(key, typeof(TParent));
-        }
-    }
+		}
+	}
 }

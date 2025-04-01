@@ -3,7 +3,6 @@ using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.UI.Core;
 using Microsoft.UI.Xaml.Controls;
-using System.Reflection;
 
 namespace FluentFin.Services;
 
@@ -18,7 +17,7 @@ public class NavigationViewService(INavigationService navigationService,
 
 	public void Initialize(NavigationView navigationView)
 	{
-		if(_navigationView is not null)
+		if (_navigationView is not null)
 		{
 			_navigationView.BackRequested -= OnBackRequested;
 			_navigationView.ItemInvoked -= OnItemInvoked;
@@ -103,7 +102,7 @@ public class NavigationViewService(INavigationService navigationService,
 		{
 			var pageType = pageService.GetPageType(pageKey);
 			var vmTYpe = pageService.GetViewModelType(pageType);
-            return pageType == sourcePageType || IsParent(vmTYpe, sourcePageType);
+			return pageType == sourcePageType || IsParent(vmTYpe, sourcePageType);
 		}
 
 		return false;
@@ -115,5 +114,5 @@ public class NavigationViewService(INavigationService navigationService,
 		var parentType = pageService.GetParent(vmType);
 
 		return parentType == parentVmType;
-    }
+	}
 }

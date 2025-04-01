@@ -84,7 +84,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		ContinueItems = new(response.Items.Select(BaseItemViewModel.FromDto));
+		ContinueItems = [.. response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 
 	private async Task UpdateNextUpItems()
@@ -120,7 +120,8 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			dto.UserData.Played = userData.Played;
 			dto.UserData.PlayedPercentage = userData.PlayedPercentage;
 			dto.UserData.UnplayedItemCount = userData.UnplayedItemCount;
-		};
+		}
+		;
 	}
 
 	private void ProcessContinueWatchingItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)

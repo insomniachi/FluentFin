@@ -1,5 +1,5 @@
-﻿using FluentFin.Core.Contracts.Services;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using FluentFin.Core.Contracts.Services;
 
 namespace FluentFin.Core.Settings;
 

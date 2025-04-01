@@ -2,6 +2,6 @@
 
 public interface ITaskBarProgress
 {
-    void Clear();
-    void SetProgressPercent(int percent);
+	void Clear();
+	void SetProgressPercent(int percent);
 }

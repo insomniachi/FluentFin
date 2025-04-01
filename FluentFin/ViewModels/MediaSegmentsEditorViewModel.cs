@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.ViewModels;
@@ -6,8 +8,6 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
 
@@ -22,7 +22,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 	[ObservableProperty]
 	public partial MediaPlayerType MediaPlayerType { get; set; }
-	
+
 	public ObservableCollection<MediaSegmentViewModel> Segments { get; } = [];
 	public long CurrentTimeTicks { get; set; }
 	public MediaSegmentViewModel? PlayingSegment { get; set; }
@@ -68,22 +68,22 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 				  {
 					  CurrentTimeTicks = time.Ticks;
 
-                      if (PlayingSegment is { } segment && CurrentTimeTicks > segment.EndTicks)
-                      {
-                          mp.Pause();
-                          PlayingSegment = null;
-                      }
-                  });
+					  if (PlayingSegment is { } segment && CurrentTimeTicks > segment.EndTicks)
+					  {
+						  mp.Pause();
+						  PlayingSegment = null;
+					  }
+				  });
 
-                if (dto.Type == BaseItemDto_Type.Episode)
-                {
-                    Playlist.SelectedItem = Playlist.Items.FirstOrDefault(x => x.Dto.IndexNumber == dto.IndexNumber && x.Dto.ParentIndexNumber == dto.ParentIndexNumber);
-                }
-                else
-                {
-                    Playlist.SelectedItem = Playlist.Items.FirstOrDefault();
-                }
-            });
+				if (dto.Type == BaseItemDto_Type.Episode)
+				{
+					Playlist.SelectedItem = Playlist.Items.FirstOrDefault(x => x.Dto.IndexNumber == dto.IndexNumber && x.Dto.ParentIndexNumber == dto.ParentIndexNumber);
+				}
+				else
+				{
+					Playlist.SelectedItem = Playlist.Items.FirstOrDefault();
+				}
+			});
 
 
 	}
@@ -100,7 +100,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 			return;
 		}
 
-		if(MediaPlayer is null)
+		if (MediaPlayer is null)
 		{
 			return;
 		}

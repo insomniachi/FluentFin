@@ -2,8 +2,8 @@
 
 namespace FluentFin.Core.Contracts.Services
 {
-    public interface IDeviceProfileFactory
-    {
-        DeviceProfile GetDeviceProfile();
-    }
+	public interface IDeviceProfileFactory
+	{
+		DeviceProfile GetDeviceProfile();
+	}
 }

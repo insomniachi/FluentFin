@@ -33,7 +33,7 @@ public partial class ScheduledTasksViewModel(IJellyfinClient jellyfinClient) : O
 	[RelayCommand]
 	private async Task Run(TaskInfo task)
 	{
-		if(string.IsNullOrEmpty(task.Id))
+		if (string.IsNullOrEmpty(task.Id))
 		{
 			return;
 		}

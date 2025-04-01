@@ -1,4 +1,5 @@
-﻿using Blurhash;
+﻿using System.Runtime.InteropServices.WindowsRuntime;
+using Blurhash;
 using FluentFin.Core;
 using FluentFin.Core.ViewModels;
 using Flurl;
@@ -7,7 +8,6 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace FluentFin.Converters;
 
@@ -79,91 +79,91 @@ public static class BaseItemDtoConverters
 
 	public static WriteableBitmap? GetBlurHash(BaseItemDto? dto, ImageType imageType, double height)
 	{
-        if (dto is null)
-        {
-            return null;
-        }
-
-        if (dto.Id is not { } id)
-        {
-            return null;
-        }
-
-        if (dto.ImageTags is null)
-        {
-            return null;
-        }
-
-        var hasRequestTag = dto.ImageTags.AdditionalData.TryGetValue($"{imageType}", out object? requestTag);
-        var backdropTag = dto.BackdropImageTags?.FirstOrDefault();
-        var parentBackdropTag = dto.ParentBackdropImageTags?.FirstOrDefault();
-
-        if (imageType == ImageType.Thumb && !hasRequestTag)
-        {
-            imageType = ImageType.Primary;
-        }
-
-        string imageTypeStr = imageType.ToString();
-        if (!dto.ImageTags.AdditionalData.TryGetValue(imageTypeStr, out object? imageTagObj))
-        {
-            return null;
-        }
-
-        string imageTag = $"{imageTagObj}";
-
-        // This is a little gross, but there doesn't seem to be a better way to do it.
-        IAdditionalDataHolder? blurHashesForType = imageType switch
-        {
-            ImageType.Art => dto.ImageBlurHashes?.Art,
-            ImageType.Banner => dto.ImageBlurHashes?.Banner,
-            ImageType.Backdrop => dto.ImageBlurHashes?.Backdrop,
-            ImageType.Box => dto.ImageBlurHashes?.Box,
-            ImageType.BoxRear => dto.ImageBlurHashes?.BoxRear,
-            ImageType.Chapter => dto.ImageBlurHashes?.Chapter,
-            ImageType.Disc => dto.ImageBlurHashes?.Disc,
-            ImageType.Logo => dto.ImageBlurHashes?.Logo,
-            ImageType.Menu => dto.ImageBlurHashes?.Menu,
-            ImageType.Primary => dto.ImageBlurHashes?.Primary,
-            ImageType.Profile => dto.ImageBlurHashes?.Profile,
-            ImageType.Screenshot => dto.ImageBlurHashes?.Screenshot,
-            ImageType.Thumb => dto.ImageBlurHashes?.Thumb,
-            _ => null,
-        };
-
-        string blurHash = "";
-        if (blurHashesForType is not null
-            && blurHashesForType.AdditionalData.TryGetValue(imageTag, out object? blurHashObj))
-        {
-            blurHash = $"{blurHashObj}";
-        }
-
-        if (string.IsNullOrEmpty(blurHash))
-        {
+		if (dto is null)
+		{
 			return null;
-        }
+		}
 
-        var pixelData = new Pixel[20, 20];
-        Blurhash.Core.Decode(blurHash, pixelData, 1);
+		if (dto.Id is not { } id)
+		{
+			return null;
+		}
 
-        // Create a WriteableBitmap and render pixels
-        var bitmap = new WriteableBitmap(20, 20);
-        using (var stream = bitmap.PixelBuffer.AsStream())
-        {
-            for (int row = 0; row < 20; row++)
-            {
-                for (int col = 0; col < 20; col++)
-                {
-                    Pixel pixel = pixelData[row, col];
-                    stream.WriteByte((byte)MathUtils.LinearTosRgb(pixel.Blue));
-                    stream.WriteByte((byte)MathUtils.LinearTosRgb(pixel.Green));
-                    stream.WriteByte((byte)MathUtils.LinearTosRgb(pixel.Red));
-                    stream.WriteByte(255);
-                }
-            }
-        }
+		if (dto.ImageTags is null)
+		{
+			return null;
+		}
 
-        return bitmap;
-    }
+		var hasRequestTag = dto.ImageTags.AdditionalData.TryGetValue($"{imageType}", out object? requestTag);
+		var backdropTag = dto.BackdropImageTags?.FirstOrDefault();
+		var parentBackdropTag = dto.ParentBackdropImageTags?.FirstOrDefault();
+
+		if (imageType == ImageType.Thumb && !hasRequestTag)
+		{
+			imageType = ImageType.Primary;
+		}
+
+		string imageTypeStr = imageType.ToString();
+		if (!dto.ImageTags.AdditionalData.TryGetValue(imageTypeStr, out object? imageTagObj))
+		{
+			return null;
+		}
+
+		string imageTag = $"{imageTagObj}";
+
+		// This is a little gross, but there doesn't seem to be a better way to do it.
+		IAdditionalDataHolder? blurHashesForType = imageType switch
+		{
+			ImageType.Art => dto.ImageBlurHashes?.Art,
+			ImageType.Banner => dto.ImageBlurHashes?.Banner,
+			ImageType.Backdrop => dto.ImageBlurHashes?.Backdrop,
+			ImageType.Box => dto.ImageBlurHashes?.Box,
+			ImageType.BoxRear => dto.ImageBlurHashes?.BoxRear,
+			ImageType.Chapter => dto.ImageBlurHashes?.Chapter,
+			ImageType.Disc => dto.ImageBlurHashes?.Disc,
+			ImageType.Logo => dto.ImageBlurHashes?.Logo,
+			ImageType.Menu => dto.ImageBlurHashes?.Menu,
+			ImageType.Primary => dto.ImageBlurHashes?.Primary,
+			ImageType.Profile => dto.ImageBlurHashes?.Profile,
+			ImageType.Screenshot => dto.ImageBlurHashes?.Screenshot,
+			ImageType.Thumb => dto.ImageBlurHashes?.Thumb,
+			_ => null,
+		};
+
+		string blurHash = "";
+		if (blurHashesForType is not null
+			&& blurHashesForType.AdditionalData.TryGetValue(imageTag, out object? blurHashObj))
+		{
+			blurHash = $"{blurHashObj}";
+		}
+
+		if (string.IsNullOrEmpty(blurHash))
+		{
+			return null;
+		}
+
+		var pixelData = new Pixel[20, 20];
+		Blurhash.Core.Decode(blurHash, pixelData, 1);
+
+		// Create a WriteableBitmap and render pixels
+		var bitmap = new WriteableBitmap(20, 20);
+		using (var stream = bitmap.PixelBuffer.AsStream())
+		{
+			for (int row = 0; row < 20; row++)
+			{
+				for (int col = 0; col < 20; col++)
+				{
+					Pixel pixel = pixelData[row, col];
+					stream.WriteByte((byte)MathUtils.LinearTosRgb(pixel.Blue));
+					stream.WriteByte((byte)MathUtils.LinearTosRgb(pixel.Green));
+					stream.WriteByte((byte)MathUtils.LinearTosRgb(pixel.Red));
+					stream.WriteByte(255);
+				}
+			}
+		}
+
+		return bitmap;
+	}
 
 	public static BitmapImage? GetImage(BaseItemDto? dto, ImageType imageType, double height)
 	{
@@ -247,57 +247,57 @@ public static class BaseItemDtoConverters
 		return new BitmapImage(uri.ToUri());
 	}
 
-    public static int GetCardBadgeValue(BaseItemViewModel vm)
-    {
-        if (vm is null)
-        {
-            return -1;
-        }
+	public static int GetCardBadgeValue(BaseItemViewModel vm)
+	{
+		if (vm is null)
+		{
+			return -1;
+		}
 
-        var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+		var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
 
-        return unwatchedCount == 0 ? -1 : unwatchedCount;
-    }
+		return unwatchedCount == 0 ? -1 : unwatchedCount;
+	}
 
-    public static IconSource? CardBadgeSource(BaseItemViewModel vm)
-    {
-        if (vm is null)
-        {
-            return null;
-        }
+	public static IconSource? CardBadgeSource(BaseItemViewModel vm)
+	{
+		if (vm is null)
+		{
+			return null;
+		}
 
-        var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+		var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
 		var played = vm.UserData?.Played ?? false;
 
-        if (played && unwatchedCount == 0)
-        {
-            return new FontIconSource { Glyph = "\uF78C" };
-        }
+		if (played && unwatchedCount == 0)
+		{
+			return new FontIconSource { Glyph = "\uF78C" };
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public static Visibility IsCardBadgeVisible(BaseItemViewModel vm)
-    {
-        if (vm is null)
-        {
-            return Visibility.Collapsed;
-        }
+	public static Visibility IsCardBadgeVisible(BaseItemViewModel vm)
+	{
+		if (vm is null)
+		{
+			return Visibility.Collapsed;
+		}
 
-        var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
-        var played = vm.UserData?.Played ?? false;
+		var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+		var played = vm.UserData?.Played ?? false;
 
-        if (played && unwatchedCount == 0)
-        {
-            return Visibility.Visible;
-        }
+		if (played && unwatchedCount == 0)
+		{
+			return Visibility.Visible;
+		}
 
-        if (unwatchedCount > 0)
-        {
-            return Visibility.Visible;
-        }
+		if (unwatchedCount > 0)
+		{
+			return Visibility.Visible;
+		}
 
 
-        return Visibility.Collapsed;
-    }
+		return Visibility.Collapsed;
+	}
 }

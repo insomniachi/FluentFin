@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Reflection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
@@ -9,7 +10,6 @@ using FluentFin.Core.ViewModels;
 using FluentFin.Views;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace FluentFin.ViewModels;
 

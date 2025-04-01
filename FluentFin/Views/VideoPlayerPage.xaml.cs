@@ -8,13 +8,13 @@ public sealed partial class VideoPlayerPage : Page
 {
 	public VideoPlayerViewModel ViewModel { get; } = App.GetService<VideoPlayerViewModel>();
 
-    public VideoPlayerPage()
+	public VideoPlayerPage()
 	{
 		InitializeComponent();
-    }
+	}
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
+	protected override void OnNavigatedTo(NavigationEventArgs e)
+	{
 		ViewModel.ToggleFullScreen = () => MediaPlayerHost.OnPlayerDoubleTapped(MediaPlayerHost, new Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs());
-    }
+	}
 }

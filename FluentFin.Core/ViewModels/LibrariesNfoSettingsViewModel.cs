@@ -35,30 +35,30 @@ public partial class LibrariesNfoSettingsViewModel(IJellyfinClient jellyfinClien
 													  Users, nameof(UserDto.Name))
 			{
 				DisplayName = "Save User watch data to NFO files for",
-                Description = "Save watch data to NFO files for other applications to use.",
-            },
+				Description = "Save watch data to NFO files for other applications to use.",
+			},
 			new JellyfinConfigItemViewModel<string>(() => _options.ReleaseDateFormat ?? "", value => _options.ReleaseDateFormat = value)
 			{
 				DisplayName = "Release date format",
 				Description = "All dates within NFO files will be parsed using this format."
-            },
+			},
 			new JellyfinConfigItemViewModel<bool>(() => _options.SaveImagePathsInNfo, value => _options.SaveImagePathsInNfo = value)
 			{
 				DisplayName = "Save image paths within NFO files",
 				Description = "This is recommended if you have image file names that don't conform to Kodi guidelines.Enable path substitution of image paths using the server's path substitution settings." +
 							  "Enable path substitution of image paths using the server's path substitution settings.Enable path substitution of image paths using the server's path substitution settings."
-            },
-            new JellyfinConfigItemViewModel<bool>(() => _options.EnablePathSubstitution, value => _options.EnablePathSubstitution = value)
+			},
+			new JellyfinConfigItemViewModel<bool>(() => _options.EnablePathSubstitution, value => _options.EnablePathSubstitution = value)
 			{
 				DisplayName = "Enable path substitution",
 				Description = "Enable path substitution of image paths using the server's path substitution settings."
-            },
-            new JellyfinConfigItemViewModel<bool>(() => _options.EnableExtraThumbsDuplication, value => _options.EnableExtraThumbsDuplication = value)
+			},
+			new JellyfinConfigItemViewModel<bool>(() => _options.EnableExtraThumbsDuplication, value => _options.EnableExtraThumbsDuplication = value)
 			{
 				DisplayName = "Copy extrafanart to extrathumbs field",
-                Description = "When downloading images they can be saved into both extrafanart and extrathumbs for maximum Kodi skin compatibility."
-            }
-        ];
+				Description = "When downloading images they can be saved into both extrafanart and extrathumbs for maximum Kodi skin compatibility."
+			}
+		];
 	}
 
 	[RelayCommand]

@@ -1,6 +1,6 @@
-﻿using FluentFin.Core.Settings;
+﻿using System.ComponentModel;
+using FluentFin.Core.Settings;
 using Jellyfin.Sdk.Generated.Models;
-using System.ComponentModel;
 
 namespace FluentFin.Core.ViewModels;
 

@@ -1,9 +1,9 @@
-﻿using FluentFin.Core.Services;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
+using FluentFin.Core.Services;
 using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
-using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace FluentFin.Core.Contracts.Services
 {
@@ -61,11 +61,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri GetImage(BaseItemDto item, ImageInfo info);
 
-		Uri GetSplashScreen();
-
 		Task<List<SessionInfoDto>> GetControllableSessions();
 
-        Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
+		Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
 
 		Task Playing(BaseItemDto dto);
 
@@ -167,9 +165,9 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<TranscodingSettings?> GetTranscodeOptions();
 
-        Task SaveTranscodeOptions(TranscodingSettings options);
+		Task SaveTranscodeOptions(TranscodingSettings options);
 
-        Task<LibraryOptionsResultDto?> GetAvailableInfo(Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType libraryContentType, bool isNewLibrary);
+		Task<LibraryOptionsResultDto?> GetAvailableInfo(Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType libraryContentType, bool isNewLibrary);
 
 		Task SaveLibraryOptions(Guid folderId, LibraryOptions options);
 
@@ -200,7 +198,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<DateTimeOffset> SyncTime();
 
-    }
+	}
 
 	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);
 

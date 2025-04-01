@@ -127,14 +127,14 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				CommandParameter = dto
 			};
 
-            yield return new MenuFlyoutItem
-            {
-                Text = "Play On",
-                Icon = new FontIcon { Glyph = "\uE8AF" },
-                Command = App.Dialogs.PlayOnSessionCommand,
-                CommandParameter = dto
-            };
-        }
+			yield return new MenuFlyoutItem
+			{
+				Text = "Play On",
+				Icon = new FontIcon { Glyph = "\uE8AF" },
+				Command = App.Dialogs.PlayOnSessionCommand,
+				CommandParameter = dto
+			};
+		}
 
 		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
 		{
@@ -186,7 +186,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 
 
-			if(SessionInfo.CurrentUser?.Policy?.IsAdministrator == true)
+			if (SessionInfo.CurrentUser?.Policy?.IsAdministrator == true)
 			{
 				yield return new MenuFlyoutItem
 				{

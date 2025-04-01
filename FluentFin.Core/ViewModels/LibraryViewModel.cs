@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
@@ -6,8 +8,6 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -102,7 +102,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial bool IsLoading { get; set; }
 
-    public IJellyfinClient JellyfinClient { get; }
+	public IJellyfinClient JellyfinClient { get; }
 
 	public LibraryFilter Filter { get; set; } = new();
 
@@ -167,7 +167,7 @@ public partial class LibraryFilter : ObservableObject
 		Years.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Years));
 	}
 
-	public ObservableCollection<string> Tags { get; set; } = new();
+	public ObservableCollection<string> Tags { get; set; } = [];
 
 	[ObservableProperty]
 	public partial ObservableCollection<string> Genres { get; set; } = new();

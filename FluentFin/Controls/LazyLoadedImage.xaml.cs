@@ -11,33 +11,33 @@ namespace FluentFin.Controls;
 
 public sealed partial class LazyLoadedImage : UserControl
 {
-    public LazyLoadedImage()
-    {
-        InitializeComponent();
+	public LazyLoadedImage()
+	{
+		InitializeComponent();
 
-        ImageFadeIn.Completed += (object sender, object e) =>
-        {
-            EnableBlurHash = false;
-            BlurHashImageSource = null;
-        };
-    }
+		ImageFadeIn.Completed += (object sender, object e) =>
+		{
+			EnableBlurHash = false;
+			BlurHashImageSource = null;
+		};
+	}
 
-    [GeneratedDependencyProperty]
-    public partial ImageSource ImageSource { get; set; }
+	[GeneratedDependencyProperty]
+	public partial ImageSource ImageSource { get; set; }
 
-    [GeneratedDependencyProperty]
-    public partial bool EnableBlurHash { get; set; }
+	[GeneratedDependencyProperty]
+	public partial bool EnableBlurHash { get; set; }
 
-    [GeneratedDependencyProperty]
-    public partial WriteableBitmap BlurHashImageSource { get; set; }
+	[GeneratedDependencyProperty]
+	public partial WriteableBitmap BlurHashImageSource { get; set; }
 
-    [GeneratedDependencyProperty(DefaultValue = Stretch.UniformToFill)]
-    public partial Stretch Stretch { get; set; }
+	[GeneratedDependencyProperty(DefaultValue = Stretch.UniformToFill)]
+	public partial Stretch Stretch { get; set; }
 
-    private void ImageOpened(object sender, RoutedEventArgs e)
-    {
-       ImageFadeIn.Begin();
-    }
+	private void ImageOpened(object sender, RoutedEventArgs e)
+	{
+		ImageFadeIn.Begin();
+	}
 }
 
 #nullable restore

@@ -1,9 +1,9 @@
-﻿using FluentFin.Core.Contracts.Services;
+﻿using System.Globalization;
+using FluentFin.Core.Contracts.Services;
 using Flurl;
 using Flurl.Http;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
-using System.Globalization;
 
 namespace FluentFin.Core.Services;
 
@@ -458,31 +458,31 @@ public partial class JellyfinClient
 	{
 		try
 		{
-            var builder = _jellyfinApiClient.System.Configuration["encoding"].ToGetRequestInformation();
+			var builder = _jellyfinApiClient.System.Configuration["encoding"].ToGetRequestInformation();
 			return await AddApiKey(builder.URI).GetJsonAsync<TranscodingSettings>();
-        }
+		}
 		catch (Exception ex)
 		{
-            logger.LogError(ex, @"Unhandled exception");
-            return null;
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
 		}
 	}
 
-    public async Task SaveTranscodeOptions(TranscodingSettings options)
-    {
-        try
-        {
-            var builder = _jellyfinApiClient.System.Configuration["encoding"].ToGetRequestInformation();
+	public async Task SaveTranscodeOptions(TranscodingSettings options)
+	{
+		try
+		{
+			var builder = _jellyfinApiClient.System.Configuration["encoding"].ToGetRequestInformation();
 			await AddApiKey(builder.URI).PostJsonAsync(options);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, @"Unhandled exception");
-            return;
-        }
-    }
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
 
-    private async Task GetPlugins()
+	private async Task GetPlugins()
 	{
 		try
 		{

@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets.Messages;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
 
@@ -48,7 +48,7 @@ public partial class PlaylistViewModel : ObservableObject
 				}
 
 				return Items.IndexOf(selectedItem) > 0;
-            })
+			})
 			.Subscribe(value => CanSelectPrev = value);
 	}
 
@@ -71,7 +71,7 @@ public partial class PlaylistViewModel : ObservableObject
 	[RelayCommand(CanExecute = nameof(CanSelectNext))]
 	public void SelectNext()
 	{
-		if(SelectedItem is null)
+		if (SelectedItem is null)
 		{
 			return;
 		}
@@ -85,16 +85,16 @@ public partial class PlaylistViewModel : ObservableObject
 	[RelayCommand(CanExecute = nameof(CanSelectPrev))]
 	public void SelectPrev()
 	{
-        if (SelectedItem is null)
-        {
-            return;
-        }
+		if (SelectedItem is null)
+		{
+			return;
+		}
 
-        RxApp.MainThreadScheduler.Schedule(() =>
-        {
-            SelectedItem = Items[Items.IndexOf(SelectedItem) - 1];
-        });
-    }
+		RxApp.MainThreadScheduler.Schedule(() =>
+		{
+			SelectedItem = Items[Items.IndexOf(SelectedItem) - 1];
+		});
+	}
 
 	public static PlaylistViewModel FromMovie(BaseItemDto dto)
 	{
@@ -132,20 +132,20 @@ public partial class PlaylistViewModel : ObservableObject
 
 	public static PlaylistViewModel FromSyncPlay(IReadOnlyList<SyncPlayQueueItem> items)
 	{
-        var playlist = new PlaylistViewModel();
-        foreach (var item in items)
-        {
-            playlist.Items.Add(new PlaylistItem
-            {
-                Title = item.ItemId.ToString(),
-                Dto = new BaseItemDto
-                {
-                    Id = item.ItemId
-                }
-            });
-        }
-        return playlist;
-    }
+		var playlist = new PlaylistViewModel();
+		foreach (var item in items)
+		{
+			playlist.Items.Add(new PlaylistItem
+			{
+				Title = item.ItemId.ToString(),
+				Dto = new BaseItemDto
+				{
+					Id = item.ItemId
+				}
+			});
+		}
+		return playlist;
+	}
 
 	public static async Task<PlaylistViewModel> FromEpisode(IJellyfinClient jellyfinClient, BaseItemDto episode)
 	{

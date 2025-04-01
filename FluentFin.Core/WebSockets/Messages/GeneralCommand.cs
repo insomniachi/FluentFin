@@ -1,5 +1,5 @@
-﻿using Jellyfin.Sdk.Generated.Models;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.WebSockets.Messages;
 

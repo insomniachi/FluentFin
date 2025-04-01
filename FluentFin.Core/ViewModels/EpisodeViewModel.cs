@@ -60,7 +60,7 @@ public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : Observab
 		}
 		Dto = episode;
 
-		if(Dto.People is { Count: > 0 } people)
+		if (Dto.People is { Count: > 0 } people)
 		{
 			CastAndCrew = people.Where(x => x.Type != BaseItemPerson_Type.GuestStar);
 			GuestStars = people.Where(x => x.Type == BaseItemPerson_Type.GuestStar);

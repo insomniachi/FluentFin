@@ -1,13 +1,13 @@
-﻿using FluentFin.Core;
-using FluentFin.Services;
-using Flurl.Http;
-using Microsoft.Extensions.Hosting;
-using ReactiveUI;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Text.Json.Nodes;
+using FluentFin.Core;
+using FluentFin.Services;
+using Flurl.Http;
+using Microsoft.Extensions.Hosting;
+using ReactiveUI;
 
 namespace FluentFin;
 
@@ -17,7 +17,7 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 {
 	private VersionInfo _current;
 	private CancellationTokenSource _cts;
-	private readonly CompositeDisposable _disposable = new();
+	private readonly CompositeDisposable _disposable = [];
 	private readonly HttpClient _httpClient = new();
 
 	private static async Task<string> TryGetStreamAsync()
@@ -29,12 +29,12 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 				.AllowAnyHttpStatus()
 				.GetAsync();
 
-					if (response.StatusCode > 300)
-					{
-						return "";
-					}
+			if (response.StatusCode > 300)
+			{
+				return "";
+			}
 
-					return await response.GetStringAsync();
+			return await response.GetStringAsync();
 		}
 		catch
 		{

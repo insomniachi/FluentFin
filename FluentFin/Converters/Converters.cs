@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using System.Web;
+using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.MediaPlayers;
 using FluentFin.ViewModels;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
@@ -10,8 +11,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System.Collections.ObjectModel;
-using System.Web;
 using Windows.Foundation;
 
 namespace FluentFin.Converters;
@@ -31,9 +30,9 @@ public static class Converters
 	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
 	public static string MsToTime(long ms) => TimeSpan.FromMilliseconds(ms).ToString("hh\\:mm\\:ss");
 
-    public static string DateTimeOffsetToString(DateTimeOffset? offset)
+	public static string DateTimeOffsetToString(DateTimeOffset? offset)
 	{
-		if(offset is null)
+		if (offset is null)
 		{
 			return "";
 		}
@@ -43,13 +42,13 @@ public static class Converters
 
 	public static string TicksToTime2(long? value)
 	{
-		if(value is null)
+		if (value is null)
 		{
 			return "";
 		}
 
 		var ts = new TimeSpan(value.Value);
-		if(ts.Hours > 0)
+		if (ts.Hours > 0)
 		{
 			return string.Format($"{ts.Hours}h {ts.Minutes}m");
 		}
@@ -79,19 +78,26 @@ public static class Converters
 			return null;
 		}
 
-		return new BitmapImage(uri);
+		try
+		{
+			return new BitmapImage(uri);
+		}
+		catch 
+		{
+			return null;
+		}
 	}
 
 	public static FlyoutBase? GetAudiosFlyout(IMediaPlayerController player, int defaultIndex)
 	{
-        var audios = player.GetAudioTracks().ToList();
+		var audios = player.GetAudioTracks().ToList();
 
-		if(audios.Count < 2)
+		if (audios.Count < 2)
 		{
 			return null;
 		}
 
-        const string groupName = "Audios";
+		const string groupName = "Audios";
 		var command = new RelayCommand<AudioTrack>(track => player.OpenAudioTrack(track.Id));
 
 		var flyout = new MenuBarItemFlyout();
@@ -110,7 +116,7 @@ public static class Converters
 			flyout.Items.Add(flyoutItem);
 		}
 
-        return flyout;
+		return flyout;
 	}
 
 	public static FlyoutBase? GetSubtitlesFlyout(IMediaPlayerController mp, MediaResponse response)
@@ -176,8 +182,8 @@ public static class Converters
 			flyout.Items.Add(flyoutItem);
 		}
 
-        return flyout;
-    }
+		return flyout;
+	}
 
 	public static string AccessScheduleToString(AccessSchedule schedule)
 	{

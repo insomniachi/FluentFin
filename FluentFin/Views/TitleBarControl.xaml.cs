@@ -9,7 +9,7 @@ public sealed partial class TitleBarControl : UserControl
 {
 	public TitleBarViewModel ViewModel { get; } = (TitleBarViewModel)App.GetService<ITitleBarViewModel>();
 
-    public TitleBarControl()
+	public TitleBarControl()
 	{
 		InitializeComponent();
 	}
@@ -24,8 +24,8 @@ public sealed partial class TitleBarControl : UserControl
 		FooterFlyout.Hide();
 	}
 
-    private void KeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
+	private void KeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+	{
 		if (FocusManager.GetFocusedElement() is AutoSuggestBox sb && sb == SearchBox)
 		{
 			return;

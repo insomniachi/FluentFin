@@ -1,3 +1,7 @@
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Windows.Input;
 using CommunityToolkit.WinUI;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
@@ -6,10 +10,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Windows.Input;
 
 
 namespace FluentFin.Controls;
@@ -21,7 +21,7 @@ public sealed partial class TransportControls : UserControl
 	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
 	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
-    [GeneratedDependencyProperty]
+	[GeneratedDependencyProperty]
 	public partial bool IsSkipButtonVisible { get; set; }
 
 	[GeneratedDependencyProperty]
@@ -54,12 +54,12 @@ public sealed partial class TransportControls : UserControl
 	}
 
 	public static readonly DependencyProperty PlayerProperty =
-        DependencyProperty.Register("Player", typeof(IMediaPlayerController), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
+		DependencyProperty.Register("Player", typeof(IMediaPlayerController), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
 
-    private static void OnPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
+	private static void OnPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
 		var tc = (TransportControls)d;
-		if(e.NewValue is not IMediaPlayerController controller)
+		if (e.NewValue is not IMediaPlayerController controller)
 		{
 			return;
 		}
@@ -79,18 +79,18 @@ public sealed partial class TransportControls : UserControl
 				tc.TxtRemainingTime.Text = TimeRemaining(e, duration);
 			}
 			catch { }
-        });
-        controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
+		});
+		controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
 		controller.Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
-        controller.VolumeChanged
+		controller.VolumeChanged
 			.Where(e => e >= 0)
 			.Throttle(TimeSpan.FromSeconds(200))
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
 		controller.SubtitleText.ObserveOn(RxApp.MainThreadScheduler).Subscribe(text => tc.Subtitles.Text = text);
-    }
+	}
 
-    public IObservable<Unit> OnDynamicSkip { get; }
+	public IObservable<Unit> OnDynamicSkip { get; }
 
 	public TransportControls()
 	{
@@ -108,20 +108,20 @@ public sealed partial class TransportControls : UserControl
 				try
 				{
 					var currentState = Player.State;
-					if(currentState is MediaPlayerState.Playing)
+					if (currentState is MediaPlayerState.Playing)
 					{
-                        Player.Pause();
-                    }
+						Player.Pause();
+					}
 
 					Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue));
 
-					if(currentState is MediaPlayerState.Playing)
+					if (currentState is MediaPlayerState.Playing)
 					{
-                        Player.Play();
-                    }
-                }
+						Player.Play();
+					}
+				}
 				catch { }
-            });
+			});
 
 		_onPointerMoved
 			.ObserveOn(RxApp.MainThreadScheduler)
@@ -160,25 +160,25 @@ public sealed partial class TransportControls : UserControl
 		var ts = Player.Position - TimeSpan.FromSeconds(10);
 		Player.SeekTo(ts);
 
-        if (JellyfinClient is null)
-        {
-            return;
-        }
+		if (JellyfinClient is null)
+		{
+			return;
+		}
 
-        await JellyfinClient.SignalSeekForSyncPlay(ts);
-    }
+		await JellyfinClient.SignalSeekForSyncPlay(ts);
+	}
 
 	private async void SkipForwardButton_Click(object sender, RoutedEventArgs e)
 	{
 		var ts = Player.Position + TimeSpan.FromSeconds(30);
 		Player.SeekTo(ts);
 
-		if(JellyfinClient is null)
-        {
+		if (JellyfinClient is null)
+		{
 			return;
-        }
+		}
 
-        await JellyfinClient.SignalSeekForSyncPlay(ts);
+		await JellyfinClient.SignalSeekForSyncPlay(ts);
 	}
 
 	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -201,16 +201,16 @@ public sealed partial class TransportControls : UserControl
 		TrickplayTip.IsOpen = false;
 	}
 
-    private void Grid_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
+	private void Grid_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	{
 		TrickplayTip.IsOpen = false;
-    }
+	}
 
-    private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
-    {
+	private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+	{
 		Player.TogglePlayPlause();
 
-		if(JellyfinClient is null)
+		if (JellyfinClient is null)
 		{
 			return;
 		}
@@ -224,23 +224,23 @@ public sealed partial class TransportControls : UserControl
 		{
 			await JellyfinClient.SignalPauseForSyncPlay();
 		}
-    }
+	}
 
-    private async void CastButton_Click(object sender, RoutedEventArgs e)
-    {
-		if(JellyfinClient is null)
+	private async void CastButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (JellyfinClient is null)
 		{
 			return;
 		}
 
 		var sessions = await JellyfinClient.GetControllableSessions();
 
-		if(sessions.FirstOrDefault(x => x.Id == SessionInfo.SessionId) is { } session && session.NowPlayingItem is { } dto)
+		if (sessions.FirstOrDefault(x => x.Id == SessionInfo.SessionId) is { } session && session.NowPlayingItem is { } dto)
 		{
 			Player.Stop();
 			App.Dialogs.PlayOnSessionCommand.Execute(dto);
 		}
-    }
+	}
 }
 
 #nullable restore

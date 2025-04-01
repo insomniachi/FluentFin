@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Reactive.Linq;
 
 namespace FluentFin.Core.ViewModels;
 

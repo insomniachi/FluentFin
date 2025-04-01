@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.WinUI;
+﻿using System.Reactive.Linq;
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Controls;
 using FluentFin.Core.ViewModels;
 using Microsoft.UI.Xaml;
@@ -7,149 +8,148 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.Xaml.Interactivity;
 using ReactiveUI;
-using System.Reactive.Linq;
 
 namespace FluentFin.Behaviors;
 
 public partial class JellyfinConfigSectionBehavior : Behavior<StackPanel>
 {
-    [GeneratedDependencyProperty]
-    public partial List<JellyfinConfigItemViewModel>? Items { get; set; }
+	[GeneratedDependencyProperty]
+	public partial List<JellyfinConfigItemViewModel>? Items { get; set; }
 
-    protected override void OnAttached()
-    {
-        this.WhenAnyValue(x => x.Items)
-            .Where(x => x is { Count: > 0 })
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(CreateItems);
-    }
+	protected override void OnAttached()
+	{
+		this.WhenAnyValue(x => x.Items)
+			.Where(x => x is { Count: > 0 })
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(CreateItems);
+	}
 
-    private void CreateItems(List<JellyfinConfigItemViewModel>? list)
-    {
-        if(list is null)
-        {
-            return;
-        }
+	private void CreateItems(List<JellyfinConfigItemViewModel>? list)
+	{
+		if (list is null)
+		{
+			return;
+		}
 
-        AssociatedObject.Children.Clear();
+		AssociatedObject.Children.Clear();
 
-        foreach (var item in list)
-        {
-            AssociatedObject.Children.Add(CreateControl(item));
-        }
-    }
-    
-    private static UIElement CreateControl(JellyfinConfigItemViewModel model)
-    {
-        return model switch
-        {
-            JellyfinTextBlockConfigItemViewModel str => CreateTextBlock(str),
-            JellyfinSelectableConfigItemViewModel cb => CreateComboBox(cb),
-            JellyfinGroupedConfigItemViewModel group => CreateGroup(group),
-            JellyfinConfigItemViewModel<double> number => CreateNumberBox(number),
-            JellyfinConfigItemViewModel<bool> boolean => CreateToggleSwitch(boolean),
-            JellyfinConfigItemViewModel<string> str => CreateTextBox(str),
-            _ => throw new NotImplementedException()
-        };
-    }
+		foreach (var item in list)
+		{
+			AssociatedObject.Children.Add(CreateControl(item));
+		}
+	}
 
-    private static SettingsExpander CreateGroup(JellyfinGroupedConfigItemViewModel model)
-    {
-        var expander = new SettingsExpander
-        {
-            Header = model.DisplayName,
-            Description = model.Description,
-            IsExpanded = true
-        };
+	private static UIElement CreateControl(JellyfinConfigItemViewModel model)
+	{
+		return model switch
+		{
+			JellyfinTextBlockConfigItemViewModel str => CreateTextBlock(str),
+			JellyfinSelectableConfigItemViewModel cb => CreateComboBox(cb),
+			JellyfinGroupedConfigItemViewModel group => CreateGroup(group),
+			JellyfinConfigItemViewModel<double> number => CreateNumberBox(number),
+			JellyfinConfigItemViewModel<bool> boolean => CreateToggleSwitch(boolean),
+			JellyfinConfigItemViewModel<string> str => CreateTextBox(str),
+			_ => throw new NotImplementedException()
+		};
+	}
 
-        foreach (var item in model.Items)
-        {
-            expander.Items.Add(CreateControl(item));
-        }
-        return expander;
-    }
+	private static SettingsExpander CreateGroup(JellyfinGroupedConfigItemViewModel model)
+	{
+		var expander = new SettingsExpander
+		{
+			Header = model.DisplayName,
+			Description = model.Description,
+			IsExpanded = true
+		};
 
-    private static SettingsCard CreateTextBlock(JellyfinTextBlockConfigItemViewModel model)
-    {
-        var control = new TextBlock
-        {
-            Text = model.Value
-        };
+		foreach (var item in model.Items)
+		{
+			expander.Items.Add(CreateControl(item));
+		}
+		return expander;
+	}
 
-        return CreateSettingsCard(control, model);
-    }
+	private static SettingsCard CreateTextBlock(JellyfinTextBlockConfigItemViewModel model)
+	{
+		var control = new TextBlock
+		{
+			Text = model.Value
+		};
 
-    private static SettingsCard CreateTextBox(JellyfinConfigItemViewModel<string> model)
-    {
-        var control = new TextBox();
+		return CreateSettingsCard(control, model);
+	}
 
-        BindingOperations.SetBinding(control, TextBox.TextProperty, new Binding
-        {
-            Path = new PropertyPath(nameof(model.Value)),
-            Source = model,
-            Mode = BindingMode.TwoWay
-        });
+	private static SettingsCard CreateTextBox(JellyfinConfigItemViewModel<string> model)
+	{
+		var control = new TextBox();
 
-        return CreateSettingsCard(control, model);
-    }
+		BindingOperations.SetBinding(control, TextBox.TextProperty, new Binding
+		{
+			Path = new PropertyPath(nameof(model.Value)),
+			Source = model,
+			Mode = BindingMode.TwoWay
+		});
 
-    private static SettingsCard CreateToggleSwitch(JellyfinConfigItemViewModel<bool> model)
-    {
-        var control = new ToggleSwitch();
+		return CreateSettingsCard(control, model);
+	}
 
-        BindingOperations.SetBinding(control, ToggleSwitch.IsOnProperty, new Binding
-        {
-            Path = new PropertyPath(nameof(model.Value)),
-            Source = model,
-            Mode = BindingMode.TwoWay
-        });
+	private static SettingsCard CreateToggleSwitch(JellyfinConfigItemViewModel<bool> model)
+	{
+		var control = new ToggleSwitch();
 
-        return CreateSettingsCard(control, model);
-    }
+		BindingOperations.SetBinding(control, ToggleSwitch.IsOnProperty, new Binding
+		{
+			Path = new PropertyPath(nameof(model.Value)),
+			Source = model,
+			Mode = BindingMode.TwoWay
+		});
 
-    private static SettingsCard CreateNumberBox(JellyfinConfigItemViewModel<double> model)
-    {
-        var control = new NumberBox();
+		return CreateSettingsCard(control, model);
+	}
 
-        BindingOperations.SetBinding(control, NumberBox.ValueProperty, new Binding
-        {
-            Path = new PropertyPath(nameof(model.Value)),
-            Source = model,
-            Mode = BindingMode.TwoWay
-        });
+	private static SettingsCard CreateNumberBox(JellyfinConfigItemViewModel<double> model)
+	{
+		var control = new NumberBox();
 
-        return CreateSettingsCard(control, model);
-    }
+		BindingOperations.SetBinding(control, NumberBox.ValueProperty, new Binding
+		{
+			Path = new PropertyPath(nameof(model.Value)),
+			Source = model,
+			Mode = BindingMode.TwoWay
+		});
 
-    private static SettingsCard CreateComboBox(JellyfinSelectableConfigItemViewModel model)
-    {
-        var control = new ComboBox()
-        {
-            ItemsSource = model.Values
-        };
+		return CreateSettingsCard(control, model);
+	}
 
-        if(!string.IsNullOrEmpty(model.DisplayMemberPath))
-        {
-            control.DisplayMemberPath = model.DisplayMemberPath;
-        }
+	private static SettingsCard CreateComboBox(JellyfinSelectableConfigItemViewModel model)
+	{
+		var control = new ComboBox()
+		{
+			ItemsSource = model.Values
+		};
 
-        BindingOperations.SetBinding(control, Selector.SelectedItemProperty, new Binding
-        {
-            Path = new PropertyPath(nameof(model.SelectedValue)),
-            Source = model,
-            Mode = BindingMode.TwoWay
-        });
+		if (!string.IsNullOrEmpty(model.DisplayMemberPath))
+		{
+			control.DisplayMemberPath = model.DisplayMemberPath;
+		}
 
-        return CreateSettingsCard(control, model);
-    }
+		BindingOperations.SetBinding(control, Selector.SelectedItemProperty, new Binding
+		{
+			Path = new PropertyPath(nameof(model.SelectedValue)),
+			Source = model,
+			Mode = BindingMode.TwoWay
+		});
 
-    private static SettingsCard CreateSettingsCard(object content, JellyfinConfigItemViewModel model)
-    {
-        return new SettingsCard
-        {
-            Header = model.DisplayName,
-            Description = model.Description,
-            Content = content
-        };
-    }
+		return CreateSettingsCard(control, model);
+	}
+
+	private static SettingsCard CreateSettingsCard(object content, JellyfinConfigItemViewModel model)
+	{
+		return new SettingsCard
+		{
+			Header = model.DisplayName,
+			Description = model.Description,
+			Content = content
+		};
+	}
 }

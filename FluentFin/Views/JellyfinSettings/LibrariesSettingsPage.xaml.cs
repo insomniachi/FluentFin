@@ -22,19 +22,19 @@ public sealed partial class LibrariesSettingsPage : Page
 
 	private async void OnDelete(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-		if(sender is not MenuFlyoutItem item)
+		if (sender is not MenuFlyoutItem item)
 		{
 			return;
 		}
 
-		if(item.Tag is not VirtualFolderInfo info)
+		if (item.Tag is not VirtualFolderInfo info)
 		{
 			return;
 		}
 
 		var delete = await DialogCommands.DeleteLibraryDialog(info.Name ?? "");
 
-		if(delete)
+		if (delete)
 		{
 			ViewModel.VirtualFolders.Remove(info);
 		}
@@ -54,7 +54,7 @@ public sealed partial class LibrariesSettingsPage : Page
 
 		var newName = await App.GetService<IUserInput<string>>().GetValue();
 
-		if(!string.IsNullOrEmpty(newName))
+		if (!string.IsNullOrEmpty(newName))
 		{
 			await App.GetService<IJellyfinClient>().RenameLibrary(info.Name ?? "", newName);
 			await ViewModel.OnNavigatedTo(new());

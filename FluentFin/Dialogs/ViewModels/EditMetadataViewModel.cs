@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
-using System.Collections.ObjectModel;
 
 namespace FluentFin.Dialogs.ViewModels;
 

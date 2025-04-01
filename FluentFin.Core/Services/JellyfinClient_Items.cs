@@ -1,4 +1,7 @@
-﻿using Jellyfin.Sdk.Generated.Library.VirtualFolders;
+﻿using System.Threading.Tasks;
+using FluentFin.Core.Contracts.Services;
+using Flurl.Http;
+using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
 
@@ -174,7 +177,7 @@ public partial class JellyfinClient
 
 	public async Task DeleteItem(BaseItemDto dto)
 	{
-		if(dto?.Id is not { } id)
+		if (dto?.Id is not { } id)
 		{
 			return;
 		}
@@ -190,15 +193,23 @@ public partial class JellyfinClient
 		}
 	}
 
-	public Uri GetSplashScreen()
+	public async Task<Uri?> GetSplashScreen()
 	{
-		return _jellyfinApiClient.Branding.Splashscreen.ToGetRequestInformation(x => 
+		var endoint = _jellyfinApiClient.System.Configuration["branding"].ToGetRequestInformation();
+		var options =  await AddApiKey(endoint.URI).GetJsonAsync<BrandingOptions>();
+
+		if(options.SplashscreenEnabled is not true)
+		{
+			return null;
+		}
+
+		return AddApiKey(_jellyfinApiClient.Branding.Splashscreen.ToGetRequestInformation(x =>
 		{
 			var query = x.QueryParameters;
-			query.Blur = 50;
+			query.Blur = 20;
 			query.Height = 1080;
 			query.Width = 1920;
 			query.Format = Jellyfin.Sdk.Generated.Branding.Splashscreen.ImageFormat.Jpg;
-		}).URI;
+		}).URI);
 	}
 }

@@ -32,7 +32,7 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 			.Select(x => new { EndDate = x.Item1, Days = x.Item2 * 7 })
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Do(_ => Plots.Clear())
-			.Subscribe( async x =>
+			.Subscribe(async x =>
 			{
 				await CreatePlot("GetTvShowsReport", x.Days, x.EndDate);
 				await CreatePlot("MoviesReport", x.Days, x.EndDate);
@@ -60,7 +60,7 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 		var timePlot = timeControl.Plot;
 
 		CustomizePlot(countPlot, "Count");
-		CustomizePlot(timePlot, "Time");	
+		CustomizePlot(timePlot, "Time");
 
 		var data = await PlaybackReportingHelper.GetBreakdown(type, days, endDate);
 
@@ -88,7 +88,7 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 
 		countPlot.Axes.AutoScale();
 		timePlot.Axes.AutoScale();
-		
+
 		countPie.SliceLabelDistance = 0.5;
 		countPie.ExplodeFraction = .1;
 		timePie.SliceLabelDistance = 0.5;

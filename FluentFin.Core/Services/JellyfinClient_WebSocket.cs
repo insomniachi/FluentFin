@@ -1,9 +1,9 @@
-﻿using FluentFin.Core.WebSockets;
+﻿using System.Net.WebSockets;
+using System.Text.Json;
+using FluentFin.Core.WebSockets;
 using FluentFin.Core.WebSockets.Messages;
 using Flurl;
 using Microsoft.Extensions.Logging;
-using System.Net.WebSockets;
-using System.Text.Json;
 
 namespace FluentFin.Core.Services;
 
@@ -70,31 +70,31 @@ public partial class JellyfinClient
 		using var document = JsonDocument.Parse(socketMessage);
 		var type = document.RootElement.GetProperty("MessageType").GetString();
 
-		if(!Enum.TryParse<SessionMessageType>(type, out var messageType))
+		if (!Enum.TryParse<SessionMessageType>(type, out var messageType))
 		{
 			return;
 		}
 
-		if(messageType is SessionMessageType.KeepAlive or SessionMessageType.ForceKeepAlive)
+		if (messageType is SessionMessageType.KeepAlive or SessionMessageType.ForceKeepAlive)
 		{
 			return;
 		}
 
-		if(messageType is SessionMessageType.SyncPlayGroupUpdate)
+		if (messageType is SessionMessageType.SyncPlayGroupUpdate)
 		{
 			var data = document.RootElement.GetProperty("Data");
 			var grupUpdateType = data.GetProperty("Type").GetString();
-			if(!Enum.TryParse<GroupUpdateType>(grupUpdateType, out var updateType))
+			if (!Enum.TryParse<GroupUpdateType>(grupUpdateType, out var updateType))
 			{
 				return;
 			}
 
-            if (updateType.Parse(socketMessage) is IInboundSocketMessage message)
-            {
+			if (updateType.Parse(socketMessage) is IInboundSocketMessage message)
+			{
 				socketMessageSender.OnNext(message);
-            }
+			}
 
-        }
+		}
 		else if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
 		{
 			socketMessageSender.OnNext(message);
@@ -127,23 +127,23 @@ internal static class MessageConverter
 		}
 	}
 
-    internal static WebSocketMessage? Parse(this GroupUpdateType messageType, string json)
-    {
-        try
-        {
-            return messageType switch
-            {
+	internal static WebSocketMessage? Parse(this GroupUpdateType messageType, string json)
+	{
+		try
+		{
+			return messageType switch
+			{
 				GroupUpdateType.PlayQueue => JsonSerializer.Deserialize<PlayQueueUpdateMessage>(json),
 				GroupUpdateType.UserJoined => JsonSerializer.Deserialize<UserJoinedUpdateMessage>(json),
 				GroupUpdateType.UserLeft => JsonSerializer.Deserialize<UserLeftUpdateMessage>(json),
-                GroupUpdateType.GroupJoined => JsonSerializer.Deserialize<GroupJoinedUpdateMessage>(json),
-                _ => null
-            };
-        }
-        catch
-        {
-            return null;
-        }
-    }
+				GroupUpdateType.GroupJoined => JsonSerializer.Deserialize<GroupJoinedUpdateMessage>(json),
+				_ => null
+			};
+		}
+		catch
+		{
+			return null;
+		}
+	}
 
 }

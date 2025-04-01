@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using FluentFin.Contracts.Services;
@@ -9,8 +11,6 @@ using FluentFin.Services;
 using FluentFin.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Concurrency;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -60,11 +60,11 @@ public partial class SelectServerViewModel(ISettings settings,
 		{
 			if (server.LocalNetworkNames.Count == 0)
 			{
-                // bug in version 10.10.5
-                if (info.Version == @"10.10.5")
+				// bug in version 10.10.5
+				if (info.Version == @"10.10.5")
 				{
-					server.LocalUrl = url; 
-				} 
+					server.LocalUrl = url;
+				}
 				server.LocalNetworkNames = [.. networkNames];
 				settings.SaveServerDetails();
 			}

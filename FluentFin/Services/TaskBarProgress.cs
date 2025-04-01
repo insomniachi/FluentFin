@@ -4,22 +4,22 @@ namespace FluentFin.Services;
 
 internal class TaskBarProgress : ITaskBarProgress
 {
-    private readonly ITaskbarList3 _taskbarInstance;
-    public TaskBarProgress()
-    {
-        _taskbarInstance = (ITaskbarList3)new TaskbarInstance();
-        _taskbarInstance.HrInit();
-    }
+	private readonly ITaskbarList3 _taskbarInstance;
+	public TaskBarProgress()
+	{
+		_taskbarInstance = (ITaskbarList3)new TaskbarInstance();
+		_taskbarInstance.HrInit();
+	}
 
-    public void SetProgressPercent(int percent)
-    {
-        _taskbarInstance.SetProgressValue(App.MainWindow.GetWindowHandle(), (ulong)percent, 100);
-    }
+	public void SetProgressPercent(int percent)
+	{
+		_taskbarInstance.SetProgressValue(App.MainWindow.GetWindowHandle(), (ulong)percent, 100);
+	}
 
-    public void Clear()
-    {
-        _taskbarInstance.SetProgressState(App.MainWindow.GetWindowHandle(), TaskbarProgressBarStatus.NoProgress);
-    }
+	public void Clear()
+	{
+		_taskbarInstance.SetProgressState(App.MainWindow.GetWindowHandle(), TaskbarProgressBarStatus.NoProgress);
+	}
 }
 
 // Define the CLSID and IID for TaskbarList
@@ -28,14 +28,14 @@ internal class TaskBarProgress : ITaskBarProgress
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 internal partial interface ITaskbarList3
 {
-    void HrInit();
-    void AddTab(IntPtr hwnd);
-    void DeleteTab(IntPtr hwnd);
-    void ActivateTab(IntPtr hwnd);
-    void SetActiveAlt(IntPtr hwnd);
-    void MarkFullscreenWindow(IntPtr hwnd, [MarshalAs(UnmanagedType.VariantBool)] bool fullscreen);
-    void SetProgressValue(IntPtr hwnd, ulong completed, ulong total);
-    void SetProgressState(IntPtr hwnd, TaskbarProgressBarStatus status);
+	void HrInit();
+	void AddTab(IntPtr hwnd);
+	void DeleteTab(IntPtr hwnd);
+	void ActivateTab(IntPtr hwnd);
+	void SetActiveAlt(IntPtr hwnd);
+	void MarkFullscreenWindow(IntPtr hwnd, [MarshalAs(UnmanagedType.VariantBool)] bool fullscreen);
+	void SetProgressValue(IntPtr hwnd, ulong completed, ulong total);
+	void SetProgressState(IntPtr hwnd, TaskbarProgressBarStatus status);
 }
 
 [ComImport]
@@ -47,9 +47,9 @@ internal class TaskbarInstance
 
 internal enum TaskbarProgressBarStatus
 {
-    NoProgress = 0,
-    Indeterminate = 1,
-    Normal = 2,
-    Error = 4,
-    Paused = 8,
+	NoProgress = 0,
+	Indeterminate = 1,
+	Normal = 2,
+	Error = 4,
+	Paused = 8,
 }

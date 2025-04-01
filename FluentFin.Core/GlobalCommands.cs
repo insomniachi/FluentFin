@@ -13,27 +13,27 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	[RelayCommand]
 	public async Task PlayDto(BaseItemDto dto)
 	{
-		if(SessionInfo.GroupId is not null)
+		if (SessionInfo.GroupId is not null)
 		{
 			var ids = await GetItemIds(dto);
 			var info = await jellyfinClient.GetItem(ids[0]!.Value);
 
-            var request = new PlayRequestDto
-            {
+			var request = new PlayRequestDto
+			{
 				PlayingItemPosition = 0,
 				PlayingQueue = ids,
 				StartPositionTicks = info?.UserData?.PlaybackPositionTicks ?? 0,
-            };
-            await jellyfinClient.SignalNewPlaylist(request);
+			};
+			await jellyfinClient.SignalNewPlaylist(request);
 		}
-		else if(!string.IsNullOrEmpty(SessionInfo.RemoteSessionId) && SessionInfo.SessionId != SessionInfo.RemoteSessionId)
+		else if (!string.IsNullOrEmpty(SessionInfo.RemoteSessionId) && SessionInfo.SessionId != SessionInfo.RemoteSessionId)
 		{
-            await jellyfinClient.PlayOnSession(SessionInfo.RemoteSessionId, await GetItemIds(dto));
-        }
+			await jellyfinClient.PlayOnSession(SessionInfo.RemoteSessionId, await GetItemIds(dto));
+		}
 		else
 		{
-            navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
-        }
+			navigationService.NavigateTo("FluentFin.ViewModels.VideoPlayerViewModel", dto);
+		}
 	}
 
 	[RelayCommand]
@@ -54,13 +54,17 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 		switch (dto.Type)
 		{
 			case BaseItemDto_Type.Movie:
-				navigationService.NavigateTo<MovieViewModel>(dto); break;
+				navigationService.NavigateTo<MovieViewModel>(dto);
+				break;
 			case BaseItemDto_Type.Series:
-				navigationService.NavigateTo<SeriesViewModel>(dto); break;
+				navigationService.NavigateTo<SeriesViewModel>(dto);
+				break;
 			case BaseItemDto_Type.Season:
-				navigationService.NavigateTo<SeasonViewModel>(dto); break;
+				navigationService.NavigateTo<SeasonViewModel>(dto);
+				break;
 			case BaseItemDto_Type.Episode:
-				navigationService.NavigateTo<EpisodeViewModel>(dto); break;
+				navigationService.NavigateTo<EpisodeViewModel>(dto);
+				break;
 			default:
 				break;
 		}
@@ -78,26 +82,26 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 		await jellyfinClient.DeleteItem(dto);
 	}
 
-    private async Task<List<Guid?>> GetItemIds(BaseItemDto dto)
-    {
-        var playlist = dto.Type switch
-        {
-            BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(dto),
-            BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(jellyfinClient, dto),
-            BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(jellyfinClient, dto),
-            BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(jellyfinClient, dto),
-            _ => new PlaylistViewModel()
-        };
+	private async Task<List<Guid?>> GetItemIds(BaseItemDto dto)
+	{
+		var playlist = dto.Type switch
+		{
+			BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(dto),
+			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(jellyfinClient, dto),
+			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(jellyfinClient, dto),
+			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(jellyfinClient, dto),
+			_ => new PlaylistViewModel()
+		};
 
-        playlist.AutoSelect();
+		playlist.AutoSelect();
 
-        if (playlist.SelectedItem is null)
-        {
-            return [];
-        }
+		if (playlist.SelectedItem is null)
+		{
+			return [];
+		}
 
-        var index = playlist.Items.IndexOf(playlist.SelectedItem);
-        return [.. playlist.Items.Skip(index).Select(x => x.Dto.Id)];
-    }
+		var index = playlist.Items.IndexOf(playlist.SelectedItem);
+		return [.. playlist.Items.Skip(index).Select(x => x.Dto.Id)];
+	}
 
 }

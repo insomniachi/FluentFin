@@ -8,6 +8,7 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 
@@ -17,7 +18,7 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
-	private readonly Subject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _onPointerMoved = new();
+	private readonly Subject<PointerRoutedEventArgs> _onPointerMoved = new();
 	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
 	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
@@ -155,76 +156,11 @@ public sealed partial class TransportControls : UserControl
 		return (duration - currentTime).ToString("hh\\:mm\\:ss");
 	}
 
-	private async void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
-	{
-		var ts = Player.Position - TimeSpan.FromSeconds(10);
-		Player.SeekTo(ts);
+	private async void SkipBackwardButton_Click(object sender, RoutedEventArgs e) => await SkipBackward();
 
-		if (JellyfinClient is null)
-		{
-			return;
-		}
+	private async void SkipForwardButton_Click(object sender, RoutedEventArgs e) => await SkipForward();
 
-		await JellyfinClient.SignalSeekForSyncPlay(ts);
-	}
-
-	private async void SkipForwardButton_Click(object sender, RoutedEventArgs e)
-	{
-		var ts = Player.Position + TimeSpan.FromSeconds(30);
-		Player.SeekTo(ts);
-
-		if (JellyfinClient is null)
-		{
-			return;
-		}
-
-		await JellyfinClient.SignalSeekForSyncPlay(ts);
-	}
-
-	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-	{
-		if (Trickplay is null)
-		{
-			return;
-		}
-
-		if (Trickplay.Item?.Trickplay?.AdditionalData?.Count is not > 0)
-		{
-			return;
-		}
-
-		_onPointerMoved.OnNext(e);
-	}
-
-	private void TimeSlider_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-	{
-		TrickplayTip.IsOpen = false;
-	}
-
-	private void Grid_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-	{
-		TrickplayTip.IsOpen = false;
-	}
-
-	private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
-	{
-		Player.TogglePlayPlause();
-
-		if (JellyfinClient is null)
-		{
-			return;
-		}
-
-
-		if (Player.State == MediaPlayerState.Playing)
-		{
-			await JellyfinClient.SignalUnpauseForSyncPlay();
-		}
-		else
-		{
-			await JellyfinClient.SignalPauseForSyncPlay();
-		}
-	}
+	private async void PlayPauseButton_Click(object sender, RoutedEventArgs e) => await TogglePlayPause();
 
 	private async void CastButton_Click(object sender, RoutedEventArgs e)
 	{
@@ -240,6 +176,46 @@ public sealed partial class TransportControls : UserControl
 			Player.Stop();
 			App.Dialogs.PlayOnSessionCommand.Execute(dto);
 		}
+	}
+
+	private void TimeSlider_PointerEntered(object sender, PointerRoutedEventArgs e)
+	{
+		if (Trickplay is null)
+		{
+			return;
+		}
+
+		if (Trickplay.Item?.Trickplay?.AdditionalData?.Count is not > 0)
+		{
+			return;
+		}
+
+		_onPointerMoved.OnNext(e);
+	}
+
+	private void TimeSlider_PointerExited(object sender, PointerRoutedEventArgs e)
+	{
+		TrickplayTip.IsOpen = false;
+	}
+
+	private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
+	{
+		TrickplayTip.IsOpen = false;
+	}
+
+	private async Task SkipBackward()
+	{
+		await Player.SeekBackward(JellyfinClient, TimeSpan.FromSeconds(10));
+	}
+
+	private async Task SkipForward()
+	{
+		await Player.SeekForward(JellyfinClient, TimeSpan.FromSeconds(30));
+	}
+
+	private async Task TogglePlayPause()
+	{
+		await Player.TogglePlayPlause(JellyfinClient);
 	}
 }
 

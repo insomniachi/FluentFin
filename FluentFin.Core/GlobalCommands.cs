@@ -37,6 +37,12 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	}
 
 	[RelayCommand]
+	public async Task ResetWatchProgress(Guid id)
+	{
+		await jellyfinClient.ResetProgress(id);
+	}
+
+	[RelayCommand]
 	public async Task ToggleWatched(BaseItemDto dto)
 	{
 		await jellyfinClient.SetPlayed(dto, !(dto.UserData?.Played ?? false));

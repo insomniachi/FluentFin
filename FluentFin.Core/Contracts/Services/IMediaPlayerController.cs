@@ -56,7 +56,7 @@ public record struct AudioTrack(int Id, string? Language, string? Name);
 
 public static class MediaPlayerControllerExtensions
 {
-	public static void TogglePlayPlause(this IMediaPlayerController controller)
+	public static async ValueTask TogglePlayPlause(this IMediaPlayerController controller, IJellyfinClient client)
 	{
 		if (controller is null)
 		{
@@ -65,21 +65,50 @@ public static class MediaPlayerControllerExtensions
 
 		if (controller.State is MediaPlayerState.Playing)
 		{
+			await (client?.SignalPauseForSyncPlay() ?? Task.CompletedTask);
 			controller.Pause();
 		}
 		else if (controller.State is MediaPlayerState.Paused)
 		{
+			await (client?.SignalUnpauseForSyncPlay() ?? Task.CompletedTask);
 			controller.Play();
 		}
 	}
 
-	public static void SeekForward(this IMediaPlayerController controller, TimeSpan ts)
+	public static async ValueTask SeekForward(this IMediaPlayerController controller, IJellyfinClient client, TimeSpan ts)
 	{
-		controller.SeekTo(controller.Position + ts);
+		if(controller is null)
+		{
+			return;
+		}
+
+		var newTime = controller.Position + ts;
+
+		await (client?.SignalSeekForSyncPlay(ts) ?? Task.CompletedTask);
+		controller.SeekTo(newTime);
 	}
 
-	public static void SeekBackward(this IMediaPlayerController controller, TimeSpan ts)
+	public static async ValueTask SeekBackward(this IMediaPlayerController controller, IJellyfinClient client, TimeSpan ts)
 	{
-		controller.SeekTo(controller.Position - ts);
+		if (controller is null)
+		{
+			return;
+		}
+
+		var newTime = controller.Position - ts;
+
+		await (client?.SignalSeekForSyncPlay(newTime) ?? Task.CompletedTask);
+		controller.SeekTo(newTime);
+	}
+
+	public static async ValueTask SeekTo(this IMediaPlayerController controller, IJellyfinClient client, TimeSpan ts)
+	{
+		if (controller is null)
+		{
+			return;
+		}
+
+		await (client?.SignalSeekForSyncPlay(ts) ?? Task.CompletedTask);
+		controller.SeekTo(ts);
 	}
 }

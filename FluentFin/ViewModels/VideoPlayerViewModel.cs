@@ -78,6 +78,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		NativeMethods.AllowSleep();
 
 		taskBarProgress.Clear();
+		await UpdateStatus();
 		await JellyfinClient.Stop();
 
 		if (MediaPlayer is null)
@@ -399,7 +400,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 				switch (message)
 				{
 					case PlayStateMessage { Data.Command: PlaystateCommand.PlayPause }:
-						MediaPlayer.TogglePlayPlause();
+						await MediaPlayer.TogglePlayPlause(JellyfinClient);
 						await UpdateStatus();
 						break;
 					case PlayStateMessage { Data.Command: PlaystateCommand.Stop }:

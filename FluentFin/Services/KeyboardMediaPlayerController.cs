@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 using DeftSharp.Windows.Input.Keyboard;
 using FluentFin.Core.Contracts.Services;
 
@@ -30,13 +31,13 @@ namespace FluentFin.Services
 
 		private void SubscribeEvents()
 		{
-			_keySubscriptions.Add(_listener.Subscribe(Key.Space, TogglePlayPlause).Id);
+			_keySubscriptions.Add(_listener.Subscribe(Key.Space, async () => await TogglePlayPlause()).Id);
 
-			_keySubscriptions.Add(_listener.Subscribe(Key.Left, () => SeekTo(_controller.Position - _smallSeek)).Id);
-			_keySubscriptions.Add(_listener.SubscribeCombination([Key.LeftCtrl | Key.RightCtrl, Key.Left], () => SeekTo(_controller.Position - _bigSeek)).Id);
+			_keySubscriptions.Add(_listener.Subscribe(Key.Left, async() => await SeekTo(_controller.Position - _smallSeek)).Id);
+			_keySubscriptions.Add(_listener.SubscribeCombination([Key.LeftCtrl | Key.RightCtrl, Key.Left], async () => await SeekTo(_controller.Position - _bigSeek)).Id);
 
-			_keySubscriptions.Add(_listener.Subscribe(Key.Right, () => SeekTo(_controller.Position + _smallSeek)).Id);
-			_keySubscriptions.Add(_listener.SubscribeCombination([Key.LeftCtrl | Key.RightCtrl, Key.Right], () => SeekTo(_controller.Position + _bigSeek)).Id);
+			_keySubscriptions.Add(_listener.Subscribe(Key.Right, async () => await SeekTo(_controller.Position + _smallSeek)).Id);
+			_keySubscriptions.Add(_listener.SubscribeCombination([Key.LeftCtrl | Key.RightCtrl, Key.Right], async () => await SeekTo(_controller.Position + _bigSeek)).Id);
 
 			_keySubscriptions.Add(_listener.Subscribe(Key.S, async () => await _skipSegment()).Id);
 
@@ -54,33 +55,14 @@ namespace FluentFin.Services
 			_listener.Unsubscribe(_keySubscriptions);
 		}
 
-		public void TogglePlayPlause()
+		public async Task TogglePlayPlause()
 		{
-			if (_controller is null)
-			{
-				return;
-			}
-
-			if (_controller.State is MediaPlayerState.Playing)
-			{
-				_jellyfinClient.SignalPauseForSyncPlay();
-				_controller.Pause();
-			}
-			else if (_controller.State is MediaPlayerState.Paused)
-			{
-				_jellyfinClient.SignalUnpauseForSyncPlay();
-				_controller.Play();
-			}
+			await _controller.TogglePlayPlause(_jellyfinClient);
 		}
 
-		public void SeekTo(TimeSpan position)
+		public async Task SeekTo(TimeSpan position)
 		{
-			if (_controller is null)
-			{
-				return;
-			}
-			_jellyfinClient.SignalSeekForSyncPlay(position);
-			_controller.SeekTo(position);
+			await _controller.SeekTo(_jellyfinClient, position);
 		}
 	}
 }

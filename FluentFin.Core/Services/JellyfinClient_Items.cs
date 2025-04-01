@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using FluentFin.Core.Contracts.Services;
-using Flurl.Http;
+﻿using Flurl.Http;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
@@ -49,6 +47,21 @@ public partial class JellyfinClient
 			logger.LogError(ex, @"Unhandled exception");
 			return null;
 		}
+	}
+
+	public async Task ResetProgress(Guid id)
+	{
+		var dto = await GetItem(id);
+		if (dto is null or { UserData: null})
+		{
+			return;
+		}
+
+		dto.UserData.PlayedPercentage = 0;
+		dto.UserData.PlaybackPositionTicks = 0;
+		dto.UserData.LastPlayedDate = null;
+
+		await _jellyfinApiClient.Items[id].PostAsync(dto);
 	}
 
 	public async Task<BaseItemDtoQueryResult?> GetSimilarItems(BaseItemDto dto)

@@ -25,6 +25,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent, bool recursive = false);
 
+		Task ResetProgress(Guid id);
+
 		Task<BaseItemDtoQueryResult?> GetMediaFolders();
 
 		Task<List<FileSystemEntryInfo>> GetDirectoryContents(string path);

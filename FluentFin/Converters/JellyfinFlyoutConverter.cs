@@ -1,4 +1,5 @@
-﻿using FluentFin.Core;
+﻿using System.Linq.Expressions;
+using FluentFin.Core;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -143,6 +144,18 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Text = "Play all from here",
 				Icon = new SymbolIcon { Symbol = Symbol.Play }
 			};
+
+
+			if(dto.UserData?.PlaybackPositionTicks is > 0 && dto.Id is { } id)
+			{
+				yield return new MenuFlyoutItem
+				{
+					Text = "Reset Watch Progress",
+					Icon = new FontIcon { Glyph = "\uED62" },
+					Command = App.Commands.ResetWatchProgressCommand,
+					CommandParameter = id
+				};
+			}
 		}
 
 		if (type is BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.CollectionFolder)

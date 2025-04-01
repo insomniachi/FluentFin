@@ -2,6 +2,7 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
@@ -11,7 +12,8 @@ using ReactiveUI;
 namespace FluentFin.Core.ViewModels;
 
 public partial class HomeViewModel(IJellyfinClient jellyfinClient,
-								   IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
+								   IObservable<IInboundSocketMessage> webSocketMessages,
+								   GlobalCommands commands) : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposable = [];
 
@@ -153,6 +155,22 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		{
 			await UpdateNextUpItems();
 		}
+	}
+
+	[RelayCommand]
+	private async Task Continue() => await PlayFirstItem(ContinueItems);
+
+	[RelayCommand]
+	private async Task NextUp() => await PlayFirstItem(NextUpItems);
+
+	private Task PlayFirstItem(ObservableCollection<BaseItemViewModel> items)
+	{
+		if (items.Count == 0)
+		{
+			return Task.CompletedTask;
+		}
+
+		return commands.PlayDto(items.First().Dto);
 	}
 }
 

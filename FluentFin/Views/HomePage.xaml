@@ -24,6 +24,10 @@
         <cc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </Page.Resources>
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="N" Invoked="NextUpInvoked" />
+        <KeyboardAccelerator Key="C" Invoked="ContinueInvoked" />
+    </Page.KeyboardAccelerators>
 
     <ctk:SwitchPresenter TargetType="x:Boolean" Value="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
         <ctk:Case Value="False">

@@ -16,6 +16,6 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
 		<PackageReference Include="ReactiveUI" Version="20.2.45" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="Riok.Mapperly" Version="4.1.1" />
+		<PackageReference Include="Riok.Mapperly" Version="4.2.0" />
 	</ItemGroup>
 </Project>

@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin", "FluentFin\Flue
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.Core", "FluentFin.Core\FluentFin.Core.csproj", "{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.Core.Tests", "FluentFin.Core.Tests\FluentFin.Core.Tests.csproj", "{927D047D-DD1F-4A67-A07E-B97370CF9BD1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.Plugins", "FluentFin.Plugins\FluentFin.Plugins.csproj", "{988BA5C8-360A-42A9-9301-CDB0F3313E4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentFin.UI.Core", "FluentFin.UI.Core\FluentFin.UI.Core.csproj", "{A0920681-4A94-4F9F-9D8A-02FDB64F365B}"
@@ -29,8 +27,6 @@ Global
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Debug|x64.Build.0 = Debug|x64
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x64.ActiveCfg = Release|x64
 		{5CF62C4C-54AE-41BC-9625-541A3F4FD2C2}.Release|x64.Build.0 = Release|x64
-		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{927D047D-DD1F-4A67-A07E-B97370CF9BD1}.Release|x64.ActiveCfg = Release|Any CPU
 		{988BA5C8-360A-42A9-9301-CDB0F3313E4A}.Debug|x64.ActiveCfg = Debug|x64
 		{988BA5C8-360A-42A9-9301-CDB0F3313E4A}.Debug|x64.Build.0 = Debug|x64
 		{988BA5C8-360A-42A9-9301-CDB0F3313E4A}.Release|x64.ActiveCfg = Release|x64

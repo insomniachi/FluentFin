@@ -304,6 +304,7 @@
                     <controls:BaseItemDtoCard
                         Width="390"
                         Height="240"
+                        BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(ViewModel.NextUp.Dto, jm:ImageType.Thumb, 300), Mode=OneWay}"
                         ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.NextUp.Dto, jm:ImageType.Thumb, 300), Mode=OneWay}"
                         JellyfinClient="{x:Bind ViewModel.JellyfinClient}"
                         Model="{x:Bind ViewModel.NextUp, Mode=OneWay}" />
@@ -322,6 +323,7 @@
                                 <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
                                     <controls:BaseItemDtoCard
                                         Width="200"
+                                        BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Primary, 300)}"
                                         ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 300)}"
                                         JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                         Model="{x:Bind}" />

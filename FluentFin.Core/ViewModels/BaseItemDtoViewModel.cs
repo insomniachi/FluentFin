@@ -6,7 +6,6 @@ namespace FluentFin.Core.ViewModels;
 public partial class BaseItemViewModel : ObservableObject
 {
 	public BaseItemDto Dto { get; set; } = null!;
-
 	public List<DayOfWeekObject?> AirDays { get; set; } = [];
 	public int? AirsAfterSeasonNumber { get; set; }
 	public int? AirsBeforeEpisodeNumber { get; set; }
@@ -156,9 +155,9 @@ public partial class BaseItemViewModel : ObservableObject
 	public int? TrailerCount { get; set; }
 	public BaseItemDto_Trickplay? Trickplay { get; set; }
 	public BaseItemDto_Type? Type { get; set; }
-
-	[ObservableProperty]
-	public partial UserItemDataViewModel? UserData { get; set; }
+#pragma warning disable MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+	public UserItemDataViewModel? UserData { get; set => SetProperty(ref field, value); }
+#pragma warning restore MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
 	public BaseItemDto_Video3DFormat? Video3DFormat { get; set; }
 	public BaseItemDto_VideoType? VideoType { get; set; }
 	public int? Width { get; set; }
@@ -329,12 +328,12 @@ public partial class UserItemDataViewModel : ObservableObject
 {
 	public UserItemDataDto Dto { get; set; } = null!;
 
-	[ObservableProperty]
-	public partial bool? IsFavorite { get; set; }
-
-	[ObservableProperty]
-	public partial bool? Played { get; set; }
-
+#pragma warning disable MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+	public bool? IsFavorite { get; set => SetProperty(ref field, value); }
+#pragma warning restore MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+#pragma warning disable MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+	public bool? Played { get; set => SetProperty(ref field, value); }
+#pragma warning restore MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
 	public Guid? ItemId { get; set; }
 	public string? Key { get; set; }
 	public DateTimeOffset? LastPlayedDate { get; set; }

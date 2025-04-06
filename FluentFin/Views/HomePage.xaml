@@ -18,6 +18,7 @@
     xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     Margin="{StaticResource MediumLeftRightMargin}"
+    KeyboardAcceleratorPlacementMode="Hidden"
     mc:Ignorable="d">
 
     <Page.Resources>

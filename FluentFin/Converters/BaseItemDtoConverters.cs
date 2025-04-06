@@ -84,19 +84,12 @@ public static class BaseItemDtoConverters
 			return null;
 		}
 
-		if (dto.Id is not { } id)
-		{
-			return null;
-		}
-
 		if (dto.ImageTags is null)
 		{
 			return null;
 		}
 
-		var hasRequestTag = dto.ImageTags.AdditionalData.TryGetValue($"{imageType}", out object? requestTag);
-		var backdropTag = dto.BackdropImageTags?.FirstOrDefault();
-		var parentBackdropTag = dto.ParentBackdropImageTags?.FirstOrDefault();
+		var hasRequestTag = dto.ImageTags.AdditionalData.TryGetValue($"{imageType}", out _);
 
 		if (imageType == ImageType.Thumb && !hasRequestTag)
 		{

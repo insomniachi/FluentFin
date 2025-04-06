@@ -85,6 +85,7 @@ public partial class App : Application
 			services.AddSingleton<IActivationService, ActivationService>();
 			services.AddSingleton<IPageService, PageService>();
 			services.AddSingleton<INavigationViewService, NavigationViewService>();
+			services.AddSingleton<INavigationViewServiceCore>(sp => sp.GetRequiredService<INavigationViewService>());
 			services.AddSingleton<INavigationService, NavigationService>();
 			services.AddSingleton((Func<IServiceProvider, INavigationServiceCore>)(sp => sp.GetRequiredService<INavigationService>()));
 			services.AddTransient<IContentDialogService, ContentDialogService>();

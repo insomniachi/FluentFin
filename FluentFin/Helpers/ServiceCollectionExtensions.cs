@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using FluentFin.Contracts.Services;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,8 +35,13 @@ internal static class ServiceCollectionExtensions
 		services.AddKeyedSingleton<INavigationViewService, NavigationViewService>(key, (sp, key) =>
 		{
 			return new NavigationViewService(sp.GetRequiredKeyedService<INavigationService>(key),
-											 sp.GetRequiredService<IPageService>());
+											 sp.GetRequiredService<IPageService>(),
+											 sp.GetRequiredService<ILocalSettingsService>())
+			{
+				Key = key
+			};
 		});
+		services.AddKeyedSingleton<INavigationViewServiceCore>(key, (sp, key) => sp.GetRequiredKeyedService<INavigationViewService>(key));
 		return services;
 	}
 }

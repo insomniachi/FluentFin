@@ -117,14 +117,26 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if (parameter is not BaseItemDto libraryDto)
+		if (parameter is BaseItemDto libraryDto)
 		{
-			return;
+			await Initialize(libraryDto);
 		}
+		else if(parameter is Guid id)
+		{
+			var dto = await JellyfinClient.GetItem(id);
+			if(dto is null)
+			{
+				return;
+			}
+			await Initialize(dto);
+		}
+	}
 
+	private async Task Initialize(BaseItemDto dto)
+	{
 		IsLoading = true;
 
-		var result = await JellyfinClient.GetItems(libraryDto);
+		var result = await JellyfinClient.GetItems(dto);
 
 		if (result is null or { Items: null })
 		{
@@ -134,7 +146,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		_itemsCache.AddOrUpdate(result.Items.Select(BaseItemViewModel.FromDto));
 		UpdateNumberOfPages();
 
-		var filters = await JellyfinClient.GetFilters(libraryDto);
+		var filters = await JellyfinClient.GetFilters(dto);
 
 		if (filters is null)
 		{

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
+using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
@@ -8,7 +9,8 @@ using Jellyfin.Sdk.Generated.Models;
 namespace FluentFin.Core;
 
 public partial class GlobalCommands(INavigationServiceCore navigationService,
-									IJellyfinClient jellyfinClient)
+									IJellyfinClient jellyfinClient,
+									INavigationViewServiceCore navigationViewService)
 {
 	[RelayCommand]
 	public async Task PlayDto(BaseItemDto dto)
@@ -86,6 +88,38 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 	public async Task DeleteItem(BaseItemDto dto)
 	{
 		await jellyfinClient.DeleteItem(dto);
+	}
+
+	[RelayCommand]
+	private void PinToSideBar(BaseItemDto library)
+	{
+		if (library is not { Id: not null, CollectionType: not null })
+		{
+			return;
+		}
+
+		var folder = new CustomNavigationViewItem
+		{
+			Key = typeof(LibraryViewModel).FullName!,
+			Name = library.Name!,
+			Parameter = library.Id.Value,
+			Glyph = library.CollectionType.Value switch
+			{
+				BaseItemDto_CollectionType.Tvshows => "\uE7F4",
+				BaseItemDto_CollectionType.Movies => "\uE8B2",
+				_ => null
+			},
+			Commands = [new CommandModel() { Name = "Unpin", DisplayName = "Unpin", Glyph = "\uE77A" }]
+		};
+
+		navigationViewService.AddNavigationItem(folder);
+		navigationViewService.SaveCustomViews();
+	}
+
+	[RelayCommand]
+	private void UnPinFromSideBar(CustomNavigationViewItem item)
+	{
+		navigationViewService.RemoveNavigationItem(item);
 	}
 
 	private async Task<List<Guid?>> GetItemIds(BaseItemDto dto)

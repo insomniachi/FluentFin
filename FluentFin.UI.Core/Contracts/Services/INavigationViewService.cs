@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentFin.Core.Services;
 using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Contracts.Services;
 
-public interface INavigationViewService
+public interface INavigationViewService : INavigationViewServiceCore
 {
 	IList<object>? MenuItems
 	{
@@ -21,6 +22,8 @@ public interface INavigationViewService
 	void UnregisterEvents();
 
 	NavigationViewItem? GetSelectedItem(Type pageType);
+
+	NavigationViewItem? GetSelectedItem();
 
 	void TogglePane();
 }

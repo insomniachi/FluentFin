@@ -11,6 +11,7 @@ public interface INavigationServiceCore
 
 public interface INavigationViewServiceCore
 {
+	object? Key { get; }
 	void AddNavigationItem(CustomNavigationViewItem item);
 	void RemoveNavigationItem(CustomNavigationViewItem item);
 	void SaveCustomViews();

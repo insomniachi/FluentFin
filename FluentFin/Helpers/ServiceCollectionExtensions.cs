@@ -3,6 +3,8 @@ using FluentFin.Contracts.Services;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Services;
+using FluentFin.UI.Core;
+using FluentFin.UI.Core.Contracts.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
@@ -36,7 +38,8 @@ internal static class ServiceCollectionExtensions
 		{
 			return new NavigationViewService(sp.GetRequiredKeyedService<INavigationService>(key),
 											 sp.GetRequiredService<IPageService>(),
-											 sp.GetRequiredService<ILocalSettingsService>())
+											 sp.GetRequiredService<ILocalSettingsService>(),
+											 sp.GetRequiredService<IPluginManager>())
 			{
 				Key = key
 			};

@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FluentFin.Contracts.Services;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using FluentFin.Plugins.Playback_Reporting.Views;
+using FluentFin.UI.Core;
+using FluentFin.UI.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
@@ -12,14 +13,14 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Services;
 
-public class PageService : IPageService
+public class PageService : IPageService, IPageRegistration
 {
 	private readonly Dictionary<string, Type> _pages = [];
 	private readonly Dictionary<Type, Type> _viewModels = [];
 	private readonly Dictionary<Type, Type> _parents = [];
 	private readonly Lock _lock = new();
 
-	public PageService()
+	public PageService(IPluginManager pluginManager)
 	{
 		// Setup Section
 		Configure<ShellViewModel, ShellPage>();
@@ -58,17 +59,10 @@ public class PageService : IPageService
 		Configure<ActivitiesViewModel, ActivitiesPage>();
 		Configure<ScheduledTasksViewModel, ScheduledTasksPage>();
 
-		// Playback Reporting Pages
-		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();
-		Configure<UsersReportViewModel, UsersReportPage>();
-		Configure<PlaybackReportViewModel, PlaybackReportPage>();
-		Configure<BreakdownReportViewModel, BreakdownReportPage>();
-		Configure<UsageReportViewModel, UsageReportPage>();
-		Configure<SessionDurationReportViewModel, SessionDurationReportPage>();
-
-
 		// Setup Parent/Child Relationships
 		ConfigureParent<LibraryViewModel, LibrariesLandingPageViewModel>();
+
+		pluginManager.ConfigurePages(this);
 	}
 
 	public Type GetPageType(string key)
@@ -109,7 +103,7 @@ public class PageService : IPageService
 		return null;
 	}
 
-	private void Configure<VM, V>()
+	public void Configure<VM, V>()
 		where VM : ObservableObject
 		where V : Page
 	{

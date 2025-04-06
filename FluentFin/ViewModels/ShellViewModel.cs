@@ -5,6 +5,7 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
 using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
+using FluentFin.UI.Core.Contracts.Services;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace FluentFin.ViewModels;

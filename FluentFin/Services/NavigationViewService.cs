@@ -5,6 +5,7 @@ using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.UI.Core;
+using FluentFin.UI.Core.Contracts.Services;
 using FluentFin.Views;
 using Microsoft.UI.Xaml.Controls;
 
@@ -12,7 +13,8 @@ namespace FluentFin.Services;
 
 public class NavigationViewService(INavigationService navigationService,
 								   IPageService pageService,
-								   ILocalSettingsService localSettingsService) : INavigationViewService
+								   ILocalSettingsService localSettingsService,
+								   IPluginManager pluginManager) : INavigationViewService
 {
 	private NavigationView? _navigationView;
 	private readonly List<CustomNavigationViewItem> _customNavigationItems = [];
@@ -36,8 +38,9 @@ public class NavigationViewService(INavigationService navigationService,
 		_navigationView.BackRequested += OnBackRequested;
 		_navigationView.ItemInvoked += OnItemInvoked;
 
-		var customItems = localSettingsService.ReadSetting<List<CustomNavigationViewItem>>($"{Key}_Items", []);
+		pluginManager.AddNavigationItems(this);
 
+		var customItems = localSettingsService.ReadSetting<List<CustomNavigationViewItem>>($"{Key}_Items", []);
 		foreach (var item in customItems)
 		{
 			AddNavigationItem(item);
@@ -158,7 +161,7 @@ public class NavigationViewService(INavigationService navigationService,
 
 			if (selectedItem.GetValue(NavigationHelper.NavigateToProperty) is string pageKey)
 			{
-				if(selectedItem.Tag is CustomNavigationViewItem item)
+				if(selectedItem.Tag is CustomNavigationViewItem { Parameter: not null } item)
 				{
 					navigationService.NavigateTo(pageKey, item.Parameter);
 				}

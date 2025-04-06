@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FluentFin.Core.Services;
 using Microsoft.UI.Xaml.Controls;
 
-namespace FluentFin.Contracts.Services;
+namespace FluentFin.UI.Core.Contracts.Services;
 
 public interface INavigationViewService : INavigationViewServiceCore
 {

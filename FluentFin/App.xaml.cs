@@ -13,8 +13,11 @@ using FluentFin.Dialogs.UserInput;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
+using FluentFin.Plugins.Playback_Reporting;
 using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using FluentFin.Services;
+using FluentFin.UI.Core;
+using FluentFin.UI.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using Jellyfin.Sdk.Generated.Models;
@@ -151,12 +154,12 @@ public partial class App : Application
 			services.AddTransient<ScheduledTasksViewModel>();
 
 			// playback report view models
-			services.AddTransient<PlaybackReportingDashboardViewModel>();
-			services.AddTransient<UsersReportViewModel>();
-			services.AddTransient<PlaybackReportViewModel>();
-			services.AddTransient<BreakdownReportViewModel>();
-			services.AddTransient<UsageReportViewModel>();
-			services.AddTransient<SessionDurationReportViewModel>();
+			//services.AddTransient<PlaybackReportingDashboardViewModel>();
+			//services.AddTransient<UsersReportViewModel>();
+			//services.AddTransient<PlaybackReportViewModel>();
+			//services.AddTransient<BreakdownReportViewModel>();
+			//services.AddTransient<UsageReportViewModel>();
+			//services.AddTransient<SessionDurationReportViewModel>();
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
@@ -180,8 +183,22 @@ public partial class App : Application
 
 			services.AddTransient<ShellPage>();
 
-			// Configuration
+			services.AddTransient<IPluginManager, PluginManager>();
+			Assembly[] assemblies = [typeof(PlaybackReportingPlugin).Assembly];
+			foreach (var assembly in assemblies)
+			{
+				var plugins = assembly.GetTypes()
+					.Where(t => t.IsAssignableTo(typeof(IPlugin)) && !t.IsAbstract);
 
+				foreach (var type in plugins)
+				{
+					var plugin = (IPlugin)Activator.CreateInstance(type)!;
+					services.AddSingleton(plugin);
+					plugin.ConfigureServices(services);
+				}
+			}
+
+			// Configuration
 			if (!IsPackaged())
 			{
 				services.AddHostedService<WindowsUpdateService>();

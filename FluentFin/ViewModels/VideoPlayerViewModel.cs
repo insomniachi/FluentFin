@@ -46,9 +46,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	public partial IMediaPlayerController? MediaPlayer { get; set; }
 
 	[ObservableProperty]
-	public partial BaseItemDto? Dto { get; set; }
-
-	[ObservableProperty]
 	public partial List<MediaSegmentDto> Segments { get; set; } = [];
 
 	[ObservableProperty]
@@ -69,11 +66,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	public async Task OnNavigatedFrom()
 	{
 		_disposables.Dispose();
-
-		if (Dto is null)
-		{
-			return;
-		}
 
 		NativeMethods.AllowSleep();
 
@@ -100,10 +92,10 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		else if (parameter is PlayQueueUpdate pqu)
 		{
 			_playQueueUpdate = pqu;
-			await InitializeForSyncPlay(pqu);
+			InitializeForSyncPlay(pqu);
 		}
 
-		if (Dto is null || Playlist.Items.Count == 0)
+		if (Playlist.Items.Count == 0)
 		{
 			return;
 		}
@@ -118,7 +110,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		this.WhenAnyValue(x => x.MediaPlayer)
 			.WhereNotNull()
-			.Subscribe(async mp =>
+			.Subscribe(mp =>
 			{
 				_keyboardController?.UnsubscribeEvents();
 				_keyboardController = new KeyboardMediaPlayerController(mp, JellyfinClient, Skip, ToggleFullScreen);
@@ -131,8 +123,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 				{
 					Playlist.SelectedItem = Playlist.Items.FirstOrDefault();
 				}
-
-				await JellyfinClient.Playing(Dto);
 			});
 
 		Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(20))
@@ -149,32 +139,30 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		Dto = await JellyfinClient.GetItem(id.Value);
+		var dto = await JellyfinClient.GetItem(id.Value);
 
-		if (Dto is null)
+		if (dto is null)
 		{
 			return;
 		}
 
-		Playlist = Dto.Type switch
+		Playlist = dto.Type switch
 		{
-			BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(Dto),
-			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(JellyfinClient, Dto),
-			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(JellyfinClient, Dto),
-			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(JellyfinClient, Dto),
+			BaseItemDto_Type.Movie => PlaylistViewModel.FromMovie(dto),
+			BaseItemDto_Type.Episode => await PlaylistViewModel.FromEpisode(JellyfinClient, dto),
+			BaseItemDto_Type.Series => await PlaylistViewModel.FromSeries(JellyfinClient, dto),
+			BaseItemDto_Type.Season => await PlaylistViewModel.FromSeason(JellyfinClient, dto),
 			_ => new PlaylistViewModel()
 		};
 	}
 
-	private async Task InitializeForSyncPlay(PlayQueueUpdate pqu)
+	private void InitializeForSyncPlay(PlayQueueUpdate pqu)
 	{
 		if (pqu.PlayingItemIndex < 0)
 		{
 			return;
 		}
 
-		var id = pqu.Playlist[pqu.PlayingItemIndex].ItemId;
-		Dto = await JellyfinClient.GetItem(id);
 		Playlist = PlaylistViewModel.FromSyncPlay(pqu.Playlist);
 	}
 
@@ -216,14 +204,14 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		if (Playlist.SelectedItem is not { } selectedItem)
+		if (Playlist.SelectedItem is not { Dto.Id: not null } selectedItem)
 		{
 			return;
 		}
 
 		MediaPlayer.Stop();
 
-		var full = await JellyfinClient.GetItem(selectedItem.Dto.Id ?? Guid.Empty);
+		var full = await JellyfinClient.GetItem(selectedItem.Dto.Id.Value);
 
 		if (full is null)
 		{
@@ -252,7 +240,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		PlayMethod = mediaResponse.PlayMethod;
 
-		if (selectedItem.Dto?.UserData?.PlaybackPositionTicks is { } ticks)
+		if (selectedItem.Dto.UserData?.PlaybackPositionTicks is { } ticks)
 		{
 			MediaPlayer.SeekTo(TimeSpan.FromTicks(ticks));
 		}
@@ -262,6 +250,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			OpenSubtitles(MediaPlayer, mediaResponse, subtitleStream);
 		}
 
+		await JellyfinClient.Playing(selectedItem.Dto);
 	}
 
 	private void OpenSubtitles(IMediaPlayerController mp, MediaResponse response, MediaStream stream)
@@ -314,11 +303,6 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		if (Dto is null)
-		{
-			return;
-		}
-
 		if (MediaPlayer.Position.Ticks == 0)
 		{
 			return;
@@ -334,10 +318,10 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		_playbackProgressInfo.ItemId = Dto.Id;
+		_playbackProgressInfo.ItemId = Playlist.SelectedItem.Dto.Id;
 		_playbackProgressInfo.PositionTicks = MediaPlayer.Position.Ticks;
 		_playbackProgressInfo.IsPaused = !MediaPlayer.IsPlaying;
-		_playbackProgressInfo.MediaSourceId = Dto.Id?.ToString("N");
+		_playbackProgressInfo.MediaSourceId = Playlist.SelectedItem.Dto.Id?.ToString("N");
 		_playbackProgressInfo.IsMuted = MediaPlayer.IsMuted;
 		_playbackProgressInfo.PlayMethod = PlayMethod;
 		_playbackProgressInfo.AudioStreamIndex = MediaPlayer.AudioTrackIndex;

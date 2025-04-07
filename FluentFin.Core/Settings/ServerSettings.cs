@@ -25,6 +25,7 @@ public record CustomNavigationViewItem
 	public Guid? Parameter { get; set; }
 	public string? Glyph { get; set; } = "";
 	public List<CommandModel> Commands { get; set; } = [];
+	public bool Persistent { get; set; }
 }
 
 public record CommandModel

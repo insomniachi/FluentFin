@@ -109,7 +109,8 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 				BaseItemDto_CollectionType.Movies => "\uE8B2",
 				_ => null
 			},
-			Commands = [new CommandModel() { Name = "Unpin", DisplayName = "Unpin", Glyph = "\uE77A" }]
+			Commands = [new CommandModel() { Name = "Unpin", DisplayName = "Unpin", Glyph = "\uE77A" }],
+			Persistent = true,
 		};
 
 		navigationViewService.AddNavigationItem(folder);

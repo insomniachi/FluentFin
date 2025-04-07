@@ -49,7 +49,7 @@ public class NavigationViewService(INavigationService navigationService,
 
 	public void SaveCustomViews()
 	{
-		localSettingsService.SaveSetting($"{Key}_Items", _customNavigationItems);
+		localSettingsService.SaveSetting($"{Key}_Items", _customNavigationItems.Where(x => x.Persistent).ToList());
 	}
 
 	public void RemoveNavigationItem(CustomNavigationViewItem item)

@@ -1,9 +1,15 @@
-﻿using System.Net.WebSockets;
+﻿using System;
+using System.Net.WebSockets;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentFin.Core.WebSockets;
 using FluentFin.Core.WebSockets.Messages;
 using Flurl;
+using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Kiota.Abstractions.Serialization;
+using Microsoft.Kiota.Serialization.Json;
 
 namespace FluentFin.Core.Services;
 
@@ -95,7 +101,7 @@ public partial class JellyfinClient
 			}
 
 		}
-		else if (messageType.Parse(socketMessage) is IInboundSocketMessage message)
+		else if (messageType.Parse(document) is IInboundSocketMessage message)
 		{
 			socketMessageSender.OnNext(message);
 		}
@@ -108,20 +114,30 @@ public partial class JellyfinClient
 
 internal static class MessageConverter
 {
-	internal static WebSocketMessage? Parse(this SessionMessageType messageType, string json)
+	private static readonly KiotaJsonSerializationContext _context = new(new JsonSerializerOptions(KiotaJsonSerializationContext.Default.Options)
+	{
+		Converters =
+		{
+			new JsonNullableGuidConverter(),
+			new JsonGuidConverter()
+		}
+	});
+
+	internal static WebSocketMessage? Parse(this SessionMessageType messageType, JsonDocument doc)
 	{
 		try
 		{
 			return messageType switch
 			{
-				SessionMessageType.GeneralCommand => JsonSerializer.Deserialize<GeneralCommandMessage>(json),
-				SessionMessageType.Playstate => JsonSerializer.Deserialize<PlayStateMessage>(json),
-				SessionMessageType.UserDataChanged => JsonSerializer.Deserialize<UserDataChangeMessage>(json),
-				SessionMessageType.SyncPlayCommand => JsonSerializer.Deserialize<SyncPlayCommandMessage>(json),
+				SessionMessageType.GeneralCommand => KiotaParseObject<GeneralCommandMessage, GeneralCommand>(doc),
+				SessionMessageType.Playstate => doc.Deserialize<PlayStateMessage>(),
+				SessionMessageType.UserDataChanged => KiotaParseObject<UserDataChangeMessage, UserDataChangeInfo>(doc),
+				SessionMessageType.SyncPlayCommand => doc.Deserialize<SyncPlayCommandMessage>(),
+				SessionMessageType.Sessions => KiotaParseList<SessionInfoMessage, SessionInfoDto>(doc),
 				_ => null
 			};
 		}
-		catch
+		catch(Exception ex)
 		{
 			return null;
 		}
@@ -146,4 +162,46 @@ internal static class MessageConverter
 		}
 	}
 
+	private static TMessage KiotaParseObject<TMessage,TData>(JsonDocument doc) 
+		where TData : IParsable, new()
+		where TMessage : WebSocketMessage<TData>, new()
+	{
+		var id = doc.RootElement.GetProperty("MessageId").GetString();
+		var data = doc.RootElement.GetProperty("Data");
+		var parseNode = new JsonParseNode(data, _context);
+
+		return new TMessage
+		{
+			MessageId = Guid.TryParse(id, out var guid) ? guid : Guid.Empty,
+			Data = parseNode.GetObjectValue(CreateFromDiscriminatorValue<TData>)
+		};
+	}
+
+	private static TMessage KiotaParseList<TMessage,TData>(JsonDocument doc)
+		where TData : IParsable, new()
+		where TMessage : WebSocketMessage<List<TData>>, new()
+	{
+		var id = doc.RootElement.GetProperty("MessageId").GetString();
+		var array = doc.RootElement.GetProperty("Data");
+		List<TData?> data = [];
+
+		foreach (var item in array.EnumerateArray())
+		{
+			var text = item.GetRawText();
+			var parseNode = new JsonParseNode(item, _context);
+			data.Add(parseNode.GetObjectValue(CreateFromDiscriminatorValue<TData>));
+		}
+
+		return new TMessage
+		{
+			MessageId = Guid.TryParse(id, out var guid) ? guid : Guid.Empty,
+			Data = [.. data.Where(x => x is not null)]
+		};
+	}
+
+	private static T CreateFromDiscriminatorValue<T>(IParseNode parseNode)
+		where T : IParsable, new()
+	{
+		return new T();
+	}
 }

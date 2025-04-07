@@ -25,10 +25,10 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
 		 {
 			 switch (message)
 			 {
-				 case GeneralCommandMessage { Data.Name: GeneralCommandType.DisplayMessage } gcm:
-					 contentDialogService.Growl(gcm.Data.Arguments["Header"],
-												gcm.Data.Arguments["Text"],
-												TimeSpan.FromMilliseconds(double.Parse(gcm.Data.Arguments["TimeoutMs"])));
+				 case GeneralCommandMessage { Data.Name: GeneralCommand_Name.DisplayMessage } gcm:
+					 contentDialogService.Growl((string)gcm.Data.Arguments!.AdditionalData["Header"],
+												(string)gcm.Data.Arguments!.AdditionalData["Text"],
+												TimeSpan.FromMilliseconds(double.Parse((string)gcm.Data.Arguments.AdditionalData["TimeoutMs"])));
 					 break;
 				 case PlayQueueUpdateMessage { Data.Data.PlayingItemIndex: >= 0 } playMessage:
 					 navigationService.NavigateTo<VideoPlayerViewModel>(playMessage.Data.Data);

@@ -1,49 +1,55 @@
 ﻿
 using FluentFin.Core.WebSockets.Messages;
+using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.WebSockets;
 
-public class GeneralCommandMessage : SocketMessage<GeneralCommand>
+public class GeneralCommandMessage : WebSocketMessage<GeneralCommand>
 {
 	public override SessionMessageType MessageType => SessionMessageType.GeneralCommand;
 }
 
-public class PlayStateMessage : SocketMessage<PlaystateRequest>
+public class PlayStateMessage : WebSocketMessage<PlaystateRequest>
 {
 	public override SessionMessageType MessageType => SessionMessageType.Playstate;
 }
 
-public class UserDataChangeMessage : SocketMessage<UserDataChangeInfo>
+public class UserDataChangeMessage : WebSocketMessage<UserDataChangeInfo>
 {
 	public override SessionMessageType MessageType => SessionMessageType.UserDataChanged;
 }
 
-public class SyncPlayCommandMessage : SocketMessage<SyncPlaySendCommand>
+public class SyncPlayCommandMessage : WebSocketMessage<SyncPlaySendCommand>
 {
 	public override SessionMessageType MessageType => SessionMessageType.SyncPlayCommand;
 }
 
-public class PlayQueueUpdateMessage : SocketMessage<GroupUpdate<PlayQueueUpdate>>
+public class PlayQueueUpdateMessage : WebSocketMessage<GroupUpdate<PlayQueueUpdate>>
 {
 	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
-public class UserJoinedUpdateMessage : SocketMessage<GroupUpdate<string>>
+public class UserJoinedUpdateMessage : WebSocketMessage<GroupUpdate<string>>
 {
 	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
-public class UserLeftUpdateMessage : SocketMessage<GroupUpdate<string>>
+public class UserLeftUpdateMessage : WebSocketMessage<GroupUpdate<string>>
 {
 	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
-public class GroupJoinedUpdateMessage : SocketMessage<GroupUpdate<GroupJoinedUpdate>>
+public class GroupJoinedUpdateMessage : WebSocketMessage<GroupUpdate<GroupJoinedUpdate>>
 {
 	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
 }
 
-public class GroupLeftUpdateMessage : SocketMessage<GroupUpdate<string>>
+public class GroupLeftUpdateMessage : WebSocketMessage<GroupUpdate<string>>
 {
 	public override SessionMessageType MessageType => SessionMessageType.SyncPlayGroupUpdate;
+}
+
+public class SessionInfoMessage : WebSocketMessage<List<SessionInfoDto>>
+{
+	public override SessionMessageType MessageType => SessionMessageType.Sessions;
 }

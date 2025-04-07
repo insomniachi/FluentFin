@@ -1,26 +1,26 @@
-﻿using System.Text.Json.Serialization;
+﻿using Jellyfin.Sdk.Generated.Models;
+using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace FluentFin.Core.WebSockets.Messages;
 
-public class UserDataChangeInfo
+public class UserDataChangeInfo : IParsable
 {
-	[JsonConverter(typeof(JsonNullableGuidConverter))]
 	public Guid? UserId { get; set; }
+	public List<UserItemDataDto> UserDataList { get; set; } = [];
 
-	public UserItemDataDto[] UserDataList { get; set; } = [];
-}
+	public IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
+	{
+		return new Dictionary<string, Action<IParseNode>>
+		{
+			{ "UserId", n => { UserId = n.GetGuidValue(); }},
+			{ "UserDataList", n => UserDataList = [.. n.GetCollectionOfObjectValues(UserItemDataDto.CreateFromDiscriminatorValue)]}
+		};
+	}
 
-public class UserItemDataDto
-{
-	public bool? IsFavorite { get; set; }
-	public string? ItemId { get; set; }
-	public string? Key { get; set; }
-	public DateTimeOffset? LastPlayedDate { get; set; }
-	public bool? Likes { get; set; }
-	public long? PlaybackPositionTicks { get; set; }
-	public int? PlayCount { get; set; }
-	public bool? Played { get; set; }
-	public double? PlayedPercentage { get; set; }
-	public double? Rating { get; set; }
-	public int? UnplayedItemCount { get; set; }
+	public void Serialize(ISerializationWriter writer)
+	{
+		_ = writer ?? throw new ArgumentNullException(nameof(writer));
+		writer.WriteGuidValue("IsFavorite", UserId);
+		writer.WriteCollectionOfObjectValues("UserDataList", UserDataList);
+	}
 }

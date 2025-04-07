@@ -62,7 +62,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			{
 				foreach (var item in msg.Data?.UserDataList ?? [])
 				{
-					if (!Guid.TryParse(item.ItemId, out var guid))
+					if (item.ItemId is not { } guid)
 					{
 						continue;
 					}
@@ -109,7 +109,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		}
 	}
 
-	private void ProcessRecentItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private void ProcessRecentItemChanged(UserItemDataDto userData, Guid guid)
 	{
 		foreach (var library in RecentItems)
 		{
@@ -126,7 +126,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		;
 	}
 
-	private void ProcessContinueWatchingItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private void ProcessContinueWatchingItemChanged(UserItemDataDto userData, Guid guid)
 	{
 		if (ContinueItems.FirstOrDefault(x => x.Id == guid) is not { } item)
 		{
@@ -144,7 +144,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		}
 	}
 
-	private async Task ProcessNextUpItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private async Task ProcessNextUpItemChanged(UserItemDataDto userData, Guid guid)
 	{
 		if (NextUpItems.FirstOrDefault(x => x.Id == guid) is not { } item)
 		{

@@ -37,10 +37,10 @@ public partial class JellyfinClient
 
 	private async Task StartWebSocketConnection(CancellationToken ct)
 	{
-		await Task.Factory.StartNew(async () => await CreateSocketConnectionWithReconnection(ct), ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+		await Task.Factory.StartNew(async () => await TryCreateSocketConnection(ct), ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 	}
 
-	private async Task CreateSocketConnectionWithReconnection(CancellationToken ct)
+	private async Task TryCreateSocketConnection(CancellationToken ct)
 	{
 		while(true)
 		{

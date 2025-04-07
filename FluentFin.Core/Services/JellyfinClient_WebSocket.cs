@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using FluentFin.Core.WebSockets;
 using FluentFin.Core.WebSockets.Messages;
 using Flurl;
@@ -15,20 +13,52 @@ namespace FluentFin.Core.Services;
 
 public partial class JellyfinClient
 {
-	private async Task CreateSocketConnection(CancellationToken ct)
-	{
-		var socket = new ClientWebSocket();
-		socket.Options.SetRequestHeader("Authorization", _settings.GetAuthorizationHeader());
+	private ClientWebSocket? _socket;
 
-		try
+	public async Task SendWebsocketMessage<T>(T message)
+		where T : WebSocketMessage
+	{
+		if(_socket is null)
 		{
-			await socket.ConnectAsync(new Uri(BaseUrl.Replace("http", "ws").AppendPathSegment("/socket")), ct);
-			await Task.Factory.StartNew(async () => await ReceiveLoop(socket, ct), ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			return;
 		}
-		catch (Exception ex)
+
+		if(_socket.State is not WebSocketState.Open)
 		{
-			logger.LogError(ex, @"Unhandled exception");
+			return;
 		}
+
+		var jsonData = JsonSerializer.Serialize(message);
+		var bytes = Encoding.UTF8.GetBytes(jsonData);
+		var segment = new ArraySegment<byte>(bytes);
+
+		await _socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+	}
+
+	private async Task StartWebSocketConnection(CancellationToken ct)
+	{
+		await Task.Factory.StartNew(async () => await CreateSocketConnectionWithReconnection(ct), ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+	}
+
+	private async Task CreateSocketConnectionWithReconnection(CancellationToken ct)
+	{
+		while(true)
+		{
+			_socket = new ClientWebSocket();
+			_socket.Options.SetRequestHeader("Authorization", _settings.GetAuthorizationHeader());
+
+			try
+			{
+				await _socket.ConnectAsync(new Uri(BaseUrl.Replace("http", "ws").AppendPathSegment("/socket")), ct);
+				await ReceiveLoop(_socket, ct);
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex, @"Unhandled exception");
+			}
+
+			await Task.Delay(TimeSpan.FromMinutes(1), ct);
+		}	
 	}
 
 	private async Task ReceiveLoop(WebSocket socket, CancellationToken token)
@@ -61,7 +91,7 @@ public partial class JellyfinClient
 				await ResponseReceived(outputStream);
 			}
 		}
-		catch (TaskCanceledException) { }
+		catch { }
 		finally
 		{
 			outputStream?.Dispose();

@@ -54,7 +54,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		});
 
 		await GetPlugins();
-		await CreateSocketConnection(CancellationToken.None);
+		await StartWebSocketConnection(CancellationToken.None);
 	}
 
 	public async Task<BaseItemDtoQueryResult?> Search(string searchTerm)

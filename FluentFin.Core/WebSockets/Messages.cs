@@ -53,3 +53,19 @@ public class SessionInfoMessage : WebSocketMessage<List<SessionInfoDto>>
 {
 	public override SessionMessageType MessageType => SessionMessageType.Sessions;
 }
+
+// Outbound
+public class SessionsStartMessage : WebSocketMessage<string>
+{
+	public override SessionMessageType MessageType => SessionMessageType.SessionsStart;
+}
+
+public class SessionsStopMessage : WebSocketMessage
+{
+	public override SessionMessageType MessageType => SessionMessageType.SessionsStop;
+}
+
+public class KeepAliveMessage : WebSocketMessage
+{
+	public override SessionMessageType MessageType => SessionMessageType.KeepAlive;
+}

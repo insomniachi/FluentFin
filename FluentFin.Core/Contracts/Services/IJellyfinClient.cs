@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using FluentFin.Core.Services;
+using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
@@ -178,6 +179,8 @@ namespace FluentFin.Core.Contracts.Services
 		Task RunScheduledTask(string id);
 
 		Task PlayOnSession(string sessionId, params IEnumerable<Guid?> itemIds);
+
+		Task SendWebsocketMessage<T>(T message) where T: WebSocketMessage;
 
 		// SyncPlay
 		Task<List<GroupInfoDto>> GetSyncPlayGroups();

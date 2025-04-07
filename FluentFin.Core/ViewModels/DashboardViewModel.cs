@@ -1,14 +1,18 @@
-﻿using System.Reflection;
+﻿using System.Reactive.Linq;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
+using ReactiveUI;
 
 namespace FluentFin.Core.ViewModels
 {
 	public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
-											ITitleBarViewModel titleBarViewModel) : ObservableObject, INavigationAware
+											ITitleBarViewModel titleBarViewModel,
+											IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
 	{
 		private string? _scanMediaLibraryTask;
 
@@ -31,7 +35,10 @@ namespace FluentFin.Core.ViewModels
 		public partial string Version { get; set; } = Assembly.GetEntryAssembly()!.GetName().Version!.ToString();
 
 
-		public Task OnNavigatedFrom() => Task.CompletedTask;
+		public async Task OnNavigatedFrom()
+		{
+			await jellyfinClient.SendWebsocketMessage(new SessionsStopMessage());
+		}
 
 		public async Task OnNavigatedTo(object parameter)
 		{
@@ -58,9 +65,22 @@ namespace FluentFin.Core.ViewModels
 				OtherActivities = otherActivityResult.Items;
 			}
 
+			await jellyfinClient.SendWebsocketMessage(new SessionsStartMessage { Data = @"0,1500" });
 			var tasks = await jellyfinClient.GetScheduledTasks(true);
 
 			_scanMediaLibraryTask = tasks.FirstOrDefault(x => x.Name == "Scan Media Library")?.Id;
+
+			webSocketMessages
+				.OfType<SessionInfoMessage>()
+				.ObserveOn(RxApp.MainThreadScheduler)
+				.Select(x => x.Data)
+				.Subscribe(sessions =>
+				{
+					if(sessions?.Any(x => x.PlayState?.PositionTicks > 0) == true)
+					{
+						;
+					}
+				});
 		}
 
 		[RelayCommand]

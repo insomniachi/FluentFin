@@ -1,7 +1,9 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.WebSockets;
 using FluentFin.ViewModels;
@@ -13,7 +15,8 @@ namespace FluentFin.Services;
 
 public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocketMessages,
 									 IContentDialogService contentDialogService,
-									 INavigationService navigationService) : IHostedService
+									 INavigationService navigationService,
+									 IJellyfinClient jellyfinClient) : IHostedService
 {
 	private readonly CompositeDisposable _disposables = [];
 
@@ -50,6 +53,11 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
 			 }
 		 })
 		 .DisposeWith(_disposables);
+
+		Observable.Timer(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1))
+			.SelectMany(_ => jellyfinClient.SendWebsocketMessage(new KeepAliveMessage()).ToObservable())
+			.Subscribe()
+			.DisposeWith(_disposables);
 
 		return Task.CompletedTask;
 	}

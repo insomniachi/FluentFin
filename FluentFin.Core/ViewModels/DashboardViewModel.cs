@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,104 +9,118 @@ using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 
-namespace FluentFin.Core.ViewModels
+namespace FluentFin.Core.ViewModels;
+
+public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
+										ITitleBarViewModel titleBarViewModel,
+										IUserInput<string> stringUserInput,
+										IContentDialogServiceCore contentDialogService,
+										IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
 {
-	public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
-											ITitleBarViewModel titleBarViewModel,
-											IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
+	private string? _scanMediaLibraryTask;
+
+	[ObservableProperty]
+	public partial SystemInfo? SystemInfo { get; set; }
+
+	[ObservableProperty]
+	public partial ObservableCollection<SessionInfoDtoViewModel> ActiveSessions { get; set; } = [];
+
+	[ObservableProperty]
+	public partial List<ActivityLogEntry> UserActivities { get; set; } = [];
+
+	[ObservableProperty]
+	public partial List<ActivityLogEntry> OtherActivities { get; set; } = [];
+
+	[ObservableProperty]
+	public partial List<NameValuePair> Paths { get; set; } = [];
+
+	[ObservableProperty]
+	public partial string Version { get; set; } = Assembly.GetEntryAssembly()!.GetName().Version!.ToString();
+
+
+	public async Task OnNavigatedFrom()
 	{
-		private string? _scanMediaLibraryTask;
+		await jellyfinClient.SendWebSocketMessageWithoutData<SessionsStopMessage>();
+	}
 
-		[ObservableProperty]
-		public partial SystemInfo? SystemInfo { get; set; }
+	public async Task OnNavigatedTo(object parameter)
+	{
+		SystemInfo = await jellyfinClient.GetSystemInfo();
+		ActiveSessions = [..(await jellyfinClient.GetActiveSessions()).Where(x => x.Id != SessionInfo.SessionId).Select(CreateViewModel)];
 
-		[ObservableProperty]
-		public partial List<SessionInfoDto> ActiveSessions { get; set; } = [];
+		Paths = [
+			new NameValuePair { Name = "Cache", Value = SystemInfo?.CachePath },
+			new NameValuePair { Name = "Logs", Value = SystemInfo?.LogPath },
+			new NameValuePair { Name = "Metadata", Value = SystemInfo?.InternalMetadataPath },
+			new NameValuePair { Name = "Transcodes", Value = SystemInfo?.TranscodingTempPath },
+			new NameValuePair { Name = "Web", Value = SystemInfo?.WebPath },
+		];
 
-		[ObservableProperty]
-		public partial List<ActivityLogEntry> UserActivities { get; set; } = [];
-
-		[ObservableProperty]
-		public partial List<ActivityLogEntry> OtherActivities { get; set; } = [];
-
-		[ObservableProperty]
-		public partial List<NameValuePair> Paths { get; set; } = [];
-
-		[ObservableProperty]
-		public partial string Version { get; set; } = Assembly.GetEntryAssembly()!.GetName().Version!.ToString();
-
-
-		public async Task OnNavigatedFrom()
+		var userActivityResult = await jellyfinClient.GetActivities(TimeProvider.System.GetUtcNow().AddDays(-1), true);
+		if (userActivityResult is { Items.Count: > 0 })
 		{
-			await jellyfinClient.SendWebsocketMessage(new SessionsStopMessage());
+			UserActivities = userActivityResult.Items;
 		}
 
-		public async Task OnNavigatedTo(object parameter)
+		var otherActivityResult = await jellyfinClient.GetActivities(TimeProvider.System.GetUtcNow().AddDays(-7), false);
+		if (otherActivityResult is { Items.Count: > 0 })
 		{
-			SystemInfo = await jellyfinClient.GetSystemInfo();
-			ActiveSessions = await jellyfinClient.GetActiveSessions();
+			OtherActivities = otherActivityResult.Items;
+		}
 
-			Paths = [
-				new NameValuePair { Name = "Cache", Value = SystemInfo?.CachePath },
-				new NameValuePair { Name = "Logs", Value = SystemInfo?.LogPath },
-				new NameValuePair { Name = "Metadata", Value = SystemInfo?.InternalMetadataPath },
-				new NameValuePair { Name = "Transcodes", Value = SystemInfo?.TranscodingTempPath },
-				new NameValuePair { Name = "Web", Value = SystemInfo?.WebPath },
-			];
+		await jellyfinClient.SendWebsocketMessage(new SessionsStartMessage(TimeSpan.Zero, TimeSpan.FromSeconds(2)));
+		
+		var tasks = await jellyfinClient.GetScheduledTasks(true);
 
-			var userActivityResult = await jellyfinClient.GetActivities(TimeProvider.System.GetUtcNow().AddDays(-1), true);
-			if (userActivityResult is { Items.Count: > 0 })
+		_scanMediaLibraryTask = tasks.FirstOrDefault(x => x.Name == "Scan Media Library")?.Id;
+
+		webSocketMessages
+			.OfType<SessionInfoMessage>()
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Select(x => x.Data?.Where(x => x.Id != SessionInfo.SessionId) ?? [])
+			.Subscribe(sessions =>
 			{
-				UserActivities = userActivityResult.Items;
-			}
-
-			var otherActivityResult = await jellyfinClient.GetActivities(TimeProvider.System.GetUtcNow().AddDays(-7), false);
-			if (otherActivityResult is { Items.Count: > 0 })
-			{
-				OtherActivities = otherActivityResult.Items;
-			}
-
-			await jellyfinClient.SendWebsocketMessage(new SessionsStartMessage { Data = @"0,1500" });
-			var tasks = await jellyfinClient.GetScheduledTasks(true);
-
-			_scanMediaLibraryTask = tasks.FirstOrDefault(x => x.Name == "Scan Media Library")?.Id;
-
-			webSocketMessages
-				.OfType<SessionInfoMessage>()
-				.ObserveOn(RxApp.MainThreadScheduler)
-				.Select(x => x.Data)
-				.Subscribe(sessions =>
+				foreach (var dto in sessions)
 				{
-					if(sessions?.Any(x => x.PlayState?.PositionTicks > 0) == true)
+					if(ActiveSessions.FirstOrDefault(x => x.Id == dto.Id) is { } vm)
 					{
-						;
+						vm.Update(dto);
 					}
-				});
-		}
+					else
+					{
+						ActiveSessions.Add(CreateViewModel(dto));
+					}
+				}
+			});
+	}
 
-		[RelayCommand]
-		private async Task Shutdown()
+	[RelayCommand]
+	private async Task Shutdown()
+	{
+		await titleBarViewModel.Logout();
+		await jellyfinClient.Shutdown();
+	}
+
+	[RelayCommand]
+	private async Task Restart()
+	{
+		await titleBarViewModel.Logout();
+		await jellyfinClient.Restart();
+	}
+
+	[RelayCommand]
+	private async Task StartScan()
+	{
+		if (string.IsNullOrEmpty(_scanMediaLibraryTask))
 		{
-			await titleBarViewModel.Logout();
-			await jellyfinClient.Shutdown();
+			return;
 		}
 
-		[RelayCommand]
-		private async Task Restart()
-		{
-			await titleBarViewModel.Logout();
-			await jellyfinClient.Restart();
-		}
+		await jellyfinClient.RunTask(_scanMediaLibraryTask);
+	}
 
-		[RelayCommand]
-		private async Task StartScan()
-		{
-			if (string.IsNullOrEmpty(_scanMediaLibraryTask))
-			{
-				return;
-			}
-
-			await jellyfinClient.RunTask(_scanMediaLibraryTask);
-		}
+	private SessionInfoDtoViewModel CreateViewModel(SessionInfoDto dto)
+	{
+		return new SessionInfoDtoViewModel(dto, jellyfinClient, contentDialogService, stringUserInput);
 	}
 }

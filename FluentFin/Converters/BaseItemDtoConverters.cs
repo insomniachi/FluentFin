@@ -51,6 +51,25 @@ public static class BaseItemDtoConverters
 		return "";
 	}
 
+	public static string ToSessionInfoItemName(this BaseItemDto? dto)
+	{
+		if (dto is null)
+		{
+			return string.Empty;
+		}
+
+		if (dto.Type == BaseItemDto_Type.Episode)
+		{
+			return $"S{dto.ParentIndexNumber}:E{dto.IndexNumber} - {dto.Name}";
+		}
+		if (dto.Type == BaseItemDto_Type.Movie)
+		{
+			return $"{dto.Name}";
+		}
+
+		return "";
+	}
+
 	public static string GetSeasonAndEpisodeNumber(this BaseItemDto? dto)
 	{
 		if (dto is null)

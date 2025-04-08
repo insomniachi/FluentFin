@@ -7,15 +7,17 @@
     xmlns:cc="using:CommunityToolkit.WinUI.Converters"
     xmlns:controls="using:FluentFin.Controls"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+    xmlns:cvm="using:FluentFin.Core.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     mc:Ignorable="d">
 
     <Page.Resources>
         <c:HumanizeConverter x:Key="HumanizeConverter" />
-        <c:JellyfinImageConverter x:Key="ImageConveter" />
+        <c:JellyfinImageConverter x:Key="ImageConveter" TypeRequest="Backdrop" />
         <c:JellyfinImageConverter x:Key="LogoConverter" TypeRequest="Logo" />
         <cc:EmptyObjectToObjectConverter
             x:Key="ObjectToVisibilityConverter"
@@ -114,7 +116,7 @@
                         VerticalScrollMode="Disabled">
                         <ItemsRepeater ItemsSource="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="jm:SessionInfoDto">
+                                <DataTemplate x:DataType="cvm:SessionInfoDtoViewModel">
                                     <Grid
                                         Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
                                         BorderBrush="{ThemeResource CardStrokeColorDefault}"
@@ -127,11 +129,11 @@
 
                                         <controls:LoadingImage
                                             CornerRadius="{StaticResource ControlCornerRadius}"
-                                            Source="{x:Bind NowPlayingItem, Converter={StaticResource ImageConveter}}"
+                                            Source="{x:Bind NowPlayingItem, Converter={StaticResource ImageConveter}, Mode=OneWay}"
                                             Stretch="UniformToFill"
-                                            Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                                            Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
 
-                                        <Grid Padding="16" Background="{x:Bind NowPlayingItem, Converter={StaticResource ImageFillBackgroundConverter}}">
+                                        <Grid Padding="16,8" Background="{x:Bind NowPlayingItem, Converter={StaticResource ImageFillBackgroundConverter}, Mode=OneWay}">
                                             <StackPanel>
                                                 <TextBlock Text="{x:Bind DeviceName}" />
                                                 <TextBlock>
@@ -141,23 +143,39 @@
                                             </StackPanel>
 
                                             <TextBlock
+                                                Margin="0,0,0,16"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Bottom"
-                                                Visibility="{x:Bind NowPlayingItem, Converter={StaticResource InvertedObjectToVisibilityConverter}}">
+                                                Visibility="{x:Bind NowPlayingItem, Converter={StaticResource InvertedObjectToVisibilityConverter}, Mode=OneWay}">
                                                 <Run Text="Last activity" />
-                                                <Run Text="{x:Bind LastActivityDate, Converter={StaticResource HumanizeConverter}}" />
+                                                <Run Text="{x:Bind LastActivityDate, Converter={StaticResource HumanizeConverter}, Mode=OneWay}" />
                                             </TextBlock>
                                             <StackPanel
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Bottom"
-                                                Spacing="16"
-                                                Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                                Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+
                                                 <Image
-                                                    Height="50"
+                                                    x:Name="LogoImage"
+                                                    Height="35"
                                                     HorizontalAlignment="Left"
-                                                    Source="{x:Bind NowPlayingItem, Converter={StaticResource LogoConverter}}"
+                                                    Source="{x:Bind NowPlayingItem, Converter={StaticResource LogoConverter}, Mode=OneWay}"
                                                     Stretch="Uniform" />
-                                                <ProgressBar Maximum="{x:Bind c:Converters.ToDouble(NowPlayingItem.RunTimeTicks)}" Value="{x:Bind c:Converters.ToDouble(PlayState.PositionTicks)}" />
+
+                                                <Grid Margin="0,0,0,4">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{x:Bind c:BaseItemDtoConverters.ToSessionInfoItemName(NowPlayingItem), Mode=OneWay}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Right"
+                                                        Text="{x:Bind c:Converters.TicksToSecondsString(PlayState.PositionTicks), Mode=OneWay}"
+                                                        TextWrapping="WrapWholeWords" />
+                                                </Grid>
+
+                                                <ProgressBar Maximum="{x:Bind c:Converters.ToDouble(NowPlayingItem.RunTimeTicks), Mode=OneWay}" Value="{x:Bind c:Converters.ToDouble(PlayState.PositionTicks), Mode=OneWay}" />
                                             </StackPanel>
 
                                         </Grid>
@@ -165,8 +183,35 @@
                                         <Grid
                                             Grid.Row="1"
                                             Padding="16"
-                                            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
-                                            <TextBlock Text="{x:Bind UserName}" TextAlignment="Center" />
+                                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                            <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                                <StackPanel
+                                                    CornerRadius="{StaticResource ControlCornerRadius}"
+                                                    Orientation="Horizontal"
+                                                    Spacing="4">
+                                                    <Button
+                                                        Command="{x:Bind TogglePlayPauseCommand}"
+                                                        Content="{x:Bind c:Converters.IsPausedToSymbol(PlayState.IsPaused), Mode=OneWay}"
+                                                        Style="{StaticResource IconButtonStyle}"
+                                                        Visibility="{x:Bind c:Converters.BooleanToVisibility(MediaControlsVisible), Mode=OneWay}" />
+                                                    <Button
+                                                        Command="{x:Bind StopCommand}"
+                                                        Content="{ui:SymbolIcon Symbol=Stop}"
+                                                        Style="{StaticResource IconButtonStyle}"
+                                                        Visibility="{x:Bind c:Converters.BooleanToVisibility(MediaControlsVisible), Mode=OneWay}" />
+                                                    <Button
+                                                        Command="{x:Bind InfoCommand}"
+                                                        Content="{ui:FontIcon Glyph=&#xE946;}"
+                                                        Style="{StaticResource IconButtonStyle}"
+                                                        Visibility="{x:Bind NowPlayingItem, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
+                                                    <Button
+                                                        Command="{x:Bind SendMessageCommand}"
+                                                        Content="{ui:FontIcon Glyph=&#xE8BD;}"
+                                                        Style="{StaticResource IconButtonStyle}"
+                                                        Visibility="{x:Bind c:Converters.BooleanToVisibility(CanRecieveMessage)}" />
+                                                </StackPanel>
+                                                <TextBlock Text="{x:Bind UserName, Mode=OneWay}" TextAlignment="Center" />
+                                            </StackPanel>
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>
@@ -174,12 +219,11 @@
                             <ItemsRepeater.Layout>
                                 <UniformGridLayout
                                     ItemsStretch="Fill"
-                                    MaximumRowsOrColumns="1"
                                     MinColumnSpacing="16"
                                     MinItemHeight="260"
                                     MinItemWidth="320"
                                     MinRowSpacing="16"
-                                    Orientation="Vertical" />
+                                    Orientation="Horizontal" />
                             </ItemsRepeater.Layout>
                         </ItemsRepeater>
                     </ScrollViewer>

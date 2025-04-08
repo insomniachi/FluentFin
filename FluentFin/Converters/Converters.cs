@@ -27,7 +27,7 @@ public static class Converters
 	public static IEnumerable<BaseItemPerson> GetWriters(List<BaseItemPerson>? people) => people?.Where(x => x.Type == BaseItemPerson_Type.Writer) ?? [];
 	public static double TicksToSeconds(long value) => value / 10000000.0;
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
-	public static string TicksToTime(long value) => new TimeSpan(value).ToString("hh\\:mm\\:ss");
+	public static string TicksToTime(long? value) => value is null ? "" : new TimeSpan(value.Value).ToString("hh\\:mm\\:ss");
 	public static string MsToTime(long ms) => TimeSpan.FromMilliseconds(ms).ToString("hh\\:mm\\:ss");
 
 	public static string DateTimeOffsetToString(DateTimeOffset? offset)
@@ -57,9 +57,10 @@ public static class Converters
 			return string.Format($"{ts.Minutes}m");
 		}
 	}
-	public static string TicksToSecondsString(long value) => TimeSpanToString(new TimeSpan(value));
+	public static string TicksToSecondsString(long? value) => value is null ? "" : TimeSpanToString(new TimeSpan(value.Value));
 	public static Visibility VisibleIfMoreThanOne(ObservableCollection<PlaylistItem> items) => VisibleIfMoreThanOne<PlaylistItem>(items);
 	public static Visibility VisibleIfMoreThanOne<T>(IList<T> values) => values.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+	public static Visibility BooleanToVisibility(bool value) => value is true ? Visibility.Visible : Visibility.Collapsed;
 
 	public static string TimeSpanToString(TimeSpan ts)
 	{
@@ -196,5 +197,15 @@ public static class Converters
 		var end = DateTime.Today.Add(TimeSpan.FromHours(schedule.EndHour ?? 0));
 
 		return $"{start:hh:mm tt} - {end:hh:mm tt}";
+	}
+
+	public static object IsPausedToSymbol(bool? isPaused)
+	{
+		return isPaused switch
+		{
+			true => new SymbolIcon { Symbol = Symbol.Play },
+			false => new SymbolIcon { Symbol = Symbol.Pause },
+			_ => new FontIcon { Glyph = "\uE897" }
+		};
 	}
 }

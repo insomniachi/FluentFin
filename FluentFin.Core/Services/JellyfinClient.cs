@@ -326,6 +326,19 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		}
 	}
 
+	public async Task SendMessage(string sessionId, MessageCommand command)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions[sessionId].Message.PostAsync(command);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
 		return uri.AppendQueryParam("ApiKey", _token).ToUri();

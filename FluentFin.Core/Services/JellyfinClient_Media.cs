@@ -200,6 +200,32 @@ public partial class JellyfinClient
 		});
 	}
 
+	public async Task TogglePlayPause(string sessionId)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions[sessionId].Playing["PlayPause"].PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
+	public async Task Stop(string sessionId)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions[sessionId].Playing["Stop"].PostAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
 	public Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution)
 	{
 		return new Uri(HttpUtility.HtmlDecode(BaseUrl.AppendPathSegment($"/Videos/{dto?.Id}/Trickplay/{resolution}/{index}.jpg").AppendQueryParam("ApiKey", _token).ToString()));

@@ -180,6 +180,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task PlayOnSession(string sessionId, params IEnumerable<Guid?> itemIds);
 
+		Task TogglePlayPause(string sessionId);
+
+		Task Stop(string sessionId);
+
 		Task SendWebsocketMessage<T>(T message) where T: WebSocketMessage;
 
 		// SyncPlay
@@ -203,6 +207,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<DateTimeOffset> SyncTime();
 
+		Task SendMessage(string sessionId, MessageCommand command);
 	}
 
 	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);
@@ -223,5 +228,14 @@ namespace FluentFin.Core.Contracts.Services
 	public class Metadata
 	{
 		public bool UseFileCreationTimeForDateAdded { get; set; }
+	}
+
+	public static class JellyfinClientExtensions
+	{
+		public static async Task SendWebSocketMessageWithoutData<T>(this IJellyfinClient client)
+			where T: WebSocketMessage, new()
+		{
+			await client.SendWebsocketMessage(new T());
+		}
 	}
 }

@@ -167,7 +167,7 @@ internal static class MessageConverter
 				_ => null
 			};
 		}
-		catch(Exception ex)
+		catch
 		{
 			return null;
 		}

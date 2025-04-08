@@ -55,7 +55,7 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
 		 .DisposeWith(_disposables);
 
 		Observable.Timer(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1))
-			.SelectMany(_ => jellyfinClient.SendWebsocketMessage(new KeepAliveMessage()).ToObservable())
+			.SelectMany(_ => jellyfinClient.SendWebSocketMessageWithoutData<KeepAliveMessage>().ToObservable())
 			.Subscribe()
 			.DisposeWith(_disposables);
 

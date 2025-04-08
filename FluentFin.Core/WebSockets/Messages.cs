@@ -57,6 +57,11 @@ public class SessionInfoMessage : WebSocketMessage<List<SessionInfoDto>>
 // Outbound
 public class SessionsStartMessage : WebSocketMessage<string>
 {
+	public SessionsStartMessage(TimeSpan initalDelay, TimeSpan interval)
+	{
+		Data = $"{initalDelay.TotalMilliseconds},{interval.TotalMilliseconds}";
+	}
+
 	public override SessionMessageType MessageType => SessionMessageType.SessionsStart;
 }
 

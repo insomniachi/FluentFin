@@ -52,7 +52,7 @@ public sealed partial class LibrariesSettingsPage : Page
 			return;
 		}
 
-		var newName = await App.GetService<IUserInput<string>>().GetValue();
+		var newName = await App.GetKeyedService<IUserInput<string>>(UserInputs.LibraryNewName).GetValue();
 
 		if (!string.IsNullOrEmpty(newName))
 		{

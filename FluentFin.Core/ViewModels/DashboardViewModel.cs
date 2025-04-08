@@ -7,13 +7,14 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 
 namespace FluentFin.Core.ViewModels;
 
 public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 										ITitleBarViewModel titleBarViewModel,
-										IUserInput<string> stringUserInput,
+										[FromKeyedServices(UserInputs.MessageToSession)]IUserInput<string> stringUserInput,
 										IContentDialogServiceCore contentDialogService,
 										IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
 {

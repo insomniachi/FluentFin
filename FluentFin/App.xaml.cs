@@ -14,7 +14,6 @@ using FluentFin.Dialogs.ViewModels;
 using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
 using FluentFin.Plugins.Playback_Reporting;
-using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using FluentFin.Services;
 using FluentFin.UI.Core;
 using FluentFin.UI.Core.Contracts.Services;
@@ -154,14 +153,6 @@ public partial class App : Application
 			services.AddTransient<LibrariesLandingPageViewModel>();
 			services.AddTransient<ScheduledTasksViewModel>();
 
-			// playback report view models
-			//services.AddTransient<PlaybackReportingDashboardViewModel>();
-			//services.AddTransient<UsersReportViewModel>();
-			//services.AddTransient<PlaybackReportViewModel>();
-			//services.AddTransient<BreakdownReportViewModel>();
-			//services.AddTransient<UsageReportViewModel>();
-			//services.AddTransient<SessionDurationReportViewModel>();
-
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
 			services.AddDialog<EditImagesViewModel, EditImagesDialog>();
@@ -179,7 +170,8 @@ public partial class App : Application
 
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();
-			services.AddTransient<IUserInput<string>, StringUserInput>();
+			services.AddKeyedTransient<IUserInput<string>, LibraryNewNameInput>(UserInputs.LibraryNewName);
+			services.AddKeyedTransient<IUserInput<string>, SendMessageToSessionInput>(UserInputs.MessageToSession);
 			services.AddTransient<IServerFolderPicker, ServerFolderInput>();
 
 			services.AddTransient<ShellPage>();

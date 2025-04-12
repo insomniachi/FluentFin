@@ -17,6 +17,8 @@ public partial class SessionInfoDtoViewModel(SessionInfoDto dto,
 	public string? UserName { get; set; } = dto.UserName;
 	public bool CanRecieveMessage { get; set; } = dto.Capabilities?.SupportedCommands?.Contains(GeneralCommandType.DisplayMessage) == true;
 
+	[ObservableProperty]
+	public partial string? IconUrl { get; set; } = dto.Capabilities?.IconUrl;
 
 	[ObservableProperty]
 	public partial BaseItemDto? NowPlayingItem { get; set; } = dto.NowPlayingItem;

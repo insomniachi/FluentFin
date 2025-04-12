@@ -22,7 +22,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
 		<PackageReference Include="DeftSharp.Windows.Input" Version="0.10.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
 		<PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.3.1" />
 		<PackageReference Include="ReactiveUI.WinUI" Version="20.2.45" />

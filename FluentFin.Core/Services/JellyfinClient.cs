@@ -47,7 +47,8 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		{
 			SupportsMediaControl = true,
 			PlayableMediaTypes = [MediaType.Video],
-			DeviceProfile = DeviceProfiles.Flyleaf,
+			DeviceProfile = deviceProfileFactory.GetDeviceProfile(),
+			IconUrl = "https://github.com/insomniachi/FluentFin/raw/master/Installer/base-icon-transparent.png",
 			SupportedCommands = [
 				GeneralCommandType.DisplayMessage,
 			]

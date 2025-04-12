@@ -89,6 +89,23 @@ public static class Converters
 		}
 	}
 
+	public static ImageSource? GetImage(string? uri)
+	{
+		if (string.IsNullOrEmpty(uri))
+		{
+			return null;
+		}
+
+		try
+		{
+			return new BitmapImage(new Uri(uri));
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
 	public static FlyoutBase? GetAudiosFlyout(IMediaPlayerController player, int defaultIndex)
 	{
 		var audios = player.GetAudioTracks().ToList();

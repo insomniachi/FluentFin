@@ -19,6 +19,13 @@
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="LibrarySortFilterButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="CornerRadius" Value="18" />
+        </Style>
+    </Page.Resources>
+
     <ctk:SwitchPresenter TargetType="x:Boolean" Value="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
         <ctk:Case Value="False">
             <Grid>
@@ -33,9 +40,14 @@
                     Margin="{StaticResource MediumBottomMargin}"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
-                    Spacing="5">
-                    <lc:MenuFlyoutButton Content="Sort" Icon="{ui:SymbolIcon Symbol=Sort}">
-                        <lc:MenuFlyoutButton.Flyout>
+                    Spacing="8">
+
+                    <Button Style="{StaticResource LibrarySortFilterButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Sort" />
+                            <FontIcon FontSize="15" Glyph="&#xE8CB;" />
+                        </StackPanel>
+                        <Button.Flyout>
                             <MenuBarItemFlyout>
                                 <RadioMenuFlyoutItem
                                     Command="{x:Bind ViewModel.UpdateSortByCommand}"
@@ -93,10 +105,15 @@
                                     GroupName="Library_SortOrder"
                                     Text="Descending" />
                             </MenuBarItemFlyout>
-                        </lc:MenuFlyoutButton.Flyout>
-                    </lc:MenuFlyoutButton>
-                    <lc:MenuFlyoutButton Content="Filter" Icon="{ui:SymbolIcon Symbol=Filter}">
-                        <lc:MenuFlyoutButton.Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <Button Style="{StaticResource LibrarySortFilterButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Filter" />
+                            <FontIcon FontSize="15" Glyph="&#xE71C;" />
+                        </StackPanel>
+                        <Button.Flyout>
                             <Flyout>
                                 <StackPanel Spacing="10">
                                     <StackPanel.Resources>
@@ -126,8 +143,8 @@
                                     </ctk:TokenizingTextBox>
                                 </StackPanel>
                             </Flyout>
-                        </lc:MenuFlyoutButton.Flyout>
-                    </lc:MenuFlyoutButton>
+                        </Button.Flyout>
+                    </Button>
 
                 </StackPanel>
 

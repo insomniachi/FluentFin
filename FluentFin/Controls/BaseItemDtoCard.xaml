@@ -206,14 +206,23 @@
                 </Button>
 
                 <InfoBadge
+                    Width="50"
+                    Height="25"
                     Margin="10"
                     Padding="5,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
+                    Background="{x:Bind c:BaseItemDtoConverters.CardBadgeBackground(Model), Mode=OneWay}"
+                    FontSize="25"
                     FontWeight="ExtraBold"
                     IconSource="{x:Bind c:BaseItemDtoConverters.CardBadgeSource(Model), Mode=OneWay}"
                     Visibility="{x:Bind c:BaseItemDtoConverters.IsCardBadgeVisible(Model), Mode=OneWay}"
-                    Value="{x:Bind c:BaseItemDtoConverters.GetCardBadgeValue(Model), Mode=OneWay}" />
+                    Value="{x:Bind c:BaseItemDtoConverters.GetCardBadgeValue(Model), Mode=OneWay}">
+                    <InfoBadge.Resources>
+                        <x:Double x:Key="InfoBadgeMaxHeight">100</x:Double>
+                        <x:Double x:Key="InfoBadgeValueFontSize">18</x:Double>
+                    </InfoBadge.Resources>
+                </InfoBadge>
 
                 <ProgressBar
                     Margin="5,0,5,10"

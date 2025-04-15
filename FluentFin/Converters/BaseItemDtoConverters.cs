@@ -7,6 +7,7 @@ using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace FluentFin.Converters;
@@ -287,6 +288,24 @@ public static class BaseItemDtoConverters
 		}
 
 		return null;
+	}
+
+	public static Brush CardBadgeBackground(BaseItemViewModel vm)
+	{
+		if (vm is null)
+		{
+			return (Brush)Application.Current.Resources["InfoBadgeBackground"];
+		}
+
+		var unwatchedCount = vm.UserData?.UnplayedItemCount ?? 0;
+		var played = vm.UserData?.Played ?? false;
+
+		if (played && unwatchedCount == 0)
+		{
+			return (Brush)Application.Current.Resources["SystemFillColorSuccessBrush"];
+		}
+
+		return (Brush)Application.Current.Resources["InfoBadgeBackground"];
 	}
 
 	public static Visibility IsCardBadgeVisible(BaseItemViewModel vm)

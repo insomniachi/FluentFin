@@ -14,7 +14,7 @@
     xmlns:lc="using:FluentFin.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     Margin="{StaticResource MediumLeftTopRightBottomMargin}"
     mc:Ignorable="d">
@@ -151,7 +151,7 @@
                 <ScrollView Grid.Row="1">
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                            <DataTemplate x:DataType="vm:BaseItemViewModel">
                                 <ItemContainer CornerRadius="{StaticResource ControlCornerRadius}" Style="{StaticResource BareItemContainerStyle}">
                                     <lc:BaseItemDtoCard
                                         BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Primary, 352)}"

@@ -67,12 +67,13 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 			_mp.Open(stream);
 		}
 	}
+
 	public void OpenExternalSubtitleTrack(string url)
 	{
 		_mp.Config.Subtitles.Enabled = true;
-		MethodInfo? dynMethod = _mp.GetType().GetMethod("OpenSubtitles", BindingFlags.NonPublic | BindingFlags.Instance);
-		dynMethod?.Invoke(_mp, [url]);
+		_mp.Open(url, forceSubtitles: true);
 	}
+	
 	public void OpenInternalSubtitleTrack(int trackIndex, int subtitleIndex)
 	{
 		_mp.Config.Subtitles.Enabled = true;

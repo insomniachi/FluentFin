@@ -93,6 +93,7 @@ public partial class App : Application
 			services.AddTransient<IContentDialogService, ContentDialogService>();
 			services.AddTransient<IContentDialogServiceCore>(sp => sp.GetRequiredService<IContentDialogService>());
 			services.AddSingleton<IDeviceProfileFactory, DeviceProfileFactory>();
+			services.AddSingleton<IJumpListService, JumpListService>();
 
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
 			services.AddFrameNavigation(NavigationRegions.UserEditor);

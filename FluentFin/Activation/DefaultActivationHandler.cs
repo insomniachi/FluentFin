@@ -13,14 +13,17 @@ namespace FluentFin.Activation;
 public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
 	private readonly INavigationService _navigationService;
+	private readonly INavigationService _mainNavigationService;
 	private readonly ISettings _settings;
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticationService;
 
 	public DefaultActivationHandler([FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
+									INavigationService mainNavigationService,
 									ISettings settings,
 									IJellyfinAuthenticationService jellyfinAuthenticationService)
 	{
 		_navigationService = navigationService;
+		_mainNavigationService = mainNavigationService;
 		_settings = settings;
 		_jellyfinAuthenticationService = jellyfinAuthenticationService;
 		_settings.ListenToChanges();
@@ -41,6 +44,12 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 			if (result)
 			{
 				_navigationService.NavigateTo<ShellViewModel>();
+
+				var cmdArgs = Environment.GetCommandLineArgs();
+				if(cmdArgs.Length == 2 && Guid.TryParse(cmdArgs[1], out var libraryId))
+				{
+					_mainNavigationService.NavigateTo<LibraryViewModel>(libraryId);
+				}
 			}
 			else
 			{

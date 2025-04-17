@@ -162,7 +162,7 @@
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>
-                            <UniformGridLayout
+                            <UniformGridLayout 
                                 ItemsJustification="Start"
                                 ItemsStretch="Fill"
                                 MinColumnSpacing="8"

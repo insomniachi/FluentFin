@@ -10,6 +10,7 @@ namespace FluentFin.Core.Services;
 
 public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 									IObserver<IInboundSocketMessage> socketMessageSender,
+									IJumpListService jumpListService,
 									IDeviceProfileFactory deviceProfileFactory) : IJellyfinClient
 {
 	private Jellyfin.Sdk.JellyfinApiClient _jellyfinApiClient = null!;
@@ -56,6 +57,13 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 
 		await GetPlugins();
 		await StartWebSocketConnection(CancellationToken.None);
+
+		var libaries = new List<BaseItemDto>();
+		await foreach (var item in GetUserLibraries())
+		{
+			libaries.Add(item);
+		}
+		await jumpListService.Initialize(libaries);
 	}
 
 	public async Task<BaseItemDtoQueryResult?> Search(string searchTerm)

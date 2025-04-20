@@ -206,9 +206,10 @@
 
                                     <Grid
                                         Grid.Row="1"
-                                        Padding="16"
+                                        Height="65"
+                                        Padding="8"
                                         Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
-                                        <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel
                                                 CornerRadius="{StaticResource ControlCornerRadius}"
                                                 Orientation="Horizontal"
@@ -248,8 +249,8 @@
                                 ItemsJustification="Start"
                                 ItemsStretch="Fill"
                                 MinColumnSpacing="16"
-                                MinItemHeight="260"
-                                MinItemWidth="320"
+                                MinItemHeight="290"
+                                MinItemWidth="330"
                                 MinRowSpacing="16"
                                 Orientation="Horizontal" />
                         </ItemsRepeater.Layout>

@@ -69,7 +69,7 @@ public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 			OtherActivities = otherActivityResult.Items;
 		}
 
-		await jellyfinClient.SendWebsocketMessage(new SessionsStartMessage(TimeSpan.Zero, TimeSpan.FromSeconds(2)));
+		await jellyfinClient.SendWebsocketMessage(new SessionsStartMessage(TimeSpan.Zero, TimeSpan.FromSeconds(1.5)));
 		
 		var tasks = await jellyfinClient.GetScheduledTasks(true);
 
@@ -83,6 +83,11 @@ public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 			{
 				foreach (var dto in sessions)
 				{
+					if(dto.LastActivityDate is { } date && (TimeProvider.System.GetUtcNow() - date).TotalMinutes > 30)
+					{
+						continue;
+					}
+
 					if(ActiveSessions.FirstOrDefault(x => x.Id == dto.Id) is { } vm)
 					{
 						vm.Update(dto);

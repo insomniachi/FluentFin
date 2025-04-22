@@ -28,9 +28,6 @@
             x:Key="ObjectToBoolConverter"
             EmptyValue="False"
             NotEmptyValue="True" />
-        <c:JellyfinImageConverter x:Key="PrimaryImageConverter" />
-        <c:JellyfinSubtitleConverter x:Key="SubtitleConverter" />
-        <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
     <TitleBar
@@ -41,7 +38,7 @@
         IsBackButtonVisible="{x:Bind ViewModel.User, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}"
         IsPaneToggleButtonVisible="False"
         Subtitle="{x:Bind ViewModel.Version}"
-        Visibility="{x:Bind ViewModel.IsVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+        Visibility="{x:Bind c:Converters.BooleanToVisibility(ViewModel.IsVisible), Mode=OneWay}">
         <TitleBar.IconSource>
             <ImageIconSource ImageSource="/Assets/icons8-jellyfin-color-hand-drawn-70.png" />
         </TitleBar.IconSource>
@@ -70,14 +67,16 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid CornerRadius="{StaticResource ControlCornerRadius}">
-                                <Image
-                                    Height="100"
-                                    Source="{x:Bind Converter={StaticResource PrimaryImageConverter}}"
+                                <lc:LazyLoadedImage
+                                    Height="90"
+                                    BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash((jm:BaseItemDto), jm:ImageType.Primary, 100)}"
+                                    ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemDto), jm:ImageType.Primary, 100)}"
                                     Stretch="UniformToFill" />
                             </Grid>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Converter={StaticResource SubtitleConverter}}" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind c:BaseItemDtoConverters.GetCardSubtitle((jm:BaseItemDto))}" />
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Type}" />
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
@@ -146,7 +145,7 @@
                                         Command="{x:Bind ViewModel.GoToDashboardCommand}"
                                         Content="Dashboard"
                                         Icon="{ui:FontIcon Glyph=&#xE713;}"
-                                        Visibility="{x:Bind ViewModel.User.Policy.IsAdministrator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind c:Converters.BooleanToVisibility(ViewModel.User.Policy.IsAdministrator), Mode=OneWay}" />
                                     <lc:MenuFlyoutButton
                                         HorizontalAlignment="Stretch"
                                         Click="CloseTitleBarFooterFlyout"

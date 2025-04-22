@@ -60,7 +60,7 @@ public static class Converters
 	public static string TicksToSecondsString(long? value) => value is null ? "" : TimeSpanToString(new TimeSpan(value.Value));
 	public static Visibility VisibleIfMoreThanOne(ObservableCollection<PlaylistItem> items) => VisibleIfMoreThanOne<PlaylistItem>(items);
 	public static Visibility VisibleIfMoreThanOne<T>(IList<T> values) => values.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
-	public static Visibility BooleanToVisibility(bool value) => value is true ? Visibility.Visible : Visibility.Collapsed;
+	public static Visibility BooleanToVisibility(bool? value) => value is true ? Visibility.Visible : Visibility.Collapsed;
 
 	public static string TimeSpanToString(TimeSpan ts)
 	{

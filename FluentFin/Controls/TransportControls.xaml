@@ -97,25 +97,34 @@
                 StrokeWidth="2"
                 Visibility="{x:Bind Subtitles.Text, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}" />
 
-
             <!--  Logo  -->
             <Grid
                 x:Name="TitleSection"
-                Margin="36,36,0,0"
+                Margin="{StaticResource MediumTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 x:FieldModifier="Public">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Image Height="100" Source="{x:Bind c:BaseItemDtoConverters.GetImage(Playlist.SelectedItem.Dto, jm:ImageType.Logo, 100), Mode=OneWay}" />
+                <Image
+                    Height="100"
+                    HorizontalAlignment="Left"
+                    Source="{x:Bind c:BaseItemDtoConverters.GetImage(Playlist.SelectedItem.Dto, jm:ImageType.Logo, 100), Mode=OneWay}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="{StaticResource LargeLeftRightMargin}"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="{x:Bind c:BaseItemDtoConverters.ToSessionInfoItemName(Playlist.SelectedItem.Dto), Mode=OneWay}"
+                    Visibility="{x:Bind Playlist.SelectedItem.Dto.Type, Converter={StaticResource PlaylistVisibilityConverter}, Mode=OneWay}" />
                 <TextBlock
                     x:Name="TxtTitleTime"
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
+                    Grid.Row="2"
+                    Margin="{StaticResource LargeLeftRightMargin}"
                     x:FieldModifier="Public"
-                    Style="{ThemeResource TitleLargeTextBlockStyle}" />
+                    Style="{ThemeResource HeaderTextBlockStyle}" />
             </Grid>
 
 

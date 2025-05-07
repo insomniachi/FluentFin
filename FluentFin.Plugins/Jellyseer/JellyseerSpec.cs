@@ -12106,7 +12106,7 @@ namespace FluentFin.Plugins.Jellyseer.Request
                 {
                     result.String = stringValue;
                 }
-                else if(parseNode.GetCollectionOfPrimitiveValues<double?>()?.AsList() is List<double> doubleValue)
+                else if(parseNode.GetCollectionOfPrimitiveValues<double?>()?.AsList() is List<double?> doubleValue)
                 {
                     result.Double = doubleValue;
                 }

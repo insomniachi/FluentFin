@@ -12,7 +12,30 @@
 	<Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.11.4" />
+    <PackageReference Include="Microsoft.Kiota.Abstractions" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Kiota.Authentication.Azure" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="1.17.2" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FluentFin.UI.Core\FluentFin.UI.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Jellyseer\JellyseerSpec.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>JellyseerSpec.yml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Jellyseer\JellyseerSpec.yml">
+      <Generator>KiotaCodeGenerator</Generator>
+      <LastGenOutput>JellyseerSpec.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Playback Reporting\Views\SessionDurationReportPage.xaml">

@@ -4,6 +4,7 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.UI.Core;
 using FluentFin.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -16,16 +17,22 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 	private readonly INavigationService _mainNavigationService;
 	private readonly ISettings _settings;
 	private readonly IJellyfinAuthenticationService _jellyfinAuthenticationService;
+	private readonly ILocalSettingsService _localSettingsService;
+	private readonly IPluginManager _pluginManager;
 
 	public DefaultActivationHandler([FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
 									INavigationService mainNavigationService,
 									ISettings settings,
+									ILocalSettingsService localSettingsService,
+									IPluginManager pluginManager,
 									IJellyfinAuthenticationService jellyfinAuthenticationService)
 	{
 		_navigationService = navigationService;
 		_mainNavigationService = mainNavigationService;
 		_settings = settings;
 		_jellyfinAuthenticationService = jellyfinAuthenticationService;
+		_localSettingsService = localSettingsService;
+		_pluginManager = pluginManager;
 		_settings.ListenToChanges();
 	}
 
@@ -37,6 +44,8 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 
 	protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
 	{
+		_pluginManager.LoadOptions(_localSettingsService);
+
 		if (_settings.Servers.Count == 1 && _settings.Servers[0].Users.Count == 1)
 		{
 			var result = await _jellyfinAuthenticationService.Authenticate(_settings.Servers[0], _settings.Servers[0].Users[0]);

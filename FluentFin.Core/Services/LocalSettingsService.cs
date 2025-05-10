@@ -42,6 +42,16 @@ public class LocalSettingsService : ILocalSettingsService
 		return _settings[key].Deserialize<T>(_options) ?? defaultValue;
 	}
 
+	public JsonNode? ReadSettingRaw(string key)
+	{
+		if(!_settings.ContainsKey(key))
+		{
+			return null;
+		}
+
+		return _settings[key];
+	}
+
 	public void RemoveSetting(string key)
 	{
 		_settings.Remove(key);

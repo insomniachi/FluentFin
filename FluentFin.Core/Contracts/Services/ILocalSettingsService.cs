@@ -1,7 +1,10 @@
-﻿namespace FluentFin.Core.Contracts.Services;
+﻿using System.Text.Json.Nodes;
+
+namespace FluentFin.Core.Contracts.Services;
 
 public interface ILocalSettingsService
 {
+	JsonNode? ReadSettingRaw(string key);
 	T ReadSetting<T>(string key, T defaultValue);
 	void SaveSetting<T>(string key, T value);
 	void RemoveSetting(string key);

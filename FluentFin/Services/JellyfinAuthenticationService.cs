@@ -8,7 +8,6 @@ using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using FluentFin.ViewModels;
-using Flurl.Http;
 using Jellyfin.Sdk;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -112,6 +111,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		if (success)
 		{
 			titleBarViewModel.CurrentServer = server;
+			SessionInfo.CurrentUserCrendentials = user;
 		}
 
 		return success;

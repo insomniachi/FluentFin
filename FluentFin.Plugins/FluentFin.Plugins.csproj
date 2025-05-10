@@ -12,6 +12,10 @@
 	<Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Jellyseer\Views\JellyseerDashboardPage.xaml" />
+    <None Remove="Jellyseer\Views\JellyseerRequest.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="Microsoft.Kiota.Abstractions" Version="1.17.2" />
     <PackageReference Include="Microsoft.Kiota.Authentication.Azure" Version="1.17.2" />
@@ -36,6 +40,12 @@
       <Generator>KiotaCodeGenerator</Generator>
       <LastGenOutput>JellyseerSpec.cs</LastGenOutput>
     </None>
+    <Page Update="Jellyseer\Views\JellyseerRequest.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Jellyseer\Views\JellyseerDashboardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Playback Reporting\Views\SessionDurationReportPage.xaml">

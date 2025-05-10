@@ -30,6 +30,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 
 		SessionInfo.CurrentUser = authResult.User;
 		SessionInfo.BaseUrl = baseUrl;
+		SessionInfo.ServerId = authResult.ServerId;
 		SessionInfo.AccessToken = authResult.AccessToken;
 		SessionInfo.SessionId = authResult.SessionInfo?.Id ?? "";
 

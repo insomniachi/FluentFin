@@ -1,12 +1,15 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+﻿using FluentFin.Core.Settings;
+using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core
 {
 #nullable disable
 	public static class SessionInfo
 	{
+		public static string ServerId { get; set; }
 		public static string BaseUrl { get; set; }
 		public static UserDto CurrentUser { get; set; }
+		public static SavedUser CurrentUserCrendentials { get; set; }
 		public static List<PluginInfo> Plugins { get; set; }
 		public static string AccessToken { get; set; }
 		public static string SessionId { get; set; }

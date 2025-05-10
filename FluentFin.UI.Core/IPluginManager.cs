@@ -1,4 +1,5 @@
-﻿using FluentFin.Core.Services;
+﻿using FluentFin.Core.Contracts.Services;
+using FluentFin.Core.Services;
 using FluentFin.UI.Core.Contracts.Services;
 
 namespace FluentFin.UI.Core
@@ -7,5 +8,6 @@ namespace FluentFin.UI.Core
 	{
 		void AddNavigationItems(INavigationViewServiceCore navigationViewService);
 		void ConfigurePages(IPageRegistration pageRegistration);
+		void LoadOptions(ILocalSettingsService localSettingsService);
 	}
 }

@@ -66,16 +66,3 @@ public static class SavedServerExtensions
 		return (bytes[0] == 10) || (bytes[0] == 172 && (bytes[1] >= 16 && bytes[1] <= 31)) || (bytes[0] == 192 && bytes[1] == 168);
 	}
 }
-
-public static class SecurityExtensions
-{
-	public static byte[] Protect(this string plainText, byte[] entropy)
-	{
-		return ProtectedData.Protect(Encoding.UTF8.GetBytes(plainText), entropy, DataProtectionScope.CurrentUser);
-	}
-
-	public static string Unprotect(this byte[] protectedData, byte[] entropy)
-	{
-		return Encoding.UTF8.GetString(ProtectedData.Unprotect(protectedData, entropy, DataProtectionScope.CurrentUser));
-	}
-}

@@ -1,4 +1,5 @@
-﻿using FluentFin.Core;
+﻿using System;
+using FluentFin.Core;
 using FluentFin.Core.Services;
 using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using FluentFin.Plugins.Playback_Reporting.Views;
@@ -9,6 +10,8 @@ namespace FluentFin.Plugins.Playback_Reporting;
 
 public class PlaybackReportingPlugin : IPlugin
 {
+	public Guid Id { get; } = Guid.Parse("6f4f2da2-b003-415e-aff3-db6a1e39daed");
+
 	public void AddNavigationViewItem(INavigationViewServiceCore navigationViewService)
 	{
 		if(!SessionInfo.HasPlaybackReporting())

@@ -25,7 +25,7 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 		public IEnumerable<int> Weeks { get; } = Enumerable.Range(1, 11);
 
 		public Task OnNavigatedFrom() => Task.CompletedTask;
-		
+
 		public Task OnNavigatedTo(object parameter)
 		{
 			this.WhenAnyValue(x => x.EndDate, x => x.NumberOfWeeks)
@@ -96,7 +96,7 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 		private static void CreateUsageByDay(Dictionary<string, int> data, WinUIPlot control)
 		{
 			control.UserInputProcessor.Disable();
-			
+
 			var plot = control.Plot;
 			plot.Clear();
 			plot.Title("Usage By Day");
@@ -111,7 +111,7 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 			{
 				int day = int.Parse(kv.Key.Split("-")[0]);
 
-				if(bars.FirstOrDefault(x => x.Position == day) is { } barToUpdate)
+				if (bars.FirstOrDefault(x => x.Position == day) is { } barToUpdate)
 				{
 					barToUpdate.Value += kv.Value;
 					barToUpdate.Label = barToUpdate.Value > 0 ? TimeSpan.FromSeconds(barToUpdate.Value).ToString() : "";
@@ -123,13 +123,13 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 						Value = kv.Value,
 						Position = day,
 						Label = kv.Value > 0 ? TimeSpan.FromSeconds(kv.Value).ToString() : ""
-					}); 
+					});
 				}
 			}
 
 			plot.Add.Bars(bars);
 
-			Tick[] ticks = 
+			Tick[] ticks =
 			[
 				new(0, "Sun"),
 				new(1, "Mon"),

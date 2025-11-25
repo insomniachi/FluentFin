@@ -25,11 +25,11 @@ public sealed partial class ManageLibraryDialog : IViewFor<ManageLibraryViewMode
 	{
 		var input = App.GetService<IServerFolderPicker>();
 		var value = await input.PickFolder();
-		if(string.IsNullOrEmpty(value))
+		if (string.IsNullOrEmpty(value))
 		{
 			return;
 		}
 
 		ViewModel?.Locations.Add(value);
-    }
+	}
 }

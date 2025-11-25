@@ -25,7 +25,7 @@ public static class PlaybackReportingHelper
 				{
 					days,
 					end_date = endDate,
-					api_key = SessionInfo.AccessToken
+					ApiKey = SessionInfo.AccessToken
 				})
 				.GetStreamAsync();
 
@@ -50,7 +50,7 @@ public static class PlaybackReportingHelper
 				{
 					days,
 					end_date = endDate,
-					api_key = SessionInfo.AccessToken,
+					ApiKey = SessionInfo.AccessToken,
 					filter = "Episode,Movie,Audio,Series",
 					dataType = "count",
 					timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
@@ -82,7 +82,7 @@ public static class PlaybackReportingHelper
 					{
 						days,
 						end_date = endDate,
-						api_key = SessionInfo.AccessToken,
+						ApiKey = SessionInfo.AccessToken,
 						timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 					})
 					.GetStreamAsync();
@@ -121,7 +121,7 @@ public static class PlaybackReportingHelper
 				{
 					days,
 					end_date = endDate,
-					api_key = SessionInfo.AccessToken,
+					ApiKey = SessionInfo.AccessToken,
 					timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 				})
 				.GetStreamAsync();
@@ -145,7 +145,7 @@ public static class PlaybackReportingHelper
 				{
 					days,
 					end_date = endDate,
-					api_key = SessionInfo.AccessToken,
+					ApiKey = SessionInfo.AccessToken,
 					filter = "Episode,Movie,Audio,Series",
 					timezoneOffset = TimeZoneInfo.Local.GetUtcOffset(TimeProvider.System.GetUtcNow()).TotalHours,
 				})
@@ -168,7 +168,7 @@ public static class PlaybackReportingHelper
 				{
 					days,
 					end_date = endDate,
-					api_key = SessionInfo.AccessToken,
+					ApiKey = SessionInfo.AccessToken,
 					filter = "Episode,Movie,Audio,Series"
 				})
 				.GetJsonAsync<Dictionary<string, int>>();

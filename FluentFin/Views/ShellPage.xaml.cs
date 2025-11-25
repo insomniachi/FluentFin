@@ -66,5 +66,5 @@ public sealed partial class ShellPage : Page
 	private async void OnContributeTapped(object sender, TappedRoutedEventArgs e)
 	{
 		await Launcher.LaunchUriAsync(new Uri("https://github.com/insomniachi/FluentFin"));
-    }
+	}
 }

@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using Jellyfin.Sdk.Generated.Models;
-using System.Collections.ObjectModel;
 
 namespace FluentFin.Core.ViewModels;
 
 public partial class LibrariesLandingPageViewModel(IJellyfinClient jellyfinClient,
 												   INavigationServiceCore navigationService) : ObservableObject, INavigationAware
 {
-	public ObservableCollection<BaseItemDto> Libraries { get; } = new();
+	public ObservableCollection<BaseItemDto> Libraries { get; } = [];
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
 

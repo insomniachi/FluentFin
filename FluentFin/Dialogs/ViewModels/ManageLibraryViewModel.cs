@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
 
@@ -133,7 +133,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(value =>
 			{
-				if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
+				if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
 				{
 					PopulateMetadataFetcher("Series", value, SeriesMetadataFetchers);
 					PopulateMetadataFetcher("Season", value, SeasonMetadataFetchers);
@@ -143,7 +143,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 					PopulateImageFetcher("Season", value, SeasonImageFetchers);
 					PopulateImageFetcher("Episode", value, EpisodeImageFetchers);
 				}
-				else if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
+				else if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
 				{
 					PopulateMetadataFetcher("Movie", value, MovieMetadataFetchers);
 
@@ -153,19 +153,19 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 				IsMovieFolder = FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies;
 				IsSeriesFolder = FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows;
 			});
-		
+
 	}
 
 	public async Task Initialize(VirtualFolderInfo virtualFolder)
 	{
 		IsCreateMode = false;
-		if(virtualFolder.LibraryOptions is not { } options)
+		if (virtualFolder.LibraryOptions is not { } options)
 		{
 			return;
 		}
 
-		Cultures = [null, ..await jellyfinClient.GetCultures()];
-		Countries = [null, ..await jellyfinClient.GetCountries()];
+		Cultures = [null, .. await jellyfinClient.GetCultures()];
+		Countries = [null, .. await jellyfinClient.GetCountries()];
 
 		_info = virtualFolder;
 		FolderCollectionType = (Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType)(int)_info.CollectionType!;
@@ -192,7 +192,8 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		SkipSubtitlesIfEmbeddedSubtitlesPresent = options.SkipSubtitlesIfEmbeddedSubtitlesPresent ?? false;
 		SkipSubtitlesIfAudioTrackMatches = options.SkipSubtitlesIfAudioTrackMatches ?? false;
 		SaveSubtitlesWithMedia = options.SaveSubtitlesWithMedia ?? false;
-		SaveLocalMetadata = options.SaveLocalMetadata ?? false; ;
+		SaveLocalMetadata = options.SaveLocalMetadata ?? false;
+		;
 		PreferredMetadataLanguage = Cultures.FirstOrDefault(x => x?.TwoLetterISOLanguageName == options.PreferredMetadataLanguage);
 		MetadataCountryCode = Countries.FirstOrDefault(x => x?.TwoLetterISORegionName == options.MetadataCountryCode);
 
@@ -234,17 +235,17 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	[RelayCommand]
 	private async Task Save()
 	{
-		if(_info is not { ItemId : not null})
+		if (_info is not { ItemId: not null })
 		{
 			return;
 		}
 
-		if(_info.LibraryOptions is not { } options)
+		if (_info.LibraryOptions is not { } options)
 		{
 			return;
 		}
 
-		options.PathInfos = [..Locations.Select(x => new MediaPathInfo { Path = x })];
+		options.PathInfos = [.. Locations.Select(x => new MediaPathInfo { Path = x })];
 		options.Enabled = IsEnabled;
 		options.SeasonZeroDisplayName = SeasonZeroDisplayName;
 		options.EnableEmbeddedTitles = EnableEmbeddedTitles;
@@ -267,7 +268,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 		options.PreferredMetadataLanguage = PreferredMetadataLanguage?.TwoLetterISOLanguageName;
 		options.MetadataCountryCode = MetadataCountryCode?.TwoLetterISORegionName;
 
-		if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
+		if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
 		{
 			UpdateMetadataFetcher("Series", options, SeriesMetadataFetchers);
 			UpdateMetadataFetcher("Season", options, SeasonMetadataFetchers);
@@ -276,15 +277,15 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 			UpdateImageFetcher("Season", options, SeasonImageFetchers);
 			UpdateImageFetcher("Episode", options, EpisodeImageFetchers);
 		}
-		else if(FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
+		else if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Movies)
 		{
 			UpdateMetadataFetcher("Movie", options, MovieMetadataFetchers);
 			UpdateImageFetcher("Movie", options, MovieImageFetcher);
 		}
 
-		options.SubtitleFetcherOrder = [..SubtitleFetchers.Select(x => x.Name)];
+		options.SubtitleFetcherOrder = [.. SubtitleFetchers.Select(x => x.Name)];
 		options.DisabledSubtitleFetchers = [.. SubtitleFetchers.Where(x => !x.IsSelected).Select(x => x.Name)];
-		options.SubtitleDownloadLanguages = [..SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName)];
+		options.SubtitleDownloadLanguages = [.. SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName)];
 
 		await jellyfinClient.SaveLibraryOptions(Guid.Parse(_info.ItemId), options);
 	}
@@ -292,7 +293,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	[RelayCommand]
 	private async Task Reset()
 	{
-		if(_info is null)
+		if (_info is null)
 		{
 			return;
 		}
@@ -344,7 +345,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 	private static void UpdateMetadataFetcher(string type, LibraryOptions options, IList<MetadataFetcher> fetcher)
 	{
 		var typeOption = options.TypeOptions?.FirstOrDefault(x => x.Type == type);
-		if(typeOption is null)
+		if (typeOption is null)
 		{
 			return;
 		}

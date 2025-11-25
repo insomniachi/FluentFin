@@ -1,16 +1,16 @@
-using CommunityToolkit.WinUI;
-using FluentFin.ViewModels;
-using FlyleafLib.MediaFramework.MediaStream;
-using FlyleafLib.MediaPlayer;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using ReactiveMarbles.ObservableEvents;
-using ReactiveUI;
-using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+using CommunityToolkit.WinUI;
+using FluentFin.Core;
+using FluentFin.Core.Contracts.Services;
+using FluentFin.ViewModels;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using ReactiveMarbles.ObservableEvents;
+using ReactiveUI;
 
 
 namespace FluentFin.Controls;
@@ -18,7 +18,9 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
-	private readonly Subject<Microsoft.UI.Xaml.Input.PointerRoutedEventArgs> _onPointerMoved = new();
+	private readonly Subject<PointerRoutedEventArgs> _onPointerMoved = new();
+	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
+	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
 	[GeneratedDependencyProperty]
 	public partial bool IsSkipButtonVisible { get; set; }
@@ -33,13 +35,16 @@ public sealed partial class TransportControls : UserControl
 	[GeneratedDependencyProperty]
 	public partial TrickplayViewModel Trickplay { get; set; }
 
-	public Player Player
+	[GeneratedDependencyProperty]
+	public partial IJellyfinClient JellyfinClient { get; set; }
+
+	public IMediaPlayerController Player
 	{
 		get
 		{
 			try
 			{
-				return (Player)GetValue(PlayerProperty);
+				return (IMediaPlayerController)GetValue(PlayerProperty);
 			}
 			catch
 			{
@@ -50,7 +55,41 @@ public sealed partial class TransportControls : UserControl
 	}
 
 	public static readonly DependencyProperty PlayerProperty =
-		DependencyProperty.Register("Player", typeof(Player), typeof(TransportControls), new PropertyMetadata(null));
+		DependencyProperty.Register("Player", typeof(IMediaPlayerController), typeof(TransportControls), new PropertyMetadata(null, OnPlayerChanged));
+
+	private static void OnPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
+		var tc = (TransportControls)d;
+		if (e.NewValue is not IMediaPlayerController controller)
+		{
+			return;
+		}
+
+		TimeSpan duration = TimeSpan.Zero;
+		controller.DurationChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+			tc.TimeSlider.Maximum = e.TotalMilliseconds;
+			duration = e;
+		});
+		controller.PositionChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		{
+			try
+			{
+				tc.TimeSlider.Value = e.TotalMilliseconds;
+				tc.TxtCurrentTime.Text = Converters.Converters.TimeSpanToString(e);
+				tc.TxtRemainingTime.Text = TimeRemaining(e, duration);
+			}
+			catch { }
+		});
+		controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
+		controller.Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
+		controller.VolumeChanged
+			.Where(e => e >= 0)
+			.Throttle(TimeSpan.FromSeconds(200))
+			.ObserveOn(RxApp.MainThreadScheduler)
+			.Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
+		controller.SubtitleText.ObserveOn(RxApp.MainThreadScheduler).Subscribe(text => tc.Subtitles.Text = text);
+	}
 
 	public IObservable<Unit> OnDynamicSkip { get; }
 
@@ -64,11 +103,28 @@ public sealed partial class TransportControls : UserControl
 		TimeSlider
 			.Events()
 			.ValueChanged
-			.Where(x => Math.Abs(x.NewValue - Converters.Converters.TicksToSeconds(Player.CurTime)) > 1)
-			.Subscribe(x => Player.SeekAccurate((int)TimeSpan.FromSeconds(x.NewValue).TotalMilliseconds));
+			.Where(x => Math.Abs(x.NewValue - Player.Position.TotalMilliseconds) > 5000)
+			.Subscribe(x =>
+			{
+				try
+				{
+					var currentState = Player.State;
+					if (currentState is MediaPlayerState.Playing)
+					{
+						Player.Pause();
+					}
+
+					Player.SeekTo(TimeSpan.FromMilliseconds(x.NewValue));
+
+					if (currentState is MediaPlayerState.Playing)
+					{
+						Player.Play();
+					}
+				}
+				catch { }
+			});
 
 		_onPointerMoved
-			.Throttle(TimeSpan.FromMilliseconds(200))
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Subscribe(e =>
 			{
@@ -82,65 +138,47 @@ public sealed partial class TransportControls : UserControl
 
 				var point = e.GetCurrentPoint(TimeSlider);
 				var globalPoint = e.GetCurrentPoint(this);
-				Trickplay.Position = TimeSpan.FromSeconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
+				Trickplay.Position = TimeSpan.FromMilliseconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
 
 				var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
 				var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
 				TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 			});
+
+		VolumeSlider.Events()
+			.ValueChanged
+			.Where(_ => Player is not null)
+			.Subscribe(x => Player.Volume = (int)x.NewValue);
 	}
 
-	public string TimeRemaining(long currentTime, long duration)
+	private static string TimeRemaining(TimeSpan currentTime, TimeSpan duration)
 	{
-		var remaining = duration - currentTime;
-		return new TimeSpan(remaining).ToString("hh\\:mm\\:ss");
+		return (duration - currentTime).ToString("hh\\:mm\\:ss");
 	}
 
-	private void SkipBackwardButton_Click(object sender, RoutedEventArgs e)
+	private async void SkipBackwardButton_Click(object sender, RoutedEventArgs e) => await SkipBackward();
+
+	private async void SkipForwardButton_Click(object sender, RoutedEventArgs e) => await SkipForward();
+
+	private async void PlayPauseButton_Click(object sender, RoutedEventArgs e) => await TogglePlayPause();
+
+	private async void CastButton_Click(object sender, RoutedEventArgs e)
 	{
-		var ts = new TimeSpan(Player.CurTime) - TimeSpan.FromSeconds(10);
-		Player.SeekAccurate((int)ts.TotalMilliseconds);
-	}
-
-	private void SkipForwardButton_Click(object sender, RoutedEventArgs e)
-	{
-		var ts = new TimeSpan(Player.CurTime) + TimeSpan.FromSeconds(30);
-		Player.SeekAccurate((int)ts.TotalMilliseconds);
-	}
-
-
-	public void UpdateSubtitleFlyout(ObservableCollection<SubtitlesStream> streams)
-	{
-		var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		flyout.Items.Clear();
-		for (int i = 0; i < streams.Count; i++)
-		{
-			var item = new RadioMenuFlyoutItem
-			{
-				Text = streams[i].Title,
-				IsChecked = i == 0,
-			};
-			item.Click += Item_Click;
-
-			flyout.Items.Add(item);
-		}
-	}
-
-	private void Item_Click(object sender, RoutedEventArgs e)
-	{
-		var title = ((RadioMenuFlyoutItem)sender).Text;
-		var stream = Player.Subtitles.Streams.FirstOrDefault(x => x.Title == title);
-
-		if (stream is null)
+		if (JellyfinClient is null)
 		{
 			return;
 		}
 
-		var flyout = CCSelectionButton.Flyout as MenuFlyout;
-		Player.OpenAsync(stream);
+		var sessions = await JellyfinClient.GetControllableSessions();
+
+		if (sessions.FirstOrDefault(x => x.Id == SessionInfo.SessionId) is { } session && session.NowPlayingItem is { } dto)
+		{
+			Player.Stop();
+			App.Dialogs.PlayOnSessionCommand.Execute(dto);
+		}
 	}
 
-	private void TimeSlider_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	private void TimeSlider_PointerEntered(object sender, PointerRoutedEventArgs e)
 	{
 		if (Trickplay is null)
 		{
@@ -155,9 +193,29 @@ public sealed partial class TransportControls : UserControl
 		_onPointerMoved.OnNext(e);
 	}
 
-	private void TimeSlider_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	private void TimeSlider_PointerExited(object sender, PointerRoutedEventArgs e)
 	{
 		TrickplayTip.IsOpen = false;
+	}
+
+	private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
+	{
+		TrickplayTip.IsOpen = false;
+	}
+
+	private async Task SkipBackward()
+	{
+		await Player.SeekBackward(JellyfinClient, TimeSpan.FromSeconds(10));
+	}
+
+	private async Task SkipForward()
+	{
+		await Player.SeekForward(JellyfinClient, TimeSpan.FromSeconds(30));
+	}
+
+	private async Task TogglePlayPause()
+	{
+		await Player.TogglePlayPlause(JellyfinClient);
 	}
 }
 

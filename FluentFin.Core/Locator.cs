@@ -5,7 +5,7 @@ namespace FluentFin.Core;
 public static class Locator
 {
 	private static IServiceProvider? _current;
-	
+
 	public static void SetServiceProvider(IServiceProvider sp) => _current = sp;
 
 	public static T GetService<T>()

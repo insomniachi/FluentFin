@@ -15,7 +15,7 @@ namespace FluentFin.Views
 
 		private void ItemsView_ItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs args)
 		{
-			if(args.InvokedItem is not BaseItemDto library)
+			if (args.InvokedItem is not BaseItemDto library)
 			{
 				return;
 			}

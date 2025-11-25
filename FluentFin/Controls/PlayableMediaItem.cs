@@ -36,7 +36,7 @@ public sealed partial class PlayableMediaItem : Control
 			return;
 		}
 
-		if(Model is null)
+		if (Model is null)
 		{
 			return;
 		}

@@ -1,71 +1,66 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using FluentFin.Contracts.ViewModels;
+﻿using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.ViewModels;
 
-public partial class LibrariesMetadataViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+public partial class LibrariesMetadataViewModel(IJellyfinClient jellyfinClient) : ServerConfigurationViewModel(jellyfinClient), INavigationAware
 {
-	private ServerConfiguration? _configuration;
+	public List<CultureDto> Cultures { get; set; } = [];
+	public List<CountryInfo> Countries { get; set; } = [];
 
-
-	[ObservableProperty]
-	public partial List<CultureDto> Cultures { get; set; } = [];
-
-	[ObservableProperty]
-	public partial List<CountryInfo> Countries { get; set; } = [];
-
-	[ObservableProperty]
-	public partial CultureDto? SelectedCulture { get; set; }
-
-	[ObservableProperty]
-	public partial CountryInfo? SelectedCountry { get; set; }
-
-	[ObservableProperty]
-	public partial double Interval { get; set; }
-
-	[ObservableProperty]
-	public partial ServerConfiguration_ChapterImageResolution? Resolution { get; set; }
-
-
-	public Task OnNavigatedFrom() => Task.CompletedTask;
-
-	public async Task OnNavigatedTo(object parameter)
+	protected override List<JellyfinConfigItemViewModel> CreateItems(ServerConfiguration config)
 	{
-		Cultures = await jellyfinClient.GetCultures();
-		Countries = await jellyfinClient.GetCountries();
+		return
+		[
+			new JellyfinGroupedConfigItemViewModel()
+			{
+				DisplayName = "Preferred Metadata Language",
+				Description = "These are your defaults and can be customized on a per-library basis.",
+				Items =
+				[
+					new JellyfinSelectableConfigItemViewModel(() => Cultures.FirstOrDefault(c => c.TwoLetterISOLanguageName == config.PreferredMetadataLanguage),
+															  value => config.PreferredMetadataLanguage = (value as CultureDto)?.TwoLetterISOLanguageName,
+															  Cultures, nameof(CultureDto.Name))
+					{
+						DisplayName = "Language"
+					},
+					new JellyfinSelectableConfigItemViewModel(() => Countries.FirstOrDefault(c => c.TwoLetterISORegionName == config.MetadataCountryCode),
+															  value => config.MetadataCountryCode = (value as CountryInfo)?.TwoLetterISORegionName,
+															  Countries, nameof(CountryInfo.DisplayName))
+					{
+						DisplayName = "Country/Region"
+					}
+				]
+			},
+			new JellyfinGroupedConfigItemViewModel
+			{
+				DisplayName = "Chapter Images",
+				Items =
+				[
+					new JellyfinConfigItemViewModel<double>(() => config.DummyChapterDuration ?? 0, value => config.DummyChapterDuration = (int)value)
+					{
+						DisplayName = "Interval",
+						Description = "The interval between dummy chapters. Set to 0 to disable dummy chapter generation. Changing this will have no effect on existing dummy chapters."
+					},
+					new JellyfinSelectableConfigItemViewModel(() => config.ChapterImageResolution,
+															  value => config.ChapterImageResolution = (value as ServerConfiguration_ChapterImageResolution?),
+															  [.. Enum.GetValues<ServerConfiguration_ChapterImageResolution>()])
+					{
+						DisplayName = "Resolution",
+						Description = "The resolution of the extracted chapter images. Changing this will have no effect on existing dummy chapters."
+					}
+				]
+			}
 
-		_configuration = await jellyfinClient.GetConfiguration();
-
-		if (_configuration is null)
-		{
-			return;
-		}
-
-		SelectedCulture = Cultures.FirstOrDefault(c => c.TwoLetterISOLanguageName == _configuration.PreferredMetadataLanguage);
-		SelectedCountry = Countries.FirstOrDefault(x => x.TwoLetterISORegionName == _configuration.MetadataCountryCode);
-		Interval = _configuration.DummyChapterDuration ?? 0;
-		Resolution = _configuration.ChapterImageResolution;
+		];
 	}
 
-	[RelayCommand]
-	private async Task Save()
+	async Task INavigationAware.OnNavigatedTo(object parameter)
 	{
-		if (_configuration is null)
-		{
-			return;
-		}
+		Cultures = await _jellyfinClient.GetCultures();
+		Countries = await _jellyfinClient.GetCountries();
 
-		_configuration.PreferredMetadataLanguage = SelectedCulture?.TwoLetterISOLanguageName;
-		_configuration.MetadataCountryCode = SelectedCountry?.TwoLetterISORegionName;
-		_configuration.DummyChapterDuration = (int?)Interval;
-		_configuration.ChapterImageResolution = Resolution;
-
-		await jellyfinClient.SaveConfiguration(_configuration);
+		await base.OnNavigatedTo(parameter);
 	}
-
-	[RelayCommand]
-	private async Task Reset() => await OnNavigatedTo(new());
 }

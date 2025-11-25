@@ -32,11 +32,6 @@
                 helpers:NavigationHelper.NavigateTo="FluentFin.Core.ViewModels.LibrariesLandingPageViewModel"
                 Content="Libraries"
                 Icon="{ui:SymbolIcon Symbol=Library}" />
-            <NavigationViewItem
-                helpers:NavigationHelper.NavigateTo="FluentFin.Plugins.Playback_Reporting.ViewModels.PlaybackReportingDashboardViewModel"
-                Content="Reporting"
-                Icon="{ui:FontIcon Glyph=&#xE9F9;}"
-                Visibility="{x:Bind ViewModel.IsReportingVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </NavigationView.MenuItems>
         <NavigationView.FooterMenuItems>
             <NavigationViewItem

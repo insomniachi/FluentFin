@@ -94,10 +94,10 @@
             </i:Interaction.Behaviors>
 
             <Grid>
-                <controls:LoadingImage
-                    Glyph="{x:Bind Glyph}"
-                    Source="{x:Bind ImageSource, Mode=OneWay}"
-                    Stretch="UniformToFill" />
+                <controls:LazyLoadedImage
+                    BlurHashImageSource="{x:Bind BlurHashImageSource}"
+                    EnableBlurHash="True"
+                    ImageSource="{x:Bind ImageSource}" />
 
                 <media:UIElementExtensions.VisualFactory>
                     <media:PipelineVisualFactory>
@@ -206,13 +206,23 @@
                 </Button>
 
                 <InfoBadge
+                    Width="50"
+                    Height="25"
                     Margin="10"
                     Padding="5,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
+                    Background="{x:Bind c:BaseItemDtoConverters.CardBadgeBackground(Model), Mode=OneWay}"
+                    FontSize="25"
                     FontWeight="ExtraBold"
-                    Visibility="{x:Bind Model.UserData.UnplayedItemCount, Converter={StaticResource MoreThanZeroToVisibilityConverter}}"
-                    Value="{x:Bind Model.UserData.UnplayedItemCount, Converter={StaticResource NullableIntToValueOrDefaultConverter}}" />
+                    IconSource="{x:Bind c:BaseItemDtoConverters.CardBadgeSource(Model), Mode=OneWay}"
+                    Visibility="{x:Bind c:BaseItemDtoConverters.IsCardBadgeVisible(Model), Mode=OneWay}"
+                    Value="{x:Bind c:BaseItemDtoConverters.GetCardBadgeValue(Model), Mode=OneWay}">
+                    <InfoBadge.Resources>
+                        <x:Double x:Key="InfoBadgeMaxHeight">100</x:Double>
+                        <x:Double x:Key="InfoBadgeValueFontSize">18</x:Double>
+                    </InfoBadge.Resources>
+                </InfoBadge>
 
                 <ProgressBar
                     Margin="5,0,5,10"

@@ -6,7 +6,6 @@ namespace FluentFin.Core.ViewModels;
 public partial class BaseItemViewModel : ObservableObject
 {
 	public BaseItemDto Dto { get; set; } = null!;
-
 	public List<DayOfWeekObject?> AirDays { get; set; } = [];
 	public int? AirsAfterSeasonNumber { get; set; }
 	public int? AirsBeforeEpisodeNumber { get; set; }
@@ -31,7 +30,7 @@ public partial class BaseItemViewModel : ObservableObject
 	public bool? CanDelete { get; set; }
 	public bool? CanDownload { get; set; }
 	public Guid? ChannelId { get; set; }
-	public string ChannelName { get; set; }	= "";
+	public string ChannelName { get; set; } = "";
 	public string ChannelNumber { get; set; } = "";
 	public string ChannelPrimaryImageTag { get; set; } = "";
 	public BaseItemDto_ChannelType? ChannelType { get; set; }
@@ -110,7 +109,7 @@ public partial class BaseItemViewModel : ObservableObject
 	public string ParentLogoImageTag { get; set; } = "";
 	public Guid? ParentLogoItemId { get; set; }
 	public string ParentPrimaryImageItemId { get; set; } = "";
-	public string ParentPrimaryImageTag { get; set; } = "";	
+	public string ParentPrimaryImageTag { get; set; } = "";
 	public string ParentThumbImageTag { get; set; } = "";
 	public Guid? ParentThumbItemId { get; set; }
 	public int? PartCount { get; set; }
@@ -140,7 +139,7 @@ public partial class BaseItemViewModel : ObservableObject
 	public string SeriesStudio { get; set; } = "";
 	public string SeriesThumbImageTag { get; set; } = "";
 	public string SeriesTimerId { get; set; } = "";
-	public string ServerId { get; set; } = "";	
+	public string ServerId { get; set; } = "";
 	public double? ShutterSpeed { get; set; }
 	public string Software { get; set; } = "";
 	public int? SongCount { get; set; }
@@ -156,9 +155,9 @@ public partial class BaseItemViewModel : ObservableObject
 	public int? TrailerCount { get; set; }
 	public BaseItemDto_Trickplay? Trickplay { get; set; }
 	public BaseItemDto_Type? Type { get; set; }
-
-	[ObservableProperty]
-	public partial UserItemDataViewModel? UserData { get; set; }
+#pragma warning disable MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+	public UserItemDataViewModel? UserData { get; set => SetProperty(ref field, value); }
+#pragma warning restore MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
 	public BaseItemDto_Video3DFormat? Video3DFormat { get; set; }
 	public BaseItemDto_VideoType? VideoType { get; set; }
 	public int? Width { get; set; }
@@ -168,25 +167,25 @@ public partial class BaseItemViewModel : ObservableObject
 		return new BaseItemViewModel
 		{
 			Dto = dto,
-			AirDays = new List<DayOfWeekObject?>(dto.AirDays ?? []),
+			AirDays = [.. dto.AirDays ?? []],
 			AirsAfterSeasonNumber = dto.AirsAfterSeasonNumber,
 			AirsBeforeEpisodeNumber = dto.AirsBeforeEpisodeNumber,
 			AirsBeforeSeasonNumber = dto.AirsBeforeSeasonNumber,
 			AirTime = dto.AirTime ?? "",
 			Album = dto.Album ?? "",
 			AlbumArtist = dto.AlbumArtist ?? "",
-			AlbumArtists = new List<NameGuidPair>(dto.AlbumArtists ?? []),
+			AlbumArtists = [.. dto.AlbumArtists ?? []],
 			AlbumCount = dto.AlbumCount,
 			AlbumId = dto.AlbumId,
 			AlbumPrimaryImageTag = dto.AlbumPrimaryImageTag ?? "",
 			Altitude = dto.Altitude,
 			Aperture = dto.Aperture,
 			ArtistCount = dto.ArtistCount,
-			ArtistItems = new List<NameGuidPair>(dto.ArtistItems ?? []),
-			Artists = new List<string>(dto.Artists ?? []),
+			ArtistItems = [.. dto.ArtistItems ?? []],
+			Artists = [.. dto.Artists ?? []],
 			AspectRatio = dto.AspectRatio ?? "",
 			Audio = dto.Audio,
-			BackdropImageTags = new List<string>(dto.BackdropImageTags ?? []),
+			BackdropImageTags = [.. dto.BackdropImageTags ?? []],
 			CameraMake = dto.CameraMake ?? "",
 			CameraModel = dto.CameraModel ?? "",
 			CanDelete = dto.CanDelete,
@@ -196,7 +195,7 @@ public partial class BaseItemViewModel : ObservableObject
 			ChannelNumber = dto.ChannelNumber ?? "",
 			ChannelPrimaryImageTag = dto.ChannelPrimaryImageTag ?? "",
 			ChannelType = dto.ChannelType,
-			Chapters = new List<ChapterInfo>(dto.Chapters ?? []),
+			Chapters = [.. dto.Chapters ?? []],
 			ChildCount = dto.ChildCount,
 			CollectionType = dto.CollectionType,
 			CommunityRating = dto.CommunityRating,
@@ -216,12 +215,12 @@ public partial class BaseItemViewModel : ObservableObject
 			EpisodeTitle = dto.EpisodeTitle ?? "",
 			Etag = dto.Etag ?? "",
 			ExposureTime = dto.ExposureTime,
-			ExternalUrls = new List<ExternalUrl>(dto.ExternalUrls ?? []),
+			ExternalUrls = [.. dto.ExternalUrls ?? []],
 			ExtraType = dto.ExtraType,
 			FocalLength = dto.FocalLength,
 			ForcedSortName = dto.ForcedSortName ?? "",
-			GenreItems = new List<NameGuidPair>(dto.GenreItems ?? []),
-			Genres = new List<string>(dto.Genres ?? []),
+			GenreItems = [.. dto.GenreItems ?? []],
+			Genres = [.. dto.Genres ?? []],
 			HasLyrics = dto.HasLyrics,
 			HasSubtitles = dto.HasSubtitles,
 			Height = dto.Height,
@@ -248,11 +247,11 @@ public partial class BaseItemViewModel : ObservableObject
 			LocalTrailerCount = dto.LocalTrailerCount,
 			LocationType = dto.LocationType,
 			LockData = dto.LockData,
-			LockedFields = new List<MetadataField?>(dto.LockedFields ?? []),
+			LockedFields = [.. dto.LockedFields ?? []],
 			Longitude = dto.Longitude,
 			MediaSourceCount = dto.MediaSourceCount,
-			MediaSources = new List<MediaSourceInfo>(dto.MediaSources ?? []),
-			MediaStreams = new List<MediaStream>(dto.MediaStreams ?? []),
+			MediaSources = [.. dto.MediaSources ?? []],
+			MediaStreams = [.. dto.MediaStreams ?? []],
 			MediaType = dto.MediaType,
 			MovieCount = dto.MovieCount,
 			MusicVideoCount = dto.MusicVideoCount,
@@ -264,7 +263,7 @@ public partial class BaseItemViewModel : ObservableObject
 			Overview = dto.Overview ?? "",
 			ParentArtImageTag = dto.ParentArtImageTag ?? "",
 			ParentArtItemId = dto.ParentArtItemId,
-			ParentBackdropImageTags = new List<string>(dto.ParentBackdropImageTags ?? []),
+			ParentBackdropImageTags = [.. dto.ParentBackdropImageTags ?? []],
 			ParentBackdropItemId = dto.ParentBackdropItemId,
 			ParentId = dto.ParentId,
 			ParentIndexNumber = dto.ParentIndexNumber,
@@ -276,22 +275,22 @@ public partial class BaseItemViewModel : ObservableObject
 			ParentThumbItemId = dto.ParentThumbItemId,
 			PartCount = dto.PartCount,
 			Path = dto.Path ?? "",
-			People = new List<BaseItemPerson>(dto.People ?? []),
+			People = [.. dto.People ?? []],
 			PlayAccess = dto.PlayAccess,
 			PlaylistItemId = dto.PlaylistItemId ?? "",
 			PreferredMetadataCountryCode = dto.PreferredMetadataCountryCode ?? "",
 			PreferredMetadataLanguage = dto.PreferredMetadataLanguage ?? "",
 			PremiereDate = dto.PremiereDate,
 			PrimaryImageAspectRatio = dto.PrimaryImageAspectRatio,
-			ProductionLocations = new List<string>(dto.ProductionLocations ?? []),
+			ProductionLocations = [.. dto.ProductionLocations ?? []],
 			ProductionYear = dto.ProductionYear,
 			ProgramCount = dto.ProgramCount,
 			ProgramId = dto.ProgramId ?? "",
 			ProviderIds = dto.ProviderIds,
 			RecursiveItemCount = dto.RecursiveItemCount,
-			RemoteTrailers = new List<MediaUrl>(dto.RemoteTrailers ?? []),
+			RemoteTrailers = [.. dto.RemoteTrailers ?? []],
 			RunTimeTicks = dto.RunTimeTicks,
-			ScreenshotImageTags = new List<string>(dto.ScreenshotImageTags ?? []),
+			ScreenshotImageTags = [.. dto.ScreenshotImageTags ?? []],
 			SeasonId = dto.SeasonId,
 			SeasonName = dto.SeasonName ?? "",
 			SeriesCount = dto.SeriesCount,
@@ -310,9 +309,9 @@ public partial class BaseItemViewModel : ObservableObject
 			SpecialFeatureCount = dto.SpecialFeatureCount,
 			StartDate = dto.StartDate,
 			Status = dto.Status ?? "",
-			Studios = new List<NameGuidPair>(dto.Studios ?? []),
-			Taglines = new List<string>(dto.Taglines ?? []),
-			Tags = new List<string>(dto.Tags ?? []),
+			Studios = [.. dto.Studios ?? []],
+			Taglines = [.. dto.Taglines ?? []],
+			Tags = [.. dto.Tags ?? []],
 			TimerId = dto.TimerId ?? "",
 			TrailerCount = dto.TrailerCount,
 			Trickplay = dto.Trickplay,
@@ -329,12 +328,12 @@ public partial class UserItemDataViewModel : ObservableObject
 {
 	public UserItemDataDto Dto { get; set; } = null!;
 
-	[ObservableProperty]
-	public partial bool? IsFavorite { get; set; }
-
-	[ObservableProperty]
-	public partial bool? Played { get; set; }
-
+#pragma warning disable MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+	public bool? IsFavorite { get; set => SetProperty(ref field, value); }
+#pragma warning restore MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+#pragma warning disable MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
+	public bool? Played { get; set => SetProperty(ref field, value); }
+#pragma warning restore MVVMTK0056 // Prefer using [ObservableProperty] over semi-auto properties
 	public Guid? ItemId { get; set; }
 	public string? Key { get; set; }
 	public DateTimeOffset? LastPlayedDate { get; set; }
@@ -347,7 +346,7 @@ public partial class UserItemDataViewModel : ObservableObject
 
 	public static UserItemDataViewModel? FromDto(UserItemDataDto? dto)
 	{
-		if(dto is null)
+		if (dto is null)
 		{
 			return null;
 		}

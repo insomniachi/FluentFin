@@ -2,8 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core;
+using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
+using FluentFin.Core.WebSockets;
+using FluentFin.UI.Core.Contracts.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -38,12 +41,15 @@ public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAw
 {
 	private readonly INavigationService _navigationService;
 	private readonly INavigationViewService _navigationViewService;
+	private readonly IJellyfinClient _jellyfinClient;
 
 	public JellyfinSettingsViewModel([FromKeyedServices(NavigationRegions.Settings)] INavigationService navigationService,
-									 [FromKeyedServices(NavigationRegions.Settings)] INavigationViewService navigationViewService)
+									 [FromKeyedServices(NavigationRegions.Settings)] INavigationViewService navigationViewService,
+									 IJellyfinClient jellyfinClient)
 	{
 		_navigationService = navigationService;
 		_navigationViewService = navigationViewService;
+		_jellyfinClient = jellyfinClient;
 
 		_navigationService.Navigated += OnNavigated;
 	}
@@ -60,7 +66,15 @@ public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAw
 		}
 	}
 
-	public Task OnNavigatedFrom() => Task.CompletedTask;
+	public async Task OnNavigatedFrom()
+	{
+		if (Selected is not { Content: "Dashboard" })
+		{
+			return;
+		}
+
+		await _jellyfinClient.SendWebSocketMessageWithoutData<SessionsStopMessage>();
+	}
 
 	public Task OnNavigatedTo(object parameter)
 	{

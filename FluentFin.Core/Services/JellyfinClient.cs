@@ -1,15 +1,17 @@
-﻿using DeviceId;
+﻿using System.Reflection;
+using DeviceId;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace FluentFin.Core.Services;
 
 public partial class JellyfinClient(ILogger<JellyfinClient> logger,
-									IObserver<IInboundSocketMessage> socketMessageSender) : IJellyfinClient
+									IObserver<IInboundSocketMessage> socketMessageSender,
+									IJumpListService jumpListService,
+									IDeviceProfileFactory deviceProfileFactory) : IJellyfinClient
 {
 	private Jellyfin.Sdk.JellyfinApiClient _jellyfinApiClient = null!;
 	private string _token = "";
@@ -29,6 +31,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		SessionInfo.CurrentUser = authResult.User;
 		SessionInfo.BaseUrl = baseUrl;
 		SessionInfo.AccessToken = authResult.AccessToken;
+		SessionInfo.SessionId = authResult.SessionInfo?.Id ?? "";
 
 		UserId = authResult.User.Id.Value;
 		BaseUrl = baseUrl;
@@ -45,14 +48,22 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		{
 			SupportsMediaControl = true,
 			PlayableMediaTypes = [MediaType.Video],
-			DeviceProfile = DeviceProfiles.Flyleaf,
+			DeviceProfile = deviceProfileFactory.GetDeviceProfile(),
+			IconUrl = "https://github.com/insomniachi/FluentFin/raw/master/Installer/base-icon-transparent.png",
 			SupportedCommands = [
 				GeneralCommandType.DisplayMessage,
 			]
 		});
 
 		await GetPlugins();
-		await CreateSocketConnection(CancellationToken.None);
+		await StartWebSocketConnection(CancellationToken.None);
+
+		var libaries = new List<BaseItemDto>();
+		await foreach (var item in GetUserLibraries())
+		{
+			libaries.Add(item);
+		}
+		await jumpListService.Initialize(libaries);
 	}
 
 	public async Task<BaseItemDtoQueryResult?> Search(string searchTerm)
@@ -89,41 +100,41 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 
 	public async Task<int> BitrateTest()
 	{
+		const int bitrateTestSize = 1024 * 1024 * 3;
+		const int chunkSize = 64 * 1024;
+		const double safetyRatio = 0.8;
+		var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+		int totalBytesRead = 0;
+		long startTime = TimeProvider.System.GetTimestamp();
 		try
 		{
-			List<int> sizes = [500_000, 1_000_000, 3_000_000];
-			List<int> bitRates = new(sizes.Count);
+			var stream = await _jellyfinApiClient.Playback.BitrateTest.GetAsync(x => x.QueryParameters.Size = bitrateTestSize, cts.Token);
 
-			foreach (var size in sizes)
+			if (stream is null)
 			{
-				var start = TimeProvider.System.GetTimestamp();
-				var result = await _jellyfinApiClient.Playback.BitrateTest.GetAsync(x => x.QueryParameters.Size = size);
-				var stream = new MemoryStream();
-				if (result is null)
-				{
-					continue;
-				}
+				return 0;
+			}
 
-				await result.CopyToAsync(stream);
-				var elapsed = TimeProvider.System.GetElapsedTime(start);
+			var buffer = new byte[chunkSize];
 
-				if (elapsed.TotalSeconds > 10)
+			while (true)
+			{
+				int bytesRead = await stream.ReadAsync(buffer, cts.Token);
+				if (bytesRead == 0)
 				{
 					break;
 				}
 
-				var length = stream.Length;
-
-				bitRates.Add((int)((length * 8) / elapsed.TotalSeconds));
+				totalBytesRead += bytesRead;
 			}
-
-			return (int)bitRates.Average();
 		}
-		catch (Exception)
-		{
+		catch (OperationCanceledException) { }
 
-			throw;
-		}
+		double responseTimeSeconds = TimeProvider.System.GetElapsedTime(startTime).TotalSeconds;
+		double bytesPerSecond = totalBytesRead / responseTimeSeconds;
+		int bitrate = (int)Math.Round(bytesPerSecond * 8 * safetyRatio);
+		return bitrate;
 	}
 
 	public async Task<SystemInfo?> GetSystemInfo()
@@ -324,9 +335,22 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		}
 	}
 
+	public async Task SendMessage(string sessionId, MessageCommand command)
+	{
+		try
+		{
+			await _jellyfinApiClient.Sessions[sessionId].Message.PostAsync(command);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return;
+		}
+	}
+
 	private Uri AddApiKey(Uri uri)
 	{
-		return uri.AppendQueryParam("api_key", _token).ToUri();
+		return uri.AppendQueryParam("ApiKey", _token).ToUri();
 	}
 }
 

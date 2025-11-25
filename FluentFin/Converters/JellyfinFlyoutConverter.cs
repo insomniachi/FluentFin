@@ -1,4 +1,5 @@
-﻿using FluentFin.Core;
+﻿using System.Linq.Expressions;
+using FluentFin.Core;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -126,6 +127,14 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Command = App.Commands.PlayDtoCommand,
 				CommandParameter = dto
 			};
+
+			yield return new MenuFlyoutItem
+			{
+				Text = "Play On",
+				Icon = new FontIcon { Glyph = "\uE8AF" },
+				Command = App.Dialogs.PlayOnSessionCommand,
+				CommandParameter = dto
+			};
 		}
 
 		if (type is BaseItemDto_Type.Movie or BaseItemDto_Type.Episode)
@@ -135,6 +144,18 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 				Text = "Play all from here",
 				Icon = new SymbolIcon { Symbol = Symbol.Play }
 			};
+
+
+			if(dto.UserData?.PlaybackPositionTicks is > 0 && dto.Id is { } id)
+			{
+				yield return new MenuFlyoutItem
+				{
+					Text = "Reset Watch Progress",
+					Icon = new FontIcon { Glyph = "\uED62" },
+					Command = App.Commands.ResetWatchProgressCommand,
+					CommandParameter = id
+				};
+			}
 		}
 
 		if (type is BaseItemDto_Type.Season or BaseItemDto_Type.Series or BaseItemDto_Type.CollectionFolder)
@@ -178,7 +199,7 @@ public partial class JellyfinFlyoutConverter : IValueConverter
 			};
 
 
-			if(SessionInfo.CurrentUser?.Policy?.IsAdministrator == true)
+			if (SessionInfo.CurrentUser?.Policy?.IsAdministrator == true)
 			{
 				yield return new MenuFlyoutItem
 				{

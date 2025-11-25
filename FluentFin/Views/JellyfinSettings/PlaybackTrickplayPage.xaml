@@ -3,95 +3,16 @@
     x:Class="FluentFin.Views.JellyfinSettings.PlaybackTrickplayPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c="using:FluentFin.Converters"
-    xmlns:controls="using:FluentFin.Controls"
-    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:root="using:FluentFin"
-    xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <c:JellyfinVirtualFolderImageConverter x:Key="ImageConverter" />
-        <c:HumanizeConverter x:Key="HumanizeConverter" />
-    </Page.Resources>
-
-    <Grid Width="1000">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Margin="0,40,0,0">
-            <TextBlock
-                HorizontalAlignment="Left"
-                Style="{ThemeResource SubheaderTextBlockStyle}"
-                Text="Trickplay" />
-            <StackPanel
-                Padding="16"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Orientation="Horizontal"
-                Spacing="16">
-                <Button Command="{x:Bind ViewModel.SaveCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <SymbolIcon Symbol="Save" />
-                        <TextBlock Text="Save" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{x:Bind ViewModel.ResetCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <SymbolIcon Symbol="Refresh" />
-                        <TextBlock Text="Reset" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
-
-        <StackPanel Grid.Row="1" Spacing="5">
-            <ctk:SettingsCard Header="Enable hardware decoding">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.EnableHardwareDecoding, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Currently only available on QSV, VA-API, VideoToolbox and RKMPP, this option has no effect on other hardware acceleration methods." Header="Enable hardware accelerated MJPEG encoding">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.EnableHardwareAcceleratedMjpegEncoding, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Extract key frames only for significantly faster processing with less accurate timing. If the configured hardware decoder does not support this mode, will use the software decoder instead." Header="Only generate images from key frames">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.OnlyGenerateImagesFromKeyFrames, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="The default behavior is non blocking, which will add media to the library before trickplay generation is done. Blocking will ensure trickplay files are generated before media is added to the library, but will make scans significantly longer." Header="Scan Behavior">
-                <ComboBox ItemsSource="{ui:EnumValues Type=jm:TrickplayOptions_ScanBehavior}" SelectedItem="{x:Bind ViewModel.ScanBehavior, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Setting this lower or higher will determine how the CPU prioritizes the ffmpeg trickplay generation process in relation to other processes. If you notice slowdown while generating trickplay images but don't want to fully stop their generation, try lowering this as well as the thread count." Header="Process Priority">
-                <ComboBox ItemsSource="{ui:EnumValues Type=jm:TrickplayOptions_ProcessPriority}" SelectedItem="{x:Bind ViewModel.ProcessPriority, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Interval of time (ms) between each new trickplay image." Header="Image Interval">
-                <NumberBox Value="{x:Bind ViewModel.ImageInterval, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Comma separated list of the widths (px) that trickplay images will be generated at. All images should generate proportionally to the source, so a width of 320 on a 16:9 video ends up around 320x180." Header="Width Resolutions">
-                <TextBox Text="{x:Bind ViewModel.WidthResolutions, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Maximum number of images per tile in the X direction." Header="Tile Width">
-                <NumberBox Value="{x:Bind ViewModel.TileWidth, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Maximum number of images per tile in the Y direction." Header="Tile Height">
-                <NumberBox Value="{x:Bind ViewModel.TileHeight, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="The JPEG compression quality for trickplay images." Header="JPEG Quality">
-                <NumberBox Value="{x:Bind ViewModel.JpegQuality, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="The quality scale of images output by ffmpeg, with 2 being the highest quality and 31 being the lowest." Header="Qscale">
-                <NumberBox Value="{x:Bind ViewModel.Qscale, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="The number of threads to pass to the '-threads' argument of ffmpeg." Header="FFmpeg Threads">
-                <NumberBox Value="{x:Bind ViewModel.Qscale, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-        </StackPanel>
-
-    </Grid>
+    <local:ServerConfigurationPage
+        Items="{x:Bind ViewModel.Items, Mode=OneWay}"
+        ResetCommand="{x:Bind ViewModel.ResetCommand}"
+        SaveCommand="{x:Bind ViewModel.SaveCommand}"
+        SectionName="Trickplay" />
 
 </Page>

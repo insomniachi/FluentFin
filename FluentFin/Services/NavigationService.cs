@@ -1,9 +1,10 @@
-﻿using FluentFin.Contracts.Services;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Helpers;
+using FluentFin.UI.Core.Contracts.Services;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FluentFin.Services;
 

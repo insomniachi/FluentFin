@@ -25,12 +25,11 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <flyleaf:FlyleafHost
-            x:Name="flyleafHost"
+        <controls:MediaPlayerHost
             Margin="100,0,100,36"
-            Player="{x:Bind ViewModel.MediaPlayer}">
-            <controls:TransportControls Player="{x:Bind ViewModel.MediaPlayer}" Playlist="{x:Bind ViewModel.Playlist}" />
-        </flyleaf:FlyleafHost>
+            MediaPlayerType="{x:Bind ViewModel.MediaPlayerType, Mode=OneWay}"
+            Player="{x:Bind ViewModel.MediaPlayer, Mode=TwoWay}"
+            Playlist="{x:Bind ViewModel.Playlist}" />
 
         <ScrollView Grid.Row="1">
             <StackPanel Spacing="10">

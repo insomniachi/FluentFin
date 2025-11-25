@@ -8,27 +8,34 @@
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:ctkl="using:CommunityToolkit.Labs.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dwui="using:DevWinUI"
     xmlns:generic="using:System.Collections.Generic"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:lc="using:FluentFin.Controls"
     xmlns:local="using:FluentFin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:FluentFin.Core.Contracts.Services"
-    xmlns:viewmodels="using:FluentFin.Core.ViewModels"
+    xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     Margin="{StaticResource MediumLeftRightMargin}"
+    KeyboardAcceleratorPlacementMode="Hidden"
     mc:Ignorable="d">
 
     <Page.Resources>
         <cc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </Page.Resources>
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="N" Invoked="NextUpInvoked" />
+        <KeyboardAccelerator Key="C" Invoked="ContinueInvoked" />
+    </Page.KeyboardAccelerators>
 
     <ctk:SwitchPresenter TargetType="x:Boolean" Value="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
         <ctk:Case Value="False">
             <ScrollViewer Margin="0,36" VerticalScrollBarVisibility="Hidden">
                 <StackPanel Spacing="20">
                     <StackPanel Padding="12,0,0,0" Visibility="{x:Bind ViewModel.HasContinueItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+
                         <TextBlock
                             Margin="{StaticResource SmallTopBottomMargin}"
                             Style="{StaticResource TitleTextBlockStyle}"
@@ -41,10 +48,11 @@
                             VerticalScrollMode="Disabled">
                             <ItemsRepeater ItemsSource="{x:Bind ViewModel.ContinueItems, Mode=OneWay}">
                                 <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <DataTemplate x:DataType="vm:BaseItemViewModel">
                                         <lc:BaseItemDtoCard
                                             Width="390"
                                             Height="240"
+                                            BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Thumb, 192)}"
                                             ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Thumb, 192)}"
                                             JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                             Model="{x:Bind}" />
@@ -70,10 +78,11 @@
                             VerticalScrollMode="Disabled">
                             <ItemsRepeater ItemsSource="{x:Bind ViewModel.NextUpItems, Mode=OneWay}">
                                 <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
+                                    <DataTemplate x:DataType="vm:BaseItemViewModel">
                                         <lc:BaseItemDtoCard
                                             Width="390"
                                             Height="240"
+                                            BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Thumb, 192)}"
                                             ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Thumb, 192)}"
                                             JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                             Model="{x:Bind}" />
@@ -88,12 +97,13 @@
 
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.RecentItems, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="viewmodels:NamedQueryResult">
+                            <DataTemplate x:DataType="vm:NamedQueryResult">
                                 <lc:PagedScrollView
                                     Margin="{StaticResource SmallLeftRightMargin}"
-                                    Header="{x:Bind Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
-                                    Items="{x:Bind Items, Mode=OneWay}"
-                                    JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}" />
+                                    Header="{x:Bind Library.Name, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Recently Added In {0}'}"
+                                    Items="{x:Bind Items}"
+                                    JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
+                                    Tag="{x:Bind Library}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>

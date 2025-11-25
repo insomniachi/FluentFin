@@ -1,6 +1,6 @@
-﻿using Microsoft.UI.Xaml.Data;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Windows;
+using Microsoft.UI.Xaml.Data;
 
 namespace FluentFin.Converters;
 

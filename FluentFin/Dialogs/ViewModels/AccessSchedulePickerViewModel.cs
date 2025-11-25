@@ -9,8 +9,8 @@ public partial class AccessSchedulePickerViewModel : ObservableObject
 	public partial AccessSchedule_DayOfWeek DayOfWeek { get; set; }
 
 	[ObservableProperty]
-	public partial TimeSpan? StartTime { get; set; }
+	public partial DateTime StartTime { get; set; }
 
 	[ObservableProperty]
-	public partial TimeSpan? EndTime { get; set; }
+	public partial DateTime EndTime { get; set; }
 }

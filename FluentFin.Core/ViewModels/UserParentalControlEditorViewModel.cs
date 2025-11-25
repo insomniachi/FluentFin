@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Reactive.Linq;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -38,9 +38,9 @@ public partial class UserParentalControlEditorViewModel(IJellyfinClient jellyfin
 
 		Ratings = [null, .. await jellyfinClient.GetParentalRatings()];
 		MaximumAllowedRating = Ratings.FirstOrDefault(x => x?.Value == policy.MaxParentalRating);
-		AllowedTags = new ObservableCollection<string>(policy.AllowedTags ?? []);
-		BlockedTags = new ObservableCollection<string>(policy.BlockedTags ?? []);
-		AccessSchedules = new ObservableCollection<AccessSchedule>(policy.AccessSchedules ?? []);
+		AllowedTags = [.. policy.AllowedTags ?? []];
+		BlockedTags = [.. policy.BlockedTags ?? []];
+		AccessSchedules = [.. policy.AccessSchedules ?? []];
 
 		BlockUnratedItems.Clear();
 		foreach (var value in Enum.GetValues<UnratedItem>())

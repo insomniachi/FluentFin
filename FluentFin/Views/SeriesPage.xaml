@@ -152,6 +152,7 @@
                     Height="50"
                     Background="Transparent"
                     Command="{x:Bind root:App.Commands.ToggleWatchedCommand}"
+                    CommandParameter="{x:Bind ViewModel.Dto, Mode=OneWay}"
                     Content="{ui:FontIcon Glyph=&#xE73E;}"
                     CornerRadius="25"
                     IsChecked="{x:Bind ViewModel.Dto.UserData.Played, Mode=OneWay}"
@@ -161,6 +162,7 @@
                     Height="50"
                     Background="Transparent"
                     Command="{x:Bind root:App.Commands.ToggleFavoriteCommand}"
+                    CommandParameter="{x:Bind ViewModel.Dto, Mode=OneWay}"
                     Content="{ui:FontIcon Glyph=&#xEB52;}"
                     CornerRadius="25"
                     IsChecked="{x:Bind ViewModel.Dto.UserData.IsFavorite, Mode=OneWay}"
@@ -302,6 +304,7 @@
                     <controls:BaseItemDtoCard
                         Width="390"
                         Height="240"
+                        BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(ViewModel.NextUp.Dto, jm:ImageType.Thumb, 300), Mode=OneWay}"
                         ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.NextUp.Dto, jm:ImageType.Thumb, 300), Mode=OneWay}"
                         JellyfinClient="{x:Bind ViewModel.JellyfinClient}"
                         Model="{x:Bind ViewModel.NextUp, Mode=OneWay}" />
@@ -320,6 +323,7 @@
                                 <DataTemplate x:DataType="viewmodels:BaseItemViewModel">
                                     <controls:BaseItemDtoCard
                                         Width="200"
+                                        BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(Dto, jm:ImageType.Primary, 300)}"
                                         ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(Dto, jm:ImageType.Primary, 300)}"
                                         JellyfinClient="{Binding ElementName=Page, Path=ViewModel.JellyfinClient}"
                                         Model="{x:Bind}" />
@@ -343,20 +347,19 @@
                         <ItemsRepeater Margin="0,0,15,0" ItemsSource="{x:Bind ViewModel.Dto.People, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="jm:BaseItemPerson">
-                                    <Grid Width="125" Height="200">
+                                    <Grid Width="150">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <controls:LoadingImage
-                                            Glyph="&#xE77B;"
-                                            Source="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemPerson), 300)}"
-                                            Stretch="UniformToFill" />
 
-                                        <StackPanel
-                                            Grid.Row="1"
-                                            Padding="3"
-                                            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                                        <PersonPicture
+                                            Width="150"
+                                            Height="150"
+                                            DisplayName="{x:Bind Name}"
+                                            ProfilePicture="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemPerson), 300)}" />
+
+                                        <StackPanel Grid.Row="1" Padding="3">
                                             <TextBlock
                                                 HorizontalAlignment="Center"
                                                 Style="{ThemeResource BodyStrongTextBlockStyle}"

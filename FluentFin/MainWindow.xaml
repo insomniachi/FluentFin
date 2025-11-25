@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:FluentFin.Views"
     xmlns:windowex="using:WinUIEx"
+    Title="FluentFin"
     MinWidth="500"
     MinHeight="500"
     PersistenceId="MainWindow"
@@ -26,24 +27,6 @@
         <views:TitleBarControl Grid.Row="0" />
 
         <Frame x:Name="RootFrame" Grid.Row="1" />
-
-        <!--<controls:SwitchPresenter
-            Grid.Row="1"
-            TargetType="core:MainWindowViewState"
-            Value="{x:Bind ViewModel.ViewState, Mode=OneWay}">
-            <controls:Case Value="LoggedIn">
-                <views:ShellPage x:Name="Shell" />
-            </controls:Case>
-            <controls:Case IsDefault="true" Value="Login">
-                <views:LoginView />
-            </controls:Case>
-            <controls:Case Value="LoginFailed">
-                <views:TrickplayTestPage />
-            </controls:Case>
-            <controls:Case Value="SelectServer">
-                <views:SelectServerPage />
-            </controls:Case>
-        </controls:SwitchPresenter>-->
 
     </Grid>
 

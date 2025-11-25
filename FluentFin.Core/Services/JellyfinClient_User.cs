@@ -54,12 +54,12 @@ public partial class JellyfinClient
 		}
 	}
 
-	public async IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries()
+	public async IAsyncEnumerable<RecentItemDtoQueryResult> GetRecentItemsFromUserLibraries()
 	{
 		BaseItemDtoQueryResult? views = null;
 		try
 		{
-			views = await _jellyfinApiClient.UserViews.GetAsync(x => x.QueryParameters.UserId = UserId); 
+			views = await _jellyfinApiClient.UserViews.GetAsync(x => x.QueryParameters.UserId = UserId);
 		}
 		catch (Exception ex)
 		{
@@ -78,7 +78,7 @@ public partial class JellyfinClient
 				continue;
 			}
 
-			if(library.CollectionType is BaseItemDto_CollectionType.Music)
+			if (library.CollectionType is BaseItemDto_CollectionType.Music)
 			{
 				continue;
 			}
@@ -103,7 +103,7 @@ public partial class JellyfinClient
 
 			if (info is not null and { Count: > 0 })
 			{
-				yield return new(library.Name ?? "", new(info));
+				yield return new(library, [.. info]);
 			}
 		}
 	}

@@ -1,12 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Core.Contracts.Services;
-using System.Collections.ObjectModel;
 
 namespace FluentFin.Core.Settings;
 
 public interface ISettings
 {
 	ObservableCollection<SavedServer> Servers { get; }
+	MediaPlayerType MediaPlayer { get; set; }
 
 	void ListenToChanges();
 
@@ -18,6 +19,12 @@ public partial class Settings(ILocalSettingsService localSettingsService) : Obse
 	private bool _isListening;
 
 	public ObservableCollection<SavedServer> Servers { get; set; } = localSettingsService.ReadSetting(SettingKeys.Servers);
+	
+	public MediaPlayerType MediaPlayer
+	{
+		get => localSettingsService.ReadSetting(SettingKeys.MediaPlayerType);
+		set => localSettingsService.SaveSetting(SettingKeys.MediaPlayerType, value);
+	}
 
 	public void SaveServerDetails() => localSettingsService.SaveSetting(SettingKeys.Servers, Servers);
 

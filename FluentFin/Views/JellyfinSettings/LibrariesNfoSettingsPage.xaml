@@ -3,77 +3,16 @@
     x:Class="FluentFin.Views.JellyfinSettings.LibrariesNfoSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c="using:FluentFin.Converters"
-    xmlns:controls="using:FluentFin.Controls"
-    xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:root="using:FluentFin"
-    xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:vm="using:FluentFin.Core.ViewModels"
     x:Name="Page"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <c:JellyfinVirtualFolderImageConverter x:Key="ImageConverter" />
-        <c:HumanizeConverter x:Key="HumanizeConverter" />
-    </Page.Resources>
-
-    <Grid Width="1000">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Margin="0,40,0,0">
-            <TextBlock
-                HorizontalAlignment="Left"
-                Style="{ThemeResource SubheaderTextBlockStyle}"
-                Text="NFO Settings" />
-            <StackPanel
-                Padding="16"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Orientation="Horizontal"
-                Spacing="16">
-                <Button Command="{x:Bind ViewModel.SaveCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <SymbolIcon Symbol="Save" />
-                        <TextBlock Text="Save" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{x:Bind ViewModel.ResetCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <SymbolIcon Symbol="Refresh" />
-                        <TextBlock Text="Reset" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
-
-        <StackPanel Grid.Row="1" Spacing="5">
-            <ctk:SettingsCard Description="Save watch data to NFO files for other applications to use." Header="Save User watch data to NFO files for">
-                <ComboBox
-                    DisplayMemberPath="Name"
-                    ItemsSource="{x:Bind ViewModel.Users, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="All dates within NFO files will be parsed using this format." Header="Release date format">
-                <TextBox Text="{x:Bind ViewModel.ReleaseDateFormat, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="This is recommended if you have image file names that don't conform to Kodi guidelines.Enable path substitution of image paths using the server's path substitution settings.Enable path substitution of image paths using the server's path substitution settings.Enable path substitution of image paths using the server's path substitution settings." Header="Save image paths within NFO files">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.SaveImagePathsInNfo, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="Enable path substitution of image paths using the server's path substitution settings." Header="Enable path substitution">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.EnablePathSubstitution, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-            <ctk:SettingsCard Description="When downloading images they can be saved into both extrafanart and extrathumbs for maximum Kodi skin compatibility." Header="Copy extrafanart to extrathumbs field">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.EnableExtraThumbsDuplication, Mode=TwoWay}" />
-            </ctk:SettingsCard>
-        </StackPanel>
-
-    </Grid>
+    <local:ServerConfigurationPage
+        Items="{x:Bind ViewModel.Items, Mode=OneWay}"
+        ResetCommand="{x:Bind ViewModel.ResetCommand}"
+        SaveCommand="{x:Bind ViewModel.SaveCommand}"
+        SectionName="NFO Settings" />
 
 </Page>

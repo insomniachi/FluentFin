@@ -1,5 +1,4 @@
 using FluentFin.Core.ViewModels;
-using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 
 

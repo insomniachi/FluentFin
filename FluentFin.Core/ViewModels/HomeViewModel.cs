@@ -2,15 +2,18 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
+using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
 
 namespace FluentFin.Core.ViewModels;
 
 public partial class HomeViewModel(IJellyfinClient jellyfinClient,
-								   IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
+								   IObservable<IInboundSocketMessage> webSocketMessages,
+								   GlobalCommands commands) : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposable = [];
 
@@ -59,7 +62,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			{
 				foreach (var item in msg.Data?.UserDataList ?? [])
 				{
-					if (!Guid.TryParse(item.ItemId, out var guid))
+					if (item.ItemId is not { } guid)
 					{
 						continue;
 					}
@@ -83,7 +86,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		ContinueItems = new(response.Items.Select(BaseItemViewModel.FromDto));
+		ContinueItems = [.. response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 
 	private async Task UpdateNextUpItems()
@@ -95,18 +98,18 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		NextUpItems = new(response.Items.Select(BaseItemViewModel.FromDto));
+		NextUpItems = [.. response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 
 	private async Task UpdateRecentItems()
 	{
 		await foreach (var list in JellyfinClient.GetRecentItemsFromUserLibraries())
 		{
-			RecentItems.Add(new(list.Name, new(list.Items.Select(BaseItemViewModel.FromDto))));
+			RecentItems.Add(new(list.Library, [.. list.Items.Select(BaseItemViewModel.FromDto)]));
 		}
 	}
 
-	private void ProcessRecentItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private void ProcessRecentItemChanged(UserItemDataDto userData, Guid guid)
 	{
 		foreach (var library in RecentItems)
 		{
@@ -119,10 +122,11 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			dto.UserData.Played = userData.Played;
 			dto.UserData.PlayedPercentage = userData.PlayedPercentage;
 			dto.UserData.UnplayedItemCount = userData.UnplayedItemCount;
-		};
+		}
+		;
 	}
 
-	private void ProcessContinueWatchingItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private void ProcessContinueWatchingItemChanged(UserItemDataDto userData, Guid guid)
 	{
 		if (ContinueItems.FirstOrDefault(x => x.Id == guid) is not { } item)
 		{
@@ -140,7 +144,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		}
 	}
 
-	private async Task ProcessNextUpItemChanged(WebSockets.Messages.UserItemDataDto userData, Guid guid)
+	private async Task ProcessNextUpItemChanged(UserItemDataDto userData, Guid guid)
 	{
 		if (NextUpItems.FirstOrDefault(x => x.Id == guid) is not { } item)
 		{
@@ -152,6 +156,22 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 			await UpdateNextUpItems();
 		}
 	}
+
+	[RelayCommand]
+	private async Task Continue() => await PlayFirstItem(ContinueItems);
+
+	[RelayCommand]
+	private async Task NextUp() => await PlayFirstItem(NextUpItems);
+
+	private Task PlayFirstItem(ObservableCollection<BaseItemViewModel> items)
+	{
+		if (items.Count == 0)
+		{
+			return Task.CompletedTask;
+		}
+
+		return commands.PlayDto(items.First().Dto);
+	}
 }
 
-public record NamedQueryResult(string Name, ObservableCollection<BaseItemViewModel> Items);
+public record NamedQueryResult(BaseItemDto Library, ObservableCollection<BaseItemViewModel> Items);

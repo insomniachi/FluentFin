@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
@@ -12,14 +14,12 @@ using FluentFin.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using ReactiveUI;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 
 namespace FluentFin.ViewModels;
 
 public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthenticator,
 									[FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService navigationService,
-								    ILocalSettingsService settingsService,
+									ILocalSettingsService settingsService,
 									IContentDialogService contentDialogService) : ObservableObject, INavigationAware
 {
 	private CompositeDisposable? _disposable;
@@ -39,6 +39,9 @@ public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthe
 
 	[ObservableProperty]
 	public partial SavedServer? Server { get; private set; }
+
+	[ObservableProperty]
+	public partial Uri? SplashScreen { get; set; }
 
 
 	[RelayCommand(CanExecute = nameof(CanLogin))]
@@ -125,6 +128,7 @@ public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthe
 			.Subscribe(validDetails => CanLogin = validDetails);
 
 		Server = server;
+		SplashScreen = JellyfinAuthenticationService.GetSplashScreen(Server.GetServerUrl());
 
 		return Task.CompletedTask;
 	}

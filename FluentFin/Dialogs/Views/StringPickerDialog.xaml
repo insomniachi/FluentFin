@@ -12,7 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Dialogs.ViewModels"
-    Title="Rename Library"
+    Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     CloseButtonText="Close"
     DefaultButton="Primary"
     PrimaryButtonText="OK"
@@ -20,12 +20,12 @@
     mc:Ignorable="d">
 
     <StackPanel Spacing="20">
-        <TextBox PlaceholderText="Enter new name" Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
+        <TextBox PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}" Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
         <InfoBar
             IsClosable="False"
             IsIconVisible="True"
-            IsOpen="True"
-            Message="Renaming a media library will cause all metadata to be lost, proceed with caution."
+            IsOpen="{x:Bind ViewModel.HasInfo}"
+            Message="{x:Bind ViewModel.Message, Mode=OneWay}"
             Severity="Warning" />
     </StackPanel>
 

@@ -1,8 +1,8 @@
-﻿using FluentFin.Core.Contracts.Services;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using FluentFin.Core.Contracts.Services;
 
 namespace FluentFin.Core.Services;
 

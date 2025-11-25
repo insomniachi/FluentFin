@@ -15,4 +15,14 @@ public sealed partial class HomePage : Page
 	{
 		InitializeComponent();
 	}
+
+	private void NextUpInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+	{
+		ViewModel.NextUpCommand.Execute(null);
+    }
+
+	private void ContinueInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+	{
+		ViewModel.ContinueCommand.Execute(null);
+    }
 }

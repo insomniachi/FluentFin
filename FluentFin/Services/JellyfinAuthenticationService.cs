@@ -1,4 +1,5 @@
-﻿using DeviceId;
+﻿using System.Reflection;
+using DeviceId;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
@@ -7,11 +8,11 @@ using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
 using FluentFin.Helpers;
 using FluentFin.ViewModels;
+using Flurl.Http;
 using Jellyfin.Sdk;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace FluentFin.Services;
 
@@ -21,6 +22,20 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 										   [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService setupNavigationService,
 										   ILogger<JellyfinAuthenticationService> logger) : IJellyfinAuthenticationService
 {
+
+	public static Uri GetSplashScreen(string url)
+	{
+		var client = GetClient(url);
+
+		return client.Branding.Splashscreen.ToGetRequestInformation(x =>
+		{
+			var query = x.QueryParameters;
+			query.Blur = 8;
+			query.Height = 1080;
+			query.Width = 1920;
+			query.Format = Jellyfin.Sdk.Generated.Branding.Splashscreen.ImageFormat.Jpg;
+		}).URI;
+	}
 
 	public static async Task<PublicSystemInfo?> GetPublicInfo(string url)
 	{

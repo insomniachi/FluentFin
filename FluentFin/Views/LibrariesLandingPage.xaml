@@ -11,6 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:root="using:FluentFin"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    x:Name="Page"
     mc:Ignorable="d">
 
     <ItemsView
@@ -23,6 +24,15 @@
             <DataTemplate x:DataType="jm:BaseItemDto">
                 <ItemContainer>
                     <Grid CornerRadius="{StaticResource ControlCornerRadius}">
+                        <Grid.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem
+                                    Command="{x:Bind root:App.Commands.PinToSideBarCommand}"
+                                    CommandParameter="{x:Bind}"
+                                    Icon="{ui:FontIcon Glyph=&#xE718;}"
+                                    Text="Pin to side bar" />
+                            </MenuFlyout>
+                        </Grid.ContextFlyout>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />

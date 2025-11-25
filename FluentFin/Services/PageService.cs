@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using FluentFin.Contracts.Services;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Core.ViewModels;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Plugins.Playback_Reporting.ViewModels;
 using FluentFin.Plugins.Playback_Reporting.Views;
+using FluentFin.UI.Core;
+using FluentFin.UI.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using FluentFin.Views.JellyfinSettings;
@@ -12,11 +13,14 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Services;
 
-public class PageService : IPageService
+public class PageService : IPageService, IPageRegistration
 {
-	private readonly Dictionary<string, Type> _pages = new();
+	private readonly Dictionary<string, Type> _pages = [];
+	private readonly Dictionary<Type, Type> _viewModels = [];
+	private readonly Dictionary<Type, Type> _parents = [];
+	private readonly Lock _lock = new();
 
-	public PageService()
+	public PageService(IPluginManager pluginManager)
 	{
 		// Setup Section
 		Configure<ShellViewModel, ShellPage>();
@@ -51,16 +55,14 @@ public class PageService : IPageService
 		Configure<LibrariesDisplayViewModel, LibrariesDisplayPage>();
 		Configure<PlaybackResumeViewModel, PlaybackResumePage>();
 		Configure<PlaybackTrickplayViewModel, PlaybackTrickplayPage>();
+		Configure<PlaybackTranscodingViewModel, PlaybackTranscodingPage>();
 		Configure<ActivitiesViewModel, ActivitiesPage>();
 		Configure<ScheduledTasksViewModel, ScheduledTasksPage>();
 
-		// Playback Reporting Pages
-		Configure<PlaybackReportingDashboardViewModel, PlaybackReportingDashboardPage>();
-		Configure<UsersReportViewModel, UsersReportPage>();
-		Configure<PlaybackReportViewModel, PlaybackReportPage>();
-		Configure<BreakdownReportViewModel, BreakdownReportPage>();
-		Configure<UsageReportViewModel, UsageReportPage>();
-		Configure<SessionDurationReportViewModel, SessionDurationReportPage>();
+		// Setup Parent/Child Relationships
+		ConfigureParent<LibraryViewModel, LibrariesLandingPageViewModel>();
+
+		pluginManager.ConfigurePages(this);
 	}
 
 	public Type GetPageType(string key)
@@ -77,7 +79,31 @@ public class PageService : IPageService
 		return pageType;
 	}
 
-	private void Configure<VM, V>()
+	public Type GetViewModelType(Type type)
+	{
+		Type? vmType;
+		lock (_pages)
+		{
+			if (!_viewModels.TryGetValue(type, out vmType))
+			{
+				throw new ArgumentException($"VM not found: {type.FullName}. Did you forget to call PageService.Configure?");
+			}
+		}
+
+		return vmType;
+	}
+
+	public Type? GetParent(Type typeKey)
+	{
+		if (_parents.TryGetValue(typeKey, out var parent))
+		{
+			return parent;
+		}
+
+		return null;
+	}
+
+	public void Configure<VM, V>()
 		where VM : ObservableObject
 		where V : Page
 	{
@@ -96,6 +122,23 @@ public class PageService : IPageService
 			}
 
 			_pages.Add(key, type);
+			_viewModels.Add(type, typeof(VM));
+		}
+	}
+
+	private void ConfigureParent<TChild, TParent>()
+	where TChild : INotifyPropertyChanged
+	where TParent : INotifyPropertyChanged
+	{
+		lock (_lock)
+		{
+			var key = typeof(TChild);
+			if (_parents.ContainsKey(key))
+			{
+				throw new ArgumentException($"The key {key} is already configured in PageService");
+			}
+
+			_parents.Add(key, typeof(TParent));
 		}
 	}
 }

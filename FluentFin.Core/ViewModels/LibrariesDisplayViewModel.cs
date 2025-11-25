@@ -1,88 +1,61 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using FluentFin.Contracts.ViewModels;
+﻿using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.ViewModels;
 
-public partial class LibrariesDisplayViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+public partial class LibrariesDisplayViewModel(IJellyfinClient jellyfinClient) : ServerConfigurationViewModel(jellyfinClient), INavigationAware
 {
-	private ServerConfiguration? _serverConfiguration;
 	private Metadata? _metadata;
-
-	[ObservableProperty]
-	public partial string DateAddedBehaviorForNewContent { get; set; }
-
-	[ObservableProperty]
-	public partial bool DisplayFolderView { get; set; }
-
-	[ObservableProperty]
-	public partial bool DisplaySpecialsWithinSeasons { get; set; }
-
-	[ObservableProperty]
-	public partial bool GroupMoviesIntoCollections { get; set; }
-
-	[ObservableProperty]
-	public partial bool EnableExternalContentSuggestions { get; set; }
 
 	public List<string> DateAddedBehaviors { get; set; } = ["User file creation date", "Use date scanned into the library"];
 
-	public Task OnNavigatedFrom() => Task.CompletedTask;
-
-	public async Task OnNavigatedTo(object parameter)
+	protected override List<JellyfinConfigItemViewModel> CreateItems(ServerConfiguration config)
 	{
-		_serverConfiguration = await jellyfinClient.GetConfiguration();
-		_metadata = await jellyfinClient.GetMetadata();
+
+		List<JellyfinConfigItemViewModel> items =
+		[
+			new JellyfinConfigItemViewModel<bool>(() => config.EnableFolderView ?? false, value => config.EnableFolderView = value)
+			{
+				DisplayName = "Display a folder view to show plain media folders",
+				Description = "Display folders alongside your other media libraries. This can be useful if you'd like to have a plain folder view."
+			},
+			new JellyfinConfigItemViewModel<bool>(() => config.DisplaySpecialsWithinSeasons ?? false, value => config.DisplaySpecialsWithinSeasons = value)
+			{
+				DisplayName = "Display specials within seasons they aired in",
+			},
+			new JellyfinConfigItemViewModel<bool>(() => config.EnableGroupingIntoCollections ?? false, value => config.EnableGroupingIntoCollections = value)
+			{
+				DisplayName = "Group movies into collections",
+				Description = "Movies in a collection will be displayed as one grouped item when displaying movie lists."
+			},
+			new JellyfinConfigItemViewModel<bool>(() => config.EnableExternalContentInSuggestions ?? false, value => config.EnableExternalContentInSuggestions = value)
+			{
+				DisplayName = "Enable external content in suggestions",
+				Description = "Allow internet trailers and live TV programs to be included within suggested content."
+			}
+		];
 
 		if (_metadata is not null)
 		{
-			DateAddedBehaviorForNewContent = _metadata.UseFileCreationTimeForDateAdded ? DateAddedBehaviors[0] : DateAddedBehaviors[1];
+			var item = new JellyfinSelectableConfigItemViewModel(() => _metadata.UseFileCreationTimeForDateAdded ? DateAddedBehaviors[0] : DateAddedBehaviors[1],
+																 value => _metadata.UseFileCreationTimeForDateAdded = value?.Equals(DateAddedBehaviors[0]) == true,
+																 DateAddedBehaviors)
+			{
+				DisplayName = "Date added behavior for new content",
+				Description = "If a metadata value is present, it will always be used before either of these options."
+			};
+
+			items.Insert(0, item);
 		}
 
-		if (_serverConfiguration is null)
-		{
-			return;
-		}
-
-		DisplayFolderView = _serverConfiguration.EnableFolderView ?? false;
-		DisplaySpecialsWithinSeasons = _serverConfiguration.DisplaySpecialsWithinSeasons ?? false;
-		GroupMoviesIntoCollections = _serverConfiguration.EnableGroupingIntoCollections ?? false;
-		EnableExternalContentSuggestions = _serverConfiguration.EnableExternalContentInSuggestions ?? false;
+		return items;
 	}
 
-	[RelayCommand]
-	private async Task Save()
+	async Task INavigationAware.OnNavigatedTo(object parameter)
 	{
-		await SaveConfiguration();
-		await SaveMetadata();
-	}
+		_metadata = await _jellyfinClient.GetMetadata();
 
-	[RelayCommand]
-	private async Task Reset() => await OnNavigatedTo(new());
-
-	private async Task SaveConfiguration()
-	{
-		if (_serverConfiguration is null)
-		{
-			return;
-		}
-
-		_serverConfiguration.EnableFolderView = DisplayFolderView;
-		_serverConfiguration.DisplaySpecialsWithinSeasons = DisplaySpecialsWithinSeasons;
-		_serverConfiguration.EnableGroupingIntoCollections = GroupMoviesIntoCollections;
-		_serverConfiguration.EnableExternalContentInSuggestions = EnableExternalContentSuggestions;
-
-		await jellyfinClient.SaveConfiguration(_serverConfiguration);
-	}
-
-	private async Task SaveMetadata()
-	{
-		if (_metadata is null)
-		{
-			return;
-		}
-		_metadata.UseFileCreationTimeForDateAdded = DateAddedBehaviorForNewContent == DateAddedBehaviors[0];
-		await jellyfinClient.SaveMetadata(_metadata);
+		await OnNavigatedTo(parameter);
 	}
 }

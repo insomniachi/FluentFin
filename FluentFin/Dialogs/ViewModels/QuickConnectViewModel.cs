@@ -13,7 +13,7 @@ public partial class QuickConnectViewModel(IJellyfinClient jellyfinClient) : Obs
 	[RelayCommand]
 	private async Task VerifyQuickConnect()
 	{
-		if(string.IsNullOrEmpty(QuickConnectCode))
+		if (string.IsNullOrEmpty(QuickConnectCode))
 		{
 			return;
 		}

@@ -1,9 +1,10 @@
-﻿using FluentFin.Core.ViewModels;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
+using FluentFin.Core.Services;
+using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
-using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace FluentFin.Core.Contracts.Services
 {
@@ -25,6 +26,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDtoQueryResult?> GetItems(BaseItemDto parent, bool recursive = false);
 
+		Task ResetProgress(Guid id);
+
 		Task<BaseItemDtoQueryResult?> GetMediaFolders();
 
 		Task<List<FileSystemEntryInfo>> GetDirectoryContents(string path);
@@ -45,7 +48,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<BaseItemDto?> GetItem(Guid id);
 
-		IAsyncEnumerable<NamedDtoQueryResult> GetRecentItemsFromUserLibraries();
+		IAsyncEnumerable<RecentItemDtoQueryResult> GetRecentItemsFromUserLibraries();
 
 		IAsyncEnumerable<BaseItemDto> GetUserLibraries();
 
@@ -61,7 +64,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri GetImage(BaseItemDto item, ImageInfo info);
 
-		Uri GetSplashScreen();
+		Task<List<SessionInfoDto>> GetControllableSessions();
 
 		Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
 
@@ -163,6 +166,10 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task SaveConfiguration(ServerConfiguration configuration);
 
+		Task<TranscodingSettings?> GetTranscodeOptions();
+
+		Task SaveTranscodeOptions(TranscodingSettings options);
+
 		Task<LibraryOptionsResultDto?> GetAvailableInfo(Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType libraryContentType, bool isNewLibrary);
 
 		Task SaveLibraryOptions(Guid folderId, LibraryOptions options);
@@ -170,9 +177,40 @@ namespace FluentFin.Core.Contracts.Services
 		Task<List<TaskInfo>> GetScheduledTasks();
 
 		Task RunScheduledTask(string id);
+
+		Task PlayOnSession(string sessionId, params IEnumerable<Guid?> itemIds);
+
+		Task TogglePlayPause(string sessionId);
+
+		Task Stop(string sessionId);
+
+		Task SendWebsocketMessage<T>(T message) where T: WebSocketMessage;
+
+		// SyncPlay
+		Task<List<GroupInfoDto>> GetSyncPlayGroups();
+
+		Task CreateSyncPlayGroup();
+
+		Task JoinSyncPlayGroup(Guid groupId);
+
+		Task LeaveSyncPlayGroup();
+
+		Task SignalReadyForSyncPlay(ReadyRequestDto request);
+
+		Task SignalPauseForSyncPlay();
+
+		Task SignalUnpauseForSyncPlay();
+
+		Task SignalSeekForSyncPlay(TimeSpan position);
+
+		Task SignalNewPlaylist(PlayRequestDto request);
+
+		Task<DateTimeOffset> SyncTime();
+
+		Task SendMessage(string sessionId, MessageCommand command);
 	}
 
-	public record NamedDtoQueryResult(string Name, ObservableCollection<BaseItemDto> Items);
+	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);
 
 	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
 
@@ -190,5 +228,14 @@ namespace FluentFin.Core.Contracts.Services
 	public class Metadata
 	{
 		public bool UseFileCreationTimeForDateAdded { get; set; }
+	}
+
+	public static class JellyfinClientExtensions
+	{
+		public static async Task SendWebSocketMessageWithoutData<T>(this IJellyfinClient client)
+			where T: WebSocketMessage, new()
+		{
+			await client.SendWebsocketMessage(new T());
+		}
 	}
 }

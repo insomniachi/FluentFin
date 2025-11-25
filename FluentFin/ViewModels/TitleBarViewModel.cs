@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Reflection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
@@ -6,10 +7,10 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
+using FluentFin.UI.Core.Contracts.Services;
 using FluentFin.Views;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace FluentFin.ViewModels;
 
@@ -23,8 +24,7 @@ public partial class TitleBarViewModel : ObservableObject, ITitleBarViewModel
 	public TitleBarViewModel(INavigationService navigationService,
 							 [FromKeyedServices(NavigationRegions.InitialSetup)] INavigationService setupNavigationService,
 							 INavigationViewService navigationViewService,
-							 IJellyfinClient jellyfinClient,
-							 ILocalSettingsService localSettingsService)
+							 IJellyfinClient jellyfinClient)
 	{
 		_navigationService = navigationService;
 		_setupNavigationService = setupNavigationService;

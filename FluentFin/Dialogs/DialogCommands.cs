@@ -122,6 +122,31 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseButtonClick(dialog, vm));
 	}
 
+	[RelayCommand]
+	private async Task PlayOnSession(BaseItemDto dto)
+	{
+		var vm = App.GetService<SessionPickerViewModel>();
+		await vm.Initialize(dto);
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+	[RelayCommand]
+	private async Task ChangeDefaultSession()
+	{
+		var vm = App.GetService<SessionPickerViewModel>();
+		await vm.Initialize();
+		await dialogService.ShowDialog(vm, dialog => CloseOnlyOnCloseAndPrimaryButtonClick(dialog, vm));
+	}
+
+	[RelayCommand]
+	private async Task SelectSyncPlayGroup()
+	{
+		var vm = App.GetService<SyncPlayGroupPickerViewModel>();
+		await vm.Initialize();
+		await dialogService.ShowDialog(vm, dialog => CloseOnAllButtonClick(dialog, vm));
+	}
+
+
 	public static async Task<bool> DeleteLibraryDialog(string name)
 	{
 		var dialog = new ContentDialog
@@ -184,5 +209,19 @@ public partial class DialogCommands(IContentDialogService dialogService,
 		};
 		dialog.CloseButtonClick += (_, _) => { vm.CanClose = true; };
 		dialog.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
+	}
+
+	private static void CloseOnAllButtonClick(ContentDialog dialog, IHandleClose vm)
+	{
+		dialog.Closing += (_, e) =>
+		{
+			if (!vm.CanClose)
+			{
+				e.Cancel = true;
+			}
+		};
+		dialog.CloseButtonClick += (_, _) => { vm.CanClose = true; };
+		dialog.PrimaryButtonClick += (_, _) => { vm.CanClose = true; };
+		dialog.SecondaryButtonClick += (_, _) => { vm.CanClose = true; };
 	}
 }

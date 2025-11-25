@@ -1,4 +1,6 @@
-﻿using FluentFin.Activation;
+﻿using System.Reactive.Subjects;
+using System.Reflection;
+using FluentFin.Activation;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
@@ -11,8 +13,10 @@ using FluentFin.Dialogs.UserInput;
 using FluentFin.Dialogs.ViewModels;
 using FluentFin.Dialogs.Views;
 using FluentFin.Helpers;
-using FluentFin.Plugins.Playback_Reporting.ViewModels;
+using FluentFin.Plugins.Playback_Reporting;
 using FluentFin.Services;
+using FluentFin.UI.Core;
+using FluentFin.UI.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using FluentFin.Views;
 using Jellyfin.Sdk.Generated.Models;
@@ -21,10 +25,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Serilog;
-using System.Reactive.Subjects;
-using System.Reflection;
 using Windows.ApplicationModel;
-using Windows.Storage;
 
 namespace FluentFin;
 
@@ -86,9 +87,13 @@ public partial class App : Application
 			services.AddSingleton<IActivationService, ActivationService>();
 			services.AddSingleton<IPageService, PageService>();
 			services.AddSingleton<INavigationViewService, NavigationViewService>();
+			services.AddSingleton<INavigationViewServiceCore>(sp => sp.GetRequiredService<INavigationViewService>());
 			services.AddSingleton<INavigationService, NavigationService>();
 			services.AddSingleton((Func<IServiceProvider, INavigationServiceCore>)(sp => sp.GetRequiredService<INavigationService>()));
 			services.AddTransient<IContentDialogService, ContentDialogService>();
+			services.AddTransient<IContentDialogServiceCore>(sp => sp.GetRequiredService<IContentDialogService>());
+			services.AddSingleton<IDeviceProfileFactory, DeviceProfileFactory>();
+			services.AddSingleton<IJumpListService, JumpListService>();
 
 			services.AddNavigationViewNavigation(NavigationRegions.Settings);
 			services.AddFrameNavigation(NavigationRegions.UserEditor);
@@ -102,6 +107,7 @@ public partial class App : Application
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton(knownFolders);
+			services.AddSingleton<ITaskBarProgress, TaskBarProgress>();
 			services.AddSingleton<Subject<IInboundSocketMessage>>();
 			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
 			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
@@ -143,17 +149,10 @@ public partial class App : Application
 			services.AddTransient<LibrariesDisplayViewModel>();
 			services.AddTransient<PlaybackResumeViewModel>();
 			services.AddTransient<PlaybackTrickplayViewModel>();
+			services.AddTransient<PlaybackTranscodingViewModel>();
 			services.AddTransient<ActivitiesViewModel>();
 			services.AddTransient<LibrariesLandingPageViewModel>();
 			services.AddTransient<ScheduledTasksViewModel>();
-
-			// playback report view models
-			services.AddTransient<PlaybackReportingDashboardViewModel>();
-			services.AddTransient<UsersReportViewModel>();
-			services.AddTransient<PlaybackReportViewModel>();
-			services.AddTransient<BreakdownReportViewModel>();
-			services.AddTransient<UsageReportViewModel>();
-			services.AddTransient<SessionDurationReportViewModel>();
 
 			// Dialogs
 			services.AddDialog<EditMetadataViewModel, EditMetadataDialog>();
@@ -167,24 +166,49 @@ public partial class App : Application
 			services.AddDialog<ManageLibraryViewModel, ManageLibraryDialog>();
 			services.AddDialog<StringPickerViewModel, StringPickerDialog>();
 			services.AddDialog<QuickConnectViewModel, QuickConnectDialog>();
+			services.AddDialog<SessionPickerViewModel, SessionPickerDialog>();
+			services.AddDialog<SyncPlayGroupPickerViewModel, SyncPlayGroupPickerDialog>();
 
 			// Pickers
 			services.AddTransient<IUserInput<AccessSchedule>, AccessScheduleUserInput>();
-			services.AddTransient<IUserInput<string>, StringUserInput>();
+			services.AddKeyedTransient<IUserInput<string>, LibraryNewNameInput>(UserInputs.LibraryNewName);
+			services.AddKeyedTransient<IUserInput<string>, SendMessageToSessionInput>(UserInputs.MessageToSession);
 			services.AddTransient<IServerFolderPicker, ServerFolderInput>();
 
 			services.AddTransient<ShellPage>();
 
-			// Configuration
+			services.AddTransient<IPluginManager, PluginManager>();
+			Assembly[] assemblies = [typeof(PlaybackReportingPlugin).Assembly];
+			foreach (var assembly in assemblies)
+			{
+				var plugins = assembly.GetTypes()
+					.Where(t => t.IsAssignableTo(typeof(IPlugin)) && !t.IsAbstract);
 
-			if(!IsPackaged())
+				foreach (var type in plugins)
+				{
+					var plugin = (IPlugin)Activator.CreateInstance(type)!;
+					services.AddSingleton(plugin);
+					plugin.ConfigureServices(services);
+				}
+			}
+
+			// Configuration
+			if (!IsPackaged())
 			{
 				services.AddHostedService<WindowsUpdateService>();
 			}
+			services.AddHostedService<WebSocketMessageHandler>();
 		}).
 		Build();
 
 		UnhandledException += App_UnhandledException;
+		AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+	}
+
+	private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+	{
+		NativeMethods.AllowSleep();
+		GetService<ILogger<App>>().LogError($"{e.ExceptionObject}");
 	}
 
 	private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -202,7 +226,7 @@ public partial class App : Application
 		base.OnLaunched(args);
 
 		MainWindow.Closed += MainWindow_Closed;
-		
+
 		StartFlyleaf();
 
 		await GetService<IActivationService>().ActivateAsync(args);

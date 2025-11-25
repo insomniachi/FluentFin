@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
@@ -6,8 +8,6 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -99,6 +99,9 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 	[ObservableProperty]
 	public partial List<string> YearsSource { get; set; } = new();
 
+	[ObservableProperty]
+	public partial bool IsLoading { get; set; }
+
 	public IJellyfinClient JellyfinClient { get; }
 
 	public LibraryFilter Filter { get; set; } = new();
@@ -114,12 +117,26 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 
 	public async Task OnNavigatedTo(object parameter)
 	{
-		if (parameter is not BaseItemDto libraryDto)
+		if (parameter is BaseItemDto libraryDto)
 		{
-			return;
+			await Initialize(libraryDto);
 		}
+		else if(parameter is Guid id)
+		{
+			var dto = await JellyfinClient.GetItem(id);
+			if(dto is null)
+			{
+				return;
+			}
+			await Initialize(dto);
+		}
+	}
 
-		var result = await JellyfinClient.GetItems(libraryDto);
+	private async Task Initialize(BaseItemDto dto)
+	{
+		IsLoading = true;
+
+		var result = await JellyfinClient.GetItems(dto);
 
 		if (result is null or { Items: null })
 		{
@@ -129,7 +146,7 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		_itemsCache.AddOrUpdate(result.Items.Select(BaseItemViewModel.FromDto));
 		UpdateNumberOfPages();
 
-		var filters = await JellyfinClient.GetFilters(libraryDto);
+		var filters = await JellyfinClient.GetFilters(dto);
 
 		if (filters is null)
 		{
@@ -140,6 +157,8 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		GenresSource = filters.Genres?.ToList() ?? [];
 		OfficialRatingsSource = filters.OfficialRatings?.ToList() ?? [];
 		YearsSource = filters.Years?.Where(x => x.HasValue).Select(x => x!.Value.ToString()).ToList() ?? [];
+
+		IsLoading = false;
 	}
 
 	private void UpdateNumberOfPages()
@@ -160,7 +179,7 @@ public partial class LibraryFilter : ObservableObject
 		Years.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Years));
 	}
 
-	public ObservableCollection<string> Tags { get; set; } = new();
+	public ObservableCollection<string> Tags { get; set; } = [];
 
 	[ObservableProperty]
 	public partial ObservableCollection<string> Genres { get; set; } = new();

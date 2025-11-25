@@ -168,10 +168,13 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             CornerRadius="15">
-            <Image
-                Width="400"
-                Source="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}"
-                Stretch="Uniform" />
+            <controls:LazyLoadedImage
+                Width="450"
+                Height="675"
+                BlurHashImageSource="{x:Bind c:BaseItemDtoConverters.GetBlurHash(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}"
+                EnableBlurHash="True"
+                ImageSource="{x:Bind c:BaseItemDtoConverters.GetImage(ViewModel.Dto, jm:ImageType.Primary, 800), Mode=OneWay}"
+                Stretch="UniformToFill" />
         </Grid>
 
         <ScrollViewer
@@ -313,7 +316,7 @@
                                         Background="Transparent"
                                         Content="{ui:SymbolIcon Symbol=More}"
                                         CornerRadius="25"
-                                        Flyout="{x:Bind Converter={StaticResource FlyoutConverter}, Mode=OneWay}"
+                                        Flyout="{x:Bind Converter={StaticResource FlyoutConverter}}"
                                         Style="{StaticResource IconButtonStyle}" />
                                 </StackPanel>
 
@@ -336,21 +339,19 @@
                         <ItemsRepeater Margin="0,0,15,0" ItemsSource="{x:Bind ViewModel.Dto.People, Mode=OneWay}">
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="jm:BaseItemPerson">
-                                    <Grid Width="125" Height="200">
+                                    <Grid Width="150">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <controls:LoadingImage
-                                            Glyph="&#xE77B;"
-                                            Source="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemPerson), 300)}"
-                                            Stretch="UniformToFill" />
+                                        <PersonPicture
+                                            Width="150"
+                                            Height="150"
+                                            DisplayName="{x:Bind Name}"
+                                            ProfilePicture="{x:Bind c:BaseItemDtoConverters.GetImage((jm:BaseItemPerson), 300)}" />
 
-                                        <StackPanel
-                                            Grid.Row="1"
-                                            Padding="3"
-                                            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                                        <StackPanel Grid.Row="1" Padding="3">
                                             <TextBlock
                                                 HorizontalAlignment="Center"
                                                 Style="{ThemeResource BodyStrongTextBlockStyle}"

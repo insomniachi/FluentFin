@@ -10,6 +10,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactivity"
     xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dwui="using:DevWinUI"
     xmlns:fmp="using:FlyleafLib.MediaPlayer"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
@@ -56,7 +57,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid PointerMoved="Grid_PointerMoved">
             <!--  Skip  -->
             <Button
                 x:Name="DynamicSkipIntroButton"
@@ -67,7 +68,6 @@
                 VerticalAlignment="Top"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind SkipCommand, Mode=OneWay}"
-                CommandParameter="{x:Bind Player.CurTime, Mode=OneWay}"
                 FontSize="20"
                 FontWeight="Bold"
                 Foreground="White"
@@ -84,60 +84,58 @@
                 </StackPanel>
             </Button>
 
-            <!--  Subtitles  -->
-            <Grid>
-                <Border x:Name="ShadowTarget" />
-                <TextBlock
-                    Margin="0,0,0,50"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    FontSize="50"
-                    FontWeight="SemiBold"
-                    Foreground="White"
-                    Text="{x:Bind Player.Subtitles.SubsText, Mode=OneWay}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap"
-                    Visibility="{x:Bind Player.Subtitles.SubsText, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}">
-                    <ui:Effects.Shadow>
-                        <ui:AttachedDropShadow
-                            BlurRadius="10"
-                            CastTo="{x:Bind ShadowTarget}"
-                            CornerRadius="0"
-                            Opacity="1"
-                            Offset="2"
-                            Color="Black" />
-                    </ui:Effects.Shadow>
-                </TextBlock>
-            </Grid>
+            <dwui:OutlineTextControl
+                x:Name="Subtitles"
+                Height="300"
+                VerticalAlignment="Bottom"
+                DashStyle="Solid"
+                FontColor="White"
+                FontSize="60"
+                FontWeight="ExtraBold"
+                OutlineColor="Black"
+                ShowNonOutlineText="True"
+                StrokeWidth="2"
+                Visibility="{x:Bind Subtitles.Text, Mode=OneWay, Converter={StaticResource StringVisibilityConveter}}" />
 
             <!--  Logo  -->
             <Grid
                 x:Name="TitleSection"
-                Margin="36,36,0,0"
+                Margin="{StaticResource MediumTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 x:FieldModifier="Public">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Image Height="100" Source="{x:Bind c:BaseItemDtoConverters.GetImage(Playlist.SelectedItem.Dto, jm:ImageType.Logo, 100), Mode=OneWay}" />
+                <Image
+                    Height="100"
+                    HorizontalAlignment="Left"
+                    Source="{x:Bind c:BaseItemDtoConverters.GetImage(Playlist.SelectedItem.Dto, jm:ImageType.Logo, 100), Mode=OneWay}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="{StaticResource LargeLeftRightMargin}"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="{x:Bind c:BaseItemDtoConverters.ToSessionInfoItemName(Playlist.SelectedItem.Dto), Mode=OneWay}"
+                    Visibility="{x:Bind Playlist.SelectedItem.Dto.Type, Converter={StaticResource PlaylistVisibilityConverter}, Mode=OneWay}" />
                 <TextBlock
                     x:Name="TxtTitleTime"
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
+                    Grid.Row="2"
+                    Margin="{StaticResource LargeLeftRightMargin}"
                     x:FieldModifier="Public"
-                    Style="{ThemeResource TitleLargeTextBlockStyle}" />
+                    Style="{ThemeResource HeaderTextBlockStyle}" />
             </Grid>
 
 
             <!--  Trickplay  -->
             <TeachingTip
                 x:Name="TrickplayTip"
+                PointerExited="TimeSlider_PointerExited"
                 PreferredPlacement="BottomLeft"
                 Style="{ThemeResource NoHeaderClose}">
                 <TeachingTip.Content>
-                    <Grid>
+                    <Grid PointerExited="TimeSlider_PointerExited">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -200,10 +198,10 @@
 
                 <!--  Current Time | Slider | Remaining Time  -->
                 <TextBlock
+                    x:Name="TxtCurrentTime"
                     Grid.Column="0"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind c:Converters.TicksToTime(Player.CurTime), Mode=OneWay}" />
+                    VerticalAlignment="Center" />
 
                 <ctk:SwitchPresenter
                     Grid.Column="1"
@@ -222,19 +220,16 @@
                             Margin="10,0,10,0"
                             VerticalAlignment="Center"
                             IsTabStop="False"
-                            Maximum="{x:Bind c:Converters.TicksToSeconds(Player.Duration), Mode=OneWay}"
                             PointerExited="TimeSlider_PointerExited"
-                            PointerMoved="TimeSlider_PointerEntered"
-                            Value="{x:Bind c:Converters.TicksToSeconds(Player.CurTime), Mode=OneWay}" />
+                            PointerMoved="TimeSlider_PointerEntered" />
                     </ctk:Case>
                 </ctk:SwitchPresenter>
 
                 <TextBlock
-                    x:Name="TxtCurrentTime"
+                    x:Name="TxtRemainingTime"
                     Grid.Column="2"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind TimeRemaining(Player.CurTime, Player.Duration), Mode=OneWay}" />
+                    VerticalAlignment="Center" />
             </Grid>
 
             <Grid Grid.Row="1" Margin="8">
@@ -254,52 +249,36 @@
                         Click="SkipForwardButton_Click"
                         Icon="{ui:FontIcon Glyph=&#xED3D;}"
                         IsTapEnabled="False"
-                        Label="Seek forward">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Right" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Seek forward" />
+
                     <AppBarButton
                         x:Name="NextTrackButton"
                         Command="{x:Bind Playlist.SelectNextCommand, Mode=OneWay}"
                         Icon="Next"
                         IsTabStop="False"
-                        Label="Next Episode">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Right" Modifiers="Control" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Next Episode" />
+
                     <AppBarButton
                         x:Name="PlayPauseButton"
-                        Command="{x:Bind Player.Commands.TogglePlayPause, Mode=OneWay}"
-                        Icon="{x:Bind Player.Status, Converter={StaticResource PlayPauseIconConveter}, Mode=OneWay}"
-                        IsEnabled="{x:Bind Player.CanPlay, Mode=OneWay}"
+                        Click="PlayPauseButton_Click"
+                        Content="{ui:SymbolIcon Symbol=Play}"
                         IsTabStop="False"
-                        Label="Play/Pause">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Space" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Play/Pause" />
+
                     <AppBarButton
                         x:Name="PreviousTrackButton"
                         Command="{x:Bind Playlist.SelectPrevCommand, Mode=OneWay}"
                         Icon="Previous"
                         IsTabStop="False"
-                        Label="Previous Episode">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Left" Modifiers="Control" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Previous Episode" />
+
                     <AppBarButton
                         x:Name="SkipBackwardButton"
                         Click="SkipBackwardButton_Click"
                         Icon="{ui:FontIcon Glyph=&#xED3C;}"
                         IsTapEnabled="False"
-                        Label="Seek backward">
-                        <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Left" />
-                        </AppBarButton.KeyboardAccelerators>
-                    </AppBarButton>
+                        Label="Seek backward" />
+
 
                 </CommandBar>
 
@@ -356,7 +335,6 @@
                     <AppBarButton
                         x:Name="FullWindowButton"
                         x:FieldModifier="Public"
-                        Command="{x:Bind Player.Commands.ToggleFullScreen, Mode=OneWay}"
                         IsTabStop="False"
                         Label="Toggle Fullscreen">
                         <AppBarButton.Icon>
@@ -373,10 +351,11 @@
                         <AppBarButton.Flyout>
                             <Flyout>
                                 <Slider
+                                    x:Name="VolumeSlider"
                                     Width="100"
                                     IsTabStop="False"
-                                    Maximum="{x:Bind Player.Config.Player.VolumeMax, Mode=OneWay}"
-                                    Value="{x:Bind Player.Audio.Volume, Mode=TwoWay}" />
+                                    Maximum="100"
+                                    Minimum="0" />
                             </Flyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
@@ -384,8 +363,15 @@
                     <AppBarSeparator />
 
                     <AppBarButton
+                        x:Name="CastButton"
+                        Click="CastButton_Click"
+                        Icon="{ui:FontIcon Glyph=&#xEC16;}"
+                        IsTabStop="False"
+                        Label="Cast" />
+
+                    <AppBarButton
                         x:Name="CCSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Player.Subtitles.Streams, Playlist.SelectedItem.Media), Mode=OneWay}"
+                        Flyout="{x:Bind c:Converters.GetSubtitlesFlyout(Player, Playlist.SelectedItem.Media), Mode=OneWay}"
                         Icon="{ui:FontIcon Glyph=&#xED1E;}"
                         IsTabStop="False"
                         Label="Subtitles"
@@ -393,7 +379,7 @@
 
                     <AppBarButton
                         x:Name="AudioSelectionButton"
-                        Flyout="{x:Bind c:Converters.GetAudiosFlyout(Player, Player.Audio.Streams), Mode=OneWay}"
+                        x:FieldModifier="Public"
                         Icon="{ui:FontIcon Glyph=&#xED1F;}"
                         IsTabStop="False"
                         Label="Audio"

@@ -80,7 +80,7 @@ public partial class SeriesViewModel(IJellyfinClient jellyfinClient) : Observabl
 			return;
 		}
 
-		Similar = [ ..response.Items.Select(BaseItemViewModel.FromDto)];
+		Similar = [.. response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 
 	private async Task UpdateSeasons(BaseItemDto dto)
@@ -92,6 +92,6 @@ public partial class SeriesViewModel(IJellyfinClient jellyfinClient) : Observabl
 			return;
 		}
 
-		Seasons = [ ..response.Items.Select(BaseItemViewModel.FromDto)];
+		Seasons = [.. response.Items.Select(BaseItemViewModel.FromDto)];
 	}
 }

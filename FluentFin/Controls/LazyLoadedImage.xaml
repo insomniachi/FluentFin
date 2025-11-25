@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="FluentFin.Controls.LazyLoadedImage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:CommunityToolkit.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FluentFin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Image
+            x:Name="Blur"
+            Source="{x:Bind BlurHashImageSource, Mode=OneWay}"
+            Stretch="{x:Bind Stretch, Mode=OneWay}"
+            Visibility="{x:Bind EnableBlurHash, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+        <Image
+            Name="Image"
+            ImageOpened="ImageOpened"
+            Opacity="0"
+            Source="{x:Bind ImageSource, Mode=OneWay}"
+            Stretch="{x:Bind Stretch, Mode=OneWay}" />
+    </Grid>
+    <UserControl.Resources>
+        <c:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Storyboard
+            x:Name="ImageFadeIn"
+            AutoReverse="False"
+            RepeatBehavior="1x">
+            <DoubleAnimation
+                Storyboard.TargetName="Image"
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.2" />
+        </Storyboard>
+    </UserControl.Resources>
+</UserControl>

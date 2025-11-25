@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 
 namespace FluentFin.Dialogs.ViewModels;
 
@@ -64,7 +64,7 @@ public partial class EditImagesViewModel(IJellyfinClient jellyfinClient) : Obser
 			Uri = jellyfinClient.GetImage(item, info)
 		});
 
-		Images = [ ..images];
+		Images = [.. images];
 
 
 		var providers = await jellyfinClient.GetImageProviders(item);
@@ -89,7 +89,7 @@ public partial class EditImagesViewModel(IJellyfinClient jellyfinClient) : Obser
 
 				ImageTypes.AddRange(newTypes);
 
-				if(ImageTypes.Contains(selectedImageType) == false)
+				if (ImageTypes.Contains(selectedImageType) == false)
 				{
 					SelectedImageType = ImageTypes.FirstOrDefault();
 				}

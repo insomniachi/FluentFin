@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.WinUI.Helpers;
-using FluentFin.Core.Settings;
-using Microsoft.UI.Xaml.Controls;
-using System.Net;
+﻿using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using CommunityToolkit.WinUI.Helpers;
+using FluentFin.Core.Settings;
+using Microsoft.UI.Xaml.Controls;
 
 namespace FluentFin.Helpers;
 

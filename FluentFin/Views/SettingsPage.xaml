@@ -11,6 +11,7 @@
     xmlns:local="using:FluentFin.Views.JellyfinSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:root="using:FluentFin"
+    xmlns:s="using:FluentFin.Core.Contracts.Services"
     xmlns:settings="using:FluentFin.Core.Settings"
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Core.ViewModels"
@@ -59,6 +60,9 @@
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
+            <ctk:SettingsCard Header="Media Player" HeaderIcon="{ui:FontIcon Glyph=&#xEA69;}">
+                <ComboBox ItemsSource="{ui:EnumValues Type=s:MediaPlayerType}" SelectedItem="{x:Bind ViewModel.MediaPlayerType, Mode=TwoWay}" />
+            </ctk:SettingsCard>
         </StackPanel>
 
     </Grid>

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace FluentFin.Helpers;
 
@@ -15,8 +16,22 @@ internal static class NativeMethods
 		SetThreadExecutionState(ExecutionState.EsContinuous);
 	}
 
+	public static bool IsAppForeground()
+	{
+		var fg = GetForegroundWindow();
+		if (fg == IntPtr.Zero) return false;
+		GetWindowThreadProcessId(fg, out uint pid);
+		return pid == (uint)Process.GetCurrentProcess().Id;
+	}
+
 	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	private static extern ExecutionState SetThreadExecutionState(ExecutionState esFlags);
+
+	[DllImport("user32.dll")]
+	private static extern IntPtr GetForegroundWindow();
+
+	[DllImport("user32.dll")]
+	private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
 	[Flags]
 	private enum ExecutionState : uint

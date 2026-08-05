@@ -1,7 +1,7 @@
 using System.Reactive.Linq;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml.Controls;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 
 namespace FluentFin.Controls;
@@ -19,7 +19,7 @@ public sealed partial class TomatoMeter : UserControl
 		InitializeComponent();
 
 		this.WhenAnyValue(x => x.Rating)
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Select(x => x > 60 ? TomatoMeterBadge.Fresh : TomatoMeterBadge.Rotten)
 			.Subscribe(badge => Badge = badge);
 	}

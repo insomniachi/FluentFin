@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -7,7 +8,7 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -57,7 +58,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		webSocketMessages
 			.Select(x => x as UserDataChangeMessage)
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(async msg =>
 			{
 				foreach (var item in msg.Data?.UserDataList ?? [])

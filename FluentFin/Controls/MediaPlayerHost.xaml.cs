@@ -13,7 +13,7 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 
 namespace FluentFin.Controls;
@@ -65,7 +65,7 @@ public sealed partial class MediaPlayerHost : UserControl
 
 		this.WhenAnyValue(x => x.MediaPlayerType)
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(type =>
 			{
 				if (RootGrid.Children.Count > 1)

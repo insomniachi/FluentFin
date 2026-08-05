@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Services;
 
@@ -64,7 +65,7 @@ public class ContentDialogService : IContentDialogService
 
 		if (timeout is not null)
 		{
-			Observable.Timer(timeout.Value).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => dialog.Hide());
+			Observable.Timer(timeout.Value).ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(_ => dialog.Hide());
 		}
 
 		await dialog.ShowAsync();

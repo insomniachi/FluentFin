@@ -3,7 +3,7 @@ using FluentFin.Contracts.Services;
 using FluentFin.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using Windows.System;
 
 namespace FluentFin.Views;
@@ -26,7 +26,7 @@ public sealed partial class ShellPage : Page
 		ViewModel.WhenAnyValue(x => x.Selected)
 			.WhereNotNull()
 			.Where(x => x is NavigationViewItem)
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(item =>
 			{
 				NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => x.Content == ((NavigationViewItem)item).Content);

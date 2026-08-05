@@ -4,7 +4,7 @@ using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 namespace FluentFin.Behaviors;
 
 public partial class GlobalSearchBoxBehavior : Behavior<AutoSuggestBox>

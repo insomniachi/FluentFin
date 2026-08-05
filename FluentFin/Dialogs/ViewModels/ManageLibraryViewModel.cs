@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DevWinUI;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Dialogs.ViewModels;
 
@@ -130,7 +130,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 			.WhereNotNull()
 			.SelectMany(type => jellyfinClient.GetAvailableInfo(type!.Value, true))
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(value =>
 			{
 				if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)
@@ -285,7 +285,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 
 		options.SubtitleFetcherOrder = [.. SubtitleFetchers.Select(x => x.Name)];
 		options.DisabledSubtitleFetchers = [.. SubtitleFetchers.Where(x => !x.IsSelected).Select(x => x.Name)];
-		options.SubtitleDownloadLanguages = [.. SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName)];
+		options.SubtitleDownloadLanguages = [.. SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName ?? "xxx")];
 
 		await jellyfinClient.SaveLibraryOptions(Guid.Parse(_info.ItemId), options);
 	}

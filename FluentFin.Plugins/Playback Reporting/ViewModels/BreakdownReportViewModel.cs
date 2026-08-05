@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using ScottPlot;
 using ScottPlot.WinUI;
 
@@ -30,7 +30,7 @@ public partial class BreakdownReportViewModel : ObservableObject, INavigationAwa
 	{
 		this.WhenAnyValue(x => x.EndDate, x => x.NumberOfWeeks)
 			.Select(x => new { EndDate = x.Item1, Days = x.Item2 * 7 })
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Do(_ => Plots.Clear())
 			.Subscribe(async x =>
 			{

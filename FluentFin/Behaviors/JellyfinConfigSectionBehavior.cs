@@ -7,7 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.Xaml.Interactivity;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Behaviors;
 
@@ -20,7 +20,7 @@ public partial class JellyfinConfigSectionBehavior : Behavior<StackPanel>
 	{
 		this.WhenAnyValue(x => x.Items)
 			.Where(x => x is { Count: > 0 })
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(CreateItems);
 	}
 

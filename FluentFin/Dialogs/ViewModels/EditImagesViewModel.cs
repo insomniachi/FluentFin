@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Dialogs.ViewModels;
 
@@ -75,7 +75,7 @@ public partial class EditImagesViewModel(IJellyfinClient jellyfinClient) : Obser
 
 		this.WhenAnyValue(x => x.SelectedProvider)
 			.Where(x => x is { SupportedImages.Count: > 0 })
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(provider =>
 			{
 				var newTypes = provider!.SupportedImages!.Except(ImageTypes).ToList();

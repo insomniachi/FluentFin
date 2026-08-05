@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using ReactiveUI.Primitives.Signals;
 using Serilog;
 using Windows.ApplicationModel;
 
@@ -108,9 +109,9 @@ public partial class App : Application
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton(knownFolders);
 			services.AddSingleton<ITaskBarProgress, TaskBarProgress>();
-			services.AddSingleton<Subject<IInboundSocketMessage>>();
-			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
-			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
+			services.AddSingleton<Signal<IInboundSocketMessage>>();
+			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Signal<IInboundSocketMessage>>());
+			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Signal<IInboundSocketMessage>>());
 
 
 			// Commands
@@ -256,13 +257,11 @@ public partial class App : Application
 		var location = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, "FFMpeg");
 		FlyleafLib.Engine.Start(new FlyleafLib.EngineConfig()
 		{
-			FFmpegDevices = false,    // Prevents loading avdevice/avfilter dll files. Enable it only if you plan to use dshow/gdigrab etc.
 			FFmpegPath = location ?? "FFmpeg",
 			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Quiet,
 			LogLevel = FlyleafLib.LogLevel.Quiet,
 			UIRefresh = true,    // Required for Activity, BufferedDuration, Stats in combination with Config.Player.Stats = true
 			UIRefreshInterval = 250,      // How often (in ms) to notify the UI
-			UICurTimePerSecond = true,  // Whether to notify UI for CurTime only when it's second changed or by UIRefreshInterval
 		});
 	}
 }

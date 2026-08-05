@@ -10,7 +10,7 @@ using FluentFin.Helpers;
 using FluentFin.Services;
 using FluentFin.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Core.ViewModels;
 
@@ -32,7 +32,7 @@ public partial class SelectServerViewModel(ISettings settings,
 	private async Task DetectServers()
 	{
 		IsDetecting = true;
-		await ServerDiscovery.DiscoverServersAsync(ServerDiscovered, () => RxApp.MainThreadScheduler.Schedule(() => IsDetecting = false));
+		await ServerDiscovery.DiscoverServersAsync(ServerDiscovered, () => RxSchedulers.MainThreadScheduler.Schedule(() => IsDetecting = false));
 	}
 
 	[RelayCommand]
@@ -76,7 +76,7 @@ public partial class SelectServerViewModel(ISettings settings,
 
 		if (!Servers.Any(x => x.Id == info.Id))
 		{
-			RxApp.MainThreadScheduler.Schedule(() =>
+			RxSchedulers.MainThreadScheduler.Schedule(() =>
 			{
 				Servers.Add(server);
 				HasServers = true;
@@ -98,7 +98,7 @@ public partial class SelectServerViewModel(ISettings settings,
 
 		if (!Servers.Any(x => x.Id == info.Id))
 		{
-			RxApp.MainThreadScheduler.Schedule(() =>
+			RxSchedulers.MainThreadScheduler.Schedule(() =>
 			{
 				Servers.Add(server);
 				HasServers = true;

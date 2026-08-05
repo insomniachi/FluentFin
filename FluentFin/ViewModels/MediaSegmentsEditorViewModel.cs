@@ -7,7 +7,7 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Settings;
 using Jellyfin.Sdk.Generated.Models;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.ViewModels;
 
@@ -60,7 +60,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 		this.WhenAnyValue(x => x.MediaPlayer)
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(mp =>
 			{
 				mp.PositionChanged

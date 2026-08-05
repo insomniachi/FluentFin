@@ -7,7 +7,7 @@ using FluentFin.Core.Contracts.Services;
 using FlyleafLib.Controls.WinUI;
 using FlyleafLib.MediaPlayer;
 using Microsoft.UI.Xaml.Controls;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.MediaPlayers;
 
@@ -26,7 +26,7 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 		_mp.Audio.Streams
 		   .ToObservableChangeSet()
 		   .Throttle(TimeSpan.FromSeconds(1))
-		   .ObserveOn(RxApp.MainThreadScheduler)
+		   .ObserveOn(RxSchedulers.MainThreadScheduler)
 		   .Subscribe(_ =>
 		   {
 			   _audiosFlyoutButton.Flyout = Converters.Converters.GetAudiosFlyout(this, _defaultAudioIndex);

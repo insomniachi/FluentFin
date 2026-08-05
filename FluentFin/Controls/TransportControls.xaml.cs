@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using ReactiveMarbles.ObservableEvents;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 
 namespace FluentFin.Controls;
@@ -66,12 +66,12 @@ public sealed partial class TransportControls : UserControl
 		}
 
 		TimeSpan duration = TimeSpan.Zero;
-		controller.DurationChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		controller.DurationChanged.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(e =>
 		{
 			tc.TimeSlider.Maximum = e.TotalMilliseconds;
 			duration = e;
 		});
-		controller.PositionChanged.ObserveOn(RxApp.MainThreadScheduler).Subscribe(e =>
+		controller.PositionChanged.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(e =>
 		{
 			try
 			{
@@ -81,14 +81,14 @@ public sealed partial class TransportControls : UserControl
 			}
 			catch { }
 		});
-		controller.Playing.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
-		controller.Paused.ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
+		controller.Playing.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._pauseSymbol);
+		controller.Paused.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(_ => tc.PlayPauseButton.Content = tc._playSymbol);
 		controller.VolumeChanged
 			.Where(e => e >= 0)
 			.Throttle(TimeSpan.FromSeconds(200))
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(e => tc.VolumeSlider.Value = Math.Floor(e));
-		controller.SubtitleText.ObserveOn(RxApp.MainThreadScheduler).Subscribe(text => tc.Subtitles.Text = text);
+		controller.SubtitleText.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(text => tc.Subtitles.Text = text);
 	}
 
 	public IObservable<Unit> OnDynamicSkip { get; }
@@ -125,7 +125,7 @@ public sealed partial class TransportControls : UserControl
 			});
 
 		_onPointerMoved
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(e =>
 			{
 				const int teachingTipMargin = 12;

@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,7 +14,7 @@ using FluentFin.Helpers;
 using FluentFin.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.ViewModels;
 
@@ -92,7 +93,7 @@ public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthe
 			.Where(_ => Server is not null)
 			.SelectMany(_ => jellyfinAuthenticator.CheckQuickConnectStatus(Server, response))
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(result =>
 			{
 				if (result.Authenticated == true)

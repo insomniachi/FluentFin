@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Plugins.Playback_Reporting.ViewModels;
 
@@ -29,7 +29,7 @@ public partial class UsersReportViewModel : ObservableObject, INavigationAware
 		this.WhenAnyValue(x => x.EndDate, x => x.NumberOfWeeks)
 			.Select(x => new { EndDate = x.Item1, Days = x.Item2 * 7 })
 			.SelectMany(x => PlaybackReportingHelper.GetUserActivity(x.Days, x.EndDate))
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(activity => Activities = activity);
 
 		return Task.CompletedTask;

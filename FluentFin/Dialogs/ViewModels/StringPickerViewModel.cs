@@ -1,6 +1,6 @@
 ﻿using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Dialogs.ViewModels;
 

@@ -9,7 +9,7 @@ using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace FluentFin.Dialogs.ViewModels;
 

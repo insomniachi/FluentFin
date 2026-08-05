@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentFin.Contracts.ViewModels;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using ScottPlot;
 using ScottPlot.WinUI;
 
@@ -31,7 +31,7 @@ public partial class SessionDurationReportViewModel : ObservableObject, INavigat
 			.Select(x => new { EndDate = x.Item1, Days = x.Item2 * 7 })
 			.SelectMany(x => PlaybackReportingHelper.GetDurationHistogram(x.Days, x.EndDate))
 			.Where(x => x.Count > 0)
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(UpdatePlot);
 
 		return Task.CompletedTask;

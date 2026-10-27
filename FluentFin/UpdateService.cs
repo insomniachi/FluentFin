@@ -3,6 +3,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using FluentFin.Core;
 using FluentFin.Services;
@@ -70,6 +71,14 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		return versionInfo;
 	}
 
+	// arm64 installers carry "arm64" in the file name; the x64 installer does not
+	private static string SelectAssetUrl(JsonArray assets)
+	{
+		var wantArm64 = RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+		var urls = assets.Select(a => (string)a["browser_download_url"].AsValue()).ToList();
+		return urls.FirstOrDefault(u => u.Contains("arm64", StringComparison.OrdinalIgnoreCase) == wantArm64) ?? urls[0];
+	}
+
 	private async Task<VersionInfo> CheckForUpdate()
 	{
 		var json = await TryGetStreamAsync();
@@ -82,7 +91,7 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		var versionInfo = new VersionInfo()
 		{
 			Version = new Version(jsonNode["tag_name"].ToString()),
-			Url = (string)jsonNode["assets"][0]["browser_download_url"].AsValue(),
+			Url = SelectAssetUrl(jsonNode["assets"].AsArray()),
 			Body = jsonNode?["body"]?.ToString()
 		};
 

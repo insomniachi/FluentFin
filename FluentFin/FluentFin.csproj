@@ -28,6 +28,13 @@
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<AppInstallerUri>D:\Test\</AppInstallerUri>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
+		<Platform>arm64</Platform>
+		<FFmpegDir>FFMpeg-arm64</FFmpegDir>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(FFmpegDir)' == ''">
+		<FFmpegDir>FFMpeg</FFmpegDir>
+	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
 	  <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
@@ -58,6 +65,7 @@
 		<PackageReference Include="Scrutor" Version="7.0.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+		<!-- copies libvlc\win-x64 / win-x86 / win-arm64 depending on $(Platform) -->
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.24" />
 		<PackageReference Include="WinUIEx" Version="2.9.3" />
 		<PackageReference Include="DevWinUI" Version="10.8.0" />
@@ -91,7 +99,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="FFmpeg\*.dll">
+	  <!-- native FFmpeg for the target architecture; arm64 binaries are fetched at build time into FFMpeg-arm64 -->
+	  <Content Include="$(FFmpegDir)\*.dll" Link="FFMpeg\%(Filename)%(Extension)">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

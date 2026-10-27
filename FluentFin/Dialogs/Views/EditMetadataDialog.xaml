@@ -28,191 +28,256 @@
 
     <ContentDialog.Resources>
         <c:NullableDoubleToValueOrDefaultConverter x:Key="NullableDoubleConverter" />
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        </Style>
+        <Style x:Key="SectionHeaderStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="4,0,0,8" />
+        </Style>
     </ContentDialog.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Hidden">
-        <StackPanel Spacing="20">
+    <ScrollViewer Margin="0,0,-12,0" Padding="0,0,12,0">
+        <StackPanel Width="720" Spacing="20">
             <StackPanel.Resources>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Spacing" Value="5" />
+                <Style TargetType="TextBox">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
                 </Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="FontWeight" Value="Bold" />
+                <Style TargetType="ComboBox">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+                <Style TargetType="DatePicker">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+                <Style TargetType="NumberBox">
+                    <Setter Property="SpinButtonPlacementMode" Value="Compact" />
                 </Style>
             </StackPanel.Resources>
-            <StackPanel>
-                <TextBlock Text="Path" />
-                <TextBox IsReadOnly="True" Text="{x:Bind ViewModel.Path, Mode=OneWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Title" />
-                <TextBox Text="{x:Bind ViewModel.Title, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Original title" />
-                <TextBox Text="{x:Bind ViewModel.OriginalTitle, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Sort title" />
-                <TextBox Text="{x:Bind ViewModel.SortTitle, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Date added" />
-                <DatePicker SelectedDate="{x:Bind ViewModel.DateAdded, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Status" />
-                <ComboBox
-                    HorizontalAlignment="Stretch"
-                    ItemsSource="{x:Bind ViewModel.StatusValues, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.Status, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Community rating" />
-                <NumberBox
-                    LargeChange="0.5"
-                    SmallChange="0.1"
-                    SpinButtonPlacementMode="Inline"
-                    Value="{x:Bind ViewModel.CommunityRating, Mode=TwoWay, Converter={StaticResource NullableDoubleConverter}}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Overview" />
-                <TextBox
-                    MaxHeight="90"
-                    AcceptsReturn="True"
-                    Text="{x:Bind ViewModel.Overview, Mode=TwoWay}"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Release date" />
-                <DatePicker SelectedDate="{x:Bind ViewModel.ReleaseDate, Mode=TwoWay}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Year" />
-                <NumberBox
-                    SmallChange="1"
-                    SpinButtonPlacementMode="Inline"
-                    Value="{x:Bind ViewModel.Year, Mode=TwoWay, Converter={StaticResource NullableDoubleConverter}}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="End date" />
-                <DatePicker SelectedDate="{x:Bind ViewModel.EndDate, Mode=TwoWay}" />
-            </StackPanel>
-            <Grid ColumnSpacing="20" RowSpacing="20">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0">
-                    <TextBlock Text="Parental rating" />
-                    <ComboBox
-                        HorizontalAlignment="Stretch"
-                        ItemsSource="{x:Bind ViewModel.RatingValues, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.ParentalRating, Mode=TwoWay}" />
-                </StackPanel>
-                <StackPanel Grid.Row="0" Grid.Column="1">
-                    <TextBlock Text="Custom ratings" />
-                    <ComboBox
-                        HorizontalAlignment="Stretch"
-                        ItemsSource="{x:Bind ViewModel.RatingValues, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.CustomRating, Mode=TwoWay}" />
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="0">
-                    <TextBlock Text="Original aspect ratio" />
-                    <TextBox Text="{x:Bind ViewModel.OriginalAspectRatio, Mode=TwoWay}" />
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="1">
-                    <TextBlock Text="3D format" />
-                    <ComboBox
-                        HorizontalAlignment="Stretch"
-                        ItemsSource="{x:Bind ViewModel.Video3DFormatValues, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.Video3DFormat, Mode=TwoWay}" />
-                </StackPanel>
-            </Grid>
 
-            <TextBlock
-                Margin="{StaticResource XSmallTopMargin}"
-                Style="{ThemeResource SubheaderTextBlockStyle}"
-                Text="External IDs" />
-            <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds}">
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="vm:KeyValueViewModel">
-                        <StackPanel>
-                            <TextBlock>
-                                <Run Text="{x:Bind DisplayName}" />
-                                <Run Text="{x:Bind Type}" />
-                                <Run Text="Id" />
-                            </TextBlock>
-                            <TextBox Text="{x:Bind Value, Mode=TwoWay}" />
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="General" />
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <Grid ColumnSpacing="16" RowSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBox
+                            Grid.ColumnSpan="2"
+                            Header="Path"
+                            IsReadOnly="True"
+                            Text="{x:Bind ViewModel.Path, Mode=OneWay}" />
+                        <TextBox
+                            Grid.Row="1"
+                            Header="Title"
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay}" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="Original title"
+                            Text="{x:Bind ViewModel.OriginalTitle, Mode=TwoWay}" />
+                        <TextBox
+                            Grid.Row="2"
+                            Header="Sort title"
+                            Text="{x:Bind ViewModel.SortTitle, Mode=TwoWay}" />
+                        <ComboBox
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Header="Status"
+                            ItemsSource="{x:Bind ViewModel.StatusValues, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.Status, Mode=TwoWay}" />
+                        <TextBox
+                            Grid.Row="3"
+                            Grid.ColumnSpan="2"
+                            MinHeight="96"
+                            MaxHeight="180"
+                            AcceptsReturn="True"
+                            Header="Overview"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            Text="{x:Bind ViewModel.Overview, Mode=TwoWay}"
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Dates" />
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <Grid ColumnSpacing="16" RowSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <DatePicker Header="Release date" SelectedDate="{x:Bind ViewModel.ReleaseDate, Mode=TwoWay}" />
+                        <NumberBox
+                            Grid.Column="1"
+                            Header="Year"
+                            SmallChange="1"
+                            Value="{x:Bind ViewModel.Year, Mode=TwoWay, Converter={StaticResource NullableDoubleConverter}}" />
+                        <DatePicker
+                            Grid.Row="1"
+                            Header="Date added"
+                            SelectedDate="{x:Bind ViewModel.DateAdded, Mode=TwoWay}" />
+                        <DatePicker
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="End date"
+                            SelectedDate="{x:Bind ViewModel.EndDate, Mode=TwoWay}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Ratings &amp; format" />
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <Grid ColumnSpacing="16" RowSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <NumberBox
+                            Header="Community rating"
+                            LargeChange="0.5"
+                            SmallChange="0.1"
+                            Value="{x:Bind ViewModel.CommunityRating, Mode=TwoWay, Converter={StaticResource NullableDoubleConverter}}" />
+                        <ComboBox
+                            Grid.Column="1"
+                            Header="Parental rating"
+                            ItemsSource="{x:Bind ViewModel.RatingValues, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.ParentalRating, Mode=TwoWay}" />
+                        <ComboBox
+                            Grid.Row="1"
+                            Header="Custom rating"
+                            ItemsSource="{x:Bind ViewModel.RatingValues, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.CustomRating, Mode=TwoWay}" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="Original aspect ratio"
+                            Text="{x:Bind ViewModel.OriginalAspectRatio, Mode=TwoWay}" />
+                        <ComboBox
+                            Grid.Row="2"
+                            Header="3D format"
+                            ItemsSource="{x:Bind ViewModel.Video3DFormatValues, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.Video3DFormat, Mode=TwoWay}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="External IDs" />
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="vm:KeyValueViewModel">
+                                <TextBox Text="{x:Bind Value, Mode=TwoWay}">
+                                    <TextBox.Header>
+                                        <TextBlock>
+                                            <Run Text="{x:Bind DisplayName}" />
+                                            <Run Text="{x:Bind Type}" />
+                                            <Run Text="Id" />
+                                        </TextBlock>
+                                    </TextBox.Header>
+                                </TextBox>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout
+                                ItemsStretch="Fill"
+                                MaximumRowsOrColumns="2"
+                                MinColumnSpacing="16"
+                                MinItemWidth="300"
+                                MinRowSpacing="16" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </Border>
+            </StackPanel>
+
+            <StackPanel>
+                <Grid Margin="4,0,0,8">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="Genres" />
+                    <Button
+                        HorizontalAlignment="Right"
+                        AutomationProperties.Name="Add genre"
+                        ToolTipService.ToolTip="Add genre">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <SymbolIcon Symbol="Add" />
+                            <TextBlock Text="Add" />
                         </StackPanel>
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-                <ItemsRepeater.Layout>
-                    <StackLayout Spacing="20" />
-                </ItemsRepeater.Layout>
-            </ItemsRepeater>
-
-            <StackPanel
-                Margin="{StaticResource XSmallTopMargin}"
-                Orientation="Horizontal"
-                Spacing="10">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Style="{ThemeResource SubheaderTextBlockStyle}"
-                    Text="Genres" />
-                <Button VerticalAlignment="Center">
-                    <SymbolIcon Symbol="Add" />
-                    <Button.Flyout>
-                        <Flyout ShowMode="TransientWithDismissOnPointerMoveAway">
-                            <StackPanel Spacing="20">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Genre" />
-                                    <TextBox x:Name="AddGenreTextBox" MinWidth="200" />
+                        <Button.Flyout>
+                            <Flyout>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBox
+                                        x:Name="AddGenreTextBox"
+                                        MinWidth="200"
+                                        PlaceholderText="Genre" />
+                                    <Button
+                                        Command="{x:Bind ViewModel.AddGenreCommand}"
+                                        CommandParameter="{x:Bind AddGenreTextBox.Text, Mode=OneWay}"
+                                        Content="Add"
+                                        Style="{StaticResource AccentButtonStyle}" />
                                 </StackPanel>
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{x:Bind ViewModel.AddGenreCommand}"
-                                    CommandParameter="{x:Bind AddGenreTextBox.Text, Mode=OneWay}"
-                                    Content="Add" />
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+                <Border Style="{StaticResource SectionCardStyle}">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Border
+                                    Padding="12,2,2,2"
+                                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="14">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind}" />
+                                        <Button
+                                            Width="24"
+                                            Height="24"
+                                            Padding="0"
+                                            AutomationProperties.Name="Remove genre"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Command="{Binding ElementName=Page, Path=ViewModel.DeleteGenreCommand}"
+                                            CommandParameter="{x:Bind}"
+                                            CornerRadius="12">
+                                            <FontIcon FontSize="10" Glyph="&#xE711;" />
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ctk:WrapPanel HorizontalSpacing="8" VerticalSpacing="8" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Border>
             </StackPanel>
-            <ItemsControl ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{x:Bind}" />
-                            <Button
-                                Grid.Column="1"
-                                Command="{Binding ElementName=Page, Path=ViewModel.DeleteGenreCommand}"
-                                CommandParameter="{x:Bind}">
-                                <SymbolIcon Symbol="Delete" />
-                            </Button>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="10">
-                            <StackPanel.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <AddDeleteThemeTransition />
-                                </TransitionCollection>
-                            </StackPanel.ChildrenTransitions>
-                        </StackPanel>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
         </StackPanel>
     </ScrollViewer>
 </ContentDialog>

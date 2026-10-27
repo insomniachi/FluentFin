@@ -12,14 +12,11 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
-using FluentFin.Core.WebSockets;
-using FluentFin.Core.WebSockets.Messages;
 using FluentFin.Helpers;
 using FluentFin.Services;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
-using PlayQueueUpdate = FluentFin.Core.WebSockets.Messages.PlayQueueUpdate;
-using SyncPlayCommandMessage = FluentFin.Core.WebSockets.SyncPlayCommandMessage;
+using Jellyfin.Sdk.WebSockets;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
@@ -28,7 +25,7 @@ namespace FluentFin.ViewModels;
 public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 							TrickplayViewModel trickplayViewModel,
 							ILogger<VideoPlayerViewModel> logger,
-							IObservable<IInboundSocketMessage> webSocketMessages,
+							IObservable<IOutboundWebSocketMessage> webSocketMessages,
 							INavigationService navigationService,
 							ISettings settings,
 							ITaskBarProgress taskBarProgress) : ObservableObject, INavigationAware
@@ -38,7 +35,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	private KeyboardMediaPlayerController? _keyboardController;
 	private PlayQueueUpdate? _playQueueUpdate;
 	private TimeSpan _duration;
-	private SyncPlaySendCommand? _previousCommand;
+	private SendCommand? _previousCommand;
 
 
 	public TrickplayViewModel TrickplayViewModel { get; } = trickplayViewModel;
@@ -161,12 +158,12 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 	private void InitializeForSyncPlay(PlayQueueUpdate pqu)
 	{
-		if (pqu.PlayingItemIndex < 0)
+		if (pqu.PlayingItemIndex is not >= 0)
 		{
 			return;
 		}
 
-		Playlist = PlaylistViewModel.FromSyncPlay(pqu.Playlist);
+		Playlist = PlaylistViewModel.FromSyncPlay(pqu.Playlist ?? []);
 	}
 
 	[RelayCommand]
@@ -367,7 +364,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		  {
 			  When = TimeProvider.System.GetUtcNow(),
 			  IsPlaying = mp.IsPlaying,
-			  PlaylistItemId = _playQueueUpdate!.Playlist[_playQueueUpdate.PlayingItemIndex].PlaylistItemId,
+			  PlaylistItemId = _playQueueUpdate!.Playlist![_playQueueUpdate.PlayingItemIndex ?? 0].PlaylistItemId,
 			  PositionTicks = mp.Position.Ticks
 		  }).ToObservable())
 		  .Subscribe();
@@ -386,11 +383,11 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 				switch (message)
 				{
-					case PlayStateMessage { Data.Command: PlaystateCommand.PlayPause }:
+					case PlaystateMessage { Data.Command: PlaystateRequest_Command.PlayPause }:
 						await MediaPlayer.TogglePlayPlause(JellyfinClient);
 						await UpdateStatus();
 						break;
-					case PlayStateMessage { Data.Command: PlaystateCommand.Stop }:
+					case PlaystateMessage { Data.Command: PlaystateRequest_Command.Stop }:
 						MediaPlayer.Stop();
 						await JellyfinClient.Stop();
 						navigationService.NavigateTo<HomeViewModel>(new());
@@ -404,16 +401,16 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 						switch (syncPlay.Data.Command)
 						{
-							case SendCommandType.Pause:
+							case SendCommand_Command.Pause:
 								await SchedulePause(syncPlay.Data, MediaPlayer);
 								break;
-							case SendCommandType.Unpause:
+							case SendCommand_Command.Unpause:
 								await SchedulePlay(syncPlay.Data, MediaPlayer);
 								break;
-							case SendCommandType.Seek:
+							case SendCommand_Command.Seek:
 								await SchedulePause(syncPlay.Data, MediaPlayer);
 								break;
-							case SendCommandType.Stop:
+							case SendCommand_Command.Stop:
 								MediaPlayer.Stop();
 								break;
 						}
@@ -424,17 +421,16 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			});
 	}
 
-	private async Task SchedulePause(SyncPlaySendCommand command, IMediaPlayerController mp)
+	private async Task SchedulePause(SendCommand command, IMediaPlayerController mp)
 	{
-		if (command is null)
+		if (command is not { When: { } commandTime, PositionTicks: { } positionTicks })
 		{
 			return;
 		}
 
 		var currentTime = await JellyfinClient.SyncTime();
-		var commandTime = command.When;
 
-		mp.SeekTo(new TimeSpan(command.PositionTicks));
+		mp.SeekTo(new TimeSpan(positionTicks));
 		if (commandTime > currentTime)
 		{
 			await Task.Delay(commandTime - currentTime);
@@ -446,25 +442,24 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		}
 	}
 
-	private async Task SchedulePlay(SyncPlaySendCommand command, IMediaPlayerController mp)
+	private async Task SchedulePlay(SendCommand command, IMediaPlayerController mp)
 	{
-		if (command is null)
+		if (command is not { When: { } commandTime, PositionTicks: { } positionTicks })
 		{
 			return;
 		}
 
 		var currentTime = await JellyfinClient.SyncTime();
-		var commandTime = command.When;
 
 		if (commandTime > currentTime)
 		{
-			mp.SeekTo(new TimeSpan(command.PositionTicks));
+			mp.SeekTo(new TimeSpan(positionTicks));
 			await Task.Delay(commandTime - currentTime);
 			mp.Play();
 		}
 		else
 		{
-			var serverPosition = command.PositionTicks + (currentTime - commandTime).Ticks;
+			var serverPosition = positionTicks + (currentTime - commandTime).Ticks;
 			mp.SeekTo(new TimeSpan(serverPosition));
 			mp.Play();
 		}

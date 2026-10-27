@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using DeviceId;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.WebSockets;
+using Jellyfin.Sdk.WebSockets;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.Logging;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace FluentFin.Core.Services;
 
 public partial class JellyfinClient(ILogger<JellyfinClient> logger,
-									IObserver<IInboundSocketMessage> socketMessageSender,
+									IObserver<IOutboundWebSocketMessage> socketMessageSender,
 									IJumpListService jumpListService,
 									IDeviceProfileFactory deviceProfileFactory) : IJellyfinClient
 {
@@ -57,7 +57,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		});
 
 		await GetPlugins();
-		await StartWebSocketConnection(CancellationToken.None);
+		StartWebSocketConnection();
 
 		var libaries = new List<BaseItemDto>();
 		await foreach (var item in GetUserLibraries())

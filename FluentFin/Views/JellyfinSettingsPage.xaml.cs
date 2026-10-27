@@ -5,7 +5,7 @@ using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.ViewModels;
-using FluentFin.Core.WebSockets;
+using FluentFin.Helpers;
 using FluentFin.UI.Core.Contracts.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -68,12 +68,11 @@ public partial class JellyfinSettingsViewModel : ObservableObject, INavigationAw
 
 	public async Task OnNavigatedFrom()
 	{
-		if (Selected is not { Content: "Dashboard" })
+		// leaving settings doesn't navigate the inner frame, so the dashboard won't stop its sessions feed on its own
+		if (_navigationService.Frame?.GetPageViewModel() is DashboardViewModel dashboard)
 		{
-			return;
+			await dashboard.OnNavigatedFrom();
 		}
-
-		await _jellyfinClient.SendWebSocketMessageWithoutData<SessionsStopMessage>();
 	}
 
 	public Task OnNavigatedTo(object parameter)

@@ -4,9 +4,7 @@ using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.WebSockets.Messages;
 using Jellyfin.Sdk.Generated.Models;
-using SyncPlayQueueItem = FluentFin.Core.WebSockets.Messages.SyncPlayQueueItem;
 using ReactiveUI;
 
 namespace FluentFin.ViewModels;
@@ -138,7 +136,7 @@ public partial class PlaylistViewModel : ObservableObject
 		{
 			playlist.Items.Add(new PlaylistItem
 			{
-				Title = item.ItemId.ToString(),
+				Title = $"{item.ItemId}",
 				Dto = new BaseItemDto
 				{
 					Id = item.ItemId

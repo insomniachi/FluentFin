@@ -6,14 +6,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
+using Jellyfin.Sdk.WebSockets;
 using ReactiveUI;
 
 namespace FluentFin.Core.ViewModels;
 
 public partial class HomeViewModel(IJellyfinClient jellyfinClient,
-								   IObservable<IInboundSocketMessage> webSocketMessages,
+								   IObservable<IOutboundWebSocketMessage> webSocketMessages,
 								   GlobalCommands commands) : ObservableObject, INavigationAware
 {
 	private readonly CompositeDisposable _disposable = [];
@@ -56,7 +56,7 @@ public partial class HomeViewModel(IJellyfinClient jellyfinClient,
 		NextUpItems.CollectionChanged += (_, _) => HasNextUpItems = NextUpItems.Count > 0;
 
 		webSocketMessages
-			.Select(x => x as UserDataChangeMessage)
+			.Select(x => x as UserDataChangedMessage)
 			.WhereNotNull()
 			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(async msg =>

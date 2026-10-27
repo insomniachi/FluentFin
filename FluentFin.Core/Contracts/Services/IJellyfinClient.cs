@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using FluentFin.Core.Services;
-using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Items.Item.Refresh;
 using Jellyfin.Sdk.Generated.Library.VirtualFolders;
 using Jellyfin.Sdk.Generated.Models;
@@ -184,7 +183,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task Stop(string sessionId);
 
-		Task SendWebsocketMessage<T>(T message) where T: WebSocketMessage;
+		IObservable<T> ObserveWebSocket<T>() where T : class, Jellyfin.Sdk.WebSockets.IOutboundWebSocketMessage, new();
 
 		// SyncPlay
 		Task<List<GroupInfoDto>> GetSyncPlayGroups();
@@ -228,14 +227,5 @@ namespace FluentFin.Core.Contracts.Services
 	public class Metadata
 	{
 		public bool UseFileCreationTimeForDateAdded { get; set; }
-	}
-
-	public static class JellyfinClientExtensions
-	{
-		public static async Task SendWebSocketMessageWithoutData<T>(this IJellyfinClient client)
-			where T: WebSocketMessage, new()
-		{
-			await client.SendWebsocketMessage(new T());
-		}
 	}
 }

@@ -7,7 +7,7 @@ using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
 using FluentFin.Core.ViewModels;
-using FluentFin.Core.WebSockets;
+using Jellyfin.Sdk.WebSockets;
 using FluentFin.Dialogs;
 using FluentFin.Dialogs.UserInput;
 using FluentFin.Dialogs.ViewModels;
@@ -111,9 +111,9 @@ public partial class App : Application
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton(knownFolders);
 			services.AddSingleton<ITaskBarProgress, TaskBarProgress>();
-			services.AddSingleton<Subject<IInboundSocketMessage>>();
-			services.AddSingleton<IObservable<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
-			services.AddSingleton<IObserver<IInboundSocketMessage>>(sp => sp.GetRequiredService<Subject<IInboundSocketMessage>>());
+			services.AddSingleton<Subject<IOutboundWebSocketMessage>>();
+			services.AddSingleton<IObservable<IOutboundWebSocketMessage>>(sp => sp.GetRequiredService<Subject<IOutboundWebSocketMessage>>());
+			services.AddSingleton<IObserver<IOutboundWebSocketMessage>>(sp => sp.GetRequiredService<Subject<IOutboundWebSocketMessage>>());
 
 
 			// Commands

@@ -5,10 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
-using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
-using SessionsStartMessage = FluentFin.Core.WebSockets.SessionsStartMessage;
-using SessionsStopMessage = FluentFin.Core.WebSockets.SessionsStopMessage;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 
@@ -17,10 +14,10 @@ namespace FluentFin.Core.ViewModels;
 public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 										ITitleBarViewModel titleBarViewModel,
 										[FromKeyedServices(UserInputs.MessageToSession)]IUserInput<string> stringUserInput,
-										IContentDialogServiceCore contentDialogService,
-										IObservable<IInboundSocketMessage> webSocketMessages) : ObservableObject, INavigationAware
+										IContentDialogServiceCore contentDialogService) : ObservableObject, INavigationAware
 {
 	private string? _scanMediaLibraryTask;
+	private IDisposable? _sessionsSubscription;
 
 	[ObservableProperty]
 	public partial SystemInfo? SystemInfo { get; set; }
@@ -41,9 +38,12 @@ public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 	public partial string Version { get; set; } = Assembly.GetEntryAssembly()!.GetName().Version!.ToString();
 
 
-	public async Task OnNavigatedFrom()
+	public Task OnNavigatedFrom()
 	{
-		await jellyfinClient.SendWebSocketMessageWithoutData<SessionsStopMessage>();
+		// disposing the SDK subscription sends SessionsStop
+		_sessionsSubscription?.Dispose();
+		_sessionsSubscription = null;
+		return Task.CompletedTask;
 	}
 
 	public async Task OnNavigatedTo(object parameter)
@@ -71,14 +71,12 @@ public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 			OtherActivities = otherActivityResult.Items;
 		}
 
-		await jellyfinClient.SendWebsocketMessage(new SessionsStartMessage(TimeSpan.Zero, TimeSpan.FromSeconds(1.5)));
-		
 		var tasks = await jellyfinClient.GetScheduledTasks(true);
 
 		_scanMediaLibraryTask = tasks.FirstOrDefault(x => x.Name == "Scan Media Library")?.Id;
 
-		webSocketMessages
-			.OfType<SessionInfoMessage>()
+		_sessionsSubscription?.Dispose();
+		_sessionsSubscription = jellyfinClient.ObserveWebSocket<SessionsMessage>()
 			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Select(x => x.Data?.Where(x => x.Id != SessionInfo.SessionId) ?? [])
 			.Subscribe(sessions =>

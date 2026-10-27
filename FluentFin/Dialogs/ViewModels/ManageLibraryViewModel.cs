@@ -285,7 +285,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 
 		options.SubtitleFetcherOrder = [.. SubtitleFetchers.Select(x => x.Name)];
 		options.DisabledSubtitleFetchers = [.. SubtitleFetchers.Where(x => !x.IsSelected).Select(x => x.Name)];
-		options.SubtitleDownloadLanguages = [.. SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName)];
+		options.SubtitleDownloadLanguages = [.. SubtitleLanguages.Select(x => x.ThreeLetterISOLanguageName).OfType<string>()];
 
 		await jellyfinClient.SaveLibraryOptions(Guid.Parse(_info.ItemId), options);
 	}

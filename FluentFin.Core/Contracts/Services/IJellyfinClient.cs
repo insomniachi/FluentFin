@@ -125,6 +125,8 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<SystemInfo?> GetSystemInfo();
 
+		Task<SystemStorageDto?> GetSystemStorage();
+
 		Task<List<SessionInfoDto>> GetActiveSessions();
 
 		Task<ActivityLogEntryQueryResult?> GetActivities(DateTimeOffset minDate, bool hasUserId);

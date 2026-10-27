@@ -1,4 +1,4 @@
-﻿using Jellyfin.Sdk.Generated.Models;
+using Jellyfin.Sdk.Generated.Models;
 using Windows.Devices.Enumeration;
 using Windows.Media.Audio;
 using Windows.Media.Core;
@@ -491,8 +491,6 @@ public sealed class WmpDeviceProfileManager
 				Container = "oga",
 				Type = DirectPlayProfile_Type.Audio,
 			});
-
-		bool hlsBreakOnNonKeyFrames = false;
 		bool enableFmp4Hls = true; // TODO: check user setting: preferFmp4HlsContainer
 
 		profile.TranscodingProfiles.Add(
@@ -505,7 +503,6 @@ public sealed class WmpDeviceProfileManager
 				Protocol = TranscodingProfile_Protocol.Hls,
 				MaxAudioChannels = audioChannelCount.ToString(),
 				MinSegments = 1,
-				BreakOnNonKeyFrames = hlsBreakOnNonKeyFrames,
 				EnableAudioVbrEncoding = false // TODO: ??? !appSettings.disableVbrAudio()
 			});
 
@@ -632,7 +629,6 @@ public sealed class WmpDeviceProfileManager
 				Protocol = TranscodingProfile_Protocol.Hls,
 				MaxAudioChannels = audioChannelCount.ToString(),
 				MinSegments = 1,
-				BreakOnNonKeyFrames = hlsBreakOnNonKeyFrames,
 			});
 		}
 

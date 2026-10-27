@@ -151,6 +151,19 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		}
 	}
 
+	public async Task<SystemStorageDto?> GetSystemStorage()
+	{
+		try
+		{
+			return await _jellyfinApiClient.System.Info.Storage.GetAsync();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, @"Unhandled exception");
+			return null;
+		}
+	}
+
 	public async Task<List<SessionInfoDto>> GetActiveSessions()
 	{
 		try

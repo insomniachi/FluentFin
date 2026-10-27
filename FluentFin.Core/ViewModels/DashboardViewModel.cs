@@ -51,12 +51,13 @@ public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 		SystemInfo = await jellyfinClient.GetSystemInfo();
 		ActiveSessions = [..(await jellyfinClient.GetActiveSessions()).Where(x => x.Id != SessionInfo.SessionId).Select(CreateViewModel)];
 
+		var storage = await jellyfinClient.GetSystemStorage();
 		Paths = [
-			new NameValuePair { Name = "Cache", Value = SystemInfo?.CachePath },
-			new NameValuePair { Name = "Logs", Value = SystemInfo?.LogPath },
-			new NameValuePair { Name = "Metadata", Value = SystemInfo?.InternalMetadataPath },
-			new NameValuePair { Name = "Transcodes", Value = SystemInfo?.TranscodingTempPath },
-			new NameValuePair { Name = "Web", Value = SystemInfo?.WebPath },
+			new NameValuePair { Name = "Cache", Value = storage?.CacheFolder?.Path },
+			new NameValuePair { Name = "Logs", Value = storage?.LogFolder?.Path },
+			new NameValuePair { Name = "Metadata", Value = storage?.InternalMetadataFolder?.Path },
+			new NameValuePair { Name = "Transcodes", Value = storage?.TranscodingTempFolder?.Path },
+			new NameValuePair { Name = "Web", Value = storage?.WebFolder?.Path },
 		];
 
 		var userActivityResult = await jellyfinClient.GetActivities(TimeProvider.System.GetUtcNow().AddDays(-1), true);

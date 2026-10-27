@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Security.Authentication;
 using DeviceId;
 using FluentFin.Contracts.Services;
 using FluentFin.Core;
@@ -12,6 +13,7 @@ using Jellyfin.Sdk;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Kiota.Abstractions;
 
 namespace FluentFin.Services;
 
@@ -33,18 +35,28 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		}).URI;
 	}
 
-	public static async Task<PublicSystemInfo?> GetPublicInfo(string url)
+	public static async Task<(PublicSystemInfo? Info, string? Error)> GetPublicInfo(string url)
 	{
-		var client = GetClient(url);
 		try
 		{
-			return await client.System.Info.Public.GetAsync();
+			var client = GetClient(url);
+			return (await client.System.Info.Public.GetAsync(), null);
 		}
-		catch
+		catch (Exception ex)
 		{
-			return null;
+			return (null, DescribeFailure(ex, url));
 		}
 	}
+
+	private static string DescribeFailure(Exception ex, string url) => ex switch
+	{
+		ApiException { ResponseStatusCode: 401 } => "Incorrect username or password.",
+		HttpRequestException { InnerException: AuthenticationException } =>
+			$"The HTTPS certificate of {url} isn't trusted by Windows (for example a self-signed certificate). " +
+			"Use the server's http:// address, or add its certificate to the Windows certificate store.",
+		HttpRequestException => $"Unable to reach {url}: {ex.Message}",
+		_ => ex.Message
+	};
 
 	public async Task<QuickConnectResult?> GetQuickConnectCode(SavedServer server)
 	{
@@ -104,7 +116,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 
 	public async Task<bool> Authenticate(SavedServer server, SavedUser user)
 	{
-		var success = await Authenticate(server.GetServerUrl(), user.Username, user.Password.Unprotect(settingsService.GetEntropyBytes()));
+		var success = await Authenticate(server.GetServerUrl(), user.Username, user.Password.Unprotect(settingsService.GetEntropyBytes())) is null;
 
 		if (success)
 		{
@@ -115,11 +127,11 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		return success;
 	}
 
-	public async Task<bool> Authenticate(SavedServer server, string username, string password, bool remember)
+	public async Task<string?> Authenticate(SavedServer server, string username, string password, bool remember)
 	{
-		var success = await Authenticate(server.GetServerUrl(), username, password);
+		var error = await Authenticate(server.GetServerUrl(), username, password);
 
-		if (success)
+		if (error is null)
 		{
 			titleBarViewModel.CurrentServer = server;
 
@@ -147,34 +159,34 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 			setupNavigationService.NavigateTo<ShellViewModel>();
 		}
 
-		return success;
+		return error;
 	}
 
-	private async Task<bool> Authenticate(string url, string username, string password)
+	/// <returns><c>null</c> on success, otherwise a message describing why sign-in failed.</returns>
+	private async Task<string?> Authenticate(string url, string username, string password)
 	{
-
-		var client = GetClient(url);
-
 		try
 		{
+			var client = GetClient(url);
 			var auth = await client.Users.AuthenticateByName.PostAsync(new AuthenticateUserByName
 			{
 				Username = username,
 				Pw = password
 			});
 
-			if (auth is not null)
+			if (auth is null)
 			{
-				titleBarViewModel.User = auth.User;
-				await jellyfinClient.Initialize(url, auth);
+				return "The server returned no session.";
 			}
 
-			return auth is not null;
+			titleBarViewModel.User = auth.User;
+			await jellyfinClient.Initialize(url, auth);
+			return null;
 		}
 		catch (Exception ex)
 		{
-			logger.LogError(ex, "Unhandled exception");
-			return false;
+			logger.LogError(ex, "Sign-in to {Url} failed", url);
+			return DescribeFailure(ex, url);
 		}
 	}
 

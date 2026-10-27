@@ -38,11 +38,11 @@ public partial class SelectServerViewModel(ISettings settings,
 	[RelayCommand]
 	private async Task CheckConnectivityAndGoToLogin(string url)
 	{
-		var info = await JellyfinAuthenticationService.GetPublicInfo(url);
+		var (info, error) = await JellyfinAuthenticationService.GetPublicInfo(url);
 
 		if (info is null)
 		{
-			await contentDialogService.ShowMessage("Server not found", $"Unable to find a jellyfin server at {url}");
+			await contentDialogService.ShowMessage("Server not found", error ?? $"Unable to find a jellyfin server at {url}");
 			return;
 		}
 
@@ -58,16 +58,11 @@ public partial class SelectServerViewModel(ISettings settings,
 
 		if (isLocalAddress)
 		{
-			if (server.LocalNetworkNames.Count == 0)
-			{
-				// bug in version 10.10.5
-				if (info.Version == @"10.10.5")
-				{
-					server.LocalUrl = url;
-				}
-				server.LocalNetworkNames = [.. networkNames];
-				settings.SaveServerDetails();
-			}
+			// keep the address that just answered: the server's own LocalAddress can be unreachable from here
+			// (loopback like http://[::1]:8096, a container IP), which made every login fail
+			server.LocalUrl = url;
+			server.LocalNetworkNames = [.. networkNames];
+			settings.SaveServerDetails();
 		}
 		else
 		{

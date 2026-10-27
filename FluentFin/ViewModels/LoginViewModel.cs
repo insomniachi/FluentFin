@@ -53,11 +53,9 @@ public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthe
 			return;
 		}
 
-		var success = await jellyfinAuthenticator.Authenticate(Server, Username, Password, KeepMeLoggedIn);
-
-		if (!success)
+		if (await jellyfinAuthenticator.Authenticate(Server, Username, Password, KeepMeLoggedIn) is { } error)
 		{
-			await contentDialogService.ShowMessage("Authentication Failed", "Incorrect username or password");
+			await contentDialogService.ShowMessage("Authentication Failed", error);
 		}
 	}
 
@@ -73,6 +71,8 @@ public partial class LoginViewModel(IJellyfinAuthenticationService jellyfinAuthe
 
 		if (response is null)
 		{
+			await contentDialogService.ShowMessage("Quick Connect unavailable",
+				$"Couldn't start Quick Connect on {Server.GetServerUrl()}. It may be disabled on the server, or the server can't be reached at that address.");
 			return;
 		}
 

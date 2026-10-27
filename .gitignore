@@ -364,3 +364,9 @@ FodyWeavers.xsd
 
 # Installer output
 /Installer/Output
+
+# graphify knowledge graph (local)
+graphify-out/
+
+# Claude Code local settings
+.claude/settings.local.json

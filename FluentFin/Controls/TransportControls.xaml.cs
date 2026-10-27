@@ -17,6 +17,7 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
+	private bool _isTrickplayWanted;
 	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
 	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
@@ -97,6 +98,18 @@ public sealed partial class TransportControls : UserControl
 
 		OnDynamicSkip = DynamicSkipIntroButton.Events().Click.Select(_ => Unit.Default);
 
+		// TeachingTip flips IsOpen back if it changes while its open animation is playing, so retry the close until it sticks.
+		TrickplayTip.RegisterPropertyChangedCallback(TeachingTip.IsOpenProperty, async (_, _) =>
+		{
+			if (TrickplayTip.IsOpen && !_isTrickplayWanted)
+			{
+				await Task.Delay(100);
+				if (!_isTrickplayWanted)
+				{
+					TrickplayTip.IsOpen = false;
+				}
+			}
+		});
 
 		TimeSlider
 			.Events()
@@ -169,6 +182,7 @@ public sealed partial class TransportControls : UserControl
 
 		// Handled synchronously: deferring to the dispatcher let a queued move reopen the tip after PointerExited closed it.
 		const int teachingTipMargin = 12;
+		_isTrickplayWanted = true;
 		TrickplayTip.IsOpen = true;
 
 		var navView = this.FindAscendantOrSelf<NavigationView>();
@@ -185,13 +199,13 @@ public sealed partial class TransportControls : UserControl
 		TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 	}
 
-	private void TimeSlider_PointerExited(object sender, PointerRoutedEventArgs e)
-	{
-		TrickplayTip.IsOpen = false;
-	}
+	private void TimeSlider_PointerExited(object sender, PointerRoutedEventArgs e) => CloseTrickplay();
 
-	private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
+	private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e) => CloseTrickplay();
+
+	private void CloseTrickplay()
 	{
+		_isTrickplayWanted = false;
 		TrickplayTip.IsOpen = false;
 	}
 

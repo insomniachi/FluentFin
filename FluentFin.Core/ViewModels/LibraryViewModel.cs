@@ -22,8 +22,9 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		JellyfinClient = jellyfinClient;
 
 		var pageRequest = this.WhenAnyValue(x => x.SelectedPage).Select(page => new PageRequest(page + 1, 100));
+		// tie-break so equal keys (e.g. unrated, never played) keep a stable order across pages
 		var comparer = this.WhenAnyValue(x => x.SortBy, x => x.Order)
-						   .Select(GetComparer);
+						   .Select(x => (IComparer<BaseItemViewModel>)GetComparer(x).ThenByAscending(i => i.Name ?? "").ThenByAscending(i => i.Id ?? Guid.Empty));
 
 		var filter = this.WhenAnyValue(x => x.Filter)
 			.WhereNotNull()
@@ -34,8 +35,8 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		Filter.WhenAnyPropertyChanged()
 			.Subscribe(x =>
 			{
+				SelectedPage = 0;
 				_itemsCache.Refresh();
-				UpdateNumberOfPages();
 			});
 
 		_itemsCache
@@ -43,11 +44,11 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 			.RefCount()
 			.Filter(Filter.IsVisible)
 			.SortAndPage(comparer, pageRequest)
-			.Bind(out _items)
+			.Do(changes => NumberOfPages = changes.Context.Response.Pages)			.Bind(out _items)
 			.Subscribe();
 	}
 
-	private IComparer<BaseItemViewModel> GetComparer((ItemSortBy, SortOrder) sortDescription)
+	private SortExpressionComparer<BaseItemViewModel> GetComparer((ItemSortBy, SortOrder) sortDescription)
 	{
 		return sortDescription switch
 		{
@@ -107,10 +108,18 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 	public LibraryFilter Filter { get; set; } = new();
 
 	[RelayCommand]
-	public void UpdateSortBy(ItemSortBy sortBy) => SortBy = sortBy;
+	public void UpdateSortBy(ItemSortBy sortBy)
+	{
+		SelectedPage = 0;
+		SortBy = sortBy;
+	}
 
 	[RelayCommand]
-	public void UpdateSortOrder(SortOrder order) => Order = order;
+	public void UpdateSortOrder(SortOrder order)
+	{
+		SelectedPage = 0;
+		Order = order;
+	}
 
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
@@ -144,7 +153,6 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		}
 
 		_itemsCache.AddOrUpdate(result.Items.Select(BaseItemViewModel.FromDto));
-		UpdateNumberOfPages();
 
 		var filters = await JellyfinClient.GetFilters(dto);
 
@@ -159,13 +167,6 @@ public partial class LibraryViewModel : ObservableObject, INavigationAware
 		YearsSource = filters.Years?.Where(x => x.HasValue).Select(x => x!.Value.ToString()).ToList() ?? [];
 
 		IsLoading = false;
-	}
-
-	private void UpdateNumberOfPages()
-	{
-		NumberOfPages = Filter.IsEmptyFilter()
-			? (int)Math.Ceiling(_itemsCache.Items.Count / 100d)
-			: (int)Math.Ceiling(Items.Count / 100d);
 	}
 }
 
@@ -189,8 +190,6 @@ public partial class LibraryFilter : ObservableObject
 
 	[ObservableProperty]
 	public partial ObservableCollection<string> Years { get; set; } = new();
-
-	public bool IsEmptyFilter() => this is { Tags.Count: 0, Genres.Count: 0, OfficialRatings.Count: 0, Years.Count: 0 };
 
 	public bool IsVisible(BaseItemViewModel dto)
 	{

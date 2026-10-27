@@ -39,7 +39,7 @@
         x:Name="RootGrid"
         ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5"
         ui:VisualExtensions.Scale="0.9"
-        ContextFlyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}}">
+        ContextFlyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}, Mode=OneWay}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -51,16 +51,14 @@
                     EasingMode="EaseOut"
                     EasingType="Linear"
                     To="1"
-                    Duration="0:0:0.1" />
-                <animations:StartAnimationActivity Animation="{Binding ElementName=BlurAnimation}" />
+                    Duration="0:0:0.2" />
             </animations:AnimationSet>
             <animations:AnimationSet x:Name="UnSelect" IsSequential="False">
                 <animations:ScaleAnimation
                     EasingMode="EaseOut"
                     EasingType="Linear"
                     To="0.9"
-                    Duration="0:0:0.1" />
-                <animations:StartAnimationActivity Animation="{Binding ElementName=UnBlurAnimation}" />
+                    Duration="0:0:0.2" />
             </animations:AnimationSet>
         </animations:Explicit.Animations>
 
@@ -79,6 +77,7 @@
                         TargetObject="{Binding ElementName=ActionButtons}"
                         Value="Visible" />
                     <cb:StartAnimationAction Animation="{Binding ElementName=Select}" />
+                    <cb:StartAnimationAction Animation="{Binding ElementName=BlurAnimation}" />
                 </i:EventTriggerBehavior>
                 <i:EventTriggerBehavior EventName="PointerExited">
                     <i:ChangePropertyAction
@@ -90,14 +89,15 @@
                         TargetObject="{Binding ElementName=ActionButtons}"
                         Value="Collapsed" />
                     <cb:StartAnimationAction Animation="{Binding ElementName=UnSelect}" />
+                    <cb:StartAnimationAction Animation="{Binding ElementName=UnBlurAnimation}" />
                 </i:EventTriggerBehavior>
             </i:Interaction.Behaviors>
 
-            <Grid>
+            <Grid ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5">
                 <controls:LazyLoadedImage
-                    BlurHashImageSource="{x:Bind BlurHashImageSource}"
+                    BlurHashImageSource="{x:Bind BlurHashImageSource, Mode=OneWay}"
                     EnableBlurHash="True"
-                    ImageSource="{x:Bind ImageSource}" />
+                    ImageSource="{x:Bind ImageSource, Mode=OneWay}" />
 
                 <media:UIElementExtensions.VisualFactory>
                     <media:PipelineVisualFactory>
@@ -107,7 +107,12 @@
                 </media:UIElementExtensions.VisualFactory>
 
                 <animations:Explicit.Animations>
-                    <animations:AnimationSet x:Name="BlurAnimation" IsSequential="True">
+                    <animations:AnimationSet x:Name="BlurAnimation" IsSequential="False">
+                        <animations:ScaleAnimation
+                            EasingMode="EaseOut"
+                            EasingType="Linear"
+                            To="1.1"
+                            Duration="0:0:0.2" />
                         <animations:BlurEffectAnimation
                             EasingMode="EaseOut"
                             EasingType="Linear"
@@ -124,7 +129,12 @@
                             Duration="0:0:0.2" />
                     </animations:AnimationSet>
 
-                    <animations:AnimationSet x:Name="UnBlurAnimation" IsSequential="True">
+                    <animations:AnimationSet x:Name="UnBlurAnimation" IsSequential="False">
+                        <animations:ScaleAnimation
+                            EasingMode="EaseOut"
+                            EasingType="Linear"
+                            To="1"
+                            Duration="0:0:0.2" />
                         <animations:BlurEffectAnimation
                             EasingMode="EaseOut"
                             EasingType="Linear"
@@ -155,7 +165,7 @@
                     Background="{StaticResource Black65O}"
                     BorderThickness="0"
                     Command="{x:Bind root:App.Commands.PlayDtoCommand}"
-                    CommandParameter="{x:Bind Model.Dto}"
+                    CommandParameter="{x:Bind Model.Dto, Mode=OneWay}"
                     CornerRadius="25"
                     Style="{ThemeResource BareButtonStyle}"
                     Visibility="Collapsed">
@@ -275,7 +285,7 @@
                         Content="{ui:FontIcon Glyph=&#xE712;,
                                               FontSize=15}"
                         CornerRadius="20"
-                        Flyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}}"
+                        Flyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}, Mode=OneWay}"
                         Style="{ThemeResource IconButtonStyle}"
                         ToolTipService.ToolTip="More" />
 
@@ -293,14 +303,14 @@
             <TextBlock
                 HorizontalAlignment="Center"
                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                Text="{x:Bind Model.Dto, Converter={StaticResource NameConverter}}"
+                Text="{x:Bind Model.Dto, Converter={StaticResource NameConverter}, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap" />
 
             <TextBlock
                 HorizontalAlignment="Center"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Bind Model.Dto, Converter={StaticResource SubtitleConverter}}"
+                Text="{x:Bind Model.Dto, Converter={StaticResource SubtitleConverter}, Mode=OneWay}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text, Converter={StaticResource EmptyStringVisibilityConverter}}" />
         </StackPanel>
     </Grid>

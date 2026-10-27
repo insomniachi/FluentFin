@@ -39,6 +39,9 @@
         x:Name="RootGrid"
         ui:VisualExtensions.NormalizedCenterPoint="0.5, 0.5"
         ui:VisualExtensions.Scale="0.9"
+        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+        BorderThickness="1"
+        CornerRadius="10"
         ContextFlyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}, Mode=OneWay}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -49,14 +52,14 @@
             <animations:AnimationSet x:Name="Select" IsSequential="False">
                 <animations:ScaleAnimation
                     EasingMode="EaseOut"
-                    EasingType="Linear"
+                    EasingType="Cubic"
                     To="1"
                     Duration="0:0:0.2" />
             </animations:AnimationSet>
             <animations:AnimationSet x:Name="UnSelect" IsSequential="False">
                 <animations:ScaleAnimation
                     EasingMode="EaseOut"
-                    EasingType="Linear"
+                    EasingType="Cubic"
                     To="0.9"
                     Duration="0:0:0.2" />
             </animations:AnimationSet>
@@ -110,19 +113,19 @@
                     <animations:AnimationSet x:Name="BlurAnimation" IsSequential="False">
                         <animations:ScaleAnimation
                             EasingMode="EaseOut"
-                            EasingType="Linear"
+                            EasingType="Cubic"
                             To="1.1"
                             Duration="0:0:0.2" />
                         <animations:BlurEffectAnimation
                             EasingMode="EaseOut"
-                            EasingType="Linear"
+                            EasingType="Cubic"
                             Target="{Binding ElementName=ImageBlurEffect}"
                             From="0"
                             To="3"
                             Duration="0:0:0.2" />
                         <animations:ColorEffectAnimation
                             EasingMode="EaseOut"
-                            EasingType="Linear"
+                            EasingType="Cubic"
                             Target="{Binding ElementName=ImageColorEffect}"
                             From="Transparent"
                             To="Gray"
@@ -132,19 +135,19 @@
                     <animations:AnimationSet x:Name="UnBlurAnimation" IsSequential="False">
                         <animations:ScaleAnimation
                             EasingMode="EaseOut"
-                            EasingType="Linear"
+                            EasingType="Cubic"
                             To="1"
                             Duration="0:0:0.2" />
                         <animations:BlurEffectAnimation
                             EasingMode="EaseOut"
-                            EasingType="Linear"
+                            EasingType="Cubic"
                             Target="{Binding ElementName=ImageBlurEffect}"
                             From="3"
                             To="0"
                             Duration="0:0:0.2" />
                         <animations:ColorEffectAnimation
                             EasingMode="EaseOut"
-                            EasingType="Linear"
+                            EasingType="Cubic"
                             Target="{Binding ElementName=ImageColorEffect}"
                             From="Gray"
                             To="Transparent"
@@ -174,7 +177,7 @@
                         <animations:OpacityAnimation
                             From="0"
                             To="1.0"
-                            Duration="0:0:1" />
+                            Duration="0:0:0.2" />
                     </animations:Implicit.ShowAnimations>
                     <animations:Explicit.Animations>
                         <animations:AnimationSet x:Name="ZoomAnimation">
@@ -235,7 +238,7 @@
                 </InfoBadge>
 
                 <ProgressBar
-                    Margin="5,0,5,10"
+                    Margin="10,0,10,8"
                     VerticalAlignment="Bottom"
                     Maximum="100"
                     Minimum="0"
@@ -248,7 +251,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Orientation="Horizontal"
-                    Spacing="1"
+                    Spacing="4"
                     Visibility="Collapsed">
 
                     <ToggleButton
@@ -296,9 +299,10 @@
         </Grid>
         <StackPanel
             Grid.Row="1"
-            Padding="5"
+            Padding="8,6,8,8"
             Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
-            Spacing="3">
+            CornerRadius="0,0,10,10"
+            Spacing="2">
 
             <TextBlock
                 HorizontalAlignment="Center"
@@ -309,8 +313,11 @@
 
             <TextBlock
                 HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Text="{x:Bind Model.Dto, Converter={StaticResource SubtitleConverter}, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text, Converter={StaticResource EmptyStringVisibilityConverter}}" />
         </StackPanel>
     </Grid>

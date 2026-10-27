@@ -1,9 +1,12 @@
 name: "Build and publish"
 
 on:
-  push:
-    tags:
-    - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 1.2.3). Leave empty to bump the patch of the latest release.'
+        required: false
+        default: ''
 
 env:
   MAIN_PROJECT_PATH: 'FluentFin\FluentFin.csproj'
@@ -18,21 +21,36 @@ jobs:
         steps:
         -   name: 'Checkout'
             uses: actions/checkout@v2
-  
+
         -   name: 'Install dotnet'
             uses: actions/setup-dotnet@v1
             with:
                 dotnet-version: '10.0'
-        
+
         -   name: 'Add msbuild to PATH'
             uses: microsoft/setup-msbuild@v1.1
 
         -   name: Add Windows Community Toolkit labs nuget source
             run: dotnet nuget add source ${{env.CTK_LABS_INDEX}} -n CommunityToolkitLabs
-        
+
+        # Release tags have no 'v' prefix: UpdateService parses tag_name with new Version(...)
         -   name: 'Get version'
             id: version
-            uses: battila7/get-version-action@v2
+            shell: pwsh
+            env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                INPUT_VERSION: ${{ inputs.version }}
+            run: |
+                $v = $env:INPUT_VERSION.Trim().TrimStart('v')
+                if (-not $v) {
+                    $last = [version](gh release view --json tagName -q .tagName).TrimStart('v')
+                    $v = "$($last.Major).$($last.Minor).$($last.Build + 1)"
+                }
+                if ($v -notmatch '^\d+\.\d+\.\d+$') { throw "Invalid version '$v'" }
+                gh release view $v 2>$null
+                if ($LASTEXITCODE -eq 0) { throw "Release $v already exists" }
+                $global:LASTEXITCODE = 0
+                "version-without-v=$v" >> $env:GITHUB_OUTPUT
 
         -   name: 'Build Project'
             run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -c Release -r win-x64 -o ${{ env.PUBLISH_FOLDER }}\ /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
@@ -42,19 +60,9 @@ jobs:
             with:
                 path: Installer\script.iss
                 options: /O+
-  
-        -   name: 'Create Release'
-            id: create_release
-            uses: actions/create-release@v1
-            env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-                tag_name: ${{ steps.version.outputs.version-without-v }}
-                release_name: ${{ steps.version.outputs.version-without-v }}
 
-        -   name: 'Add Exe to release'
-            uses: csexton/release-asset-action@v2
-            with:
-                github-token: ${{ secrets.GITHUB_TOKEN }}
-                pattern: Installer\Output\FluentFin.exe
-                release-url: ${{ steps.create_release.outputs.upload_url }}
+        -   name: 'Create Release'
+            shell: pwsh
+            env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            run: gh release create ${{ steps.version.outputs.version-without-v }} Installer\Output\FluentFin.exe --target ${{ github.sha }} --title ${{ steps.version.outputs.version-without-v }}

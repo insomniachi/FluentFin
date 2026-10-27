@@ -267,39 +267,45 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel
+            <Grid
                 Grid.Row="0"
                 Padding="16,0,16,16"
                 Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefault}"
                 BorderThickness="1"
                 CornerRadius="{StaticResource ControlCornerRadius}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"
                     Style="{ThemeResource SubheaderTextBlockStyle}"
                     Text="Activity" />
-                <ItemsRepeater ItemsSource="{x:Bind ViewModel.UserActivities, Mode=OneWay}">
-                    <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="jm:ActivityLogEntry">
-                            <Grid ColumnSpacing="20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <FontIcon Glyph="&#xEA8F;" />
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
-                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Date, Converter={StaticResource HumanizeConverter}}" />
-                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind ShortOverview}" />
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsRepeater.ItemTemplate>
-                    <ItemsRepeater.Layout>
-                        <StackLayout Spacing="10" />
-                    </ItemsRepeater.Layout>
-                </ItemsRepeater>
-            </StackPanel>
+                <ScrollViewer Grid.Row="1">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.UserActivities, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:ActivityLogEntry">
+                                <Grid ColumnSpacing="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Glyph="&#xEA8F;" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Date, Converter={StaticResource HumanizeConverter}}" />
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind ShortOverview}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Spacing="10" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </ScrollViewer>
+            </Grid>
 
             <StackPanel
                 Grid.Row="1"
@@ -329,7 +335,7 @@
                 </ItemsRepeater>
             </StackPanel>
 
-            <StackPanel
+            <Grid
                 Grid.Row="2"
                 Padding="16,0,16,16"
                 Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
@@ -337,32 +343,38 @@
                 BorderThickness="1"
                 CornerRadius="{StaticResource ControlCornerRadius}"
                 Visibility="{x:Bind ViewModel.OtherActivities, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"
                     Style="{ThemeResource SubheaderTextBlockStyle}"
                     Text="Alerts" />
-                <ItemsRepeater ItemsSource="{x:Bind ViewModel.OtherActivities, Mode=OneWay}">
-                    <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="jm:ActivityLogEntry">
-                            <Grid ColumnSpacing="20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <FontIcon Glyph="&#xEA8F;" />
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
-                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Date, Converter={StaticResource HumanizeConverter}}" />
-                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind ShortOverview}" />
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsRepeater.ItemTemplate>
-                    <ItemsRepeater.Layout>
-                        <StackLayout Spacing="10" />
-                    </ItemsRepeater.Layout>
-                </ItemsRepeater>
-            </StackPanel>
+                <ScrollViewer Grid.Row="1">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.OtherActivities, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="jm:ActivityLogEntry">
+                                <Grid ColumnSpacing="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Glyph="&#xEA8F;" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind Date, Converter={StaticResource HumanizeConverter}}" />
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind ShortOverview}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.Layout>
+                            <StackLayout Spacing="10" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </ScrollViewer>
+            </Grid>
 
         </Grid>
     </Grid>

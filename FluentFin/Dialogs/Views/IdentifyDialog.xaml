@@ -23,54 +23,96 @@
     Style="{StaticResource DefaultContentDialogStyleWithTitleBackground}"
     mc:Ignorable="d">
 
-    <ScrollViewer MinWidth="500">
-        <ctk:SwitchPresenter TargetType="vm:IdentifyViewModelState" Value="{x:Bind ViewModel.ViewState, Mode=OneWay}">
-            <ctk:Case Value="Input">
+    <ContentDialog.Resources>
+        <cc:EmptyObjectToObjectConverter
+            x:Key="ObjectToVisibilityConverter"
+            EmptyValue="Collapsed"
+            NotEmptyValue="Visible" />
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        </Style>
+        <Style x:Key="SectionHeaderStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="4,0,0,8" />
+        </Style>
+        <Style x:Key="SecondaryCaptionStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        </Style>
+    </ContentDialog.Resources>
+
+    <ctk:SwitchPresenter
+        Width="720"
+        TargetType="vm:IdentifyViewModelState"
+        Value="{x:Bind ViewModel.ViewState, Mode=OneWay}">
+        <ctk:Case Value="Input">
+            <ScrollViewer Margin="0,0,-12,0" Padding="0,0,12,0">
                 <StackPanel Spacing="20">
-                    <StackPanel.Resources>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Spacing" Value="5" />
-                        </Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="FontWeight" Value="Bold" />
-                        </Style>
-                    </StackPanel.Resources>
                     <StackPanel>
-                        <TextBlock Text="Name" />
-                        <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
+                        <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Search by name" />
+                        <Border Style="{StaticResource SectionCardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="160" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    HorizontalAlignment="Stretch"
+                                    Header="Name"
+                                    Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <NumberBox
+                                    Grid.Column="1"
+                                    Header="Year"
+                                    SpinButtonPlacementMode="Compact"
+                                    Text="{x:Bind ViewModel.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                        </Border>
                     </StackPanel>
+
                     <StackPanel>
-                        <TextBlock Text="Year" />
-                        <NumberBox Text="{x:Bind ViewModel.Year, Mode=TwoWay}" />
+                        <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Or by external ID" />
+                        <Border Style="{StaticResource SectionCardStyle}">
+                            <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds}">
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:KeyValueViewModel">
+                                        <TextBox HorizontalAlignment="Stretch" Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBox.Header>
+                                                <TextBlock>
+                                                    <Run Text="{x:Bind DisplayName}" />
+                                                    <Run Text="{x:Bind Type}" />
+                                                    <Run Text="Id" />
+                                                </TextBlock>
+                                            </TextBox.Header>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                                <ItemsRepeater.Layout>
+                                    <UniformGridLayout
+                                        ItemsStretch="Fill"
+                                        MaximumRowsOrColumns="2"
+                                        MinColumnSpacing="16"
+                                        MinItemWidth="300"
+                                        MinRowSpacing="16" />
+                                </ItemsRepeater.Layout>
+                            </ItemsRepeater>
+                        </Border>
                     </StackPanel>
-                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds}">
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="vm:KeyValueViewModel">
-                                <StackPanel>
-                                    <TextBlock>
-                                        <Run Text="{x:Bind DisplayName}" />
-                                        <Run Text="{x:Bind Type}"/>
-                                        <Run Text="Id" />
-                                    </TextBlock>
-                                    <TextBox Text="{x:Bind Value, Mode=TwoWay}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                        <ItemsRepeater.Layout>
-                            <StackLayout Spacing="20" />
-                        </ItemsRepeater.Layout>
-                    </ItemsRepeater>
                 </StackPanel>
-            </ctk:Case>
-            <ctk:Case Value="Loading">
-                <Grid>
-                    <ProgressRing
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        IsIndeterminate="True" />
-                </Grid>
-            </ctk:Case>
-            <ctk:Case Value="Result">
+            </ScrollViewer>
+        </ctk:Case>
+        <ctk:Case Value="Loading">
+            <Grid MinHeight="200">
+                <ProgressRing
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsIndeterminate="True" />
+            </Grid>
+        </ctk:Case>
+        <ctk:Case Value="Result">
+            <!--  ItemsView collapses to zero height unless it is measured with unbounded height  -->
+            <ScrollViewer Margin="0,0,-12,0" Padding="0,0,12,0">
                 <ItemsView
                     ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
                     SelectionChanged="ItemsView_SelectionChanged"
@@ -78,32 +120,51 @@
                     <ItemsView.ItemTemplate>
                         <DataTemplate x:DataType="jm:RemoteSearchResult">
                             <ItemContainer>
-                                <Grid ColumnSpacing="15">
+                                <Grid
+                                    Padding="8"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    ColumnSpacing="16"
+                                    CornerRadius="{StaticResource ControlCornerRadius}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="80" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <controls:LoadingImage
-                                        CornerRadius="{StaticResource ControlCornerRadius}"
-                                        Source="{x:Bind ImageUrl}"
-                                        Stretch="UniformToFill" />
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
-                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind ProductionYear}" />
+                                    <Border
+                                        Height="120"
+                                        Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                                        CornerRadius="{StaticResource ControlCornerRadius}">
+                                        <controls:LoadingImage Source="{x:Bind ImageUrl}" Stretch="UniformToFill" />
+                                    </Border>
+                                    <StackPanel
+                                        Grid.Column="1"
+                                        Padding="0,4,8,4"
+                                        Spacing="4">
                                         <TextBlock
-                                            Style="{ThemeResource CaptionTextBlockStyle}"
-                                            Text="{x:Bind SearchProviderName}"
-                                            TextTrimming="CharacterEllipsis" />
+                                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                            Text="{x:Bind Name}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock Style="{StaticResource SecondaryCaptionStyle}">
+                                            <Run Text="{x:Bind ProductionYear}" /><Run Text="  ·  " /><Run Text="{x:Bind SearchProviderName}" />
+                                        </TextBlock>
+                                        <TextBlock
+                                            MaxLines="3"
+                                            Style="{StaticResource SecondaryCaptionStyle}"
+                                            Text="{x:Bind Overview}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap"
+                                            Visibility="{x:Bind Overview, Converter={StaticResource ObjectToVisibilityConverter}}" />
                                     </StackPanel>
                                 </Grid>
                             </ItemContainer>
                         </DataTemplate>
                     </ItemsView.ItemTemplate>
                     <ItemsView.Layout>
-                        <StackLayout Orientation="Vertical" Spacing="5" />
+                        <StackLayout Orientation="Vertical" Spacing="8" />
                     </ItemsView.Layout>
                 </ItemsView>
-            </ctk:Case>
-        </ctk:SwitchPresenter>
-    </ScrollViewer>
+            </ScrollViewer>
+        </ctk:Case>
+    </ctk:SwitchPresenter>
 </ContentDialog>

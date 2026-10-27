@@ -79,16 +79,16 @@
                         <TextBox
                             Grid.Row="1"
                             Header="Title"
-                            Text="{x:Bind ViewModel.Title, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
                             Header="Original title"
-                            Text="{x:Bind ViewModel.OriginalTitle, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.OriginalTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             Grid.Row="2"
                             Header="Sort title"
-                            Text="{x:Bind ViewModel.SortTitle, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.SortTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox
                             Grid.Row="2"
                             Grid.Column="1"
@@ -103,7 +103,7 @@
                             AcceptsReturn="True"
                             Header="Overview"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                            Text="{x:Bind ViewModel.Overview, Mode=TwoWay}"
+                            Text="{x:Bind ViewModel.Overview, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="Wrap" />
                     </Grid>
                 </Border>
@@ -172,7 +172,7 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             Header="Original aspect ratio"
-                            Text="{x:Bind ViewModel.OriginalAspectRatio, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.OriginalAspectRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox
                             Grid.Row="2"
                             Header="3D format"
@@ -188,7 +188,7 @@
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.ExternalIds, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="vm:KeyValueViewModel">
-                                <TextBox Text="{x:Bind Value, Mode=TwoWay}">
+                                <TextBox Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Header>
                                         <TextBlock>
                                             <Run Text="{x:Bind DisplayName}" />

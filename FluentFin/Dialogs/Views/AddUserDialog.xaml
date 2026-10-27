@@ -30,7 +30,7 @@
         <StackPanel Spacing="20">
             <StackPanel Spacing="5">
                 <TextBlock Text="Username" />
-                <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay}" />
+                <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <StackPanel Spacing="5">
                 <TextBlock Text="Password" />

@@ -20,7 +20,7 @@
     mc:Ignorable="d">
 
     <StackPanel Spacing="20">
-        <TextBox PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}" Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
+        <TextBox PlaceholderText="{x:Bind ViewModel.PlaceholderText, Mode=OneWay}" Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <InfoBar
             IsClosable="False"
             IsIconVisible="True"

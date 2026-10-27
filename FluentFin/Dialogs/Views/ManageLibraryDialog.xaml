@@ -81,7 +81,7 @@
                     <ComboBox ItemsSource="{ui:EnumValues Type=jmlo:CollectionType}" SelectedItem="{x:Bind ViewModel.FolderCollectionType, Mode=TwoWay}" />
                 </ctk:SettingsCard>
                 <ctk:SettingsCard Header="Display name">
-                    <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
+                    <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ctk:SettingsCard>
             </StackPanel>
 
@@ -121,7 +121,7 @@
                         SelectedItem="{x:Bind ViewModel.MetadataCountryCode, Mode=TwoWay}" />
                 </ctk:SettingsCard>
                 <ctk:SettingsCard Header="Special season display name">
-                    <TextBox Text="{x:Bind ViewModel.SeasonZeroDisplayName, Mode=TwoWay}" />
+                    <TextBox Text="{x:Bind ViewModel.SeasonZeroDisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ctk:SettingsCard>
                 <ctk:SettingsExpander Header="Embedded Information" IsExpanded="True">
                     <ctk:SettingsExpander.Items>

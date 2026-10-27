@@ -30,7 +30,7 @@
 
         <StackPanel>
             <TextBlock Text="Quick connect code" />
-            <TextBox Text="{x:Bind ViewModel.QuickConnectCode, Mode=TwoWay}" />
+            <TextBox Text="{x:Bind ViewModel.QuickConnectCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </StackPanel>
 

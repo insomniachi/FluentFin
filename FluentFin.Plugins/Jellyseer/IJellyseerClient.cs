@@ -23,14 +23,6 @@ public interface IJellyseerClient
 	Task<TvDetails?> GetSeriesDetails(MediaRequest request);
 }
 
-public class NullAuthenticationProvider : IAuthenticationProvider
-{
-	public Task AuthenticateRequestAsync(RequestInformation request, Dictionary<string, object>? additionalAuthenticationContext = null, CancellationToken cancellationToken = default)
-	{
-		return Task.CompletedTask;
-	}
-}
-
 public class JellyseerClient(ILocalSettingsService settingsService) : IJellyseerClient
 {
 	private ApiClient _apiClient = null!;
@@ -62,7 +54,7 @@ public class JellyseerClient(ILocalSettingsService settingsService) : IJellyseer
 
 		BaseUrl = url;
 
-		_apiClient = new ApiClient(new HttpClientRequestAdapter(new NullAuthenticationProvider())
+		_apiClient = new ApiClient(new HttpClientRequestAdapter(new AnonymousAuthenticationProvider())
 		{
 			BaseUrl = url.AppendPathSegment("/api/v1/")
 		});

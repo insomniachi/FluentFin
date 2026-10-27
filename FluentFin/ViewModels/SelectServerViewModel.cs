@@ -72,6 +72,7 @@ public partial class SelectServerViewModel(ISettings settings,
 		else
 		{
 			server.PublicUrl = url;
+			settings.SaveServerDetails();
 		}
 
 		if (!Servers.Any(x => x.Id == info.Id))

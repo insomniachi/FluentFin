@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ReactiveUI.Builder;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Windows.ApplicationModel;
@@ -33,6 +34,8 @@ namespace FluentFin;
 public partial class App : Application
 {
 	public IHost Host { get; }
+
+	private bool _isClosing;
 
 	public static T GetService<T>()
 		where T : class
@@ -230,7 +233,7 @@ public partial class App : Application
 
 			base.OnLaunched(args);
 
-			MainWindow.Closed += MainWindow_Closed;
+			MainWindow.AppWindow.Closing += AppWindow_Closing;
 
 			StartFlyleaf();
 
@@ -258,10 +261,25 @@ public partial class App : Application
 		}
 	}
 
-	private async void MainWindow_Closed(object sender, WindowEventArgs args)
+	private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
 	{
-		await Host.StopAsync();
-		await GetService<IJellyfinClient>().Stop();
+		if (_isClosing)
+		{
+			return;
+		}
+
+		// the process exits as soon as the window closes, so finish reporting first and close again afterwards
+		args.Cancel = true;
+		_isClosing = true;
+		try
+		{
+			await GetService<IJellyfinClient>().Stop();
+			await Host.StopAsync();
+		}
+		finally
+		{
+			MainWindow.Close();
+		}
 	}
 
 	private static void StartFlyleaf()

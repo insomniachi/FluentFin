@@ -130,9 +130,18 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 			};
 			SessionInfo.CurrentUserCrendentials = user;
 
-			if (remember && server.Users.All(x => x.Username != username && !ByteArraysEqual(x.Password, user.Password)))
+			if (remember)
 			{
-				server.Users.Add(user);
+				// replace rather than mutate so the Users collection change gets saved
+				var existing = server.Users.FirstOrDefault(x => x.Username == username);
+				if (existing is null)
+				{
+					server.Users.Add(user);
+				}
+				else
+				{
+					server.Users[server.Users.IndexOf(existing)] = user;
+				}
 			}
 
 			setupNavigationService.NavigateTo<ShellViewModel>();
@@ -176,10 +185,5 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		settings.SetServerUrl(url);
 		settings.Initialize("FluentFin", Assembly.GetEntryAssembly()!.GetName().Version!.ToString(), Environment.MachineName, id);
 		return new JellyfinApiClient(new JellyfinRequestAdapter(new JellyfinAuthenticationProvider(settings), settings));
-	}
-
-	private static bool ByteArraysEqual(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
-	{
-		return a1.SequenceEqual(a2);
 	}
 }

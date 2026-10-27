@@ -6,11 +6,13 @@ public class KnownFolders
 	public string Updates { get; }
 	public string Logs { get; }
 
-	public KnownFolders()
+	public KnownFolders() : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin")) { }
+
+	public KnownFolders(string root)
 	{
-		ApplicationData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin");
-		Updates = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin\Updates");
-		Logs = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"FluentFin\Logs");
+		ApplicationData = root;
+		Updates = Path.Combine(root, "Updates");
+		Logs = Path.Combine(root, "Logs");
 
 		Directory.CreateDirectory(ApplicationData);
 		Directory.CreateDirectory(Logs);

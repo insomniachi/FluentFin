@@ -16,10 +16,7 @@ namespace FluentFin;
 public class WindowsUpdateService(KnownFolders knownFolders,
 								  IContentDialogService contentDialogService) : IHostedService
 {
-	private VersionInfo _current;
-	private CancellationTokenSource _cts;
 	private readonly CompositeDisposable _disposable = [];
-	private readonly HttpClient _httpClient = new();
 
 	private static async Task<string> TryGetStreamAsync()
 	{
@@ -43,33 +40,10 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		}
 	}
 
-	public async ValueTask<VersionInfo> GetCurrentVersionInfo()
-	{
-		if (_current is not null)
-		{
-			return _current;
-		}
-
-		var url = $"https://api.github.com/repositories/insomniachi/fluentfin/releases/tags/{Assembly.GetEntryAssembly().GetName().Version.ToString(3)}";
-		var response = await _httpClient.GetAsync(url);
-
-		if (response.IsSuccessStatusCode)
-		{
-			var jsonNode = JsonNode.Parse(await response.Content.ReadAsStreamAsync());
-			_current = new VersionInfo()
-			{
-				Version = new Version(jsonNode["tag_name"].ToString()),
-				Url = (string)jsonNode["assets"][0]["browser_download_url"].AsValue(),
-				Body = jsonNode?["body"]?.ToString()
-			};
-		}
-		return _current;
-	}
-
 	public async Task<VersionInfo> DownloadUpdate(VersionInfo versionInfo)
 	{
 		var ext = Path.GetExtension(versionInfo.Url);
-		var fileName = $"Totoro_{versionInfo.Version}{ext}";
+		var fileName = $"FluentFin_{versionInfo.Version}{ext}";
 		var fullPath = Path.Combine(knownFolders.Updates, fileName);
 		versionInfo.FilePath = fullPath;
 
@@ -85,12 +59,11 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 
 		// download to a temp name so an interrupted download is never mistaken for a complete installer
 		var partPath = fullPath + ".part";
-		_cts = new();
 		using (var client = new HttpClient())
 		using (var s = await client.GetStreamAsync(versionInfo.Url))
 		using (var fs = new FileStream(partPath, FileMode.Create))
 		{
-			await s.CopyToAsync(fs, _cts.Token);
+			await s.CopyToAsync(fs);
 		}
 
 		File.Move(partPath, fullPath, true);
@@ -136,8 +109,6 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		});
 		Process.GetCurrentProcess().CloseMainWindow();
 	}
-
-	public void ShutDown() => _cts?.Cancel();
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{

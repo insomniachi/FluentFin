@@ -66,6 +66,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	public async Task OnNavigatedFrom()
 	{
 		_disposables.Dispose();
+		_keyboardController?.UnsubscribeEvents();
 
 		NativeMethods.AllowSleep();
 
@@ -418,7 +419,8 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 						_previousCommand = syncPlay.Data;
 						break;
 				}
-			});
+			})
+			.DisposeWith(_disposables);
 	}
 
 	private async Task SchedulePause(SendCommand command, IMediaPlayerController mp)

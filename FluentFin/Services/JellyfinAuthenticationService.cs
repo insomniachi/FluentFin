@@ -89,6 +89,7 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 			if (auth is not null)
 			{
 				titleBarViewModel.User = auth.User;
+				SessionInfo.CurrentUserCrendentials = null;
 				await jellyfinClient.Initialize(url, auth);
 				setupNavigationService.NavigateTo<ShellViewModel>();
 			}
@@ -122,20 +123,16 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		{
 			titleBarViewModel.CurrentServer = server;
 
-			if (remember)
+			var user = new SavedUser
 			{
-				var passwordBytes = password.Protect(settingsService.GetEntropyBytes());
+				Username = username,
+				Password = password.Protect(settingsService.GetEntropyBytes()),
+			};
+			SessionInfo.CurrentUserCrendentials = user;
 
-				if (server.Users.All(x => x.Username != username && !ByteArraysEqual(x.Password, passwordBytes)))
-				{
-					var user = new SavedUser
-					{
-						Username = username,
-						Password = passwordBytes,
-					};
-
-					server.Users.Add(user);
-				}
+			if (remember && server.Users.All(x => x.Username != username && !ByteArraysEqual(x.Password, user.Password)))
+			{
+				server.Users.Add(user);
 			}
 
 			setupNavigationService.NavigateTo<ShellViewModel>();

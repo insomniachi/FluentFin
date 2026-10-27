@@ -24,8 +24,17 @@ internal static class NativeMethods
 		return pid == (uint)Process.GetCurrentProcess().Id;
 	}
 
+	public static void ShowError(string title, string message)
+	{
+		const uint MB_ICONERROR = 0x10;
+		MessageBox(IntPtr.Zero, message, title, MB_ICONERROR);
+	}
+
 	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	private static extern ExecutionState SetThreadExecutionState(ExecutionState esFlags);
+
+	[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+	private static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
 
 	[DllImport("user32.dll")]
 	private static extern IntPtr GetForegroundWindow();

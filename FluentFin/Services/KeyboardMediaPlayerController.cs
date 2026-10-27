@@ -129,6 +129,7 @@ namespace FluentFin.Services
 		public void UnsubscribeEvents()
 		{
 			_listener.Unsubscribe(_keySubscriptions);
+			_keySubscriptions.Clear();
 		}
 
 		public async Task TogglePlayPlause()

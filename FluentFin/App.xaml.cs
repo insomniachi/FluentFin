@@ -222,17 +222,27 @@ public partial class App : Application
 
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-		await Host.StartAsync();
+		try
+		{
+			await Host.StartAsync();
 
-		Locator.SetServiceProvider(Host.Services);
+			Locator.SetServiceProvider(Host.Services);
 
-		base.OnLaunched(args);
+			base.OnLaunched(args);
 
-		MainWindow.Closed += MainWindow_Closed;
+			MainWindow.Closed += MainWindow_Closed;
 
-		StartFlyleaf();
+			StartFlyleaf();
 
-		await GetService<IActivationService>().ActivateAsync(args);
+			await GetService<IActivationService>().ActivateAsync(args);
+		}
+		catch (Exception ex)
+		{
+			// App_UnhandledException marks errors handled, so a failed launch would otherwise leave a process with no window
+			GetService<ILogger<App>>().LogCritical(ex, "Startup failed");
+			NativeMethods.ShowError("FluentFin could not start", ex.Message);
+			Exit();
+		}
 	}
 
 	private static bool IsPackaged()

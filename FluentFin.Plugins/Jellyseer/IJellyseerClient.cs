@@ -34,6 +34,7 @@ public class NullAuthenticationProvider : IAuthenticationProvider
 public class JellyseerClient(ILocalSettingsService settingsService) : IJellyseerClient
 {
 	private ApiClient _apiClient = null!;
+	private string _loggedInAs = "";
 
 	public string BaseUrl { get; private set; } = "";
 
@@ -46,7 +47,15 @@ public class JellyseerClient(ILocalSettingsService settingsService) : IJellyseer
 			return false;
 		}
 
-		if (_apiClient is not null)
+		// QuickConnect logins have no password to hand to Jellyseerr
+		if (SessionInfo.CurrentUserCrendentials is not { } credentials)
+		{
+			return false;
+		}
+
+		// this client is a singleton, so log in again when the server, url or user changed
+		var loginKey = $"{SessionInfo.ServerId}|{url}|{credentials.Username}";
+		if (_apiClient is not null && _loggedInAs == loginKey)
 		{
 			return true;
 		}
@@ -60,10 +69,11 @@ public class JellyseerClient(ILocalSettingsService settingsService) : IJellyseer
 
 		await _apiClient.Auth.Jellyfin.PostAsync(new Auth.Jellyfin.JellyfinPostRequestBody
 		{
-			Username = SessionInfo.CurrentUserCrendentials.Username,
-			Password = SessionInfo.CurrentUserCrendentials.Password.Unprotect(settingsService.GetEntropyBytes())
+			Username = credentials.Username,
+			Password = credentials.Password.Unprotect(settingsService.GetEntropyBytes())
 		});
 
+		_loggedInAs = loginKey;
 		return true;
 	}
 

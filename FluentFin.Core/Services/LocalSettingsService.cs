@@ -24,11 +24,18 @@ public class LocalSettingsService : ILocalSettingsService
 		};
 
 		_file = Path.Combine(knownFolders.ApplicationData, "LocalSettings.json");
-		if (File.Exists(_file) && JsonNode.Parse(File.ReadAllText(_file)) is { } jsonNode)
+		try
 		{
-			_settings = jsonNode.AsObject();
+			if (File.Exists(_file) && JsonNode.Parse(File.ReadAllText(_file)) is { } jsonNode)
+			{
+				_settings = jsonNode.AsObject();
+			}
 		}
-
+		catch (Exception ex) when (ex is JsonException or InvalidOperationException)
+		{
+			// keep the unreadable file for recovery and start with defaults instead of failing every launch
+			File.Copy(_file, _file + ".corrupt", true);
+		}
 	}
 
 	public T ReadSetting<T>(string key, T defaultValue)
@@ -60,7 +67,10 @@ public class LocalSettingsService : ILocalSettingsService
 	public void SaveSetting<T>(string key, T value)
 	{
 		_settings[key] = JsonNode.Parse(JsonSerializer.Serialize(value, _options));
-		File.WriteAllText(_file, _settings.ToJsonString(_options));
+		// write then rename, so a crash mid-write can't leave a truncated settings file
+		var tempFile = _file + ".tmp";
+		File.WriteAllText(tempFile, _settings.ToJsonString(_options));
+		File.Move(tempFile, _file, true);
 	}
 
 	public byte[] GetEntropyBytes()

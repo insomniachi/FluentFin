@@ -83,25 +83,42 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 			return versionInfo;
 		}
 
+		// download to a temp name so an interrupted download is never mistaken for a complete installer
+		var partPath = fullPath + ".part";
 		_cts = new();
-		using var client = new HttpClient();
-		using var s = await client.GetStreamAsync(versionInfo.Url);
-		using var fs = new FileStream(fullPath, FileMode.OpenOrCreate);
-
-		try
+		using (var client = new HttpClient())
+		using (var s = await client.GetStreamAsync(versionInfo.Url))
+		using (var fs = new FileStream(partPath, FileMode.Create))
 		{
 			await s.CopyToAsync(fs, _cts.Token);
 		}
-		catch (Exception)
+
+		File.Move(partPath, fullPath, true);
+		return versionInfo;
+	}
+
+	private async Task<VersionInfo> CheckForUpdate()
+	{
+		var json = await TryGetStreamAsync();
+		if (string.IsNullOrEmpty(json))
 		{
-			fs.Dispose();
-			if (File.Exists(fullPath))
-			{
-				File.Delete(fullPath);
-			}
+			return null;
 		}
 
-		return versionInfo;
+		var jsonNode = JsonNode.Parse(json);
+		var versionInfo = new VersionInfo()
+		{
+			Version = new Version(jsonNode["tag_name"].ToString()),
+			Url = (string)jsonNode["assets"][0]["browser_download_url"].AsValue(),
+			Body = jsonNode?["body"]?.ToString()
+		};
+
+		if (versionInfo.Version <= Assembly.GetEntryAssembly().GetName().Version)
+		{
+			return null;
+		}
+
+		return await DownloadUpdate(versionInfo);
 	}
 
 	public async void InstallUpdate(VersionInfo versionInfo)
@@ -127,22 +144,9 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		Observable
 				.Timer(TimeSpan.Zero, TimeSpan.FromHours(1))
 				.ObserveOn(RxSchedulers.TaskpoolScheduler)
-				.SelectMany(_ => TryGetStreamAsync())
-				.Where(x => !string.IsNullOrEmpty(x))
-				.Select(x => JsonNode.Parse(x))
-				.Select(jsonNode => new VersionInfo()
-				{
-					Version = new Version(jsonNode["tag_name"].ToString()),
-					Url = (string)jsonNode["assets"][0]["browser_download_url"].AsValue(),
-					Body = jsonNode?["body"]?.ToString()
-				})
-				.Where(vi =>
-				{
-					var current = Assembly.GetEntryAssembly().GetName().Version;
-					return vi.Version > current;
-				})
-				.Throttle(TimeSpan.FromSeconds(3))
-				.SelectMany(DownloadUpdate)
+				// a failed check (no network, release without assets yet) skips this round instead of crashing the app
+				.SelectMany(_ => Observable.FromAsync(CheckForUpdate).Catch(Observable.Return<VersionInfo>(null)))
+				.Where(vi => vi?.FilePath is { } path && File.Exists(path))
 				.ObserveOn(RxSchedulers.MainThreadScheduler)
 				.Subscribe(InstallUpdate)
 				.DisposeWith(_disposable);

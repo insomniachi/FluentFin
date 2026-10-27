@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Windows.Input;
 using CommunityToolkit.WinUI;
 using FluentFin.Core;
@@ -18,7 +17,6 @@ namespace FluentFin.Controls;
 #nullable disable
 public sealed partial class TransportControls : UserControl
 {
-	private readonly Subject<PointerRoutedEventArgs> _onPointerMoved = new();
 	private readonly SymbolIcon _playSymbol = new(Symbol.Play);
 	private readonly SymbolIcon _pauseSymbol = new(Symbol.Pause);
 
@@ -124,27 +122,6 @@ public sealed partial class TransportControls : UserControl
 				catch { }
 			});
 
-		_onPointerMoved
-			.ObserveOn(RxSchedulers.MainThreadScheduler)
-			.Subscribe(e =>
-			{
-				const int teachingTipMargin = 12;
-				TrickplayTip.IsOpen = true;
-
-				var navView = this.FindAscendantOrSelf<NavigationView>();
-				var offset = navView?.IsPaneOpen == true ? navView.OpenPaneLength : 0;
-				var trickplayWidth = TrickplayScrollViewer.Width + 2 * teachingTipMargin;
-				var halfTrickplayWidth = trickplayWidth / 2;
-
-				var point = e.GetCurrentPoint(TimeSlider);
-				var globalPoint = e.GetCurrentPoint(this);
-				Trickplay.Position = TimeSpan.FromMilliseconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
-
-				var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
-				var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
-				TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
-			});
-
 		VolumeSlider.Events()
 			.ValueChanged
 			.Where(_ => Player is not null)
@@ -190,7 +167,22 @@ public sealed partial class TransportControls : UserControl
 			return;
 		}
 
-		_onPointerMoved.OnNext(e);
+		// Handled synchronously: deferring to the dispatcher let a queued move reopen the tip after PointerExited closed it.
+		const int teachingTipMargin = 12;
+		TrickplayTip.IsOpen = true;
+
+		var navView = this.FindAscendantOrSelf<NavigationView>();
+		var offset = navView?.IsPaneOpen == true ? navView.OpenPaneLength : 0;
+		var trickplayWidth = TrickplayScrollViewer.Width + 2 * teachingTipMargin;
+		var halfTrickplayWidth = trickplayWidth / 2;
+
+		var point = e.GetCurrentPoint(TimeSlider);
+		var globalPoint = e.GetCurrentPoint(this);
+		Trickplay.Position = TimeSpan.FromMilliseconds((point.Position.X / TimeSlider.ActualWidth) * TimeSlider.Maximum);
+
+		var minMargin = Math.Max(teachingTipMargin + offset, globalPoint.Position.X + offset - halfTrickplayWidth);
+		var margin = Math.Min(minMargin, ActualWidth + offset - trickplayWidth - 10);
+		TrickplayTip.PlacementMargin = new Thickness(margin, 0, 0, Bar.ActualHeight);
 	}
 
 	private void TimeSlider_PointerExited(object sender, PointerRoutedEventArgs e)

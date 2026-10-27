@@ -28,154 +28,203 @@
             x:Key="ObjectToVisibilityConverter"
             EmptyValue="Collapsed"
             NotEmptyValue="Visible" />
+        <Style x:Key="TileStyle" TargetType="Grid">
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="RowSpacing" Value="8" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        </Style>
+        <Style x:Key="ImageWellStyle" TargetType="Border">
+            <Setter Property="Height" Value="180" />
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorSecondaryBrush}" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        </Style>
+        <Style x:Key="TileCaptionStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+        </Style>
+        <Style x:Key="TileIconButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
     </ContentDialog.Resources>
 
     <ctk:SwitchPresenter
-        MinWidth="500"
+        Width="720"
+        MinHeight="300"
         TargetType="vm:EditImagesViewModelState"
         Value="{x:Bind ViewModel.State, Mode=OneWay}">
         <ctk:Case IsDefault="True" Value="Display">
-            <Grid RowSpacing="10">
+            <Grid RowSpacing="12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="Images" />
-                    <Button Command="{x:Bind ViewModel.SwitchViewCommand}" CommandParameter="{x:Bind vm:EditImagesViewModelState.Search}">
-                        <SymbolIcon Symbol="Find" />
+                <Grid>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{ThemeResource BodyStrongTextBlockStyle}"
+                        Text="Current images" />
+                    <Button
+                        HorizontalAlignment="Right"
+                        Command="{x:Bind ViewModel.SwitchViewCommand}"
+                        CommandParameter="{x:Bind vm:EditImagesViewModelState.Search}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <SymbolIcon Symbol="Find" />
+                            <TextBlock Text="Search online" />
+                        </StackPanel>
                     </Button>
-                    <Button>
-                        <SymbolIcon Symbol="Add" />
-                    </Button>
-                </StackPanel>
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+                </Grid>
+                <ScrollViewer
+                    Grid.Row="1"
+                    Margin="0,0,-12,0"
+                    Padding="0,0,12,0">
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.Images, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="vm:ImageInfoEx">
-                                <Grid
-                                    Padding="10,10,10,0"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="{StaticResource ControlCornerRadius}">
+                                <Grid Style="{StaticResource TileStyle}">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-
-                                    <controls:LoadingImage Source="{x:Bind c:Converters.GetImage(Uri)}" Stretch="Uniform" />
-                                    <StackPanel
-                                        Grid.Row="1"
-                                        Margin="{StaticResource SmallTopBottomMargin}"
-                                        HorizontalAlignment="Center">
-                                        <TextBlock HorizontalAlignment="Center" Text="{x:Bind ImageType}" />
-                                        <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind Width, Converter={StaticResource ObjectToVisibilityConverter}}">
-                                            <Run Text="{x:Bind Width}" />
-                                            <Run Text="x" />
-                                            <Run Text="{x:Bind Height}" />
-                                        </TextBlock>
-                                        <StackPanel
-                                            Margin="{StaticResource XSmallTopMargin}"
-                                            Orientation="Horizontal"
-                                            Spacing="5">
-                                            <Button
-                                                Command="{Binding ElementName=Page, Path=ViewModel.SearchCommand}"
-                                                CommandParameter="{x:Bind}"
-                                                Content="{ui:SymbolIcon Symbol=Find}" />
-                                            <Button
-                                                Command="{Binding ElementName=Page, Path=ViewModel.DeleteImageCommand}"
-                                                CommandParameter="{x:Bind}"
-                                                Content="{ui:SymbolIcon Symbol=Delete}" />
+                                    <Border Style="{StaticResource ImageWellStyle}">
+                                        <controls:LoadingImage Source="{x:Bind c:Converters.GetImage(Uri)}" Stretch="Uniform" />
+                                    </Border>
+                                    <Grid Grid.Row="1" ColumnSpacing="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock
+                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                Text="{x:Bind ImageType}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap" />
+                                            <TextBlock Style="{StaticResource TileCaptionStyle}" Visibility="{x:Bind Width, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                                <Run Text="{x:Bind Width}" /><Run Text=" × " /><Run Text="{x:Bind Height}" />
+                                            </TextBlock>
                                         </StackPanel>
-                                    </StackPanel>
+                                        <Button
+                                            Grid.Column="1"
+                                            AutomationProperties.Name="Search for replacement"
+                                            Command="{Binding ElementName=Page, Path=ViewModel.SearchCommand}"
+                                            CommandParameter="{x:Bind}"
+                                            Content="{ui:FontIcon Glyph=&#xE721;, FontSize=14}"
+                                            Style="{StaticResource TileIconButtonStyle}"
+                                            ToolTipService.ToolTip="Search for replacement" />
+                                        <Button
+                                            Grid.Column="2"
+                                            AutomationProperties.Name="Delete image"
+                                            Command="{Binding ElementName=Page, Path=ViewModel.DeleteImageCommand}"
+                                            CommandParameter="{x:Bind}"
+                                            Content="{ui:FontIcon Glyph=&#xE74D;, FontSize=14}"
+                                            Style="{StaticResource TileIconButtonStyle}"
+                                            ToolTipService.ToolTip="Delete image" />
+                                    </Grid>
                                 </Grid>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>
                             <UniformGridLayout
                                 ItemsStretch="Fill"
-                                MinColumnSpacing="10"
-                                MinItemHeight="230"
-                                MinItemWidth="125"
-                                MinRowSpacing="10" />
+                                MinColumnSpacing="12"
+                                MinItemWidth="160"
+                                MinRowSpacing="12" />
                         </ItemsRepeater.Layout>
                     </ItemsRepeater>
                 </ScrollViewer>
             </Grid>
         </ctk:Case>
         <ctk:Case Value="Search">
-            <Grid>
+            <Grid RowSpacing="12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="10">
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
                     <ComboBox
+                        HorizontalAlignment="Stretch"
                         DisplayMemberPath="Name"
+                        Header="Source"
                         ItemsSource="{x:Bind ViewModel.ImageProviders, Mode=OneWay}"
-                        PlaceholderText="Source"
+                        PlaceholderText="Select a source"
                         SelectedItem="{x:Bind ViewModel.SelectedProvider, Mode=TwoWay}" />
-
                     <ComboBox
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Header="Type"
                         ItemsSource="{x:Bind ViewModel.ImageTypes, Mode=OneWay}"
-                        PlaceholderText="Type"
+                        PlaceholderText="Select a type"
                         SelectedItem="{x:Bind ViewModel.SelectedImageType, Mode=TwoWay}" />
+                    <CheckBox
+                        Grid.Column="2"
+                        VerticalAlignment="Bottom"
+                        Content="All languages"
+                        IsChecked="{x:Bind ViewModel.IncludeAllLanguages, Mode=TwoWay}" />
+                </Grid>
 
-                    <CheckBox Content="All Languages" IsChecked="{x:Bind ViewModel.IncludeAllLanguages, Mode=TwoWay}" />
-                </StackPanel>
-
-                <ScrollViewer Grid.Row="1" Margin="{StaticResource SmallTopBottomMargin}">
+                <ScrollViewer
+                    Grid.Row="1"
+                    Margin="0,0,-12,0"
+                    Padding="0,0,12,0">
                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="jm:RemoteImageInfo">
-                                <Grid
-                                    Padding="10,10,10,0"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="{StaticResource ControlCornerRadius}">
+                                <Grid Style="{StaticResource TileStyle}">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-
-                                    <controls:LoadingImage Source="{x:Bind Url}" Stretch="Uniform" />
-                                    <StackPanel
-                                        Grid.Row="1"
-                                        Margin="{StaticResource SmallTopBottomMargin}"
-                                        HorizontalAlignment="Center">
-                                        <TextBlock Text="{x:Bind ProviderName}" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind Width, Converter={StaticResource ObjectToVisibilityConverter}}">
-                                            <Run Text="{x:Bind Width}" />
-                                            <Run Text="x" />
-                                            <Run Text="{x:Bind Height}" />
+                                    <Border Style="{StaticResource ImageWellStyle}">
+                                        <controls:LoadingImage Source="{x:Bind Url}" Stretch="Uniform" />
+                                    </Border>
+                                    <StackPanel Grid.Row="1">
+                                        <TextBlock
+                                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                            Text="{x:Bind ProviderName}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
+                                        <TextBlock Style="{StaticResource TileCaptionStyle}" Visibility="{x:Bind Width, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                            <Run Text="{x:Bind Width}" /><Run Text=" × " /><Run Text="{x:Bind Height}" />
                                         </TextBlock>
-                                        <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind VoteCount, Converter={StaticResource ObjectToVisibilityConverter}}">
-                                            <Run Text="{x:Bind VoteCount}" />
-                                            <Run Text="Votes" />
+                                        <TextBlock Style="{StaticResource TileCaptionStyle}" Visibility="{x:Bind CommunityRating, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                            <Run Text="★" /><Run Text="{x:Bind CommunityRating}" /><Run Text=" · " /><Run Text="{x:Bind VoteCount}" /><Run Text=" votes" />
                                         </TextBlock>
-                                        <TextBlock HorizontalAlignment="Center" Visibility="{x:Bind CommunityRating, Converter={StaticResource ObjectToVisibilityConverter}}">
-                                            <Run Text="Rating" />
-                                            <Run Text="{x:Bind CommunityRating}" />
-                                        </TextBlock>
-                                        <Button
-                                            Margin="{StaticResource XSmallTopMargin}"
-                                            HorizontalAlignment="Center"
-                                            Command="{Binding ElementName=Page, Path=ViewModel.UpdateImageCommand}"
-                                            CommandParameter="{x:Bind}"
-                                            Content="{ui:SymbolIcon Symbol=Download}" />
                                     </StackPanel>
+                                    <Button
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{Binding ElementName=Page, Path=ViewModel.UpdateImageCommand}"
+                                        CommandParameter="{x:Bind}">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon FontSize="14" Glyph="&#xE896;" />
+                                            <TextBlock Text="Use image" />
+                                        </StackPanel>
+                                    </Button>
                                 </Grid>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                         <ItemsRepeater.Layout>
                             <UniformGridLayout
                                 ItemsStretch="Fill"
-                                MinColumnSpacing="10"
-                                MinItemHeight="230"
-                                MinItemWidth="125"
-                                MinRowSpacing="10" />
+                                MinColumnSpacing="12"
+                                MinItemWidth="160"
+                                MinRowSpacing="12" />
                         </ItemsRepeater.Layout>
                     </ItemsRepeater>
                 </ScrollViewer>

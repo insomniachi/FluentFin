@@ -5,6 +5,7 @@ using DynamicData;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using Flurl;
+using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -29,6 +30,8 @@ public static class Converters
 	public static long SecondsToTicks(double value) => (long)(value * 10000000.0);
 	public static string TicksToTime(long? value) => value is null ? "" : new TimeSpan(value.Value).ToString("hh\\:mm\\:ss");
 	public static string MsToTime(long ms) => TimeSpan.FromMilliseconds(ms).ToString("hh\\:mm\\:ss");
+	public static string BytesToString(long? value) => value is null ? "" : value.Value.Bytes().Humanize("0.##");
+	public static string BitrateToString(int? value) => value is null ? "" : $"{value / 1000:N0} kbps";
 
 	public static string DateTimeOffsetToString(DateTimeOffset? offset)
 	{

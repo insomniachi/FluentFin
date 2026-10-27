@@ -10,6 +10,7 @@
     xmlns:jm="using:Jellyfin.Sdk.Generated.Models"
     xmlns:local="using:FluentFin.Dialogs.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:vm="using:FluentFin.Dialogs.ViewModels"
     x:Name="Page"
     Title="Edit Subtitles"
@@ -19,112 +20,140 @@
 
     <ContentDialog.Resources>
         <cc:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <cc:EmptyCollectionToObjectConverter
+            x:Key="EmptyToVisibleConverter"
+            EmptyValue="Visible"
+            NotEmptyValue="Collapsed" />
+        <Style x:Key="RowCardStyle" TargetType="Grid">
+            <Setter Property="Padding" Value="16,12" />
+            <Setter Property="ColumnSpacing" Value="16" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        </Style>
+        <Style x:Key="SectionHeaderStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="4,0,0,0" />
+        </Style>
+        <Style x:Key="SecondaryCaptionStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        </Style>
     </ContentDialog.Resources>
 
-    <ScrollViewer MinWidth="500">
-        <StackPanel Spacing="20">
-            <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="My Subtitles" />
+    <ScrollViewer Margin="0,0,-12,0" Padding="0,0,12,0">
+        <StackPanel Width="720" Spacing="8">
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Current subtitles" />
+
+            <TextBlock
+                Margin="4,0,0,0"
+                Style="{StaticResource SecondaryCaptionStyle}"
+                Text="This item has no subtitles."
+                Visibility="{x:Bind ViewModel.Subtitles, Converter={StaticResource EmptyToVisibleConverter}, Mode=OneWay}" />
 
             <ItemsRepeater ItemsSource="{x:Bind ViewModel.Subtitles, Mode=OneWay}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="jm:MediaStream">
-                        <Grid
-                            Padding="10"
-                            Background="{ThemeResource CardBackgroundFillColorDefault}"
-                            ColumnSpacing="20"
-                            CornerRadius="{StaticResource ControlCornerRadius}">
+                        <Grid Style="{StaticResource RowCardStyle}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <SymbolIcon Symbol="ClosedCaption" />
-                            <TextBlock
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="{x:Bind DisplayTitle}" />
+                            <FontIcon VerticalAlignment="Center" Glyph="&#xED1E;" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="{x:Bind DisplayTitle}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
+                                <TextBlock Style="{StaticResource SecondaryCaptionStyle}">
+                                    <Run Text="{x:Bind Codec}" />
+                                </TextBlock>
+                            </StackPanel>
                             <Button
                                 Grid.Column="2"
-                                Margin="{StaticResource SmallRightMargin}"
+                                VerticalAlignment="Center"
+                                AutomationProperties.Name="Delete subtitle"
                                 Command="{Binding ElementName=Page, Path=ViewModel.DeleteSubtitleCommand}"
                                 CommandParameter="{x:Bind}"
+                                ToolTipService.ToolTip="Delete subtitle"
                                 Visibility="{x:Bind IsExternal, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <SymbolIcon Symbol="Delete" />
+                                <FontIcon FontSize="14" Glyph="&#xE74D;" />
                             </Button>
                         </Grid>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
                 <ItemsRepeater.Layout>
-                    <StackLayout Spacing="10" />
+                    <StackLayout Spacing="8" />
                 </ItemsRepeater.Layout>
             </ItemsRepeater>
 
-            <StackPanel Spacing="10">
-                <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Text="Search for Subtitles" />
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <ComboBox
-                        MinWidth="390"
-                        DisplayMemberPath="DisplayName"
-                        ItemsSource="{x:Bind ViewModel.Cultures, Mode=OneWay}"
-                        PlaceholderText="Language"
-                        SelectedItem="{x:Bind ViewModel.SelectedCulture, Mode=TwoWay}" />
-                    <Button Command="{x:Bind ViewModel.SearchSubtitlesCommand}">
+            <TextBlock
+                Margin="4,16,0,0"
+                Style="{StaticResource SectionHeaderStyle}"
+                Text="Search online" />
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    DisplayMemberPath="DisplayName"
+                    ItemsSource="{x:Bind ViewModel.Cultures, Mode=OneWay}"
+                    PlaceholderText="Language"
+                    SelectedItem="{x:Bind ViewModel.SelectedCulture, Mode=TwoWay}" />
+                <Button
+                    Grid.Column="1"
+                    Command="{x:Bind ViewModel.SearchSubtitlesCommand}"
+                    Style="{StaticResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <SymbolIcon Symbol="Find" />
-                    </Button>
-                    <Button>
-                        <SymbolIcon Symbol="Add" />
-                    </Button>
-                </StackPanel>
+                        <TextBlock Text="Search" />
+                    </StackPanel>
+                </Button>
+            </Grid>
 
-                <ItemsRepeater ItemsSource="{x:Bind ViewModel.RemoteSubtitles, Mode=OneWay}">
-                    <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="jm:RemoteSubtitleInfo">
-                            <Grid
-                                Padding="20"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                ColumnSpacing="10"
-                                CornerRadius="{StaticResource ControlCornerRadius}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+            <ItemsRepeater Margin="0,4,0,0" ItemsSource="{x:Bind ViewModel.RemoteSubtitles, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="jm:RemoteSubtitleInfo">
+                        <Grid Style="{StaticResource RowCardStyle}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                                <StackPanel>
-                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
-                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}">
-                                        <Run Text="Format" />
-                                        <Run Text="{x:Bind Format}" />
-                                    </TextBlock>
-                                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}">
-                                        <Run Text="Downloads" />
-                                        <Run Text="{x:Bind DownloadCount}" />
-                                    </TextBlock>
-                                    <TextBlock
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{x:Bind Comment}"
-                                        TextWrapping="WrapWholeWords" />
+                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                <TextBlock
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="{x:Bind Name}"
+                                    TextWrapping="Wrap" />
+                                <TextBlock Style="{StaticResource SecondaryCaptionStyle}">
+                                    <Run Text="{x:Bind Format}" /><Run Text=" · " /><Run Text="{x:Bind DownloadCount}" /><Run Text=" downloads" />
+                                </TextBlock>
+                                <TextBlock
+                                    Style="{StaticResource SecondaryCaptionStyle}"
+                                    Text="{x:Bind Comment}"
+                                    TextWrapping="WrapWholeWords" />
+                            </StackPanel>
+
+                            <Button
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Command="{Binding ElementName=Page, Path=ViewModel.DownloadSubtitleCommand}"
+                                CommandParameter="{x:Bind}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="14" Glyph="&#xE896;" />
+                                    <TextBlock Text="Download" />
                                 </StackPanel>
-
-                                <Button
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding ElementName=Page, Path=ViewModel.DownloadSubtitleCommand}"
-                                    CommandParameter="{x:Bind}">
-                                    <SymbolIcon Symbol="Download" />
-                                </Button>
-
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsRepeater.ItemTemplate>
-                    <ItemsRepeater.Layout>
-                        <StackLayout Spacing="10" />
-                    </ItemsRepeater.Layout>
-                </ItemsRepeater>
-
-            </StackPanel>
-
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="8" />
+                </ItemsRepeater.Layout>
+            </ItemsRepeater>
         </StackPanel>
     </ScrollViewer>
 </ContentDialog>

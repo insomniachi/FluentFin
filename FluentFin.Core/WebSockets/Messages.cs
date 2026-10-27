@@ -1,6 +1,9 @@
 ﻿
 using FluentFin.Core.WebSockets.Messages;
 using Jellyfin.Sdk.Generated.Models;
+using PlaystateRequest = FluentFin.Core.WebSockets.Messages.PlaystateRequest;
+using UserDataChangeInfo = FluentFin.Core.WebSockets.Messages.UserDataChangeInfo;
+using PlayQueueUpdate = FluentFin.Core.WebSockets.Messages.PlayQueueUpdate;
 
 namespace FluentFin.Core.WebSockets;
 

@@ -24,11 +24,6 @@ public partial class LibrariesDisplayViewModel(IJellyfinClient jellyfinClient) :
 			{
 				DisplayName = "Display specials within seasons they aired in",
 			},
-			new JellyfinConfigItemViewModel<bool>(() => config.EnableGroupingIntoCollections ?? false, value => config.EnableGroupingIntoCollections = value)
-			{
-				DisplayName = "Group movies into collections",
-				Description = "Movies in a collection will be displayed as one grouped item when displaying movie lists."
-			},
 			new JellyfinConfigItemViewModel<bool>(() => config.EnableExternalContentInSuggestions ?? false, value => config.EnableExternalContentInSuggestions = value)
 			{
 				DisplayName = "Enable external content in suggestions",

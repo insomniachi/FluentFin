@@ -19,7 +19,7 @@ public sealed partial class TomatoMeter : UserControl
 		InitializeComponent();
 
 		this.WhenAnyValue(x => x.Rating)
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Select(x => x > 60 ? TomatoMeterBadge.Fresh : TomatoMeterBadge.Rotten)
 			.Subscribe(badge => Badge = badge);
 	}

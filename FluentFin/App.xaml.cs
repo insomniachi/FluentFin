@@ -23,6 +23,7 @@ using Jellyfin.Sdk.Generated.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ReactiveUI.Builder;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Windows.ApplicationModel;
@@ -64,6 +65,8 @@ public partial class App : Application
 
 	public App()
 	{
+		// ReactiveUI 23+ must be initialized explicitly before any Rx/ReactiveUI type is touched
+		RxAppBuilder.CreateReactiveUIBuilder().WithWinUI().BuildApp();
 		InitializeComponent();
 
 		Host = Microsoft.Extensions.Hosting.Host
@@ -256,13 +259,12 @@ public partial class App : Application
 		var location = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, "FFMpeg");
 		FlyleafLib.Engine.Start(new FlyleafLib.EngineConfig()
 		{
-			FFmpegDevices = false,    // Prevents loading avdevice/avfilter dll files. Enable it only if you plan to use dshow/gdigrab etc.
+			FFmpegLoadProfile = Flyleaf.FFmpeg.LoadProfile.Main,    // Prevents loading avdevice/avfilter dll files
 			FFmpegPath = location ?? "FFmpeg",
 			FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Quiet,
 			LogLevel = FlyleafLib.LogLevel.Quiet,
 			UIRefresh = true,    // Required for Activity, BufferedDuration, Stats in combination with Config.Player.Stats = true
 			UIRefreshInterval = 250,      // How often (in ms) to notify the UI
-			UICurTimePerSecond = true,  // Whether to notify UI for CurTime only when it's second changed or by UIRefreshInterval
 		});
 	}
 }

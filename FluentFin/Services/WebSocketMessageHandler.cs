@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using FluentFin.Contracts.Services;
@@ -8,6 +9,7 @@ using FluentFin.Core.Services;
 using FluentFin.Core.WebSockets;
 using FluentFin.ViewModels;
 using Jellyfin.Sdk.Generated.Models;
+using GeneralCommandMessage = FluentFin.Core.WebSockets.GeneralCommandMessage;
 using Microsoft.Extensions.Hosting;
 using ReactiveUI;
 
@@ -23,7 +25,7 @@ public class WebSocketMessageHandler(IObservable<IInboundSocketMessage> webSocke
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
 		webSocketMessages
-		 .ObserveOn(RxApp.MainThreadScheduler)
+		 .ObserveOn(RxSchedulers.MainThreadScheduler)
 		 .Subscribe(message =>
 		 {
 			 switch (message)

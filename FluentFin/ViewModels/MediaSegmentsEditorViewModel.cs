@@ -60,7 +60,7 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 
 		this.WhenAnyValue(x => x.MediaPlayer)
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(mp =>
 			{
 				mp.PositionChanged

@@ -32,7 +32,7 @@ namespace FluentFin.Plugins.Playback_Reporting.ViewModels
 				.Select(x => new { EndDate = x.Item1, Days = x.Item2 * 7 })
 				.SelectMany(x => PlaybackReportingHelper.GetHourlyReport(x.Days, x.EndDate))
 				.Where(x => x.Count > 0)
-				.ObserveOn(RxApp.MainThreadScheduler)
+				.ObserveOn(RxSchedulers.MainThreadScheduler)
 				.Subscribe(UpdatePlot);
 
 			return Task.CompletedTask;

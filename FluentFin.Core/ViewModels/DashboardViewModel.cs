@@ -7,6 +7,8 @@ using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.WebSockets;
 using Jellyfin.Sdk.Generated.Models;
+using SessionsStartMessage = FluentFin.Core.WebSockets.SessionsStartMessage;
+using SessionsStopMessage = FluentFin.Core.WebSockets.SessionsStopMessage;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 
@@ -77,7 +79,7 @@ public partial class DashboardViewModel(IJellyfinClient jellyfinClient,
 
 		webSocketMessages
 			.OfType<SessionInfoMessage>()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Select(x => x.Data?.Where(x => x.Id != SessionInfo.SessionId) ?? [])
 			.Subscribe(sessions =>
 			{

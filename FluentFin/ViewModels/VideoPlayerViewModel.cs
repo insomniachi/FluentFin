@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Web;
@@ -17,6 +18,8 @@ using FluentFin.Helpers;
 using FluentFin.Services;
 using Flurl;
 using Jellyfin.Sdk.Generated.Models;
+using PlayQueueUpdate = FluentFin.Core.WebSockets.Messages.PlayQueueUpdate;
+using SyncPlayCommandMessage = FluentFin.Core.WebSockets.SyncPlayCommandMessage;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
@@ -354,7 +357,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			.Select(x => x.Ticks)
 			.Select(ticks => Segments.Any(segment => ticks > segment.StartTicks && ticks < segment.EndTicks))
 			.DistinctUntilChanged()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(isVisible => IsSkipButtonVisible = isVisible);
 		mp.DurationChanged.Subscribe(d => _duration = d);
 
@@ -373,7 +376,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	private void SubscribeWebsocketMessage()
 	{
 		webSocketMessages
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(async message =>
 			{
 				if (MediaPlayer is null)

@@ -209,7 +209,7 @@ public partial class JellyfinClient
 	public async Task<Uri?> GetSplashScreen()
 	{
 		var endoint = _jellyfinApiClient.System.Configuration["branding"].ToGetRequestInformation();
-		var options =  await AddApiKey(endoint.URI).GetJsonAsync<BrandingOptions>();
+		var options =  await AddApiKey(endoint.URI).GetJsonAsync<BrandingOptionsDto>();
 
 		if(options.SplashscreenEnabled is not true)
 		{
@@ -219,9 +219,6 @@ public partial class JellyfinClient
 		return AddApiKey(_jellyfinApiClient.Branding.Splashscreen.ToGetRequestInformation(x =>
 		{
 			var query = x.QueryParameters;
-			query.Blur = 20;
-			query.Height = 1080;
-			query.Width = 1920;
 			query.Format = Jellyfin.Sdk.Generated.Branding.Splashscreen.ImageFormat.Jpg;
 		}).URI);
 	}

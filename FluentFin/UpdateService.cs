@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Text.Json.Nodes;
@@ -125,7 +126,7 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 	{
 		Observable
 				.Timer(TimeSpan.Zero, TimeSpan.FromHours(1))
-				.ObserveOn(RxApp.TaskpoolScheduler)
+				.ObserveOn(RxSchedulers.TaskpoolScheduler)
 				.SelectMany(_ => TryGetStreamAsync())
 				.Where(x => !string.IsNullOrEmpty(x))
 				.Select(x => JsonNode.Parse(x))
@@ -142,7 +143,7 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 				})
 				.Throttle(TimeSpan.FromSeconds(3))
 				.SelectMany(DownloadUpdate)
-				.ObserveOn(RxApp.MainThreadScheduler)
+				.ObserveOn(RxSchedulers.MainThreadScheduler)
 				.Subscribe(InstallUpdate)
 				.DisposeWith(_disposable);
 

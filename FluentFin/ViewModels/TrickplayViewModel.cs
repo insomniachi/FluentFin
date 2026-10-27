@@ -40,7 +40,7 @@ public partial class TrickplayViewModel : ObservableObject
 
 		this.WhenAnyValue(x => x.Position)
 			.Throttle(TimeSpan.FromMilliseconds(200))
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(x =>
 			{
 				if (Item is null)
@@ -78,7 +78,7 @@ public partial class TrickplayViewModel : ObservableObject
 
 				if (TileImage is null || Index != index)
 				{
-					RxApp.MainThreadScheduler.Schedule(() =>
+					RxSchedulers.MainThreadScheduler.Schedule(() =>
 					{
 						TileImage = jellyfinClient.GetTrickplayImage(Item, index, (int)Width);
 					});
@@ -86,7 +86,7 @@ public partial class TrickplayViewModel : ObservableObject
 
 				Index = index;
 
-				RxApp.MainThreadScheduler.Schedule(() =>
+				RxSchedulers.MainThreadScheduler.Schedule(() =>
 				{
 					Translate.X = -tileOffsetX * Width;
 					Translate.Y = -tileOffsetY * Height;

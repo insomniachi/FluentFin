@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>FluentFin.Plugins</RootNamespace>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -16,14 +16,14 @@
     <None Remove="Jellyseer\Views\JellyseerRequest.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.13.2" />
-    <PackageReference Include="Microsoft.Kiota.Abstractions" Version="1.17.2" />
-    <PackageReference Include="Microsoft.Kiota.Authentication.Azure" Version="1.17.2" />
-    <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.2" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="1.17.2" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="1.17.2" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="1.17.2" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="1.17.2" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Kiota.Abstractions" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Kiota.Authentication.Azure" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="2.1.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentFin.UI.Core\FluentFin.UI.Core.csproj" />

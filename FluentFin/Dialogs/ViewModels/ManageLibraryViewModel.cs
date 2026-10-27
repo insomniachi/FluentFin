@@ -130,7 +130,7 @@ public partial class ManageLibraryViewModel(IJellyfinClient jellyfinClient) : Ob
 			.WhereNotNull()
 			.SelectMany(type => jellyfinClient.GetAvailableInfo(type!.Value, true))
 			.WhereNotNull()
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(value =>
 			{
 				if (FolderCollectionType == Jellyfin.Sdk.Generated.Libraries.AvailableOptions.CollectionType.Tvshows)

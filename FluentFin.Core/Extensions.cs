@@ -3,6 +3,7 @@ using System.Text;
 
 namespace FluentFin.Core;
 
+[System.Runtime.Versioning.SupportedOSPlatform("windows")]
 public static class SecurityExtensions
 {
 	public static byte[] Protect(this string plainText, byte[] entropy)

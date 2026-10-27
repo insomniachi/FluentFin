@@ -75,7 +75,7 @@ public partial class EditImagesViewModel(IJellyfinClient jellyfinClient) : Obser
 
 		this.WhenAnyValue(x => x.SelectedProvider)
 			.Where(x => x is { SupportedImages.Count: > 0 })
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(provider =>
 			{
 				var newTypes = provider!.SupportedImages!.Except(ImageTypes).ToList();

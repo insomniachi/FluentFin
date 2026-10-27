@@ -12,7 +12,7 @@
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ImageEx.xaml" />
                 <ResourceDictionary Source="/Styles/NavigationView.xaml" />
-                <ResourceDictionary Source="ms-appx:///DevWinUI.Controls/Themes/Generic.xaml" />
+                <ResourceDictionary Source="ms-appx:///DevWinUI/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">

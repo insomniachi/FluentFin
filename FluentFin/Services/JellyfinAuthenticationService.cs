@@ -29,9 +29,6 @@ public class JellyfinAuthenticationService(IJellyfinClient jellyfinClient,
 		return client.Branding.Splashscreen.ToGetRequestInformation(x =>
 		{
 			var query = x.QueryParameters;
-			query.Blur = 8;
-			query.Height = 1080;
-			query.Width = 1920;
 			query.Format = Jellyfin.Sdk.Generated.Branding.Splashscreen.ImageFormat.Jpg;
 		}).URI;
 	}

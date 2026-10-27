@@ -108,7 +108,7 @@ public partial class BaseItemViewModel : ObservableObject
 	public int? ParentIndexNumber { get; set; }
 	public string ParentLogoImageTag { get; set; } = "";
 	public Guid? ParentLogoItemId { get; set; }
-	public string ParentPrimaryImageItemId { get; set; } = "";
+	public Guid? ParentPrimaryImageItemId { get; set; }
 	public string ParentPrimaryImageTag { get; set; } = "";
 	public string ParentThumbImageTag { get; set; } = "";
 	public Guid? ParentThumbItemId { get; set; }
@@ -269,7 +269,7 @@ public partial class BaseItemViewModel : ObservableObject
 			ParentIndexNumber = dto.ParentIndexNumber,
 			ParentLogoImageTag = dto.ParentLogoImageTag ?? "",
 			ParentLogoItemId = dto.ParentLogoItemId,
-			ParentPrimaryImageItemId = dto.ParentPrimaryImageItemId ?? "",
+			ParentPrimaryImageItemId = dto.ParentPrimaryImageItemId,
 			ParentPrimaryImageTag = dto.ParentPrimaryImageTag ?? "",
 			ParentThumbImageTag = dto.ParentThumbImageTag ?? "",
 			ParentThumbItemId = dto.ParentThumbItemId,

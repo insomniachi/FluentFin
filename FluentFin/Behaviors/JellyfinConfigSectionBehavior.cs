@@ -20,7 +20,7 @@ public partial class JellyfinConfigSectionBehavior : Behavior<StackPanel>
 	{
 		this.WhenAnyValue(x => x.Items)
 			.Where(x => x is { Count: > 0 })
-			.ObserveOn(RxApp.MainThreadScheduler)
+			.ObserveOn(RxSchedulers.MainThreadScheduler)
 			.Subscribe(CreateItems);
 	}
 

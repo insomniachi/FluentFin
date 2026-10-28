@@ -8,11 +8,11 @@
         (3:1 for icons, 4.5:1 for text) with a white image behind them, the worst case.
     -->
 
-    <!--  Transport controls drawn over the video  -->
+    <!--  Transport controls drawn over the video. Peak of the Jellyfin web OSD gradient: rgba(16 16 16 / 0.75)  -->
     <SolidColorBrush
         x:Key="PlayerControlsScrimBrush"
-        Opacity="0.65"
-        Color="Black" />
+        Opacity="0.75"
+        Color="#101010" />
 
     <!--  Same as the detail ribbon of the Jellyfin web client: rgb(32 32 32 / 0.8)  -->
     <SolidColorBrush

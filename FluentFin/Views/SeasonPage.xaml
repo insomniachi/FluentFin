@@ -35,7 +35,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid>
+    <Grid RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*" />
             <RowDefinition Height="0.5*" />
@@ -76,6 +76,13 @@
             </media:UIElementExtensions.VisualFactory>
         </Grid>
 
+        <!--  Dark scrim so the text below the title strip stays readable on any backdrop  -->
+        <Border
+            Grid.Row="2"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            Background="{StaticResource MediaInfoScrimBrush}" />
+
         <Border
             Grid.RowSpan="2"
             Grid.ColumnSpan="2"
@@ -98,8 +105,7 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             Height="{StaticResource ButtonStripHeight}"
-            VerticalAlignment="Bottom"
-            RequestedTheme="Dark">
+            VerticalAlignment="Bottom">
             <StackPanel
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"

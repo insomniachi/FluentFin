@@ -81,14 +81,27 @@ public class OverlayContrastTests
 
 	[Theory]
 	[MemberData(nameof(MediaInfoPageData))]
-	public void MediaInfoPage_UsesScrimBehindDarkThemedButtonStrip(string page)
+	public void MediaInfoPage_IsDarkThemedWithScrimBehindTitleStripAndBody(string page)
 	{
 		var doc = Load(page);
 
+		// the whole page is dark themed, not only the title strip: the body text sits on the same backdrop
 		var strip = FindByName(doc, "ButtonStrip");
-		Assert.Equal("Dark", (string?)strip.Attribute("RequestedTheme"));
+		Assert.Contains(strip.AncestorsAndSelf(), e => (string?)e.Attribute("RequestedTheme") == "Dark");
+		Assert.Equal("Dark", (string?)doc.Root!.Elements().Single(e => e.Name.LocalName == "Grid").Attribute("RequestedTheme"));
 
-		Assert.Contains(doc.Descendants(), e => (string?)e.Attribute("Background") == "{StaticResource MediaInfoScrimBrush}");
+		const string scrim = "{StaticResource MediaInfoScrimBrush}";
+
+		// title strip: the Border bottom aligned in the top rows
+		Assert.Contains(doc.Descendants(Presentation + "Border"),
+			e => (string?)e.Attribute("Background") == scrim && (string?)e.Attribute("VerticalAlignment") == "Bottom");
+
+		// body: the layer right after the blurred backdrop
+		var blurred = doc.Descendants().Single(e => e.Name.LocalName == "BlurEffect").Ancestors(Presentation + "Grid").First();
+		var overlay = blurred.ElementsAfterSelf().First();
+		Assert.Equal("Border", overlay.Name.LocalName);
+		Assert.Equal(scrim, (string?)overlay.Attribute("Background"));
+		Assert.Equal("2", (string?)overlay.Attribute("Grid.Row"));
 	}
 
 	[Theory]

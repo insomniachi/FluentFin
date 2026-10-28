@@ -45,9 +45,6 @@
             EmptyValue="Collapsed"
             NotEmptyValue="Visible" />
         <cc:CollectionVisibilityConverter x:Key="EmptyCollectionVisibilityConverter" />
-        <LinearGradientBrush x:Name="TransportControlBackground" MappingMode="RelativeToBoundingBox" Opacity="0.2" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Offset="1" Color="Black" />
-        </LinearGradientBrush>
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </UserControl.Resources>
 
@@ -70,11 +67,9 @@
                 Command="{x:Bind SkipCommand, Mode=OneWay}"
                 FontSize="20"
                 FontWeight="Bold"
+                Background="{StaticResource PlayerControlsScrimBrush}"
                 Foreground="White"
                 Visibility="{x:Bind IsSkipButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button.Background>
-                    <SolidColorBrush Opacity="0.5" Color="Black" />
-                </Button.Background>
                 <StackPanel
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
@@ -174,7 +169,8 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             x:FieldModifier="public"
-            Background="{StaticResource TransportControlBackground}">
+            Background="{StaticResource PlayerControlsScrimBrush}"
+            RequestedTheme="Dark">
             <animations:Implicit.ShowAnimations>
                 <animations:OpacityAnimation
                     From="0"

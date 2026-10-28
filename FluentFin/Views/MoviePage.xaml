@@ -26,10 +26,6 @@
             x:Key="ObjectToVisibilityConverter"
             EmptyValue="Collapsed"
             NotEmptyValue="Visible" />
-        <SolidColorBrush
-            x:Key="BackgroundOnImageBrush"
-            Opacity="0.3"
-            Color="Black" />
         <x:Double x:Key="ButtonStripHeight">75</x:Double>
         <x:Double x:Key="InputLabelWidth">125</x:Double>
         <x:Double x:Key="InputControlWidth">200</x:Double>
@@ -90,7 +86,7 @@
             Grid.ColumnSpan="2"
             Height="{StaticResource ButtonStripHeight}"
             VerticalAlignment="Bottom"
-            Background="{StaticResource BackgroundOnImageBrush}" />
+            Background="{StaticResource MediaInfoScrimBrush}" />
 
         <Grid
             Grid.RowSpan="2"
@@ -108,6 +104,7 @@
             Grid.Column="1"
             Height="{StaticResource ButtonStripHeight}"
             VerticalAlignment="Bottom"
+            RequestedTheme="Dark"
             RowSpacing="4">
             <Grid.RowDefinitions>
                 <RowDefinition />

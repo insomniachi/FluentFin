@@ -181,7 +181,21 @@ namespace FluentFin.MediaPlayers
 			}
 			catch { }
 		}
-		public void Stop() => Pause();
+
+		/// <summary>
+		/// Unlike <see cref="Pause"/>, releases the media source so that the network stream is closed.
+		/// </summary>
+		public void Stop()
+		{
+			try
+			{
+				_mp.Pause();
+				_mp.Source = null;
+			}
+			catch { }
+
+			_mediaItem = null;
+		}
 
 		private static MediaPlayerState ConvertState(Windows.Media.Playback.MediaPlayerState state)
 		{

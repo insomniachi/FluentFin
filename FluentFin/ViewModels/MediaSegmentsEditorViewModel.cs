@@ -11,8 +11,10 @@ using ReactiveUI;
 
 namespace FluentFin.ViewModels;
 
-public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient, ISettings settings) : ObservableObject, INavigationAware
+public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient, IPlaybackSessionManager playbackSessions, ISettings settings) : ObservableObject, INavigationAware
 {
+	private PlaybackSession? _session;
+	private int _loadVersion;
 
 	[ObservableProperty]
 	public partial PlaylistViewModel Playlist { get; set; } = new();
@@ -27,10 +29,19 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 	public long CurrentTimeTicks { get; set; }
 	public MediaSegmentViewModel? PlayingSegment { get; set; }
 
-	public Task OnNavigatedFrom()
+	public async Task OnNavigatedFrom()
 	{
+		Interlocked.Increment(ref _loadVersion);
+		Playlist.PropertyChanged -= OnPlaylistPropertyChanged;
+		await StopPlayback();
+	}
+
+	// the editor only scrubs through the media, it must not change the resume point or the played state
+	private async Task StopPlayback()
+	{
+		var session = Interlocked.Exchange(ref _session, null);
 		MediaPlayer?.Stop();
-		return Task.CompletedTask;
+		await playbackSessions.StopAsync(session, updateWatchState: false);
 	}
 
 	public async Task OnNavigatedTo(object parameter)
@@ -105,27 +116,30 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 			return;
 		}
 
-		MediaPlayer.Stop();
+		var version = Interlocked.Increment(ref _loadVersion);
+		await StopPlayback();
 
 		var full = await jellyfinClient.GetItem(selectedItem.Dto.Id ?? Guid.Empty);
 
-		if (full is null)
+		if (full is null || version != _loadVersion)
 		{
 			return;
 		}
 
 		var mediaResponse = await jellyfinClient.GetMediaUrl(full);
 
-		if (mediaResponse is null)
+		if (mediaResponse is null || version != _loadVersion)
 		{
 			return;
 		}
 
 		selectedItem.Media = mediaResponse;
+		_session = playbackSessions.Begin(selectedItem.Dto.Id ?? Guid.Empty, mediaResponse);
 
 		var success = MediaPlayer.Play(mediaResponse.Uri);
 		if (!success)
 		{
+			await StopPlayback();
 			return;
 		}
 

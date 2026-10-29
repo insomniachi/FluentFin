@@ -14,10 +14,10 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 									IDeviceProfileFactory deviceProfileFactory) : IJellyfinClient
 {
 	private Jellyfin.Sdk.JellyfinApiClient _jellyfinApiClient = null!;
+	private Microsoft.Kiota.Abstractions.IRequestAdapter _requestAdapter = null!;
 	private string _token = "";
 	private Jellyfin.Sdk.JellyfinSdkSettings _settings = null!;
 	private string _deviceId = "";
-	private PlaybackProgressInfo? _currentItem = null;
 
 	public Guid UserId { get; set; }
 	public string BaseUrl { get; set; } = "";
@@ -43,7 +43,8 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 		_settings.Initialize("FluentFin", Assembly.GetEntryAssembly()!.GetName().Version!.ToString()!, Environment.MachineName, _deviceId);
 		_settings.SetAccessToken(_token);
 		_settings.SetServerUrl(baseUrl);
-		_jellyfinApiClient = new Jellyfin.Sdk.JellyfinApiClient(new Jellyfin.Sdk.JellyfinRequestAdapter(new Jellyfin.Sdk.JellyfinAuthenticationProvider(_settings), _settings));
+		_requestAdapter = new Jellyfin.Sdk.JellyfinRequestAdapter(new Jellyfin.Sdk.JellyfinAuthenticationProvider(_settings), _settings);
+		_jellyfinApiClient = new Jellyfin.Sdk.JellyfinApiClient(_requestAdapter);
 
 		await _jellyfinApiClient.Sessions.Capabilities.Full.PostAsync(new ClientCapabilitiesDto
 		{

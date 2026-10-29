@@ -13,7 +13,9 @@ env:
   FFMPEG_PATH: 'Installer\FFmpeg'
   PUBLISH_FOLDER: 'FluentFin\bin\publish'
   PUBLISH_FOLDER_ARM64: 'FluentFin\bin\publish-arm64'
-  FFMPEG_ARM64_URL: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-winarm64-gpl-shared.zip
+  # pinned BtbN autobuild, the closest to the checked-in x64 DLLs (avcodec-63); bump both together
+  FFMPEG_ARM64_URL: https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-08-31-13-27/ffmpeg-N-126342-gf88b741dbf-winarm64-gpl-shared.zip
+  FFMPEG_ARM64_SHA256: d01a01d2e447dbcd0abc143c1c74d53317dfe20f08dbb2eba0712b62c083ec93
   CTK_LABS_INDEX: https://pkgs.dev.azure.com/dotnet/CommunityToolkit/_packaging/CommunityToolkit-Labs/nuget/v3/index.json
 
 jobs:
@@ -65,6 +67,7 @@ jobs:
             shell: pwsh
             run: |
                 Invoke-WebRequest $env:FFMPEG_ARM64_URL -OutFile ffmpeg-arm64.zip
+                if ((Get-FileHash ffmpeg-arm64.zip -Algorithm SHA256).Hash -ne $env:FFMPEG_ARM64_SHA256) { throw 'arm64 FFmpeg checksum mismatch' }
                 Expand-Archive ffmpeg-arm64.zip -DestinationPath ffmpeg-arm64
                 New-Item -ItemType Directory -Force FluentFin\FFMpeg-arm64 | Out-Null
                 foreach ($x64 in Get-ChildItem FluentFin\FFMpeg\*.dll) {
@@ -92,4 +95,4 @@ jobs:
             shell: pwsh
             env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            run: gh release create ${{ steps.version.outputs.version-without-v }} Installer\Output\FluentFin.exe Installer\Output\FluentFin_arm64.exe --target ${{ github.sha }} --title ${{ steps.version.outputs.version-without-v }}
+            run: gh release create ${{ steps.version.outputs.version-without-v }} Installer\Output\FluentFin_x64.exe Installer\Output\FluentFin_arm64.exe --target ${{ github.sha }} --title ${{ steps.version.outputs.version-without-v }}

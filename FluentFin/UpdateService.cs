@@ -71,12 +71,12 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		return versionInfo;
 	}
 
-	// arm64 installers carry "arm64" in the file name; the x64 installer does not
+	// installers carry the architecture in the file name, e.g. FluentFin_x64.exe, FluentFin_arm64.exe
 	private static string SelectAssetUrl(JsonArray assets)
 	{
-		var wantArm64 = RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+		var architecture = RuntimeInformation.ProcessArchitecture.ToString();
 		var urls = assets.Select(a => (string)a["browser_download_url"].AsValue()).ToList();
-		return urls.FirstOrDefault(u => u.Contains("arm64", StringComparison.OrdinalIgnoreCase) == wantArm64) ?? urls[0];
+		return urls.FirstOrDefault(u => u.Contains(architecture, StringComparison.OrdinalIgnoreCase)) ?? urls[0];
 	}
 
 	private async Task<VersionInfo> CheckForUpdate()

@@ -10,7 +10,7 @@
   #define OutputName "FluentFin_arm64"
 #else
   #define PublishDir "..\FluentFin\bin\publish"
-  #define OutputName "FluentFin"
+  #define OutputName "FluentFin_x64"
 #endif
 
 #define MyAppName "FluentFin"

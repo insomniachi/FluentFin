@@ -29,7 +29,6 @@
 		<AppInstallerUri>D:\Test\</AppInstallerUri>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
-		<Platform>arm64</Platform>
 		<FFmpegDir>FFMpeg-arm64</FFmpegDir>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(FFmpegDir)' == ''">

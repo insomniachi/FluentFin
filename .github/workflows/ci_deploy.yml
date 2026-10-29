@@ -91,21 +91,23 @@ jobs:
                 path: Installer\script.iss
                 options: /O+ /DArch=arm64
 
-        # Clients before ARM64 support install assets[0] of the latest release. gh uploads assets concurrently,
-        # so upload sequentially into a draft, check the x64 installer is first, then publish.
+        # Clients before ARM64 support install assets[0] of the latest release, and the API lists assets sorted
+        # by name. Ship a plain FluentFin.exe copy of the x64 installer for them: '.' sorts before '_', so it
+        # is always first. New clients pick FluentFin_<arch>.exe by suffix. Upload into a draft, check, publish.
         -   name: 'Create Release'
             shell: pwsh
             env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             run: |
                 $v = '${{ steps.version.outputs.version-without-v }}'
+                Copy-Item Installer\Output\FluentFin_x64.exe Installer\Output\FluentFin.exe
                 gh release create $v --draft --target ${{ github.sha }} --title $v
                 if ($LASTEXITCODE -ne 0) { throw 'gh release create failed' }
-                foreach ($f in 'Installer\Output\FluentFin_x64.exe', 'Installer\Output\FluentFin_arm64.exe') {
-                    gh release upload $v $f
+                foreach ($f in 'FluentFin.exe', 'FluentFin_x64.exe', 'FluentFin_arm64.exe') {
+                    gh release upload $v "Installer\Output\$f"
                     if ($LASTEXITCODE -ne 0) { throw "gh release upload $f failed" }
                 }
                 $first = gh release view $v --json assets -q '.assets[0].name'
-                if ($first -ne 'FluentFin_x64.exe') { throw "First asset is '$first', old clients would install it" }
+                if ($first -ne 'FluentFin.exe') { throw "First asset is '$first', old clients would install it" }
                 gh release edit $v --draft=false
                 if ($LASTEXITCODE -ne 0) { throw 'gh release edit failed' }

@@ -45,6 +45,7 @@ public class OverlayContrastTests
 	[InlineData("PlayerControlsScrimBrush", TextContrast)]
 	[InlineData("MediaInfoScrimBrush", IconContrast)]
 	[InlineData("MediaInfoScrimBrush", TextContrast)]
+	[InlineData("Black65O", IconContrast)] // play button drawn over card images
 	public void Scrim_KeepsPrimaryForegroundReadableOverWhiteImage(string brushKey, double minimum)
 	{
 		var ratio = ContrastOnScrim(brushKey, PrimaryForeground);
@@ -63,12 +64,36 @@ public class OverlayContrastTests
 	}
 
 	[Fact]
-	public void TransportControls_UseScrimAndDarkTheme()
+	public void TransportControls_AreDarkThemedAndUseScrim()
 	{
-		var bar = FindByName(Load("FluentFin/Controls/TransportControls.xaml"), "Bar");
+		var doc = Load("FluentFin/Controls/TransportControls.xaml");
 
-		Assert.Equal("{StaticResource PlayerControlsScrimBrush}", (string?)bar.Attribute("Background"));
-		Assert.Equal("Dark", (string?)bar.Attribute("RequestedTheme"));
+		// everything drawn over the video is dark themed: control bar, skip button, title and clock
+		foreach (var name in new[] { "Bar", "DynamicSkipIntroButton", "TitleSection", "TxtTitleTime" })
+		{
+			Assert.Contains(FindByName(doc, name).AncestorsAndSelf(), e => (string?)e.Attribute("RequestedTheme") == "Dark");
+		}
+
+		Assert.Equal("{StaticResource PlayerControlsScrimBrush}", (string?)FindByName(doc, "Bar").Attribute("Background"));
+	}
+
+	[Fact]
+	public void LoginPage_PanelOverSplashScreenIsDarkThemedWithScrim()
+	{
+		var panel = Load("FluentFin/Views/LoginPage.xaml").Descendants(Presentation + "StackPanel")
+			.Single(e => (string?)e.Attribute("Background") == "{StaticResource MediaInfoScrimBrush}");
+
+		Assert.Equal("Dark", (string?)panel.Attribute("RequestedTheme"));
+	}
+
+	[Fact]
+	public void BareButtonStyle_UsedForPlayButtonOverImages_HasLightForeground()
+	{
+		var style = Load("FluentFin/Styles/Button.xaml").Descendants(Presentation + "Style")
+			.Single(e => (string?)e.Attribute(Xaml + "Key") == "BareButtonStyle");
+		var foreground = style.Elements(Presentation + "Setter").Single(e => (string?)e.Attribute("Property") == "Foreground");
+
+		Assert.Equal("White", (string?)foreground.Attribute("Value"));
 	}
 
 	[Fact]
@@ -115,12 +140,12 @@ public class OverlayContrastTests
 			.ToList();
 
 		Assert.True(translucent.Count == 0,
-			$"{file} declares translucent brush(es) {string.Join(", ", translucent)}; define them in FluentFin/Styles/Overlays.xaml so the contrast tests cover them");
+			$"{file} declares translucent brush(es) {string.Join(", ", translucent)}; define them in FluentFin/Styles/Button.xaml so the contrast tests cover them");
 	}
 
 	public static TheoryData<string> MediaInfoPageData() => [.. MediaInfoPages];
 
-	public static TheoryData<string> ScrimmedFileData() => [.. MediaInfoPages, "FluentFin/Controls/TransportControls.xaml"];
+	public static TheoryData<string> ScrimmedFileData() => [.. MediaInfoPages, "FluentFin/Controls/TransportControls.xaml", "FluentFin/Views/LoginPage.xaml"];
 
 	private static double ContrastOnScrim(string brushKey, (Rgb Color, double Alpha) foreground)
 	{
@@ -134,7 +159,7 @@ public class OverlayContrastTests
 
 	private static (Rgb Color, double Opacity) LoadBrush(string key)
 	{
-		var brush = Load("FluentFin/Styles/Overlays.xaml")
+		var brush = Load("FluentFin/Styles/Button.xaml")
 			.Descendants(Presentation + "SolidColorBrush")
 			.Single(b => (string?)b.Attribute(Xaml + "Key") == key);
 
@@ -147,7 +172,7 @@ public class OverlayContrastTests
 		"Black" => new Rgb(0, 0, 0),
 		"White" => new Rgb(255, 255, 255),
 		['#', .. var hex] when hex.Length == 6 => new Rgb(Convert.ToByte(hex[..2], 16), Convert.ToByte(hex[2..4], 16), Convert.ToByte(hex[4..], 16)),
-		_ => throw new NotSupportedException($"Colour '{value}' is not supported; use Black, White or #RRGGBB in Overlays.xaml")
+		_ => throw new NotSupportedException($"Colour '{value}' is not supported; use Black, White or #RRGGBB in Button.xaml")
 	};
 
 	private static XElement FindByName(XDocument doc, string name) =>

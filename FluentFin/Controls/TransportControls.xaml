@@ -48,7 +48,7 @@
         <cc:StringFormatConverter x:Key="StringFormatConverter" />
     </UserControl.Resources>
 
-    <Grid>
+    <Grid RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -169,8 +169,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             x:FieldModifier="public"
-            Background="{StaticResource PlayerControlsScrimBrush}"
-            RequestedTheme="Dark">
+            Background="{StaticResource PlayerControlsScrimBrush}">
             <animations:Implicit.ShowAnimations>
                 <animations:OpacityAnimation
                     From="0"

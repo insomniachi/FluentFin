@@ -36,10 +36,7 @@ public class ContentDialogService : IContentDialogService
 				loaded.TrySetResult();
 			}
 
-			if (content.XamlRoot is null)
-			{
-				await loaded.Task;
-			}
+			await loaded.Task;
 		}
 
 		return content.XamlRoot;

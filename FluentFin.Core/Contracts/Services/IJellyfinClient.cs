@@ -67,13 +67,17 @@ namespace FluentFin.Core.Contracts.Services
 
 		Uri GetTrickplayImage(BaseItemDto dto, int index, int resolution);
 
-		Task Playing(BaseItemDto dto);
+		Task Playing(PlaybackStartInfo info);
 
 		Task Progress(PlaybackProgressInfo info);
 
-		Task Stop(PlaybackStopInfo dto);
+		/// <returns>true if the server accepted the stop report</returns>
+		Task<bool> Stop(PlaybackStopInfo dto);
 
-		Task Stop();
+		/// <summary>
+		/// Explicitly asks the server to kill the transcoding job of a play session, for when the stop report itself failed.
+		/// </summary>
+		Task<bool> StopEncoding(string playSessionId);
 
 		Task Logout();
 

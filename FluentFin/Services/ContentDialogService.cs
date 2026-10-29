@@ -26,19 +26,20 @@ public class ContentDialogService : IContentDialogService
 			return null;
 		}
 
-		if (content.XamlRoot is null)
+		if (content.XamlRoot is not null)
 		{
-			var loaded = new TaskCompletionSource();
-			content.Loaded += OnLoaded;
-			void OnLoaded(object sender, RoutedEventArgs e)
-			{
-				content.Loaded -= OnLoaded;
-				loaded.TrySetResult();
-			}
-
-			await loaded.Task;
+			return content.XamlRoot;
 		}
 
+		var loaded = new TaskCompletionSource();
+		content.Loaded += OnLoaded;
+		void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			content.Loaded -= OnLoaded;
+			loaded.TrySetResult();
+		}
+
+		await loaded.Task;
 		return content.XamlRoot;
 	}
 

@@ -94,7 +94,7 @@ public class PlaybackSessionManager(IJellyfinClient jellyfinClient, ILogger<Play
 
 		try
 		{
-			var position = positionTicks is > 0 ? positionTicks : ReadPosition(session);
+			var position = positionTicks ?? ReadPosition(session);
 
 			// waits for an in-flight progress report so that the stop is always the last request of the session
 			await session.Gate.WaitAsync();
@@ -148,7 +148,7 @@ public class PlaybackSessionManager(IJellyfinClient jellyfinClient, ILogger<Play
 	{
 		try
 		{
-			if (session.PositionProvider?.Invoke() is > 0 and { } live)
+			if (session.PositionProvider?.Invoke() is { } live)
 			{
 				return live;
 			}
@@ -158,7 +158,7 @@ public class PlaybackSessionManager(IJellyfinClient jellyfinClient, ILogger<Play
 			// fall back to the last reported position
 		}
 
-		return session.PositionTicks > 0 ? session.PositionTicks : null;
+		return session.PositionTicks;
 	}
 
 	private static T Convert<T>(PlaybackProgressInfo_PlayMethod method) where T : struct, Enum

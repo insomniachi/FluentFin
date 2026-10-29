@@ -66,6 +66,29 @@ public sealed class PlaybackSessionManagerTests
 	}
 
 	[Fact]
+	public async Task Stop_WithExplicitZeroPosition_IsAKnownPositionAndResetsTheResumePoint()
+	{
+		var session = _manager.Begin(Guid.NewGuid(), Media("play-1"));
+		await _manager.ReportProgressAsync(session, State(900));
+
+		await _manager.StopAsync(session, 0);
+
+		_client.Verify(x => x.Stop(It.Is<PlaybackStopInfo>(i => i.PositionTicks == 0 && i.Failed == false)), Times.Once);
+	}
+
+	[Fact]
+	public async Task Stop_WhenProviderHasNoPosition_FallsBackToLastReportedPosition()
+	{
+		var session = _manager.Begin(Guid.NewGuid(), Media("play-1"));
+		session.PositionProvider = () => null;
+		await _manager.ReportProgressAsync(session, State(321));
+
+		await _manager.StopAsync(session);
+
+		_client.Verify(x => x.Stop(It.Is<PlaybackStopInfo>(i => i.PositionTicks == 321 && i.Failed == false)), Times.Once);
+	}
+
+	[Fact]
 	public async Task Stop_WithoutUpdatingWatchState_IsReportedAsFailed()
 	{
 		var session = _manager.Begin(Guid.NewGuid(), Media("play-1"));

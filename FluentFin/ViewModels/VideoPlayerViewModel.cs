@@ -93,7 +93,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		try
 		{
 			// the position is lost once the player is stopped
-			position = MediaPlayer?.Position.Ticks is > 0 and { } ticks ? ticks : null;
+			position = GetKnownPosition();
 
 			if (stopPlayer)
 			{
@@ -273,7 +273,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		// registered before playback starts so that leaving the page at any moment can clean it up
 		var session = playbackSessions.Begin(selectedItem.Dto.Id.Value, mediaResponse);
-		session.PositionProvider = () => MediaPlayer?.Position.Ticks;
+		session.PositionProvider = GetKnownPosition;
 		_session = session;
 
 		// A transcode already carries the chosen audio stream; for direct play the player has to switch tracks itself.
@@ -424,6 +424,12 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		return await JellyfinClient.GetMediaUrl(dto, selection);
 	}
 
+	// some backends keep reporting the position of the previous media until the new one is playing,
+	// so the position only belongs to the current session once the player is actually playing it
+	private long? GetKnownPosition() => MediaPlayer is { State: MediaPlayerState.Playing or MediaPlayerState.Paused or MediaPlayerState.Ended } mp
+		? mp.Position.Ticks
+		: null;
+
 	private PlaybackState GetPlaybackState(IMediaPlayerController mp) => new(
 		mp.Position.Ticks,
 		!mp.IsPlaying,
@@ -456,7 +462,8 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	private void SubscribeEvents(IMediaPlayerController mp)
 	{
 		mp.Playing.Where(_ => _disposables.IsDisposed).Subscribe(_ => mp.Stop());
-		mp.Ended.Subscribe(async _ =>
+		// the backends raise these on their own native threads, stopping a player from there can deadlock
+		mp.Ended.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(async _ =>
 		{
 			if (Playlist.CanSelectNext)
 			{
@@ -470,8 +477,8 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			}
 		});
 		// events of a previous media can arrive late, only act on them if the player is still in that state
-		mp.Stopped.Where(_ => mp.State is MediaPlayerState.Stopped).Subscribe(async _ => await StopPlayback(stopPlayer: false));
-		mp.Errored.Subscribe(async _ =>
+		mp.Stopped.ObserveOn(RxSchedulers.MainThreadScheduler).Where(_ => mp.State is MediaPlayerState.Stopped).Subscribe(async _ => await StopPlayback(stopPlayer: false));
+		mp.Errored.ObserveOn(RxSchedulers.MainThreadScheduler).Subscribe(async _ =>
 		{
 			logger.LogError("An error occurred while playing media");
 			await StopPlayback();

@@ -19,7 +19,7 @@ public interface IPlaybackSessionManager
 
 	/// <summary>
 	/// Reports the session as stopped. Safe to call any number of times and from any thread, only the first call sends requests.
-	/// Never throws. When no position is known, or <paramref name="updateWatchState"/> is false, the report is sent as failed
+	/// Never throws. A position of zero is a known position. When no position is known (null), or <paramref name="updateWatchState"/> is false, the report is sent as failed
 	/// so that the server ends the playback session without touching the resume point or the played state.
 	/// </summary>
 	Task StopAsync(PlaybackSession? session, long? positionTicks = null, bool updateWatchState = true);
@@ -41,7 +41,10 @@ public sealed class PlaybackSession(Guid itemId, string playSessionId, string me
 	public string PlaySessionId { get; } = playSessionId;
 	public string MediaSourceId { get; } = mediaSourceId;
 	public PlaybackProgressInfo_PlayMethod PlayMethod { get; } = playMethod;
-	public long PositionTicks { get; internal set; }
+	/// <summary>
+	/// Last reported position, null until the first report. Zero is a valid position.
+	/// </summary>
+	public long? PositionTicks { get; internal set; }
 
 	/// <summary>
 	/// Optional way to read the live position when the session is stopped without an explicit position (e.g. on shutdown).

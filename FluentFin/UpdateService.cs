@@ -71,12 +71,13 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		return versionInfo;
 	}
 
-	// installers carry the architecture in the file name, e.g. FluentFin_x64.exe, FluentFin_arm64.exe
+	// installers end with the architecture, e.g. FluentFin_x64.exe, FluentFin_arm64.exe.
+	// OSArchitecture, not ProcessArchitecture: an x64 build emulated on ARM64 Windows should move to the native build.
 	private static string SelectAssetUrl(JsonArray assets)
 	{
-		var architecture = RuntimeInformation.ProcessArchitecture.ToString();
+		var suffix = $"_{RuntimeInformation.OSArchitecture}";
 		var urls = assets.Select(a => (string)a["browser_download_url"].AsValue()).ToList();
-		return urls.FirstOrDefault(u => u.Contains(architecture, StringComparison.OrdinalIgnoreCase)) ?? urls[0];
+		return urls.FirstOrDefault(u => Path.GetFileNameWithoutExtension(u).EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) ?? urls[0];
 	}
 
 	private async Task<VersionInfo> CheckForUpdate()

@@ -13,6 +13,13 @@ public class PlaybackSessionManager(IJellyfinClient jellyfinClient, ILogger<Play
 	{
 		var session = new PlaybackSession(itemId, media.PlaybackSessionId, media.MediaSourceId, media.PlayMethod);
 		_active[session] = 0;
+
+		if (_active.Count > 1)
+		{
+			logger.LogWarning("{Count} playback sessions are active at the same time: {PlaySessionIds}",
+				_active.Count, string.Join(", ", _active.Keys.Select(x => x.PlaySessionId)));
+		}
+
 		return session;
 	}
 

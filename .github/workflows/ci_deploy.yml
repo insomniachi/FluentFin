@@ -12,6 +12,10 @@ env:
   MAIN_PROJECT_PATH: 'FluentFin\FluentFin.csproj'
   FFMPEG_PATH: 'Installer\FFmpeg'
   PUBLISH_FOLDER: 'FluentFin\bin\publish'
+  PUBLISH_FOLDER_ARM64: 'FluentFin\bin\publish-arm64'
+  # pinned BtbN autobuild, the closest to the checked-in x64 DLLs (avcodec-63); bump both together
+  FFMPEG_ARM64_URL: https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-08-31-13-27/ffmpeg-N-126342-gf88b741dbf-winarm64-gpl-shared.zip
+  FFMPEG_ARM64_SHA256: d01a01d2e447dbcd0abc143c1c74d53317dfe20f08dbb2eba0712b62c083ec93
   CTK_LABS_INDEX: https://pkgs.dev.azure.com/dotnet/CommunityToolkit/_packaging/CommunityToolkit-Labs/nuget/v3/index.json
 
 jobs:
@@ -53,7 +57,27 @@ jobs:
                 "version-without-v=$v" >> $env:GITHUB_OUTPUT
 
         -   name: 'Build Project'
-            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -c Release -r win-x64 -o ${{ env.PUBLISH_FOLDER }}\ /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
+            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -c Release -r win-x64 -p:Platform=x64 -o ${{ env.PUBLISH_FOLDER }}\ /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
+
+        # native FFmpeg for Flyleaf; the DLL names must match the x64 ones in FluentFin\FFMpeg
+        # TODO: this is BtbN's stock arm64 build. The x64 DLLs are a custom decoder-only build
+        #       (--disable-encoders, plus libaom/libdavs2/libuavs3d/libopenmpt/lcevc-dec). Build a
+        #       matching arm64 FFmpeg to drop the unused encoders and get those extra decoders.
+        -   name: 'Download arm64 FFmpeg'
+            shell: pwsh
+            run: |
+                Invoke-WebRequest $env:FFMPEG_ARM64_URL -OutFile ffmpeg-arm64.zip
+                if ((Get-FileHash ffmpeg-arm64.zip -Algorithm SHA256).Hash -ne $env:FFMPEG_ARM64_SHA256) { throw 'arm64 FFmpeg checksum mismatch' }
+                Expand-Archive ffmpeg-arm64.zip -DestinationPath ffmpeg-arm64
+                New-Item -ItemType Directory -Force FluentFin\FFMpeg-arm64 | Out-Null
+                foreach ($x64 in Get-ChildItem FluentFin\FFMpeg\*.dll) {
+                    $match = Get-ChildItem ffmpeg-arm64 -Recurse -Filter $x64.Name | Select-Object -First 1
+                    if (-not $match) { throw "arm64 FFmpeg is missing $($x64.Name)" }
+                    Copy-Item $match.FullName FluentFin\FFMpeg-arm64\
+                }
+
+        -   name: 'Build Project (arm64)'
+            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -c Release -r win-arm64 -p:Platform=arm64 -o ${{ env.PUBLISH_FOLDER_ARM64 }}\ /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
 
         -   name: Create Windows Installer
             uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
@@ -61,8 +85,29 @@ jobs:
                 path: Installer\script.iss
                 options: /O+
 
+        -   name: Create Windows Installer (arm64)
+            uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+            with:
+                path: Installer\script.iss
+                options: /O+ /DArch=arm64
+
+        # Clients before ARM64 support install assets[0] of the latest release, and the API lists assets sorted
+        # by name. Ship a plain FluentFin.exe copy of the x64 installer for them: '.' sorts before '_', so it
+        # is always first. New clients pick FluentFin_<arch>.exe by suffix. Upload into a draft, check, publish.
         -   name: 'Create Release'
             shell: pwsh
             env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            run: gh release create ${{ steps.version.outputs.version-without-v }} Installer\Output\FluentFin.exe --target ${{ github.sha }} --title ${{ steps.version.outputs.version-without-v }}
+            run: |
+                $v = '${{ steps.version.outputs.version-without-v }}'
+                Copy-Item Installer\Output\FluentFin_x64.exe Installer\Output\FluentFin.exe
+                gh release create $v --draft --target ${{ github.sha }} --title $v
+                if ($LASTEXITCODE -ne 0) { throw 'gh release create failed' }
+                foreach ($f in 'FluentFin.exe', 'FluentFin_x64.exe', 'FluentFin_arm64.exe') {
+                    gh release upload $v "Installer\Output\$f"
+                    if ($LASTEXITCODE -ne 0) { throw "gh release upload $f failed" }
+                }
+                $first = gh release view $v --json assets -q '.assets[0].name'
+                if ($first -ne 'FluentFin.exe') { throw "First asset is '$first', old clients would install it" }
+                gh release edit $v --draft=false
+                if ($LASTEXITCODE -ne 0) { throw 'gh release edit failed' }

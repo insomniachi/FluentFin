@@ -365,6 +365,9 @@ FodyWeavers.xsd
 # Installer output
 /Installer/Output
 
+# arm64 FFmpeg DLLs, downloaded in CI (the x64 ones are checked in)
+/FluentFin/FFMpeg-arm64/
+
 # graphify knowledge graph (local)
 graphify-out/
 

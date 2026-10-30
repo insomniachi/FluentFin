@@ -3,6 +3,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using FluentFin.Core;
 using FluentFin.Services;
@@ -70,6 +71,15 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		return versionInfo;
 	}
 
+	// installers end with the architecture, e.g. FluentFin_x64.exe, FluentFin_arm64.exe.
+	// OSArchitecture, not ProcessArchitecture: an x64 build emulated on ARM64 Windows should move to the native build.
+	private static string SelectAssetUrl(JsonArray assets)
+	{
+		var suffix = $"_{RuntimeInformation.OSArchitecture}";
+		var urls = assets.Select(a => (string)a["browser_download_url"].AsValue()).ToList();
+		return urls.FirstOrDefault(u => Path.GetFileNameWithoutExtension(u).EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) ?? urls[0];
+	}
+
 	private async Task<VersionInfo> CheckForUpdate()
 	{
 		var json = await TryGetStreamAsync();
@@ -82,7 +92,7 @@ public class WindowsUpdateService(KnownFolders knownFolders,
 		var versionInfo = new VersionInfo()
 		{
 			Version = new Version(jsonNode["tag_name"].ToString()),
-			Url = (string)jsonNode["assets"][0]["browser_download_url"].AsValue(),
+			Url = SelectAssetUrl(jsonNode["assets"].AsArray()),
 			Body = jsonNode?["body"]?.ToString()
 		};
 

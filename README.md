@@ -1,5 +1,5 @@
 # 📺 FluentFin
-Welcome to FluentFin, a simple and user-friendly native Jellyfin client built with [Windows App SDK](https://github.com/microsoft/WindowsAppSDK) and C# for window 10 and 11. If you're looking for an alternative to other Jellyfin clients, we hope you'll find FluentFin to be a useful addition to your media streaming toolbox.
+Welcome to FluentFin, a simple and user-friendly native Jellyfin client built with [Windows App SDK](https://github.com/microsoft/WindowsAppSDK) and C# for Windows 10 and 11 (x64 and ARM64). If you're looking for an alternative to other Jellyfin clients, we hope you'll find FluentFin to be a useful addition to your media streaming toolbox.
 <div style="display: flex; flex-direction: row; gap: 8px">
   <img height=240 src="./Screenshots/movie.png" />
   <img height=240 src="./Screenshots/dashboard.png" />

@@ -1,6 +1,7 @@
 ﻿using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using Jellyfin.Sdk.Generated.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -22,6 +23,28 @@ public sealed class PlaybackSessionManagerTests
 		=> new(new Uri("http://localhost/video"), method, playSessionId, "source", new MediaSourceInfo());
 
 	private static PlaybackState State(long ticks = 100, bool paused = false) => new(ticks, paused, false, null, null);
+
+	[Fact]
+	public async Task Begin_WithAnotherActiveSession_LogsAWarning()
+	{
+		var logger = new Mock<ILogger<PlaybackSessionManager>>();
+		var manager = new PlaybackSessionManager(_client.Object, logger.Object);
+
+		var first = manager.Begin(Guid.NewGuid(), Media("a"));
+		VerifyWarnings(logger, Times.Never());
+
+		manager.Begin(Guid.NewGuid(), Media("b"));
+		VerifyWarnings(logger, Times.Once());
+
+		// once all sessions are stopped, a new session is alone again
+		await manager.StopAllAsync(TimeSpan.FromSeconds(5));
+		manager.Begin(Guid.NewGuid(), Media("c"));
+		VerifyWarnings(logger, Times.Once());
+	}
+
+	private static void VerifyWarnings(Mock<ILogger<PlaybackSessionManager>> logger, Times times)
+		=> logger.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception?>(),
+			It.IsAny<Func<It.IsAnyType, Exception?, string>>()), times);
 
 	[Fact]
 	public async Task Stop_SendsPlaySessionIdItemAndMediaSource()

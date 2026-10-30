@@ -332,9 +332,13 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 	// some backends keep reporting the position of the previous media until the new one is playing,
 	// so the position only belongs to the current session once the player is actually playing it
-	private long? GetKnownPosition() => MediaPlayer is { State: MediaPlayerState.Playing or MediaPlayerState.Paused or MediaPlayerState.Ended } mp
-		? mp.Position.Ticks
-		: null;
+	// a backend can also report Ended when it failed to open the media, there the position is zero and not a real position
+	private long? GetKnownPosition() => MediaPlayer switch
+	{
+		{ State: MediaPlayerState.Playing or MediaPlayerState.Paused } mp => mp.Position.Ticks,
+		{ State: MediaPlayerState.Ended, Position.Ticks: > 0 } mp => mp.Position.Ticks,
+		_ => null,
+	};
 
 	private PlaybackState GetPlaybackState(IMediaPlayerController mp) => new(
 		mp.Position.Ticks,

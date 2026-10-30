@@ -25,10 +25,6 @@
             x:Key="ObjectToVisibilityConverter"
             EmptyValue="Collapsed"
             NotEmptyValue="Visible" />
-        <SolidColorBrush
-            x:Key="BackgroundOnImageBrush"
-            Opacity="0.3"
-            Color="Black" />
         <x:Double x:Key="ButtonStripHeight">120</x:Double>
         <x:Double x:Key="InputLabelWidth">125</x:Double>
         <x:Double x:Key="InputControlWidth">200</x:Double>
@@ -75,7 +71,7 @@
 
     </Page.Resources>
 
-    <Grid>
+    <Grid RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />
             <RowDefinition Height="0.5*" />
@@ -116,12 +112,19 @@
             </media:UIElementExtensions.VisualFactory>
         </Grid>
 
+        <!--  Dark scrim so the text below the title strip stays readable on any backdrop  -->
+        <Border
+            Grid.Row="2"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            Background="{StaticResource MediaInfoScrimBrush}" />
+
         <Border
             Grid.RowSpan="2"
             Grid.ColumnSpan="2"
             Height="{StaticResource ButtonStripHeight}"
             VerticalAlignment="Bottom"
-            Background="{StaticResource BackgroundOnImageBrush}" />
+            Background="{StaticResource MediaInfoScrimBrush}" />
 
         <Grid
             Grid.RowSpan="2"

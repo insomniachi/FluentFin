@@ -18,6 +18,31 @@ public interface IContentDialogService : IContentDialogServiceCore
 
 public class ContentDialogService : IContentDialogService
 {
+	// The main window content has no XamlRoot until it is loaded into the visual tree (e.g. an update prompt shown during startup).
+	private static async Task<XamlRoot> GetXamlRoot()
+	{
+		if (App.MainWindow.Content is not FrameworkElement content)
+		{
+			return null;
+		}
+
+		if (content.XamlRoot is not null)
+		{
+			return content.XamlRoot;
+		}
+
+		var loaded = new TaskCompletionSource();
+		content.Loaded += OnLoaded;
+		void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			content.Loaded -= OnLoaded;
+			loaded.TrySetResult();
+		}
+
+		await loaded.Task;
+		return content.XamlRoot;
+	}
+
 	public async Task<ContentDialogResult> ShowDialog<TViewModel>(Action<ContentDialog> configure)
 		where TViewModel : class
 	{
@@ -39,7 +64,7 @@ public class ContentDialogService : IContentDialogService
 	{
 		var dialog = new ContentDialog
 		{
-			XamlRoot = App.MainWindow.Content.XamlRoot,
+			XamlRoot = await GetXamlRoot(),
 			Title = title,
 			Content = message,
 			PrimaryButtonText = "Yes",
@@ -55,7 +80,7 @@ public class ContentDialogService : IContentDialogService
 	{
 		var dialog = new ContentDialog
 		{
-			XamlRoot = App.MainWindow.Content.XamlRoot,
+			XamlRoot = await GetXamlRoot(),
 			Title = title,
 			Content = message,
 			PrimaryButtonText = "OK",
@@ -79,7 +104,7 @@ public class ContentDialogService : IContentDialogService
 		};
 
 		var dialog = (ContentDialog)view;
-		dialog.XamlRoot = App.MainWindow.Content.XamlRoot;
+		dialog.XamlRoot = await GetXamlRoot();
 
 		dialog.ManipulationDelta += delegate (object sender, ManipulationDeltaRoutedEventArgs e)
 		{
@@ -111,7 +136,7 @@ public class ContentDialogService : IContentDialogService
 		view.ViewModel = viewModel;
 
 		var dialog = (ContentDialog)view;
-		dialog.XamlRoot = App.MainWindow.Content.XamlRoot;
+		dialog.XamlRoot = await GetXamlRoot();
 
 		dialog.ManipulationDelta += delegate (object sender, ManipulationDeltaRoutedEventArgs e)
 		{

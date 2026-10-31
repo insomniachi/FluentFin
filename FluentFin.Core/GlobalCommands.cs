@@ -73,6 +73,9 @@ public partial class GlobalCommands(INavigationServiceCore navigationService,
 			case BaseItemDto_Type.Episode:
 				navigationService.NavigateTo<EpisodeViewModel>(dto);
 				break;
+			case BaseItemDto_Type.Folder or BaseItemDto_Type.CollectionFolder or BaseItemDto_Type.BoxSet:
+				navigationService.NavigateTo<LibraryViewModel>(dto);
+				break;
 			default:
 				break;
 		}

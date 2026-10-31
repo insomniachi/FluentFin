@@ -250,10 +250,12 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			? mediaResponse.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Audio).ToList().FindIndex(x => x.Index == selectedAudio)
 			: null;
 
+		LogMediaInfo(selectedItem.Dto, mediaResponse, selection, audioIndex, subtitleIndex);
+
 		var success = MediaPlayer.Play(mediaResponse.Uri, audioIndex ?? 0, audioOrdinal is >= 0 ? audioOrdinal : null);
 		if (!success)
 		{
-			logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
+			logger.LogError("Unable to open media from {URL}", SubtitleStreamDiagnostics.WithoutToken(mediaResponse.Uri.ToString()));
 		}
 
 		PlayMethod = mediaResponse.PlayMethod;
@@ -266,6 +268,10 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		if (mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Type == MediaStream_Type.Subtitle && x.Index == subtitleIndex) is { } subtitleStream)
 		{
 			_ = OpenSubtitlesWhenReady(MediaPlayer, selectedItem, mediaResponse, subtitleStream);
+		}
+		else
+		{
+			logger.LogInformation("No subtitle opened at start: wanted stream index {Index} (selection={Selection})", subtitleIndex, selection?.SubtitleStreamIndex);
 		}
 
 		await JellyfinClient.Playing(selectedItem.Dto);
@@ -316,6 +322,8 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			if (stream.UsesDeliveryUrl(response!.PlayMethod))
 			{
 				var url = HttpUtility.UrlDecode(JellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+				logger.LogInformation("Opening subtitle {Stream} as external file with {Player}, playMethod={PlayMethod}, url={Url}",
+					stream.Describe(), mp.GetType().Name, response.PlayMethod, SubtitleStreamDiagnostics.WithoutToken(url));
 				mp.OpenExternalSubtitleTrack(url);
 			}
 			else
@@ -323,13 +331,51 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 				var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
 				if (stream.Index is not { } trackIndex)
 				{
+					logger.LogWarning("Not opening subtitle {Stream}: it has no stream index", stream.Describe());
 					return;
 				}
 
+				logger.LogInformation("Opening subtitle {Stream} as internal track with {Player}, playMethod={PlayMethod}, trackIndex={TrackIndex}, ordinalAmongEmbedded={Ordinal}",
+					stream.Describe(), mp.GetType().Name, response.PlayMethod, trackIndex, subtitleIndex);
 				mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
 			}
 		}
-		catch { }
+		catch (Exception ex)
+		{
+			logger.LogWarning(ex, "Unable to open subtitle {Stream} with {Player}", stream.Describe(), mp.GetType().Name);
+		}
+	}
+
+	private void LogMediaInfo(BaseItemDto item, MediaResponse response, PlaybackSelection? selection, int? audioIndex, int? subtitleIndex)
+	{
+		var source = response.MediaSourceInfo;
+
+		logger.LogInformation(
+			"Playing {Name} ({Id}): method={PlayMethod}, container={Container}, bitrate={Bitrate}, size={Size}, directPlay={DirectPlay}, directStream={DirectStream}, transcoding={Transcoding}",
+			item.Name, item.Id, response.PlayMethod, source.Container, source.Bitrate, source.Size, source.SupportsDirectPlay, source.SupportsDirectStream, source.SupportsTranscoding);
+
+		logger.LogInformation(
+			"Stream selection: page selection (audio={SelectedAudio}, subtitle={SelectedSubtitle}), server defaults (audio={DefaultAudio}, subtitle={DefaultSubtitle}), used (audio={UsedAudio}, subtitle={UsedSubtitle})",
+			selection?.AudioStreamIndex, selection?.SubtitleStreamIndex, source.DefaultAudioStreamIndex, source.DefaultSubtitleStreamIndex, audioIndex, subtitleIndex);
+
+		logger.LogInformation("Stream URL: {Url}", SubtitleStreamDiagnostics.WithoutToken(response.Uri.ToString()));
+
+		if (response.PlayMethod == PlaybackProgressInfo_PlayMethod.Transcode)
+		{
+			logger.LogInformation("Transcode: container={Container}, protocol={Protocol}", source.TranscodingContainer, source.TranscodingSubProtocol);
+		}
+
+		foreach (var stream in source.MediaStreams ?? [])
+		{
+			logger.LogInformation(
+				"Source stream #{Index} {Type}: codec={Codec}, language={Language}, title={Title}, {Width}x{Height}, channels={Channels}, bitrate={Bitrate}, default={Default}, external={External}",
+				stream.Index, stream.Type, stream.Codec, stream.Language, stream.DisplayTitle, stream.Width, stream.Height, stream.Channels, stream.BitRate, stream.IsDefault, stream.IsExternal);
+
+			if (stream.Type == MediaStream_Type.Subtitle)
+			{
+				logger.LogInformation("Subtitle delivery of {Stream}", stream.Describe());
+			}
+		}
 	}
 
 

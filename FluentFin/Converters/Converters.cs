@@ -8,6 +8,7 @@ using FluentFin.ViewModels;
 using Flurl;
 using Humanizer;
 using Jellyfin.Sdk.Generated.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -158,9 +159,13 @@ public static class Converters
 				return;
 			}
 
+			var logger = App.GetService<ILoggerFactory>().CreateLogger("FluentFin.Subtitles");
+
 			if (stream.UsesDeliveryUrl(response!.PlayMethod))
 			{
 				var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+				logger.LogInformation("Menu: opening subtitle {Stream} as external file with {Player}, playMethod={PlayMethod}, url={Url}",
+					stream.Describe(), mp.GetType().Name, response.PlayMethod, SubtitleStreamDiagnostics.WithoutToken(url));
 				mp.OpenExternalSubtitleTrack(url);
 			}
 			else
@@ -171,11 +176,23 @@ public static class Converters
 					return;
 				}
 
-				mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
+				logger.LogInformation("Menu: opening subtitle {Stream} as internal track with {Player}, playMethod={PlayMethod}, trackIndex={TrackIndex}, ordinalAmongEmbedded={Ordinal}",
+					stream.Describe(), mp.GetType().Name, response.PlayMethod, trackIndex, subtitleIndex);
+
+				try
+				{
+					mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
+				}
+				catch (Exception ex)
+				{
+					logger.LogWarning(ex, "Menu: unable to open subtitle {Stream} with {Player}", stream.Describe(), mp.GetType().Name);
+					throw;
+				}
 			}
 		});
 		var disableSubtitles = new RelayCommand(() =>
 		{
+			App.GetService<ILoggerFactory>().CreateLogger("FluentFin.Subtitles").LogInformation("Menu: subtitles disabled with {Player}", mp.GetType().Name);
 			mp.DisableSubtitles();
 		});
 

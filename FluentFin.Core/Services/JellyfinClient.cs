@@ -364,7 +364,7 @@ public partial class JellyfinClient(ILogger<JellyfinClient> logger,
 
 	private Uri AddApiKey(Uri uri)
 	{
-		return uri.AppendQueryParam("ApiKey", _token).ToUri();
+		return uri.WithApiKey(_token);
 	}
 }
 

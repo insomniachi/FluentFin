@@ -38,6 +38,9 @@ namespace FluentFin.MediaPlayers
 				_media.ParsedChanged -= MediaParsed;
 			}
 
+			// the position is cached from TimeChanged and would still be the one of the previous media
+			Position = TimeSpan.Zero;
+
 			_media = new Media(_libVLC, uri);
 			_defaultAudioIndex = defaultAudioIndex;
 			_media.ParsedChanged += MediaParsed;

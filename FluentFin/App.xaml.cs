@@ -111,6 +111,7 @@ public partial class App : Application
 			services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
 			services.AddSingleton<IJellyfinAuthenticationService, JellyfinAuthenticationService>();
 			services.AddSingleton<IJellyfinClient, JellyfinClient>();
+			services.AddSingleton<IPlaybackSessionManager, PlaybackSessionManager>();
 			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton(knownFolders);
 			services.AddSingleton<ITaskBarProgress, TaskBarProgress>();
@@ -273,7 +274,8 @@ public partial class App : Application
 		_isClosing = true;
 		try
 		{
-			await GetService<IJellyfinClient>().Stop();
+			// best effort, a crash or a kill is left to the server's own transcoding timeout
+			await GetService<IPlaybackSessionManager>().StopAllAsync(TimeSpan.FromSeconds(4));
 			await Host.StopAsync();
 		}
 		finally

@@ -157,6 +157,13 @@ namespace FluentFin.MediaPlayers
 		{
 			try
 			{
+				// Stop() released the source, the play session of that media has ended on the server
+				// and must not be reused, new media has to be opened with Play(Uri) instead
+				if (_mp.Source is null)
+				{
+					return false;
+				}
+
 				_mp.Play();
 			}
 			catch { }
@@ -181,7 +188,21 @@ namespace FluentFin.MediaPlayers
 			}
 			catch { }
 		}
-		public void Stop() => Pause();
+
+		/// <summary>
+		/// Unlike <see cref="Pause"/>, releases the media source so that the network stream is closed.
+		/// </summary>
+		public void Stop()
+		{
+			try
+			{
+				_mp.Pause();
+				_mp.Source = null;
+			}
+			catch { }
+
+			_mediaItem = null;
+		}
 
 		private static MediaPlayerState ConvertState(Windows.Media.Playback.MediaPlayerState state)
 		{

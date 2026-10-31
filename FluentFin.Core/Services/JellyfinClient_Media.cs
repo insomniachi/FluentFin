@@ -90,14 +90,11 @@ public partial class JellyfinClient
 		return BaseUrl.AppendPathSegment($"/Items/{item.Id}/Images/{info.ImageType}").SetQueryParam("tag", info.ImageTag).ToUri();
 	}
 
-	public async Task Playing(BaseItemDto dto)
+	public async Task Playing(PlaybackStartInfo info)
 	{
 		try
 		{
-			await _jellyfinApiClient.Sessions.Playing.PostAsync(new PlaybackStartInfo
-			{
-				ItemId = dto?.Id,
-			});
+			await _jellyfinApiClient.Sessions.Playing.PostAsync(info);
 		}
 		catch (Exception ex)
 		{
@@ -110,7 +107,6 @@ public partial class JellyfinClient
 		try
 		{
 			await _jellyfinApiClient.Sessions.Playing.Progress.PostAsync(info);
-			_currentItem = info;
 		}
 		catch (Exception ex)
 		{
@@ -118,35 +114,40 @@ public partial class JellyfinClient
 		}
 	}
 
-	public async Task Stop(PlaybackStopInfo info)
+	public async Task<bool> Stop(PlaybackStopInfo info)
 	{
 		try
 		{
 			await _jellyfinApiClient.Sessions.Playing.Stopped.PostAsync(info);
-			_currentItem = null;
+			return true;
 		}
 		catch (Exception ex)
 		{
 			logger.LogError(ex, @"Unhandled exception");
+			return false;
 		}
 	}
 
-	public async Task Stop()
+	public async Task<bool> StopEncoding(string playSessionId)
 	{
-		if (_currentItem is null)
+		try
 		{
-			return;
+			// not part of the generated SDK
+			var request = new Microsoft.Kiota.Abstractions.RequestInformation
+			{
+				HttpMethod = Microsoft.Kiota.Abstractions.Method.DELETE,
+				UrlTemplate = "{+baseurl}/Videos/ActiveEncodings{?deviceId,playSessionId}",
+				PathParameters = new Dictionary<string, object> { ["baseurl"] = BaseUrl },
+				QueryParameters = { ["deviceId"] = _deviceId, ["playSessionId"] = playSessionId },
+			};
+			await _requestAdapter.SendNoContentAsync(request);
+			return true;
 		}
-
-		var info = new PlaybackStopInfo
+		catch (Exception ex)
 		{
-			ItemId = _currentItem.ItemId,
-			MediaSourceId = _currentItem.MediaSourceId,
-			PositionTicks = _currentItem.PositionTicks,
-			SessionId = _currentItem.SessionId,
-		};
-
-		await Stop(info);
+			logger.LogError(ex, @"Unhandled exception");
+			return false;
+		}
 	}
 
 	public Uri? GetStreamUrl(BaseItemDto dto)

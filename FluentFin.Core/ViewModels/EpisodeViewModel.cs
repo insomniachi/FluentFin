@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FluentFin.Contracts.ViewModels;
 using FluentFin.Core.Contracts.Services;
 using Jellyfin.Sdk.Generated.Models;
 
 namespace FluentFin.Core.ViewModels;
 
-public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : ObservableObject, INavigationAware
+public partial class EpisodeViewModel(IJellyfinClient jellyfinClient, GlobalCommands commands) : ObservableObject, INavigationAware
 {
 	[ObservableProperty]
 	public partial BaseItemDto Dto { get; set; }
@@ -35,6 +36,9 @@ public partial class EpisodeViewModel(IJellyfinClient jellyfinClient) : Observab
 	public partial bool HasSubtitles { get; set; }
 
 	public Task OnNavigatedFrom() => Task.CompletedTask;
+
+	[RelayCommand]
+	private Task Play() => commands.Play(Dto, PlaybackSelection.From(SelectedAudio, SelectedSubtitle));
 
 	public async Task OnNavigatedTo(object parameter)
 	{

@@ -211,4 +211,7 @@ public partial class PlaylistItem : ObservableObject
 
 	[ObservableProperty]
 	public partial MediaResponse? Media { get; set; }
+
+	/// <summary>Streams picked on the movie/episode page; null plays with the server defaults.</summary>
+	public PlaybackSelection? Selection { get; set; }
 }

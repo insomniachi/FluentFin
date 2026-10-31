@@ -5,7 +5,7 @@ namespace FluentFin.Core.Contracts.Services;
 public interface IMediaPlayerController : IDisposable
 {
 	bool Play();
-	bool Play(Uri uri, int defaultAudioIndex = 0);
+	bool Play(Uri uri, int defaultAudioIndex = 0, int? audioTrackOrdinal = null);
 	void Pause();
 	void Stop();
 	void OpenExternalSubtitleTrack(string url);
@@ -21,6 +21,9 @@ public interface IMediaPlayerController : IDisposable
 	bool IsMuted { get; }
 	int? SubtitleTrackIndex { get; }
 	int? AudioTrackIndex { get; }
+
+	/// <summary>How many subtitle tracks the backend knows about right now. They only appear some time after opening the media.</summary>
+	int SubtitleTrackCount { get; }
 	double Volume { get; set; }
 
 	IObservable<TimeSpan> DurationChanged { get; }

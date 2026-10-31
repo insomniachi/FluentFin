@@ -71,6 +71,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="FluentFin.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\FluentFin.Core\FluentFin.Core.csproj" />
 		<ProjectReference Include="..\FluentFin.Plugins\FluentFin.Plugins.csproj" />
 		<ProjectReference Include="..\FluentFin.UI.Core\FluentFin.UI.Core.csproj" />

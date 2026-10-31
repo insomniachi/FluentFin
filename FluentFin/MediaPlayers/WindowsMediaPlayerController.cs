@@ -27,6 +27,9 @@ namespace FluentFin.MediaPlayers
 	{
 		private readonly Windows.Media.Playback.MediaPlayer _mp = new() { AutoPlay = false };
 		private Windows.Media.Playback.MediaPlaybackItem? _mediaItem;
+		private Uri? _lastUri;
+		private int _defaultAudioIndex;
+		private TimeSpan _stoppedAt;
 		private readonly Button _audioTracksButton;
 
 		public WindowsMediaPlayerController(MediaPlayerElement element, Button audioTracksButton)
@@ -157,6 +160,20 @@ namespace FluentFin.MediaPlayers
 		{
 			try
 			{
+				// Stop() released the source, open the last media again where it was stopped
+				if (_mp.Source is null && _lastUri is not null)
+				{
+					var position = _stoppedAt;
+					var opened = Play(_lastUri, _defaultAudioIndex);
+
+					if (position > TimeSpan.Zero)
+					{
+						SeekTo(position);
+					}
+
+					return opened;
+				}
+
 				_mp.Play();
 			}
 			catch { }
@@ -165,6 +182,8 @@ namespace FluentFin.MediaPlayers
 
 		public bool Play(Uri uri, int defaultAudioIndex = 0)
 		{
+			_lastUri = uri;
+			_defaultAudioIndex = defaultAudioIndex;
 			var source = MediaSource.CreateFromUri(uri);
 			_mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
 			_mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() => _audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, defaultAudioIndex));
@@ -189,6 +208,11 @@ namespace FluentFin.MediaPlayers
 		{
 			try
 			{
+				if (_mp.Source is not null)
+				{
+					_stoppedAt = Position;
+				}
+
 				_mp.Pause();
 				_mp.Source = null;
 			}

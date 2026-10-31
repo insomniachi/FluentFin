@@ -121,6 +121,20 @@ public sealed class PlaybackSessionManagerTests
 		_client.Verify(x => x.Stop(It.Is<PlaybackStopInfo>(i => i.Failed == true)), Times.Once);
 	}
 
+	[Theory]
+	[InlineData(0)]
+	[InlineData(500)]
+	public async Task Stop_AfterOnlyAStartReport_IsReportedAsFailedBecauseThePositionWasNeverVerified(long startPosition)
+	{
+		var session = _manager.Begin(Guid.NewGuid(), Media("play-1"));
+		await _manager.ReportStartAsync(session, State(startPosition));
+
+		await _manager.StopAsync(session);
+
+		_client.Verify(x => x.Playing(It.Is<PlaybackStartInfo>(i => i.PositionTicks == startPosition)), Times.Once);
+		_client.Verify(x => x.Stop(It.Is<PlaybackStopInfo>(i => i.PlaySessionId == "play-1" && i.Failed == true)), Times.Once);
+	}
+
 	[Fact]
 	public async Task Stop_UsesLastReportedPositionWhenNothingElseIsKnown()
 	{

@@ -33,7 +33,7 @@ public class PlaybackSessionManager(IJellyfinClient jellyfinClient, ILogger<Play
 				return;
 			}
 
-			session.PositionTicks = state.PositionTicks;
+			// the player has usually not started yet, this position is not stored as the last known one
 			await jellyfinClient.Playing(new PlaybackStartInfo
 			{
 				ItemId = session.ItemId,

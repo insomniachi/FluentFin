@@ -14,6 +14,7 @@ namespace FluentFin.MediaPlayers
 		private readonly Button _audioTracksButton;
 		private Media? _media;
 		private int _defaultAudioIndex;
+		private int? _pendingAudioOrdinal;
 
 		public VlcMediaPlayerController(IVideoView view, string[] swapChainOptions, Button audioTracksButton)
 		{
@@ -31,7 +32,7 @@ namespace FluentFin.MediaPlayers
 		public void OpenAudioTrack(int index) => _mp.SetAudioTrack(index);
 		public void Pause() => _mp.Pause();
 		public bool Play() => _mp.Play();
-		public bool Play(Uri uri, int defaultAudioIndex = 0)
+		public bool Play(Uri uri, int defaultAudioIndex = 0, int? audioTrackOrdinal = null)
 		{
 			if (_media is not null)
 			{
@@ -40,8 +41,26 @@ namespace FluentFin.MediaPlayers
 
 			_media = new Media(_libVLC, uri);
 			_defaultAudioIndex = defaultAudioIndex;
+			_pendingAudioOrdinal = audioTrackOrdinal;
 			_media.ParsedChanged += MediaParsed;
 			return _mp.Play(_media);
+		}
+
+		private void ApplyPendingAudioTrack()
+		{
+			if (_pendingAudioOrdinal is not { } ordinal)
+			{
+				return;
+			}
+
+			var tracks = GetAudioTracks().ToList();
+			if (ordinal < 0 || ordinal >= tracks.Count)
+			{
+				return;
+			}
+
+			_pendingAudioOrdinal = null;
+			OpenAudioTrack(tracks[ordinal].Id);
 		}
 
 		public void Stop() => _mp.Stop();
@@ -79,6 +98,7 @@ namespace FluentFin.MediaPlayers
 				_audioTracksButton.DispatcherQueue.TryEnqueue(() =>
 				{
 					_audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, _defaultAudioIndex);
+					ApplyPendingAudioTrack();
 				});
 			}
 		}

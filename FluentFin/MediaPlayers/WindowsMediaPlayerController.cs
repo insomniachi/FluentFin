@@ -27,6 +27,7 @@ namespace FluentFin.MediaPlayers
 	{
 		private readonly Windows.Media.Playback.MediaPlayer _mp = new() { AutoPlay = false };
 		private Windows.Media.Playback.MediaPlaybackItem? _mediaItem;
+		private int? _pendingAudioOrdinal;
 		private readonly Button _audioTracksButton;
 
 		public WindowsMediaPlayerController(MediaPlayerElement element, Button audioTracksButton)
@@ -163,14 +164,36 @@ namespace FluentFin.MediaPlayers
 			return true;
 		}
 
-		public bool Play(Uri uri, int defaultAudioIndex = 0)
+		public bool Play(Uri uri, int defaultAudioIndex = 0, int? audioTrackOrdinal = null)
 		{
+			_pendingAudioOrdinal = audioTrackOrdinal;
 			var source = MediaSource.CreateFromUri(uri);
 			_mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
-			_mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() => _audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, defaultAudioIndex));
+			_mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() =>
+			{
+				_audioTracksButton.Flyout = Converters.Converters.GetAudiosFlyout(this, defaultAudioIndex);
+				ApplyPendingAudioTrack();
+			});
 			_mp.Source = _mediaItem;
 			_mp.Play();
 			return true;
+		}
+
+		private void ApplyPendingAudioTrack()
+		{
+			if (_pendingAudioOrdinal is not { } ordinal)
+			{
+				return;
+			}
+
+			var tracks = GetAudioTracks().ToList();
+			if (ordinal < 0 || ordinal >= tracks.Count)
+			{
+				return;
+			}
+
+			_pendingAudioOrdinal = null;
+			OpenAudioTrack(tracks[ordinal].Id);
 		}
 
 		public void SeekTo(TimeSpan timeSpan)

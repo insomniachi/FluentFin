@@ -16,6 +16,7 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 	private readonly Player _mp = new();
 	private readonly Button _audiosFlyoutButton;
 	private int _defaultAudioIndex;
+	private int? _pendingAudioOrdinal;
 
 	public FlyleafMediaPlayerController(FlyleafHost host, Button audioTracksButton)
 	{
@@ -30,6 +31,7 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 		   .Subscribe(_ =>
 		   {
 			   _audiosFlyoutButton.Flyout = Converters.Converters.GetAudiosFlyout(this, _defaultAudioIndex);
+			   ApplyPendingAudioTrack();
 		   });
 	}
 
@@ -90,11 +92,29 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 		return true;
 	}
 
-	public bool Play(Uri uri, int defaultAudioIndex = 0)
+	public bool Play(Uri uri, int defaultAudioIndex = 0, int? audioTrackOrdinal = null)
 	{
 		_defaultAudioIndex = defaultAudioIndex;
+		_pendingAudioOrdinal = audioTrackOrdinal;
 		var args = _mp.Open(HttpUtility.UrlDecode(uri.ToString()));
 		return args.Success;
+	}
+
+	private void ApplyPendingAudioTrack()
+	{
+		if (_pendingAudioOrdinal is not { } ordinal)
+		{
+			return;
+		}
+
+		var tracks = GetAudioTracks().ToList();
+		if (ordinal < 0 || ordinal >= tracks.Count)
+		{
+			return;
+		}
+
+		_pendingAudioOrdinal = null;
+		OpenAudioTrack(tracks[ordinal].Id);
 	}
 
 	public void SeekTo(TimeSpan timeSpan) => _mp.SeekAccurate((int)timeSpan.TotalMilliseconds);

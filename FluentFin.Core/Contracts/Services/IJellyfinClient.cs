@@ -59,7 +59,7 @@ namespace FluentFin.Core.Contracts.Services
 
 		Task<bool> Authenticate(string code);
 
-		Task<MediaResponse?> GetMediaUrl(BaseItemDto dto);
+		Task<MediaResponse?> GetMediaUrl(BaseItemDto dto, PlaybackSelection? selection = null);
 
 		Uri GetImage(BaseItemDto item, ImageInfo info);
 
@@ -214,6 +214,18 @@ namespace FluentFin.Core.Contracts.Services
 	public record RecentItemDtoQueryResult(BaseItemDto Library, ObservableCollection<BaseItemDto> Items);
 
 	public record RefreshMetadataInfo(MetadataRefreshMode ImageRefreshMode, MetadataRefreshMode MetadataRefreshMode, bool ReplaceAllImages, bool RegenerateTrickplay, bool ReplaceAllMetadata);
+
+	/// <summary>Audio/subtitle streams chosen before playback starts. A null index means "use the server default"; a subtitle index of -1 means no subtitles.</summary>
+	public record PlaybackSelection(int? AudioStreamIndex, int? SubtitleStreamIndex)
+	{
+		public const int NoSubtitles = -1;
+
+		/// <summary>Builds a selection from the page pickers, where the "None" subtitle entry is a stream without an index.</summary>
+		public static PlaybackSelection From(MediaStream? audio, MediaStream? subtitle) =>
+			new(audio?.Index, subtitle is null ? null : subtitle.Index ?? NoSubtitles);
+	}
+
+	public record PlaybackRequest(BaseItemDto Dto, PlaybackSelection Selection);
 
 	public record MediaResponse(Uri Uri, PlaybackProgressInfo_PlayMethod PlayMethod, string PlaybackSessionId, string MediaSourceId, MediaSourceInfo MediaSourceInfo);
 

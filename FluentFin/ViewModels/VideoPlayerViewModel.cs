@@ -90,6 +90,15 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		{
 			await Initialize(id);
 		}
+		else if (parameter is PlaybackRequest { Dto.Id: { } requestedId } request)
+		{
+			await Initialize(requestedId);
+
+			if (Playlist.Items.FirstOrDefault(x => x.Dto.Id == requestedId) is { } requestedItem)
+			{
+				requestedItem.Selection = request.Selection;
+			}
+		}
 		else if (parameter is PlayQueueUpdate pqu)
 		{
 			_playQueueUpdate = pqu;
@@ -219,7 +228,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		var mediaResponse = await GetMediaUrl(full);
+		var mediaResponse = await GetMediaUrl(full, selectedItem.Selection);
 
 		if (mediaResponse is null)
 		{
@@ -230,10 +239,17 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		await JellyfinClient.Stop();
 		TrickplayViewModel.SetItem(full);
 
-		var defaultSubtitleIndex = mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
+		var selection = selectedItem.Selection;
+		var subtitleIndex = selection?.SubtitleStreamIndex ?? mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
+		var audioIndex = selection?.AudioStreamIndex ?? mediaResponse.MediaSourceInfo.DefaultAudioStreamIndex;
 		selectedItem.Media = mediaResponse;
 
-		var success = MediaPlayer.Play(mediaResponse.Uri, mediaResponse.MediaSourceInfo.DefaultAudioStreamIndex ?? 0);
+		// A transcode already carries the chosen audio stream; for direct play the player has to switch tracks itself.
+		var audioOrdinal = selection?.AudioStreamIndex is { } selectedAudio && mediaResponse.PlayMethod == PlaybackProgressInfo_PlayMethod.DirectPlay
+			? mediaResponse.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Audio).ToList().FindIndex(x => x.Index == selectedAudio)
+			: null;
+
+		var success = MediaPlayer.Play(mediaResponse.Uri, audioIndex ?? 0, audioOrdinal is >= 0 ? audioOrdinal : null);
 		if (!success)
 		{
 			logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
@@ -246,7 +262,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			MediaPlayer.SeekTo(TimeSpan.FromTicks(ticks));
 		}
 
-		if (mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Index == defaultSubtitleIndex) is { } subtitleStream)
+		if (mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Type == MediaStream_Type.Subtitle && x.Index == subtitleIndex) is { } subtitleStream)
 		{
 			OpenSubtitles(MediaPlayer, mediaResponse, subtitleStream);
 		}
@@ -285,7 +301,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	}
 
 
-	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
+	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto, PlaybackSelection? selection)
 	{
 		var segments = await JellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
 
@@ -294,7 +310,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			Segments = segments.Items;
 		}
 
-		return await JellyfinClient.GetMediaUrl(dto);
+		return await JellyfinClient.GetMediaUrl(dto, selection);
 	}
 
 	private async Task UpdateStatus()

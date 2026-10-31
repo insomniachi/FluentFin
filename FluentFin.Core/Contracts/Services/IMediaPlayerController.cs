@@ -5,7 +5,7 @@ namespace FluentFin.Core.Contracts.Services;
 public interface IMediaPlayerController : IDisposable
 {
 	bool Play();
-	bool Play(Uri uri, int defaultAudioIndex = 0);
+	bool Play(Uri uri, int defaultAudioIndex = 0, int? audioTrackOrdinal = null);
 	void Pause();
 	void Stop();
 	void OpenExternalSubtitleTrack(string url);

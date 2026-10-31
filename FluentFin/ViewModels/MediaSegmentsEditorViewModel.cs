@@ -183,6 +183,12 @@ public partial class MediaSegmentsEditorViewModel(IJellyfinClient jellyfinClient
 	[RelayCommand]
 	private void PlaySegment(MediaSegmentViewModel vm)
 	{
+		// without a session the media is stopped or still loading, playing would restart a stopped stream
+		if (_session is null)
+		{
+			return;
+		}
+
 		PlayingSegment = vm;
 		MediaPlayer?.Play();
 		MediaPlayer?.SeekTo(new TimeSpan(vm.StartTicks));

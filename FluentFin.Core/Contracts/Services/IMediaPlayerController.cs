@@ -21,6 +21,9 @@ public interface IMediaPlayerController : IDisposable
 	bool IsMuted { get; }
 	int? SubtitleTrackIndex { get; }
 	int? AudioTrackIndex { get; }
+
+	/// <summary>How many subtitle tracks the backend knows about right now. They only appear some time after opening the media.</summary>
+	int SubtitleTrackCount { get; }
 	double Volume { get; set; }
 
 	IObservable<TimeSpan> DurationChanged { get; }

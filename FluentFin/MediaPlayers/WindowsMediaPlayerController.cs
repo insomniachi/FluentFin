@@ -43,6 +43,10 @@ namespace FluentFin.MediaPlayers
 		public bool IsMuted => _mp.SafeGetValue(mp => mp.IsMuted, false);
 		public int? SubtitleTrackIndex => null;
 		public int? AudioTrackIndex => null;
+
+		// text subtitles, image subtitles (PGS, VobSub) and closed captions; the other kinds are chapters and other metadata
+		public int SubtitleTrackCount => _mediaItem?.TimedMetadataTracks.Count(x =>
+			x.TimedMetadataKind is TimedMetadataKind.Subtitle or TimedMetadataKind.ImageSubtitle or TimedMetadataKind.Caption) ?? 0;
 		public double Volume
 		{
 			get

@@ -43,6 +43,8 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 	public int? SubtitleTrackIndex => _mp.Subtitles.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
 	public int? AudioTrackIndex => _mp.Audio.Streams.FirstOrDefault(x => x.Enabled)?.StreamIndex - 1;
 
+	public int SubtitleTrackCount => _mp.Subtitles.Streams.Count;
+
 	public double Volume
 	{
 		get => _mp.Audio.Volume;

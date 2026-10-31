@@ -74,6 +74,22 @@ namespace FluentFin.MediaPlayers
 		public bool IsMuted => _mp.Mute;
 		public int? SubtitleTrackIndex => _mp.Spu == -1 ? null : _mp.Spu;
 		public int? AudioTrackIndex => _mp.AudioTrack == -1 ? null : _mp.AudioTrack;
+
+		public int SubtitleTrackCount
+		{
+			get
+			{
+				try
+				{
+					// the list always starts with the "Disable" entry (id -1)
+					return _mp.SpuDescription.Count(x => x.Id >= 0);
+				}
+				catch
+				{
+					return 0;
+				}
+			}
+		}
 		public double Volume
 		{
 			get => _mp.Volume;

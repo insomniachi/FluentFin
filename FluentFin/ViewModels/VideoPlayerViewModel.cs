@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
@@ -281,7 +282,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		try
 		{
-			if (stream.IsExternal == true)
+			if (stream.UsesDeliveryUrl(response!.PlayMethod))
 			{
 				var url = HttpUtility.UrlDecode(JellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
 				mp.OpenExternalSubtitleTrack(url);

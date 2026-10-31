@@ -2,6 +2,7 @@
 using System.Web;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.ViewModels;
 using Flurl;
@@ -157,7 +158,7 @@ public static class Converters
 				return;
 			}
 
-			if (stream.IsExternal == true)
+			if (stream.UsesDeliveryUrl(response!.PlayMethod))
 			{
 				var url = HttpUtility.UrlDecode(App.GetService<IJellyfinClient>().BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
 				mp.OpenExternalSubtitleTrack(url);

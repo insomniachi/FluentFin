@@ -247,6 +247,7 @@
 
                 <StackPanel
                     x:Name="ActionButtons"
+                    RequestedTheme="Dark"
                     Margin="10"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
@@ -261,6 +262,7 @@
                         Click="MarkWatchedButton_Clicked"
                         Content="{ui:FontIcon Glyph=&#xE73E;,
                                               FontSize=15}"
+                        Background="{StaticResource Black65O}"
                         CornerRadius="20"
                         IsChecked="{x:Bind Model.UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneWay}"
                         Style="{ThemeResource IconToggleButtonStyle}"
@@ -273,6 +275,7 @@
                         Click="AddToFavoriteButton_Clicked"
                         Content="{ui:FontIcon Glyph=&#xEB52;,
                                               FontSize=15}"
+                        Background="{StaticResource Black65O}"
                         CornerRadius="20"
                         IsChecked="{x:Bind Model.UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneWay}"
                         Style="{ThemeResource IconToggleButtonStyle}"
@@ -287,6 +290,7 @@
                         Height="40"
                         Content="{ui:FontIcon Glyph=&#xE712;,
                                               FontSize=15}"
+                        Background="{StaticResource Black65O}"
                         CornerRadius="20"
                         Flyout="{x:Bind Model.Dto, Converter={StaticResource FlyoutConverter}, Mode=OneWay}"
                         Style="{ThemeResource IconButtonStyle}"

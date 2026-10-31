@@ -216,6 +216,7 @@
 
                                 <StackPanel
                                     x:Name="ActionButtons"
+                                    RequestedTheme="Dark"
                                     Margin="10"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
@@ -229,6 +230,7 @@
                                         Height="40"
                                         Content="{ui:FontIcon Glyph=&#xE73E;,
                                                               FontSize=15}"
+                                        Background="{StaticResource Black65O}"
                                         CornerRadius="20"
                                         IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.Played, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
                                         Style="{ThemeResource IconToggleButtonStyle}"
@@ -240,6 +242,7 @@
                                         Height="40"
                                         Content="{ui:FontIcon Glyph=&#xEB52;,
                                                               FontSize=15}"
+                                        Background="{StaticResource Black65O}"
                                         CornerRadius="20"
                                         IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model.UserData.IsFavorite, Converter={StaticResource NullableBoolToValueOrDefaultConverter}, Mode=OneTime}"
                                         Style="{ThemeResource IconToggleButtonStyle}"
@@ -250,6 +253,7 @@
                                         Height="40"
                                         Content="{ui:FontIcon Glyph=&#xE712;,
                                                               FontSize=15}"
+                                        Background="{StaticResource Black65O}"
                                         CornerRadius="20"
                                         Flyout="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Model, Converter={StaticResource FlyoutConverter}}"
                                         Style="{ThemeResource IconButtonStyle}"

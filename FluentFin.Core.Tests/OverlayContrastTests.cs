@@ -78,12 +78,25 @@ public class OverlayContrastTests
 	}
 
 	[Fact]
-	public void LoginPage_PanelOverSplashScreenIsDarkThemedWithScrim()
+	public void LoginPage_PanelFollowsSystemTheme()
 	{
 		var panel = Load("FluentFin/Views/LoginPage.xaml").Descendants(Presentation + "StackPanel")
-			.Single(e => (string?)e.Attribute("Background") == "{StaticResource MediaInfoScrimBrush}");
+			.Single(e => (string?)e.Attribute("MinWidth") == "500");
 
-		Assert.Equal("Dark", (string?)panel.Attribute("RequestedTheme"));
+		// no forced theme, and an opaque theme brush so text stays readable over the splash image in light and dark
+		Assert.Null(panel.Attribute("RequestedTheme"));
+		Assert.Equal("{ThemeResource SolidBackgroundFillColorBaseBrush}", (string?)panel.Attribute("Background"));
+	}
+
+	[Theory]
+	[InlineData("FluentFin/Controls/BaseItemDtoCard.xaml")]
+	[InlineData("FluentFin/Styles/PlayableMediaItem.xaml")]
+	public void CardActionButtons_AreDarkThemedWithScrim(string file)
+	{
+		var buttons = FindByName(Load(file), "ActionButtons");
+
+		Assert.Equal("Dark", (string?)buttons.Attribute("RequestedTheme"));
+		Assert.All(buttons.Elements(), b => Assert.Equal("{StaticResource Black65O}", (string?)b.Attribute("Background")));
 	}
 
 	[Fact]

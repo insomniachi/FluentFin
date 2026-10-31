@@ -281,7 +281,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 	/// A subtitle that is a track of the player can only be selected once the player knows its tracks, which is some time after
 	/// opening the media for the backends that load them in the background.
 	/// </summary>
-	private async Task OpenSubtitlesWhenReady(IMediaPlayerController mp, PlaylistItem item, MediaResponse response, MediaStream stream)
+	internal async Task OpenSubtitlesWhenReady(IMediaPlayerController mp, PlaylistItem item, MediaResponse response, MediaStream stream)
 	{
 		if (!stream.UsesDeliveryUrl(response.PlayMethod))
 		{

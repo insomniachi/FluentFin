@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="FluentFin.Controls.BaseItemDtoCard"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -67,6 +67,7 @@
 
         <Grid
             x:Name="ImageCanvas"
+            Background="Transparent"
             CornerRadius="10 10 0 0"
             Tapped="ImageCanvas_Tapped">
             <i:Interaction.Behaviors>

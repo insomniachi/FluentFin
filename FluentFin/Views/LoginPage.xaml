@@ -16,9 +16,8 @@
             Padding="50"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Background="{StaticResource MediaInfoScrimBrush}"
+            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
             CornerRadius="8"
-            RequestedTheme="Dark"
             Spacing="20">
             <StackPanel.Resources>
                 <Style TargetType="StackPanel">

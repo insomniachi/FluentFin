@@ -70,6 +70,7 @@ public sealed class VideoPlayerViewModelSubtitleTests
 		NullLogger<VideoPlayerViewModel>.Instance,
 		Observable.Empty<IOutboundWebSocketMessage>(),
 		Mock.Of<INavigationService>(),
+		Mock.Of<IPlaybackSessionManager>(),
 		Mock.Of<ISettings>(),
 		Mock.Of<ITaskBarProgress>());
 

@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using FluentFin.Contracts.Services;
 using FluentFin.Contracts.ViewModels;
+using FluentFin.Core;
 using FluentFin.Core.Contracts.Services;
 using FluentFin.Core.Services;
 using FluentFin.Core.Settings;
@@ -89,6 +90,15 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		if (parameter is BaseItemDto { Id: { } id })
 		{
 			await Initialize(id);
+		}
+		else if (parameter is PlaybackRequest { Dto.Id: { } requestedId } request)
+		{
+			await Initialize(requestedId);
+
+			if (Playlist.Items.FirstOrDefault(x => x.Dto.Id == requestedId) is { } requestedItem)
+			{
+				requestedItem.Selection = request.Selection;
+			}
 		}
 		else if (parameter is PlayQueueUpdate pqu)
 		{
@@ -219,7 +229,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			return;
 		}
 
-		var mediaResponse = await GetMediaUrl(full);
+		var mediaResponse = await GetMediaUrl(full, selectedItem.Selection);
 
 		if (mediaResponse is null)
 		{
@@ -230,13 +240,22 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 		await JellyfinClient.Stop();
 		TrickplayViewModel.SetItem(full);
 
-		var defaultSubtitleIndex = mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
+		var selection = selectedItem.Selection;
+		var subtitleIndex = selection?.SubtitleStreamIndex ?? mediaResponse.MediaSourceInfo.DefaultSubtitleStreamIndex;
+		var audioIndex = selection?.AudioStreamIndex ?? mediaResponse.MediaSourceInfo.DefaultAudioStreamIndex;
 		selectedItem.Media = mediaResponse;
 
-		var success = MediaPlayer.Play(mediaResponse.Uri, mediaResponse.MediaSourceInfo.DefaultAudioStreamIndex ?? 0);
+		// A transcode already carries the chosen audio stream; for direct play the player has to switch tracks itself.
+		var audioOrdinal = selection?.AudioStreamIndex is { } selectedAudio && mediaResponse.PlayMethod == PlaybackProgressInfo_PlayMethod.DirectPlay
+			? mediaResponse.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Audio).ToList().FindIndex(x => x.Index == selectedAudio)
+			: null;
+
+		LogMediaInfo(selectedItem.Dto, mediaResponse, selection, audioIndex, subtitleIndex);
+
+		var success = MediaPlayer.Play(mediaResponse.Uri, audioIndex ?? 0, audioOrdinal is >= 0 ? audioOrdinal : null);
 		if (!success)
 		{
-			logger.LogError("Unable to open media from {URL}", mediaResponse.Uri);
+			logger.LogError("Unable to open media from {URL}", SubtitleStreamDiagnostics.WithoutToken(mediaResponse.Uri.ToString()));
 		}
 
 		PlayMethod = mediaResponse.PlayMethod;
@@ -246,12 +265,47 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			MediaPlayer.SeekTo(TimeSpan.FromTicks(ticks));
 		}
 
-		if (mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Index == defaultSubtitleIndex) is { } subtitleStream)
+		if (mediaResponse.MediaSourceInfo.MediaStreams?.FirstOrDefault(x => x.Type == MediaStream_Type.Subtitle && x.Index == subtitleIndex) is { } subtitleStream)
 		{
-			OpenSubtitles(MediaPlayer, mediaResponse, subtitleStream);
+			_ = OpenSubtitlesWhenReady(MediaPlayer, selectedItem, mediaResponse, subtitleStream);
+		}
+		else
+		{
+			logger.LogInformation("No subtitle opened at start: wanted stream index {Index} (selection={Selection})", subtitleIndex, selection?.SubtitleStreamIndex);
 		}
 
 		await JellyfinClient.Playing(selectedItem.Dto);
+	}
+
+	/// <summary>
+	/// A subtitle that is a track of the player can only be selected once the player knows its tracks, which is some time after
+	/// opening the media for the backends that load them in the background.
+	/// </summary>
+	internal async Task OpenSubtitlesWhenReady(IMediaPlayerController mp, PlaylistItem item, MediaResponse response, MediaStream stream)
+	{
+		if (!stream.UsesDeliveryUrl(response.PlayMethod))
+		{
+			var subtitles = response.MediaSourceInfo.MediaStreams?.Where(x => x.Type == MediaStream_Type.Subtitle).ToList() ?? [];
+			var ordinal = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
+
+			for (var attempt = 0; attempt < 40 && mp.SubtitleTrackCount <= ordinal; attempt++)
+			{
+				await Task.Delay(TimeSpan.FromMilliseconds(250));
+
+				// another item or another stream of the same item has been started in the meantime
+				if (!ReferenceEquals(item.Media, response))
+				{
+					return;
+				}
+			}
+
+			if (mp.SubtitleTrackCount <= ordinal)
+			{
+				logger.LogWarning("The player reported {Count} subtitle tracks after 10 seconds, trying to open track {Ordinal} anyway", mp.SubtitleTrackCount, ordinal);
+			}
+		}
+
+		OpenSubtitles(mp, response, stream);
 	}
 
 	private void OpenSubtitles(IMediaPlayerController mp, MediaResponse response, MediaStream stream)
@@ -265,9 +319,11 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		try
 		{
-			if (stream.IsExternal == true)
+			if (stream.UsesDeliveryUrl(response!.PlayMethod))
 			{
 				var url = HttpUtility.UrlDecode(JellyfinClient.BaseUrl.AppendPathSegment(stream.DeliveryUrl).ToString());
+				logger.LogInformation("Opening subtitle {Stream} as external file with {Player}, playMethod={PlayMethod}, url={Url}",
+					stream.Describe(), mp.GetType().Name, response.PlayMethod, SubtitleStreamDiagnostics.WithoutToken(url));
 				mp.OpenExternalSubtitleTrack(url);
 			}
 			else
@@ -275,17 +331,55 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 				var subtitleIndex = subtitles.Where(x => x.IsExternal is false).IndexOf(stream);
 				if (stream.Index is not { } trackIndex)
 				{
+					logger.LogWarning("Not opening subtitle {Stream}: it has no stream index", stream.Describe());
 					return;
 				}
 
+				logger.LogInformation("Opening subtitle {Stream} as internal track with {Player}, playMethod={PlayMethod}, trackIndex={TrackIndex}, ordinalAmongEmbedded={Ordinal}",
+					stream.Describe(), mp.GetType().Name, response.PlayMethod, trackIndex, subtitleIndex);
 				mp.OpenInternalSubtitleTrack(trackIndex, subtitleIndex);
 			}
 		}
-		catch { }
+		catch (Exception ex)
+		{
+			logger.LogWarning(ex, "Unable to open subtitle {Stream} with {Player}", stream.Describe(), mp.GetType().Name);
+		}
+	}
+
+	private void LogMediaInfo(BaseItemDto item, MediaResponse response, PlaybackSelection? selection, int? audioIndex, int? subtitleIndex)
+	{
+		var source = response.MediaSourceInfo;
+
+		logger.LogInformation(
+			"Playing {Name} ({Id}): method={PlayMethod}, container={Container}, bitrate={Bitrate}, size={Size}, directPlay={DirectPlay}, directStream={DirectStream}, transcoding={Transcoding}",
+			item.Name, item.Id, response.PlayMethod, source.Container, source.Bitrate, source.Size, source.SupportsDirectPlay, source.SupportsDirectStream, source.SupportsTranscoding);
+
+		logger.LogInformation(
+			"Stream selection: page selection (audio={SelectedAudio}, subtitle={SelectedSubtitle}), server defaults (audio={DefaultAudio}, subtitle={DefaultSubtitle}), used (audio={UsedAudio}, subtitle={UsedSubtitle})",
+			selection?.AudioStreamIndex, selection?.SubtitleStreamIndex, source.DefaultAudioStreamIndex, source.DefaultSubtitleStreamIndex, audioIndex, subtitleIndex);
+
+		logger.LogInformation("Stream URL: {Url}", SubtitleStreamDiagnostics.WithoutToken(response.Uri.ToString()));
+
+		if (response.PlayMethod == PlaybackProgressInfo_PlayMethod.Transcode)
+		{
+			logger.LogInformation("Transcode: container={Container}, protocol={Protocol}", source.TranscodingContainer, source.TranscodingSubProtocol);
+		}
+
+		foreach (var stream in source.MediaStreams ?? [])
+		{
+			logger.LogInformation(
+				"Source stream #{Index} {Type}: codec={Codec}, language={Language}, title={Title}, {Width}x{Height}, channels={Channels}, bitrate={Bitrate}, default={Default}, external={External}",
+				stream.Index, stream.Type, stream.Codec, stream.Language, stream.DisplayTitle, stream.Width, stream.Height, stream.Channels, stream.BitRate, stream.IsDefault, stream.IsExternal);
+
+			if (stream.Type == MediaStream_Type.Subtitle)
+			{
+				logger.LogInformation("Subtitle delivery of {Stream}", stream.Describe());
+			}
+		}
 	}
 
 
-	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto)
+	private async Task<MediaResponse?> GetMediaUrl(BaseItemDto dto, PlaybackSelection? selection)
 	{
 		var segments = await JellyfinClient.GetMediaSegments(dto, [MediaSegmentType.Intro, MediaSegmentType.Outro]);
 
@@ -294,7 +388,7 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 			Segments = segments.Items;
 		}
 
-		return await JellyfinClient.GetMediaUrl(dto);
+		return await JellyfinClient.GetMediaUrl(dto, selection);
 	}
 
 	private async Task UpdateStatus()

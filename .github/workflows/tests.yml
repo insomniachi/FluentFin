@@ -9,7 +9,7 @@ on:
 jobs:
   tests:
     name: 'Unit and style tests'
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     -   name: 'Checkout'
         uses: actions/checkout@v4
@@ -19,7 +19,17 @@ jobs:
         with:
             dotnet-version: '10.0'
 
-    # FluentFin.Core.Tests only needs the cross-platform Core project; it also reads the XAML files
-    # (OverlayContrastTests), so the WinUI app itself is not built here.
+    # FluentFin.Core.Tests references the Core project only and also reads the XAML files (OverlayContrastTests),
+    # so the WinUI app itself is not built here. The tests run on Windows, the platform of the app.
     -   name: 'Test'
         run: dotnet test FluentFin.Core.Tests/FluentFin.Core.Tests.csproj
+
+    # The tests of the logic of the app project need the WinUI app, they build it the way the test build does.
+    -   name: 'Setup msbuild'
+        uses: microsoft/setup-msbuild@v2
+
+    -   name: 'Add Windows Community Toolkit labs nuget source'
+        run: dotnet nuget add source https://pkgs.dev.azure.com/dotnet/CommunityToolkit/_packaging/CommunityToolkit-Labs/nuget/v3/index.json -n CommunityToolkitLabs
+
+    -   name: 'Test the app'
+        run: dotnet test FluentFin.Tests/FluentFin.Tests.csproj -c Release -p:Platform=x64

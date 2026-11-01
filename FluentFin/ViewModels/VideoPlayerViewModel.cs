@@ -589,17 +589,30 @@ public partial class VideoPlayerViewModel(IJellyfinClient jellyfinClient,
 
 		// the play session was reported stopped, playing would restart its stream without being tracked,
 		// after a stop the group restarts playback with a new play queue, which opens a new session
-		if (_session is null)
+		var session = _session;
+		if (session is null)
 		{
 			return;
 		}
 
 		var currentTime = await JellyfinClient.SyncTime();
 
+		// a stop can arrive while waiting for the server time or for the time the command is scheduled for
+		if (!ReferenceEquals(_session, session))
+		{
+			return;
+		}
+
 		if (commandTime > currentTime)
 		{
 			mp.SeekTo(new TimeSpan(positionTicks));
 			await Task.Delay(commandTime - currentTime);
+
+			if (!ReferenceEquals(_session, session))
+			{
+				return;
+			}
+
 			mp.Play();
 		}
 		else

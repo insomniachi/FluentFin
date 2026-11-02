@@ -35,7 +35,10 @@ namespace FluentFin.MediaPlayers
 			_audioTracksButton = audioTracksButton;
 			element.AreTransportControlsEnabled = false;
 			element.SetMediaPlayer(_mp);
+			_mp.MediaFailed += (_, e) => LastError = $"{e.Error}: {e.ErrorMessage} (HRESULT 0x{e.ExtendedErrorCode?.HResult ?? 0:X8})";
 		}
+
+		public string? LastError { get; private set; }
 
 		public MediaPlayerState State => ConvertState(_mp.SafeGetValue(mp => mp.CurrentState, Windows.Media.Playback.MediaPlayerState.Closed));
 		public TimeSpan Position => _mp.SafeGetValue(mp => mp.Position, TimeSpan.Zero);
@@ -171,6 +174,7 @@ namespace FluentFin.MediaPlayers
 		public bool Play(Uri uri, int defaultAudioIndex = 0, int? audioTrackOrdinal = null)
 		{
 			_pendingAudioOrdinal = audioTrackOrdinal;
+			LastError = null;
 			var source = MediaSource.CreateFromUri(uri);
 			_mediaItem = new Windows.Media.Playback.MediaPlaybackItem(source);
 			_mediaItem.AudioTracksChanged += (sender, args) => _audioTracksButton.DispatcherQueue.TryEnqueue(() =>

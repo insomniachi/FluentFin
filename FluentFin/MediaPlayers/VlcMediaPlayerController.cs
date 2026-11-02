@@ -22,8 +22,40 @@ namespace FluentFin.MediaPlayers
 			_mp = new MediaPlayer(_libVLC);
 			_audioTracksButton = audioTracksButton;
 			view.MediaPlayer = _mp;
+			_libVLC.Log += OnLibVlcLog;
 
 			PositionChanged.Subscribe(p => Position = p);
+		}
+
+		private readonly Queue<string> _recentLog = new();
+
+		// the error event has no details, LibVLC reports the reason (e.g. http errors) through its log
+		public string? LastError
+		{
+			get
+			{
+				lock (_recentLog)
+				{
+					return _recentLog.Count == 0 ? null : string.Join(" | ", _recentLog);
+				}
+			}
+		}
+
+		private void OnLibVlcLog(object? sender, LogEventArgs e)
+		{
+			if (e.Level is not (LogLevel.Error or LogLevel.Warning))
+			{
+				return;
+			}
+
+			lock (_recentLog)
+			{
+				_recentLog.Enqueue($"{e.Level} {e.Module}: {e.Message}");
+				while (_recentLog.Count > 8)
+				{
+					_recentLog.Dequeue();
+				}
+			}
 		}
 
 		public void OpenExternalSubtitleTrack(string url) => _mp.AddSlave(MediaSlaveType.Subtitle, url, true);
@@ -37,6 +69,11 @@ namespace FluentFin.MediaPlayers
 			if (_media is not null)
 			{
 				_media.ParsedChanged -= MediaParsed;
+			}
+
+			lock (_recentLog)
+			{
+				_recentLog.Clear();
 			}
 
 			_media = new Media(_libVLC, uri);

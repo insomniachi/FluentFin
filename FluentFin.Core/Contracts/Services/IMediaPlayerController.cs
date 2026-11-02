@@ -26,6 +26,11 @@ public interface IMediaPlayerController : IDisposable
 	int SubtitleTrackCount { get; }
 	double Volume { get; set; }
 
+	/// <summary>
+	/// What the backend reported about the last failure, the error events themselves carry no details.
+	/// </summary>
+	string? LastError { get; }
+
 	IObservable<TimeSpan> DurationChanged { get; }
 	IObservable<TimeSpan> PositionChanged { get; }
 	IObservable<Unit> Playing { get; }

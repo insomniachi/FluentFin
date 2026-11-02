@@ -23,6 +23,7 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 		_audiosFlyoutButton = audioTracksButton;
 		_mp.Config.Player.KeyBindings.RemoveAll();
 		host.Player = _mp;
+		_mp.PlaybackStopped += (_, e) => LastError = e.Error?.ToString() ?? LastError;
 
 		_mp.Audio.Streams
 		   .ToObservableChangeSet()
@@ -34,6 +35,8 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 			   ApplyPendingAudioTrack();
 		   });
 	}
+
+	public string? LastError { get; private set; }
 
 	public MediaPlayerState State => ConvertState(_mp.Status);
 
@@ -98,7 +101,13 @@ public sealed partial class FlyleafMediaPlayerController : IMediaPlayerControlle
 	{
 		_defaultAudioIndex = defaultAudioIndex;
 		_pendingAudioOrdinal = audioTrackOrdinal;
+		LastError = null;
 		var args = _mp.Open(HttpUtility.UrlDecode(uri.ToString()));
+		if (!args.Success)
+		{
+			LastError = "Flyleaf could not open the media";
+		}
+
 		return args.Success;
 	}
 
